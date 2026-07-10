@@ -37,10 +37,11 @@
 
 ### 1. 저장소 clone / pull
 ```bash
-git clone https://github.com/hb9397/AI_Agent_docs.git
+git clone https://github.com/hb9397/ai-agent-harness-docs.git
 # 또는 이미 있으면
-cd AI_Agent_docs && git pull
+cd ai-agent-harness-docs && git pull
 ```
+> 주의: 이전 URL `AI_Agent_docs.git`도 자동 리다이렉트 되지만, 새 이름 `ai-agent-harness-docs`를 쓰는 게 정확.
 
 ### 2. 이 문서(HANDOFF)를 먼저 읽는다
 지금 이 문서. `education/vibe-coding-training/HANDOFF.md`.
