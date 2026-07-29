@@ -1,0 +1,30 @@
+{
+  "id": "frontend-design-reference-candidate",
+  "checked_at": "2026-07-29",
+  "status": "candidate-reference",
+  "internal_skill_group": ["frontend-design", "design-prototype-docs", "create-prototype"],
+  "candidate_sources": [
+    {
+      "source_id": "anthropic-frontend-design",
+      "source_url": "https://claude.com/plugins/frontend-design",
+      "repository_url": "https://github.com/anthropics/claude-code/blob/main/plugins/frontend-design/skills/frontend-design/SKILL.md",
+      "officiality": "Anthropic verified Claude plugin",
+      "observed_activity": "Official plugin page crawled 2026-07-28/29; GitHub source observed on main.",
+      "license": "See upstream LICENSE terms before importing files.",
+      "security_surface": "Skill text only unless upstream plugin assets/scripts are later imported.",
+      "fit": "Strong fit for distinctive production frontend guidance.",
+      "decision": "reference-only now; adapted requires explicit file/text comparison and license review."
+    },
+    {
+      "source_id": "openai-product-design",
+      "source_url": "https://openai.com/business/plugins/product-design/",
+      "repository_url": "https://github.com/openai/role-specific-plugins/tree/main/plugins/product-design",
+      "officiality": "OpenAI official role-specific plugin template",
+      "observed_activity": "GitHub repository crawled 2026-07-26; product page crawled 2026-07-28.",
+      "license": "MIT in openai/role-specific-plugins; verify exact LICENSE hash before importing.",
+      "security_surface": "May include app bindings/assets; reference-only avoids runtime surface.",
+      "fit": "Useful for product spec, prototype, critique, and design handoff flows.",
+      "decision": "reference-only now."
+    }
+  ]
+}

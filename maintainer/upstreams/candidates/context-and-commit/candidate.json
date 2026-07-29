@@ -1,0 +1,49 @@
+{
+  "id": "context-and-commit-reference-candidate",
+  "checked_at": "2026-07-29",
+  "status": "candidate-reference",
+  "internal_skill_group": ["context-doc", "harness-setup", "doc-audit", "commit", "custom-skill-design"],
+  "candidate_sources": [
+    {
+      "source_id": "openai-agents-md",
+      "source_url": "https://learn.chatgpt.com/docs/agent-configuration/agents-md",
+      "repository_url": "https://github.com/openai/codex/blob/main/docs/agents_md.md",
+      "officiality": "OpenAI/Codex official documentation",
+      "observed_activity": "Documentation and codex repository docs observed 2026-07-29.",
+      "license": "Documentation reference only.",
+      "security_surface": "None for reference-only documentation.",
+      "fit": "Canonical basis for AGENTS.md behavior in Codex.",
+      "decision": "reference-only."
+    },
+    {
+      "source_id": "claude-memory",
+      "source_url": "https://code.claude.com/docs/en/memory",
+      "officiality": "Claude Code official documentation",
+      "observed_activity": "Documentation observed 2026-07-29; includes AGENTS.md import bridge guidance.",
+      "license": "Documentation reference only.",
+      "security_surface": "None for reference-only documentation.",
+      "fit": "Canonical basis for CLAUDE.md importing AGENTS.md.",
+      "decision": "reference-only."
+    },
+    {
+      "source_id": "conventional-commits",
+      "source_url": "https://www.conventionalcommits.org/en/v1.0.0/",
+      "officiality": "Public specification",
+      "observed_activity": "Specification page observed 2026-07-29.",
+      "license": "Reference specification; no file import.",
+      "security_surface": "None.",
+      "fit": "Canonical basis for commit message structure.",
+      "decision": "reference-only."
+    },
+    {
+      "source_id": "skill-creator-guides",
+      "source_url": "https://claude.com/skills",
+      "officiality": "Anthropic skill platform documentation",
+      "observed_activity": "Official Claude skills page observed 2026-07-29.",
+      "license": "Documentation reference only.",
+      "security_surface": "None for reference-only documentation.",
+      "fit": "Skill authoring model and structure reference for custom-skill-design.",
+      "decision": "reference-only."
+    }
+  ]
+}

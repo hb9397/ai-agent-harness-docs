@@ -1,0 +1,28 @@
+{
+  "id": "planning-and-review-reference-candidate",
+  "checked_at": "2026-07-29",
+  "status": "candidate-reference",
+  "internal_skill_group": ["design-doc", "impl-doc", "impl-fe-be-doc", "impl-verify", "multi-review", "pre-commit"],
+  "candidate_sources": [
+    {
+      "source_id": "superpowers",
+      "source_url": "https://github.com/obra/superpowers",
+      "officiality": "Reputable third-party skill framework",
+      "observed_activity": "GitHub release page observed 2026-07-29; release result showed v5.1.0, while local prior notes mentioned v6.x, so acceptance must re-query and pin exact SHA.",
+      "license": "MIT per GitHub repository page; verify hash before import.",
+      "security_surface": "Contains skills, hooks, tests, scripts, plugin manifests, and optional telemetry references. Reference-only avoids importing runtime surface.",
+      "fit": "Strong fit for brainstorming, planning, execution, verification, code review, and skill writing workflows.",
+      "decision": "reference-only now; direct import blocked until G2-G7."
+    },
+    {
+      "source_id": "gstack",
+      "source_url": "https://github.com/garrytan/gstack",
+      "officiality": "Reputable third-party role workflow repository by Garry Tan",
+      "observed_activity": "GitHub repository page observed 2026-07-29 with active public project indicators.",
+      "license": "MIT per GitHub repository page; verify exact license file before import.",
+      "security_surface": "Includes setup scripts and role command files; import requires script/security review.",
+      "fit": "Useful comparison for role-based design, review, QA, security, release, and product workflow gates.",
+      "decision": "reference-only now."
+    }
+  ]
+}

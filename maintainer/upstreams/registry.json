@@ -1,0 +1,457 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-07-29",
+  "sources": [
+    {
+      "id": "internal-harness-native",
+      "source_class": "internal",
+      "integration_mode": "native",
+      "lifecycle": "active",
+      "upstream": {
+        "kind": "local",
+        "source_url": "D:/Dev_Workspace/ai-agent-harness-docs",
+        "repository": null,
+        "tracking": "none",
+        "tag_pattern": null,
+        "allow_prerelease": false,
+        "watched_paths": ["skills/**", "maintainer/skills/**"]
+      },
+      "target": {
+        "local_skills": [
+          "code-comment",
+          "create-prototype",
+          "design-prototype-docs",
+          "doc-audit",
+          "git-scoped-account",
+          "harness-bootstrap",
+          "harness-setup",
+          "impl-reuse-scan",
+          "impl-verify"
+        ],
+        "platform_targets": ["codex", "claude-code"]
+      },
+      "policy": {
+        "channel": "manual",
+        "pin": "none",
+        "apply": "none",
+        "deletion": "separate-explicit-approval",
+        "license_change": "not-applicable"
+      },
+      "provenance": {
+        "license_spdx": null,
+        "license_url": null,
+        "license_sha256": null,
+        "notice_path": null,
+        "classification_evidence_url": "maintainer/upstreams/provenance/current-skills.json",
+        "classification_checked_at": "2026-07-29",
+        "file_map": []
+      },
+      "protection": {
+        "protected_globs": ["**/scripts/**", "**/templates/**", "**/references/**", "**/prompts/**", "**/example/**", "**/examples/**", "**/evals/**", "LICENSE*", "NOTICE*"]
+      },
+      "validation": {
+        "structure_checks": ["validate current skill inventory"],
+        "behavior_fixtures": [],
+        "codex_smoke_prompts": [],
+        "claude_smoke_prompts": []
+      }
+    },
+    {
+      "id": "anthropic-frontend-design",
+      "source_class": "official",
+      "integration_mode": "reference",
+      "lifecycle": "active",
+      "upstream": {
+        "kind": "repository",
+        "source_url": "https://github.com/anthropics/claude-code/blob/main/plugins/frontend-design/skills/frontend-design/SKILL.md",
+        "repository": "https://github.com/anthropics/claude-code",
+        "tracking": "branch",
+        "tag_pattern": null,
+        "allow_prerelease": false,
+        "watched_paths": ["plugins/frontend-design/skills/frontend-design/SKILL.md"]
+      },
+      "target": {
+        "local_skills": ["frontend-design", "design-prototype-docs", "create-prototype"],
+        "platform_targets": ["codex", "claude-code"]
+      },
+      "policy": {
+        "channel": "stable",
+        "pin": "commit-sha",
+        "apply": "explicit-approval",
+        "deletion": "separate-explicit-approval",
+        "license_change": "block"
+      },
+      "provenance": {
+        "license_spdx": null,
+        "license_url": null,
+        "license_sha256": null,
+        "notice_path": null,
+        "classification_evidence_url": "https://claude.com/plugins/frontend-design",
+        "classification_checked_at": "2026-07-29",
+        "file_map": [{"upstream_path": "plugins/frontend-design/skills/frontend-design/SKILL.md", "local_path": "skills/frontend-design/SKILL.md", "treatment": "reference-only"}]
+      },
+      "protection": {
+        "protected_globs": ["**/skills/**", "**/templates/**", "**/assets/**", "LICENSE*"]
+      },
+      "validation": {
+        "structure_checks": ["no upstream file content copied without adapted classification"],
+        "behavior_fixtures": ["frontend visual quality guidance remains platform-neutral"],
+        "codex_smoke_prompts": [],
+        "claude_smoke_prompts": []
+      }
+    },
+    {
+      "id": "openai-product-design",
+      "source_class": "official",
+      "integration_mode": "reference",
+      "lifecycle": "active",
+      "upstream": {
+        "kind": "repository",
+        "source_url": "https://github.com/openai/role-specific-plugins/tree/main/plugins/product-design",
+        "repository": "https://github.com/openai/role-specific-plugins",
+        "tracking": "branch",
+        "tag_pattern": null,
+        "allow_prerelease": false,
+        "watched_paths": ["plugins/product-design/**"]
+      },
+      "target": {
+        "local_skills": ["frontend-design", "design-prototype-docs", "create-prototype"],
+        "platform_targets": ["codex", "docs"]
+      },
+      "policy": {
+        "channel": "stable",
+        "pin": "commit-sha",
+        "apply": "explicit-approval",
+        "deletion": "separate-explicit-approval",
+        "license_change": "block"
+      },
+      "provenance": {
+        "license_spdx": "MIT",
+        "license_url": "https://github.com/openai/role-specific-plugins/blob/main/LICENSE",
+        "license_sha256": null,
+        "notice_path": null,
+        "classification_evidence_url": "https://openai.com/business/plugins/product-design/",
+        "classification_checked_at": "2026-07-29",
+        "file_map": [{"upstream_path": "plugins/product-design/**", "local_path": "skills/frontend-design/SKILL.md", "treatment": "reference-only"}]
+      },
+      "protection": {
+        "protected_globs": ["**/skills/**", "**/assets/**", "**/templates/**", "**/.codex-plugin/plugin.json", "LICENSE*"]
+      },
+      "validation": {
+        "structure_checks": ["reference-only relationship stays file-free"],
+        "behavior_fixtures": [],
+        "codex_smoke_prompts": [],
+        "claude_smoke_prompts": []
+      }
+    },
+    {
+      "id": "superpowers",
+      "source_class": "reputable-third-party",
+      "integration_mode": "reference",
+      "lifecycle": "active",
+      "upstream": {
+        "kind": "repository",
+        "source_url": "https://github.com/obra/superpowers",
+        "repository": "https://github.com/obra/superpowers",
+        "tracking": "release",
+        "tag_pattern": "v*",
+        "allow_prerelease": false,
+        "watched_paths": ["skills/**", ".codex-plugin/plugin.json", ".claude-plugin/**"]
+      },
+      "target": {
+        "local_skills": ["design-doc", "impl-doc", "impl-fe-be-doc", "impl-verify", "multi-review", "pre-commit", "custom-skill-design"],
+        "platform_targets": ["codex", "claude-code"]
+      },
+      "policy": {
+        "channel": "stable",
+        "pin": "commit-sha",
+        "apply": "explicit-approval",
+        "deletion": "separate-explicit-approval",
+        "license_change": "block"
+      },
+      "provenance": {
+        "license_spdx": "MIT",
+        "license_url": "https://github.com/obra/superpowers/blob/main/LICENSE",
+        "license_sha256": null,
+        "notice_path": null,
+        "classification_evidence_url": "https://github.com/obra/superpowers",
+        "classification_checked_at": "2026-07-29",
+        "file_map": [{"upstream_path": "skills/**", "local_path": "skills/**", "treatment": "reference-only"}]
+      },
+      "protection": {
+        "protected_globs": ["**/skills/**", "**/scripts/**", "**/hooks/**", "**/assets/**", "**/tests/**", "LICENSE*"]
+      },
+      "validation": {
+        "structure_checks": ["registered release does not imply file import"],
+        "behavior_fixtures": [],
+        "codex_smoke_prompts": [],
+        "claude_smoke_prompts": []
+      }
+    },
+    {
+      "id": "gstack",
+      "source_class": "reputable-third-party",
+      "integration_mode": "reference",
+      "lifecycle": "active",
+      "upstream": {
+        "kind": "repository",
+        "source_url": "https://github.com/garrytan/gstack",
+        "repository": "https://github.com/garrytan/gstack",
+        "tracking": "branch",
+        "tag_pattern": null,
+        "allow_prerelease": false,
+        "watched_paths": ["**/*.md", "setup", "scripts/**"]
+      },
+      "target": {
+        "local_skills": ["design-doc", "impl-fe-be-doc", "multi-review", "frontend-design"],
+        "platform_targets": ["claude-code", "codex"]
+      },
+      "policy": {
+        "channel": "stable",
+        "pin": "commit-sha",
+        "apply": "explicit-approval",
+        "deletion": "separate-explicit-approval",
+        "license_change": "block"
+      },
+      "provenance": {
+        "license_spdx": "MIT",
+        "license_url": "https://github.com/garrytan/gstack/blob/main/LICENSE",
+        "license_sha256": null,
+        "notice_path": null,
+        "classification_evidence_url": "https://github.com/garrytan/gstack",
+        "classification_checked_at": "2026-07-29",
+        "file_map": [{"upstream_path": "**/*.md", "local_path": "skills/**", "treatment": "reference-only"}]
+      },
+      "protection": {
+        "protected_globs": ["**/scripts/**", "**/templates/**", "**/commands/**", "**/agents/**", "LICENSE*"]
+      },
+      "validation": {
+        "structure_checks": ["role workflow concepts only"],
+        "behavior_fixtures": [],
+        "codex_smoke_prompts": [],
+        "claude_smoke_prompts": []
+      }
+    },
+    {
+      "id": "conventional-commits",
+      "source_class": "standard",
+      "integration_mode": "reference",
+      "lifecycle": "active",
+      "upstream": {
+        "kind": "specification",
+        "source_url": "https://www.conventionalcommits.org/en/v1.0.0/",
+        "repository": null,
+        "tracking": "documentation",
+        "tag_pattern": null,
+        "allow_prerelease": false,
+        "watched_paths": []
+      },
+      "target": {
+        "local_skills": ["commit"],
+        "platform_targets": ["codex", "claude-code"]
+      },
+      "policy": {
+        "channel": "stable",
+        "pin": "documentation-date",
+        "apply": "explicit-approval",
+        "deletion": "not-applicable",
+        "license_change": "review"
+      },
+      "provenance": {
+        "license_spdx": null,
+        "license_url": null,
+        "license_sha256": null,
+        "notice_path": null,
+        "classification_evidence_url": "https://www.conventionalcommits.org/en/v1.0.0/",
+        "classification_checked_at": "2026-07-29",
+        "file_map": [{"upstream_path": null, "local_path": "skills/commit/SKILL.md", "treatment": "reference-only"}]
+      },
+      "protection": {
+        "protected_globs": ["**/examples/**", "**/templates/**"]
+      },
+      "validation": {
+        "structure_checks": ["commit message format remains compatible with Conventional Commits 1.0.0"],
+        "behavior_fixtures": [],
+        "codex_smoke_prompts": [],
+        "claude_smoke_prompts": []
+      }
+    },
+    {
+      "id": "openai-agents-md",
+      "source_class": "official",
+      "integration_mode": "reference",
+      "lifecycle": "active",
+      "upstream": {
+        "kind": "documentation",
+        "source_url": "https://learn.chatgpt.com/docs/agent-configuration/agents-md",
+        "repository": "https://github.com/openai/codex",
+        "tracking": "documentation",
+        "tag_pattern": null,
+        "allow_prerelease": false,
+        "watched_paths": ["docs/agents_md.md"]
+      },
+      "target": {
+        "local_skills": ["context-doc", "harness-setup", "doc-audit"],
+        "platform_targets": ["codex", "docs"]
+      },
+      "policy": {
+        "channel": "latest-docs",
+        "pin": "documentation-date",
+        "apply": "explicit-approval",
+        "deletion": "not-applicable",
+        "license_change": "review"
+      },
+      "provenance": {
+        "license_spdx": null,
+        "license_url": null,
+        "license_sha256": null,
+        "notice_path": null,
+        "classification_evidence_url": "https://github.com/openai/codex/blob/main/docs/agents_md.md",
+        "classification_checked_at": "2026-07-29",
+        "file_map": [{"upstream_path": "docs/agents_md.md", "local_path": "skills/context-doc/**", "treatment": "reference-only"}]
+      },
+      "protection": {
+        "protected_globs": ["**/templates/**", "**/prompts/**"]
+      },
+      "validation": {
+        "structure_checks": ["AGENTS.md remains canonical for Codex"],
+        "behavior_fixtures": [],
+        "codex_smoke_prompts": [],
+        "claude_smoke_prompts": []
+      }
+    },
+    {
+      "id": "claude-memory",
+      "source_class": "official",
+      "integration_mode": "reference",
+      "lifecycle": "active",
+      "upstream": {
+        "kind": "documentation",
+        "source_url": "https://code.claude.com/docs/en/memory",
+        "repository": null,
+        "tracking": "documentation",
+        "tag_pattern": null,
+        "allow_prerelease": false,
+        "watched_paths": []
+      },
+      "target": {
+        "local_skills": ["context-doc", "harness-setup", "doc-audit"],
+        "platform_targets": ["claude-code", "docs"]
+      },
+      "policy": {
+        "channel": "latest-docs",
+        "pin": "documentation-date",
+        "apply": "explicit-approval",
+        "deletion": "not-applicable",
+        "license_change": "review"
+      },
+      "provenance": {
+        "license_spdx": null,
+        "license_url": null,
+        "license_sha256": null,
+        "notice_path": null,
+        "classification_evidence_url": "https://code.claude.com/docs/en/memory",
+        "classification_checked_at": "2026-07-29",
+        "file_map": [{"upstream_path": null, "local_path": "skills/harness-setup/templates/claude-bridge.template", "treatment": "reference-only"}]
+      },
+      "protection": {
+        "protected_globs": ["**/templates/**", "**/prompts/**"]
+      },
+      "validation": {
+        "structure_checks": ["CLAUDE.md bridge imports AGENTS.md with @AGENTS.md syntax"],
+        "behavior_fixtures": [],
+        "codex_smoke_prompts": [],
+        "claude_smoke_prompts": []
+      }
+    },
+    {
+      "id": "skill-creator-guides",
+      "source_class": "official",
+      "integration_mode": "reference",
+      "lifecycle": "active",
+      "upstream": {
+        "kind": "documentation",
+        "source_url": "https://claude.com/skills",
+        "repository": null,
+        "tracking": "documentation",
+        "tag_pattern": null,
+        "allow_prerelease": false,
+        "watched_paths": []
+      },
+      "target": {
+        "local_skills": ["custom-skill-design"],
+        "platform_targets": ["codex", "claude-code", "docs"]
+      },
+      "policy": {
+        "channel": "latest-docs",
+        "pin": "documentation-date",
+        "apply": "explicit-approval",
+        "deletion": "not-applicable",
+        "license_change": "review"
+      },
+      "provenance": {
+        "license_spdx": null,
+        "license_url": null,
+        "license_sha256": null,
+        "notice_path": null,
+        "classification_evidence_url": "https://claude.com/skills",
+        "classification_checked_at": "2026-07-29",
+        "file_map": [{"upstream_path": null, "local_path": "maintainer/skills/custom-skill-design/**", "treatment": "reference-only"}]
+      },
+      "protection": {
+        "protected_globs": ["**/templates/**", "**/prompts/**", "**/evals/**"]
+      },
+      "validation": {
+        "structure_checks": ["skill authoring workflow remains platform-neutral"],
+        "behavior_fixtures": [],
+        "codex_smoke_prompts": [],
+        "claude_smoke_prompts": []
+      }
+    },
+    {
+      "id": "im-not-ai",
+      "source_class": "reputable-third-party",
+      "integration_mode": "unknown",
+      "intended_integration_mode": "adapted",
+      "lifecycle": "candidate",
+      "upstream": {
+        "kind": "repository",
+        "source_url": "https://github.com/epoko77-ai/im-not-ai",
+        "repository": "https://github.com/epoko77-ai/im-not-ai",
+        "tracking": "release",
+        "tag_pattern": "v*",
+        "allow_prerelease": false,
+        "watched_paths": ["agents/**", "commands/**", "scripts/**", "references/**", "LICENSE", "README.md"]
+      },
+      "target": {
+        "local_skills": ["humanize-korean"],
+        "platform_targets": ["codex", "claude-code"]
+      },
+      "policy": {
+        "channel": "stable",
+        "pin": "commit-sha",
+        "apply": "explicit-approval",
+        "deletion": "separate-explicit-approval",
+        "license_change": "block"
+      },
+      "provenance": {
+        "license_spdx": null,
+        "license_url": null,
+        "license_sha256": null,
+        "notice_path": "maintainer/upstreams/provenance/im-not-ai/NOTICE.md",
+        "classification_evidence_url": "https://github.com/epoko77-ai/im-not-ai/releases/tag/v2.3.0",
+        "classification_checked_at": "2026-07-29",
+        "file_map": []
+      },
+      "protection": {
+        "protected_globs": ["**/scripts/**", "**/templates/**", "**/assets/**", "**/references/**", "**/prompts/**", "**/agents/**", "**/commands/**", "**/hooks/**", "**/bin/**", "**/example/**", "**/examples/**", "**/evals/**", "**/tests/**", "LICENSE*", "NOTICE*"]
+      },
+      "validation": {
+        "structure_checks": ["candidate stays outside skills/humanize-korean until Phase 4 promote"],
+        "behavior_fixtures": ["meaning-preserving Korean humanization", "document-refinement proposal-only mode"],
+        "codex_smoke_prompts": [],
+        "claude_smoke_prompts": []
+      }
+    }
+  ]
+}

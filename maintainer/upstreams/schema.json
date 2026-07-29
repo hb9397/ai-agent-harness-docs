@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/ai-agent-harness/upstream-registry.schema.json",
+  "title": "AI Agent Harness Upstream Registry",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "sources"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^1\\.0\\.0$"
+    },
+    "generated_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/source"
+      },
+      "minItems": 1
+    }
+  },
+  "$defs": {
+    "sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "id",
+        "source_class",
+        "integration_mode",
+        "lifecycle",
+        "upstream",
+        "target",
+        "policy",
+        "provenance",
+        "protection",
+        "validation"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]*$"
+        },
+        "source_class": {
+          "enum": ["internal", "official", "reputable-third-party", "community", "standard", "unknown"]
+        },
+        "integration_mode": {
+          "enum": ["native", "reference", "vendored", "adapted", "unknown"]
+        },
+        "intended_integration_mode": {
+          "enum": ["native", "reference", "vendored", "adapted", "unknown"]
+        },
+        "lifecycle": {
+          "enum": ["candidate", "active", "blocked", "deprecated"]
+        },
+        "upstream": {
+          "type": "object",
+          "required": ["kind", "source_url", "tracking"],
+          "properties": {
+            "kind": {
+              "enum": ["repository", "documentation", "specification", "local"]
+            },
+            "source_url": {
+              "type": "string"
+            },
+            "repository": {
+              "type": ["string", "null"]
+            },
+            "tracking": {
+              "enum": ["release", "tag", "branch", "documentation", "manual", "none"]
+            },
+            "tag_pattern": {
+              "type": ["string", "null"]
+            },
+            "allow_prerelease": {
+              "type": "boolean"
+            },
+            "watched_paths": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "target": {
+          "type": "object",
+          "required": ["local_skills", "platform_targets"],
+          "properties": {
+            "local_skills": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "platform_targets": {
+              "type": "array",
+              "items": {
+                "enum": ["codex", "claude-code", "claude-chat", "docs"]
+              }
+            }
+          }
+        },
+        "policy": {
+          "type": "object",
+          "required": ["channel", "pin", "apply", "deletion", "license_change"],
+          "properties": {
+            "channel": {
+              "enum": ["stable", "latest-docs", "manual"]
+            },
+            "pin": {
+              "enum": ["commit-sha", "tag", "documentation-date", "none"]
+            },
+            "apply": {
+              "enum": ["explicit-approval", "manual-review-only", "none"]
+            },
+            "deletion": {
+              "enum": ["separate-explicit-approval", "not-applicable"]
+            },
+            "license_change": {
+              "enum": ["block", "review", "not-applicable"]
+            }
+          }
+        },
+        "provenance": {
+          "type": "object",
+          "required": ["classification_evidence_url", "classification_checked_at", "file_map"],
+          "properties": {
+            "license_spdx": {
+              "type": ["string", "null"]
+            },
+            "license_url": {
+              "type": ["string", "null"]
+            },
+            "license_sha256": {
+              "anyOf": [
+                {"$ref": "#/$defs/sha256"},
+                {"type": "null"}
+              ]
+            },
+            "notice_path": {
+              "type": ["string", "null"]
+            },
+            "classification_evidence_url": {
+              "type": "string"
+            },
+            "classification_checked_at": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "file_map": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["upstream_path", "local_path", "treatment"],
+                "properties": {
+                  "upstream_path": {"type": ["string", "null"]},
+                  "local_path": {"type": ["string", "null"]},
+                  "treatment": {
+                    "enum": ["verbatim", "modified", "excluded", "local-only", "reference-only"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "protection": {
+          "type": "object",
+          "required": ["protected_globs"],
+          "properties": {
+            "protected_globs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1
+            }
+          }
+        },
+        "validation": {
+          "type": "object",
+          "required": ["structure_checks", "behavior_fixtures", "codex_smoke_prompts", "claude_smoke_prompts"],
+          "properties": {
+            "structure_checks": {"type": "array", "items": {"type": "string"}},
+            "behavior_fixtures": {"type": "array", "items": {"type": "string"}},
+            "codex_smoke_prompts": {"type": "array", "items": {"type": "string"}},
+            "claude_smoke_prompts": {"type": "array", "items": {"type": "string"}}
+          }
+        }
+      }
+    }
+  }
+}

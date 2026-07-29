@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-07-29",
+  "scope": "Phase 2 complete: 17 user skills plus 3 maintainer skills",
+  "counts": {
+    "user_skills": 17,
+    "maintainer_skills": 3,
+    "candidate_skills": 1
+  },
+  "classification_rules": {
+    "native": "No identified external source relationship beyond local repository authorship.",
+    "reference": "External source influenced concepts or workflow, but no upstream file is stored in this repository as part of this classification.",
+    "vendored": "Upstream file is stored verbatim.",
+    "adapted": "Upstream file or substantial text is translated, restructured, or modified.",
+    "unknown": "Evidence is insufficient; do not assume redistribution rights."
+  },
+  "skills": [
+    {"name": "code-comment", "area": "user", "mode": "native", "sources": ["internal-harness-native"], "direct_import": false, "evidence": "No external upstream hit identified in current text scan."},
+    {"name": "commit", "area": "user", "mode": "reference", "sources": ["conventional-commits"], "direct_import": false, "evidence": "SKILL.md explicitly uses Conventional Commits rules, but no specification text is vendored."},
+    {"name": "context-doc", "area": "user", "mode": "reference", "sources": ["openai-agents-md", "claude-memory"], "direct_import": false, "evidence": "Phase 2 converted context output to AGENTS.md canonical plus CLAUDE.md @AGENTS.md bridge using official documentation concepts."},
+    {"name": "create-prototype", "area": "user", "mode": "reference", "sources": ["anthropic-frontend-design", "openai-product-design", "gstack"], "direct_import": false, "evidence": "Prototype workflow overlaps external design/prototype guidance; no upstream file import is recorded."},
+    {"name": "design-doc", "area": "user", "mode": "reference", "sources": ["superpowers", "gstack"], "direct_import": false, "evidence": "Planning and interview workflow is conceptually similar to Superpowers/gstack planning workflows; local template is not marked as upstream import."},
+    {"name": "design-prototype-docs", "area": "user", "mode": "reference", "sources": ["anthropic-frontend-design", "openai-product-design", "gstack"], "direct_import": false, "evidence": "Screen/prototype planning concepts are reference-only at Phase 3."},
+    {"name": "doc-audit", "area": "user", "mode": "reference", "sources": ["openai-agents-md", "claude-memory", "superpowers"], "direct_import": false, "evidence": "Document drift verification is reference-only; no external file content imported."},
+    {"name": "frontend-design", "area": "user", "mode": "reference", "sources": ["anthropic-frontend-design", "openai-product-design"], "direct_import": false, "evidence": "Current SKILL.md shares high-level distinctive frontend design goals with official skills. Phase 3 does not assert copied text."},
+    {"name": "git-scoped-account", "area": "user", "mode": "native", "sources": ["internal-harness-native"], "direct_import": false, "evidence": "Local operational Git-account workflow."},
+    {"name": "harness-bootstrap", "area": "user", "mode": "reference", "sources": ["openai-agents-md", "claude-memory", "superpowers"], "direct_import": false, "evidence": "Combines local scan workflow with AGENTS/CLAUDE context contracts and planning concepts."},
+    {"name": "harness-setup", "area": "user", "mode": "reference", "sources": ["openai-agents-md", "claude-memory"], "direct_import": false, "evidence": "Project context setup follows AGENTS.md and CLAUDE.md import docs; templates are local."},
+    {"name": "impl-doc", "area": "user", "mode": "reference", "sources": ["superpowers", "gstack"], "direct_import": false, "evidence": "Implementation planning resembles external plan/execution workflows, but file content is local."},
+    {"name": "impl-fe-be-doc", "area": "user", "mode": "reference", "sources": ["superpowers", "gstack"], "direct_import": false, "evidence": "FE/BE phase planning and review gates are reference-only."},
+    {"name": "impl-reuse-scan", "area": "user", "mode": "native", "sources": ["internal-harness-native"], "direct_import": false, "evidence": "Local implementation pre-scan workflow."},
+    {"name": "impl-verify", "area": "user", "mode": "reference", "sources": ["superpowers"], "direct_import": false, "evidence": "Verification-before-completion concepts are reference-only."},
+    {"name": "multi-review", "area": "user", "mode": "reference", "sources": ["superpowers", "gstack"], "direct_import": false, "evidence": "Multi-perspective review concepts are reference-only."},
+    {"name": "pre-commit", "area": "user", "mode": "reference", "sources": ["superpowers"], "direct_import": false, "evidence": "Pre-completion verification/checking workflow is reference-only; local scan.sh is not marked imported."},
+    {"name": "custom-skill-design", "area": "maintainer", "mode": "reference", "sources": ["skill-creator-guides", "superpowers"], "direct_import": false, "evidence": "Skill authoring workflow references official skill creator concepts and Superpowers writing-skills ideas; no direct import asserted."},
+    {"name": "harness-plugin-maintainer", "area": "maintainer", "mode": "native", "sources": ["internal-harness-native"], "direct_import": false, "evidence": "Phase 1 skeleton, local plugin packaging responsibility."},
+    {"name": "skill-portfolio-maintainer", "area": "maintainer", "mode": "native", "sources": ["internal-harness-native"], "direct_import": false, "evidence": "Phase 1 skeleton, local provenance governance responsibility."}
+  ],
+  "candidates": [
+    {
+      "name": "humanize-korean",
+      "area": "candidate",
+      "mode": "unknown",
+      "intended_mode": "adapted",
+      "sources": ["im-not-ai"],
+      "direct_import": false,
+      "evidence": "Candidate only. No skills/humanize-korean source exists at Phase 3."
+    }
+  ],
+  "open_questions": [
+    "Confirm whether frontend-design contains translated text from Anthropic official frontend-design before any adapted classification.",
+    "Confirm whether custom-skill-design contains translated text from official skill creator or Superpowers writing-skills before any adapted classification.",
+    "Phase 4 must verify im-not-ai license hash, tree hash, file hashes, and redistributable file list before source promotion."
+  ]
+}
