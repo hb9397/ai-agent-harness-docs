@@ -2,7 +2,9 @@
 
 > 기준일: 2026-07-29
 > 대상 플러그인: `ai-agent-harness` `0.1.0`
-> 현재 상태: 공식 manifest·marketplace와 격리 CLI smoke를 자동 검증한다. Codex와 Claude 앱의 설치·재시작·새 세션 증적까지 확보되기 전에는 `not release-ready`다.
+> 현재 상태: 공식 manifest·marketplace와 격리 CLI 설치 smoke를 자동 검증한다.
+> Codex와 Claude의 CLI·앱 네 표면에서 실제 모델 호출·산출물·새 세션 증적까지
+> 확보되기 전에는 `not release-ready`다.
 
 이 문서는 실제 프로젝트 사용자가 하네스 저장소를 clone하거나 스킬을 복사하지 않고 플러그인으로 시작하기 위한 설치·확인·업데이트·제거 기준이다.
 
@@ -73,7 +75,9 @@ codex plugin list
 codex plugin remove ai-agent-harness@ai-agent-harness
 ```
 
-설치 후 새 task를 열고 `harness-setup`, `humanize-korean`이 감지되는지 확인한다.
+설치 후 새 task를 열고 Codex 명시 호출인 `$harness-setup`,
+`$humanize-korean`이 동작하는지 확인한다. 자연어 요청은 별도 대조 항목으로
+기록하며 명시 호출 성공을 대신하지 않는다.
 
 ### 3-3. 대화형 설치
 
@@ -85,18 +89,29 @@ Phase 8 기준 Codex IDE extension은 별도 공식 플러그인 설치 표면�
 
 ---
 
-## 4. ChatGPT/Codex Desktop/App
+## 4. ChatGPT Desktop/App의 Codex 표면
 
 Desktop/App에서는 다음을 수동으로 확인한다.
 
-1. Plugins Directory를 연다.
-2. Git-backed marketplace repository 또는 local marketplace root를 추가한다.
-3. `ai-agent-harness` `0.1.0`을 설치한다.
-4. 앱을 재시작하거나 새 task/session을 연다.
-5. `harness-setup`과 `humanize-korean`이 보이는지 확인한다.
-6. 새 버전 후보를 설치하거나 stale cache를 비운 뒤 version marker가 갱신되는지 확인한다.
+1. 앱 전환기에서 **Codex**를 선택하고 Plugins Directory를 연다.
+2. configured marketplace에 `ai-agent-harness`가 보이면 상세 화면의 설치
+   버튼으로 직접 설치한다.
+3. local marketplace가 앱에 보이지 않는 버전이면 앱과 같은 사용자 프로필의
+   Codex CLI에서 marketplace와 플러그인을 등록하고 앱을 완전히 종료했다가 다시
+   연다.
+4. Plugins Directory 또는 `/plugins`에서 `ai-agent-harness` `0.1.0`이
+   설치·활성 상태인지 확인한다.
+5. 새 fixture 프로젝트에서 새 task/session을 연다.
+6. `$harness-setup`과 `$humanize-korean`을 명시 호출한다.
+7. 새 버전 후보를 설치하거나 stale cache를 비운 뒤 version marker가 갱신되는지 확인한다.
+
+앱 버전에 local marketplace를 직접 추가하는 UI가 없다면 위 CLI fallback을
+사용하고, UI 직접 설치인지 CLI 설치 후 앱 사용인지 수동 증적에 구분해 기록한다.
 
 자동 검증은 package와 CLI까지만 수행하며 Desktop/App 결과는 `manual-required`다.
+Codex 표면은 `$skill-name`, ChatGPT Work 표면은 `@` mention을 사용하므로 이
+릴리스의 Codex 앱 증적은 `$harness-setup`으로 남긴다. ChatGPT Work를 추가
+지원 범위로 검증하면 `@` 호출 결과를 별도 표면 증적으로 기록한다.
 
 ---
 
@@ -113,8 +128,9 @@ claude plugin marketplace add <github-owner/repo | git-url | 저장소-루트-�
 claude plugin marketplace list
 claude plugin install ai-agent-harness@ai-agent-harness
 claude plugin list
-/reload-plugins
 ```
+
+설치 후 `claude` 대화형 session 안에서 `/reload-plugins`를 실행한다.
 
 업데이트와 제거:
 
@@ -126,8 +142,8 @@ claude plugin uninstall ai-agent-harness@ai-agent-harness
 
 검증:
 
-- `harness-setup` 호출 가능
-- namespaced `ai-agent-harness:humanize-korean` 호출 가능
+- namespaced `/ai-agent-harness:harness-setup` 호출 가능
+- namespaced `/ai-agent-harness:humanize-korean` 호출 가능
 - `.claude-plugin/plugin.json`의 version 확인
 - `/reload-plugins` 후 새 skill 목록 확인
 
@@ -138,13 +154,18 @@ claude plugin uninstall ai-agent-harness@ai-agent-harness
 Claude Desktop Code 탭과 CLI는 설정을 공유하지만 host별 plugin cache와 활성 세션을
 따로 확인해야 한다.
 
-1. local host 설치
-2. SSH host 설치
-3. 앱 재시작
-4. 새 Code session
-5. `harness-setup`, `humanize-korean` 노출 확인
-6. cloud Code 세션은 plugin browser가 없어 프로젝트 `enabledPlugins` 정책을 별도 적용
-7. WSL session은 Desktop plugin 설치 표면으로 지원하지 않음을 명시
+1. local Code session에서 prompt 옆 `+` → Plugins → Add plugin을 열고
+   `ai-agent-harness`를 설치한다.
+2. local marketplace가 브라우저에 보이지 않으면 같은 사용자 설정의 Claude Code
+   CLI에서 marketplace만 등록한 뒤 앱을 다시 열어 Add plugin에서 설치한다.
+3. SSH host를 공식 지원 범위로 선언하는 릴리스라면 해당 remote host에서도
+   plugin cache와 설치를 별도로 확인한다.
+4. 앱 재시작
+5. 새 Code session
+6. `/ai-agent-harness:harness-setup`,
+   `/ai-agent-harness:humanize-korean` 명시 호출 확인
+7. cloud Code 세션은 plugin browser가 없어 프로젝트 `enabledPlugins` 정책을 별도 적용
+8. WSL session은 Desktop plugin 설치 표면으로 지원하지 않음을 명시
 
 Phase 7 자동 검증 결과: `manual-required`.
 
@@ -188,7 +209,7 @@ version marker 확인
 플러그인을 설치한 뒤 프로젝트에서 다음 순서로 진행한다.
 
 ```text
-harness-setup 실행
+harness-setup 명시 호출
 → 단일/복수 앱 확인
 → .docs 생성 또는 갱신
 → AGENTS.md 생성 또는 갱신
@@ -198,6 +219,13 @@ harness-setup 실행
 ```
 
 복수 앱에서는 `.docs/root-context/AGENTS.md`가 루트 컨텍스트의 관리 원본이다. 루트 `CLAUDE.md`는 `AGENTS.md`를 읽도록 하는 bridge로 둔다.
+
+플랫폼별 명시 호출:
+
+| 플랫폼 | 호출 예 |
+|---|---|
+| Codex CLI·앱 | `$harness-setup` |
+| Claude Code CLI·Desktop Code | `/ai-agent-harness:harness-setup` |
 
 ---
 
@@ -264,3 +292,26 @@ harness-setup 실행
 | `humanize-korean`이 원본을 바꾸려 함 | 중단. proposal-only 계약 위반으로 보고 |
 | local copy와 plugin skill이 중복됨 | inventory 후 승인형 backup/remove 절차 수행 |
 | setup 후 새 skill 디렉터리가 생김 | 중단. `.docs/**`, `AGENTS.md`, `CLAUDE.md` 출력 allowlist 위반으로 보고 |
+
+---
+
+## 13. CLI·앱 직접 테스트 예시와 증적
+
+자동 CLI smoke는 설치 cache와 payload 수를 검증하지만 실제 agent가
+`harness-setup`을 수행한 결과까지 대신하지 않는다. 릴리스 판단 전에는 각 표면의
+서로 다른 새 fixture 프로젝트에서 다음을 직접 확인한다.
+
+1. 실제 플러그인 설치·활성 버전
+2. 새 task/session에서 명시 호출
+3. `.docs/**`, `AGENTS.md`, `CLAUDE.md` 생성
+4. `.agents/skills`, `.claude/skills`, `skills` 미생성
+5. 재실행 시 managed block 밖 사용자 확장 보존
+6. 새 task/session에서 같은 artifact fingerprint의 문서 개선안 재제안 없음
+7. 실패·중단 시 기존 파일 보존
+
+정확한 Codex CLI·앱, Claude Code CLI·Desktop Code 명령 예와 표면별 증적 양식은
+[Direct Plugin Surface Test Record](../maintainer/plugin/manual-surface-test-template.md)를
+복사해 사용한다. 스크린샷만 남기지 말고 CLI/app 버전, plugin version, fixture
+경로, 명시 호출, 생성 파일, 금지 경로 검사 출력과 검토자를 함께 기록한다.
+중복 handoff 검증은 `.docs/.harness/humanize-handoffs.json`의 event와 함께
+남기며 이 JSON 자체는 Markdown 개선 대상에서 제외한다.

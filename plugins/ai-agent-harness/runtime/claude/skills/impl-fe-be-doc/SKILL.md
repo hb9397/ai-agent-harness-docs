@@ -1,12 +1,14 @@
 ---
 name: impl-fe-be-doc
 description: >
-  설계가 끝난 뒤 구현 순서와 작업 단위를 정리할 때 사용한다.
-  '작업지침서 만들어줘', '구현 계획 세워줘', 'Phase 나눠줘',
+  설계가 끝난 뒤 FE↔API↔BE↔DB를 함께 연결하거나 여러 화면·기능을 조율하는
+  구현 순서와 작업 단위를 정리할 때 사용한다.
+  'FE BE 통합 작업지침서', '풀스택 구현 계획', 'FE/BE Phase 나눠줘',
   '태스크 쪼개줘', '어떤 순서로 개발하면 돼?', '화면별 구현 지침',
   '화면 단위 명세', 'SFR 화면 구현', '화면별 컴포넌트 설계' 요청이 오면 이 스킬을 쓴다.
-  설계 문서 → FE/BE 페어 또는 화면 중심 Phase별 작업지침서 자동 생성.
-allowed-tools: Read, Glob, Grep, Bash, Write
+  설계 문서 → FE/BE 페어 또는 다중 화면 중심 Phase별 작업지침서 자동 생성.
+  단일 BE 엔드포인트나 단일 FE 컴포넌트처럼 독립된 소규모 작업은 impl-doc을 쓴다.
+allowed-tools: Read, Glob, Grep, Write, Agent
 ---
 
 # FE/BE 및 화면 중심 작업지침서 생성 (impl-fe-be-doc)
@@ -55,12 +57,9 @@ design-doc OUTPUT의 각 섹션은 아래와 같이 매핑된다.
 
 #### Step 0-A — 플랫폼·실행 방식 확인
 
-사용자에게 아래를 확인한다:
-
-> 1. 서브에이전트(병렬 처리)를 사용할 수 있는 환경인가요? (Claude Code / Codex / 기타)
-> 2. 사용할 경우 병렬 실행을 원하시나요?
-
-서브에이전트 미지원 또는 미사용 선택 시 순차 실행한다.
+현재 호스트가 독립 작업을 병렬 실행할 수 있는지는 노출된 도구로 확인한다.
+관찰 가능한 플랫폼 이름을 사용자에게 다시 묻지 않는다. 작업이 서로 독립적이고
+병렬 실행이 실질적으로 유리할 때만 선호를 확인하며, 미지원 또는 미사용 시 순차 실행한다.
 
 #### Step 0-B — 프로젝트 유형 확인 (C-1 확인 단계)
 
@@ -119,6 +118,10 @@ Phase 설계 초안을 내부적으로 확정한 뒤 Step 3으로 진행한다.
 ### Step 3 — 태스크 작성
 
 `prompts/task-rules.md` 의 태스크 작성 규칙에 따라 각 Phase의 태스크를 작성한다.
+산출물의 전체 섹션·필드 순서는 bundled 보호 자산인
+`templates/impl-workflow.md.template`을 정식 output contract로 사용한다. 실제
+산출물에서는 placeholder와 주석을 정리하되 템플릿 파일 자체를 삭제·이동·대체하지
+않는다.
 화면 중심 Phase에서는 `prompts/component-design.md`와 `prompts/api-mapping.md`를 함께 참조하여 화면별 컴포넌트 구조·API 연동·상태 관리·인터랙션 시나리오를 포함한다.
 
 태스크 ID 체계:
@@ -198,7 +201,7 @@ Phase 설계 초안을 내부적으로 확정한 뒤 Step 3으로 진행한다.
 **④ 저장 디렉토리 결정** — 프로젝트 유형에 따라 분기한다.
 
 - **단일 앱**: `.docs/impl-doc/{사용자}/`
-- **복수 앱**: `.docs/{앱}/impl-doc/{사용자}/` (예: `.docs/fe-keai-portal/impl-doc/hb9397/`)
+- **복수 앱**: `.docs/{앱}/impl-doc/{사용자}/` (예: `.docs/app-frontend/impl-doc/developer/`)
 
 디렉토리가 없으면 생성한다.
 
@@ -215,9 +218,9 @@ Phase 설계 초안을 내부적으로 확정한 뒤 Step 3으로 진행한다.
 - `{kind}` — ②에서 받은 구현 종류 한 단어.
 
 예시:
-- `.docs/fe-keai-portal/impl-doc/hb9397/260630-1.checkout-flow-impl-pair.md`
-- `.docs/fe-keai-portal/impl-doc/hb9397/260630-2.admin-dashboard-impl-screen.md`
-- `.docs/fe-keai-portal/impl-doc/hb9397/260630-3.checkout-flow-impl-e2e.md`
+- `.docs/app-frontend/impl-doc/developer/260630-1.checkout-flow-impl-pair.md`
+- `.docs/app-frontend/impl-doc/developer/260630-2.admin-dashboard-impl-screen.md`
+- `.docs/app-frontend/impl-doc/developer/260630-3.checkout-flow-impl-e2e.md`
 
 > 📌 이 네이밍 규칙은 `impl-doc` 스킬과 **완전히 동일**하다. 두 스킬 산출물은 같은 디렉토리에 섞여도 시간순으로 정렬되며, 작성 스킬 구분은 문서 머리말의 `생성 스킬:` 표기로만 한다.
 
@@ -268,7 +271,8 @@ Step 7에서 방금 저장한 문서와 같은 자리에 인덱스 문서를 새
 - `{YYMMDD}` — 인덱스 문서를 처음 만드는 시점의 날짜. 이후 문서 내용이 갱신되어도 파일명은 **바꾸지 않는다** (일반 impl 문서처럼 최신 날짜로 rename하지 않음).
 - `{앱이름}` — 단일앱은 프로젝트명, 복수앱은 대상 애플리케이션 폴더명(예: `collector`, `portal`).
 
-구조는 예시 문서(`.docs/be-keai-collector/impl-doc/lhb9397/260629-2.collector-roadmap-impl-index.md`)를 참고해 아래 섹션을 포함한다:
+구조는 현재 프로젝트의 기존 `*-roadmap-impl-index.md`가 있으면 그 사용자 확장을
+보존해 따르고, 없으면 아래의 일반 섹션 계약으로 새로 만든다:
 - 머리말: 생성 스킬, 작성일자, 갱신일자, 작성/갱신 계정, 목적, 현재 진행 위치
 - `impl-doc 분할 구조` 표: 문서 목록(순서/문서명/상태/범위)
 - 전체 페이즈·단계 경계(있다면) 또는 화면/기능 로드맵 개요
@@ -306,9 +310,19 @@ owner이고 억제되지 않았으며 아직 완료되지 않은 bundle에 대�
 `humanize-korean`의 `document-refinement` 프로필을 한 번 제안한다. 상위
 producer가 owner이면 초안과 검증 결과만 반환한다.
 
+최종 검증된 계획서·인덱스의 정규화 상대경로와 각 파일 SHA-256, profile 이름을
+정렬해 `artifact_bundle_fingerprint`를 계산한다. `.docs/.harness/
+humanize-handoffs.json` 원자적 ledger에서 같은 fingerprint의 완료 상태
+(`proposed`, `skipped`, `rejected`, `applied`, `revalidated`)를 찾으면 새
+session에서도 재제안하지 않는다. 새 결정은 bundle ID, owner, 파일 hash, 시각과
+함께 기록하고 승인 반영 후에는 `applied`와 `revalidated`를 순서대로 갱신한다.
+ledger 자체는 개선 대상에서 제외하며 기록할 수 없으면 현재 session 한정이라고
+보고한다.
+
 기본은 proposal-only이며 사용자 승인 전 파일 반영은 금지한다. 화면 ID, API ID,
 파일 경로, 명령어, 표 구조, 숫자, 날짜, 의무 수준 표현은 보존한다.
-제안·건너뛰기·거절 중 하나가 결정되면 `handoff_completed = true`로 기록한다.
+제안·건너뛰기·거절 중 하나가 결정되면 `handoff_completed = true`와 ledger 상태를
+함께 기록한다.
 
 승인된 변경을 반영한 경우 FE↔API↔BE↔DB 추적, 태스크 ID, 파일 경로, 검증
 시나리오와 Step 8 인덱스 링크를 다시 검증한다. 재검증된 계획서와 인덱스만

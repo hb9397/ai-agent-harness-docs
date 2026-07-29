@@ -41,13 +41,41 @@ FAST_REPLACEMENTS = [
 STANDARD_REPLACEMENTS = [
     *FAST_REPLACEMENTS,
     ("이에 있어서", "여기서"),
-    ("~를 통해", "~로"),
-    ("를 통해", "로"),
-    ("을 통해", "으로"),
-    ("에 의해", "가"),
-    ("결론적으로, ", ""),
-    ("결론적으로 ", ""),
 ]
+
+CONTEXTUAL_RULES = (
+    {
+        "rule_id": "A-context-through",
+        "category": "A",
+        "pattern": re.compile(r"~?[를을] 통해"),
+        "reason": "수단·경로·매개 의미에 따라 자연스러운 서술이 달라져 문맥 확인이 필요합니다.",
+        "suggestions": [
+            "수단이면 `로/으로`를 검토합니다.",
+            "경로나 매개가 핵심이면 원문을 유지합니다.",
+            "행위 주체가 분명하면 능동형 동사 문장으로 다시 씁니다.",
+        ],
+    },
+    {
+        "rule_id": "A-context-passive-agent",
+        "category": "A",
+        "pattern": re.compile(r"에 의해"),
+        "reason": "행위 주체와 피동 관계를 확인하지 않고 조사만 바꾸면 문법이나 의미가 달라질 수 있습니다.",
+        "suggestions": [
+            "실제 행위 주체를 확인한 뒤 능동문을 제안합니다.",
+            "법률·학술 문맥의 정확한 피동 표현이면 원문을 유지합니다.",
+        ],
+    },
+    {
+        "rule_id": "D-context-conclusion",
+        "category": "D",
+        "pattern": re.compile(r"(?<![가-힣A-Za-z0-9_])결론적으로(?:,)?"),
+        "reason": "빈 결말 관용구인지 실제 논리적 요약 표지인지 문단 관계를 확인해야 합니다.",
+        "suggestions": [
+            "새 정보 없이 결말만 예고하면 삭제를 제안합니다.",
+            "앞선 근거를 요약하는 기능이 있으면 원문을 유지하거나 문맥에 맞는 연결어를 제안합니다.",
+        ],
+    },
+)
 
 
 def collect_protected(text: str) -> list[str]:
@@ -100,6 +128,50 @@ def refine_plain(text: str, mode: str) -> str:
     if mode != "fast":
         refined = re.sub(r"(합니다\.)[ \t]+또한,[ \t]+", r"\1 ", refined)
     return restore_protected(refined, protected)
+
+
+def diagnose_contextual(
+    text: str,
+    line_range: tuple[int, int] | None = None,
+) -> list[dict[str, object]]:
+    """Return context-sensitive findings without rewriting their spans."""
+    diagnostics: list[dict[str, object]] = []
+    fence_marker: str | None = None
+    for line_number, line in enumerate(text.splitlines(keepends=True), start=1):
+        fence_match = re.match(r"^\s*(```|~~~)", line)
+        if fence_match:
+            marker = fence_match.group(1)
+            if fence_marker is None:
+                fence_marker = marker
+            elif fence_marker == marker:
+                fence_marker = None
+            continue
+
+        selected = line_range is None or line_range[0] <= line_number <= line_range[1]
+        is_structural = fence_marker is not None or "|" in line or line.lstrip().startswith(">")
+        if not selected or is_structural:
+            continue
+
+        spans = protected_spans(line)
+        for rule in CONTEXTUAL_RULES:
+            pattern = rule["pattern"]
+            assert isinstance(pattern, re.Pattern)
+            for match in pattern.finditer(line):
+                if any(match.start() < end and start < match.end() for start, end in spans):
+                    continue
+                diagnostics.append(
+                    {
+                        "rule_id": rule["rule_id"],
+                        "category": rule["category"],
+                        "line": line_number,
+                        "column": match.start() + 1,
+                        "span": match.group(0),
+                        "reason": rule["reason"],
+                        "suggestions": list(rule["suggestions"]),
+                        "action": "review-and-propose",
+                    }
+                )
+    return diagnostics
 
 
 def parse_redo_range(value: str) -> tuple[int, int]:
@@ -246,6 +318,10 @@ def main(argv: list[str]) -> int:
         refined_text = refine(original, mode=args.mode, redo_range=args.redo_range)
     except ValueError as exc:
         parser.error(str(exc))
+    diagnostics = diagnose_contextual(
+        original,
+        line_range=args.redo_range if args.mode == "redo" else None,
+    )
     rate = change_rate(original, refined_text)
     missing = validate_protected(original, refined_text)
     warnings = []
@@ -256,6 +332,8 @@ def main(argv: list[str]) -> int:
         warnings.append("change_rate_over_50_percent_stop")
     if missing:
         warnings.append("protected_token_changed")
+    if diagnostics:
+        warnings.append("contextual_review_required")
 
     status = "ok"
     exit_code = 0
@@ -283,6 +361,8 @@ def main(argv: list[str]) -> int:
         "protected_tokens": collect_protected(original),
         "missing_protected_tokens": missing,
         "warnings": warnings,
+        "diagnostics": diagnostics,
+        "contextual_rewrites_applied": False,
         "proposal_only": bool(args.file and not args.write_approved),
         "write_approved": args.write_approved,
         "written": written,

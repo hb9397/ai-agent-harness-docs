@@ -13,7 +13,8 @@
 - Codex runtime: 18 skills / 0 agents
 - Claude runtime: 18 skills / 0 agents
 - 관리자 스킬: 3종, 이 저장소 안에서만 사용
-- 릴리스 상태: `not release-ready` — 공식 패키지·CLI 자동 검증 후에도 Codex/Claude 앱 수동 증적이 모두 필요함
+- 릴리스 상태: `not release-ready` — 공식 패키지·CLI 설치 smoke와 별도로
+  Codex/Claude CLI·앱 네 표면의 실제 모델 호출 수동 증적이 모두 필요함
 
 상세 설치 절차는 [Docs/Plugin_Installation_Guide.md](./Docs/Plugin_Installation_Guide.md)를 먼저 본다.
 
@@ -25,21 +26,30 @@
 
 - CLI: `codex plugin marketplace add <이 저장소 URL 또는 루트 경로>` 후
   `codex plugin add ai-agent-harness@ai-agent-harness`로 설치한다.
-- Codex Desktop/App: Plugins UI에서 Git-backed marketplace repository 또는 local marketplace root를 추가하고 새 task/session에서 스킬 노출을 확인한다.
+- Codex Desktop/App: ChatGPT 데스크톱 앱의 **Codex 표면**에서 Plugins를 연다.
+  지원하는 앱 버전은 Plugins UI에서 marketplace를 추가한다.
+  UI가 local marketplace 추가를 지원하지 않으면 같은 사용자 프로필의 CLI에서
+  등록한 뒤 앱을 재시작하고, 새 task/session에서 스킬 노출을 확인한다.
+  이 표면의 스킬 명시 호출은 `$skill-name`이며 ChatGPT Work의 `@` 호출과
+  구분한다.
 - IDE extension: Phase 8 기준 별도 플러그인 설치 표면으로 보지 않는다. Codex CLI/App 플러그인 설치를 우선한다.
 
 ### Claude
 
 - Claude Code CLI: `claude plugin marketplace add <이 저장소 URL 또는 루트 경로>` 후
   `claude plugin install ai-agent-harness@ai-agent-harness`로 설치하고 `/reload-plugins`를 수행한다.
-- Claude Desktop Code 탭: local 또는 SSH host cache 기준으로 설치·재시작·새 session 확인이 필요하다.
+- Claude Desktop Code 탭: local Code session의 `+` → Plugins → Add plugin에서
+  설치하고 재시작·새 session을 확인한다. local marketplace가 앱에 보이지 않으면
+  같은 사용자 프로필의 CLI로 marketplace만 등록한 뒤 앱에서 설치한다. SSH를
+  지원 범위로 선언하면 remote host cache를 별도 검증한다.
 - Claude Chat/Cowork: Code 플러그인과 별도 구성으로 취급한다. 같은 스킬셋을 쓰더라도 설치·권한·캐시 검증은 별도 문서화한다.
 
 시스템 PATH의 Codex/Claude 명령 상태와 무관하게 임시 플랫폼 설정만 사용하는 공식 CLI
 패키지로 설치 smoke를 수행한다. 현재 증적은 Codex CLI `0.146.0`과 Claude Code
 `2.1.220`에서 marketplace 등록, plugin 설치, 18 skills / 0 agents 확인, 제거까지
-통과했다. CI가 같은 흐름을 반복하며 앱 설치·재시작·새 세션 확인은 수동 증적으로
-별도 유지한다.
+통과했다. 이는 설치·cache smoke 증적이며 실제 모델의 스킬 수행 증적은 아니다.
+CI가 같은 흐름을 반복하고, CLI와 앱 네 표면의 명시 호출·산출물·새 세션 확인은
+수동 증적으로 별도 유지한다.
 
 ---
 
@@ -54,6 +64,10 @@
 | 실제 프로젝트 | 플러그인 설치 후 `harness-setup`으로 `.docs`, `AGENTS.md`, `CLAUDE.md`만 생성·갱신 | 프로젝트 수행자 |
 
 관리자는 이 저장소에서 사용자 스킬과 플러그인 산출물을 관리한다. 사용자는 프로젝트에서 플러그인을 설치하고 스킬을 호출한다.
+
+별도의 관리자 플러그인은 없다. 관리자는 `maintainer/skills/`에서 생성된 repo-local
+projection으로 정본을 관리하고, 릴리스 후보를 검증할 때는 일반 사용자와 같은
+`ai-agent-harness` 플러그인을 격리된 CLI/App 설정에 설치해 dogfood한다.
 
 ---
 
@@ -71,6 +85,7 @@
 → 최외곽 producer가 bundle당 한 번만 humanize-korean 개선안·diff 제안
 → 승인된 변경만 반영
 → 원 producer의 link·index·bridge·구조 재검증
+→ `.docs/.harness/humanize-handoffs.json`에 내용 fingerprint와 완료 상태 기록
 → 승인된 최종 Markdown을 다음 구현·검증 스킬에 입력
 ```
 

@@ -37,6 +37,18 @@ def test_preserves_tokens() -> None:
         assert token in result["refined_text"]
 
 
+def test_contextual_phrases_are_diagnostic_only() -> None:
+    text = "도구를 통해 확인하고 시스템에 의해 기록합니다. 결론적으로, 결과를 요약합니다."
+    result = run_script("--text", text)
+    assert result["refined_text"] == text
+    assert result["contextual_rewrites_applied"] is False
+    assert [item["rule_id"] for item in result["diagnostics"]] == [
+        "A-context-through",
+        "A-context-passive-agent",
+        "D-context-conclusion",
+    ]
+
+
 def test_document_refinement_is_proposal_only() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         path = Path(tmp) / "sample.md"
@@ -59,6 +71,7 @@ def test_write_requires_explicit_approval_flag() -> None:
 
 if __name__ == "__main__":
     test_preserves_tokens()
+    test_contextual_phrases_are_diagnostic_only()
     test_document_refinement_is_proposal_only()
     test_write_requires_explicit_approval_flag()
     print("humanize-korean adapter tests passed")

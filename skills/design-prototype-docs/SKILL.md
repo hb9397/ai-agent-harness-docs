@@ -1,17 +1,22 @@
 ---
 name: design-prototype-docs
 description: >
-  프로토타입용 화면 설계 문서(.md) 생성 스킬. `/design-prototype-docs` 명령어로 트리거되며,
-  기능요구사항을 분석하여 `/create-prototype` 스킬의 입력이 되는 목업 디자인 문서를 생성한다.
+  프로토타입용 화면 설계 문서(.md) 생성 스킬. 기능요구사항을 분석하여
+  create-prototype 스킬의 입력이 되는 목업 디자인 문서를 생성한다.
   "목업 문서 만들어줘", "화면 설계 문서", "프로토타입 설계", "화면 구성 정리",
   "화면 명세 작성", "목업 디자인 문서", "화면 기능 정리" 등의 요청에 반드시 이 스킬을 사용한다.
   결과물은 create-prototype 스킬에 그대로 입력할 수 있는 .md 파일이다.
-allowed-tools: Read, Write, Glob
+allowed-tools: Read, Write, Glob, Agent
 ---
 
 # Design Prototype Docs — 프로토타입 화면 설계 문서 생성기
 
-기능요구사항, RFP/SFR 원문, 사용자가 정리한 요구사항을 분석하여, `/create-prototype` 스킬의 입력으로 사용할 수 있는 **목업 디자인 문서(.md)** 를 생성하는 스킬이다.
+기능요구사항, RFP/SFR 원문, 사용자가 정리한 요구사항을 분석하여,
+`create-prototype` 스킬의 입력으로 사용할 수 있는 **목업 디자인 문서(.md)** 를
+생성하는 스킬이다.
+
+직접 호출할 때는 Codex에서 `$design-prototype-docs`, Claude Code에서
+`/ai-agent-harness:design-prototype-docs`를 사용한다.
 
 ```
 design-prototype-docs OUTPUT (.md)
@@ -26,12 +31,9 @@ design-prototype-docs OUTPUT (.md)
 
 #### STEP 0-A — 플랫폼·실행 방식 확인
 
-사용자에게 아래를 확인한다:
-
-> 1. 서브에이전트(병렬 처리)를 사용할 수 있는 환경인가요? (Claude Code / Codex / 기타)
-> 2. 사용할 경우 병렬 실행을 원하시나요?
-
-서브에이전트 미지원 또는 미사용 선택 시 순차 실행한다.
+현재 호스트가 독립 작업을 병렬 실행할 수 있는지는 노출된 도구로 확인한다.
+관찰 가능한 플랫폼 이름을 사용자에게 다시 묻지 않는다. 작업이 서로 독립적이고
+병렬 실행이 실질적으로 유리할 때만 선호를 확인하며, 미지원 또는 미사용 시 순차 실행한다.
 
 #### STEP 0-B — 프로젝트 유형 확인 (C-1 확인 단계)
 
@@ -130,7 +132,7 @@ STEP 1~3에서 수집한 정보를 종합하여 목업 디자인 문서를 생�
 |---|---|
 | **요구사항 번호** | SFR-020 |
 | **요구사항 명칭** | 전기넷 입찰-낙찰정보 분석 |
-| **프로젝트명** | 한국전기안전공사 AI플랫폼 |
+| **프로젝트명** | `{프로젝트명}` |
 | **메인 색상** | `#0D47A1` (딥 네이비) |
 | **화면 수** | 5개 |
 ```
@@ -333,8 +335,8 @@ STEP 0-C에서 확인한 식별자를 폴더명에 사용한다.
 - **복수 앱**: `.docs/prototype/{사용자}/{식별자}/design-doc.md` (앱 구분 없이 프로젝트 공통)
 
 예시:
-- 단일앱: `.docs/prototype/hb9397/SFR-019/design-doc.md`
-- 복수앱: `.docs/prototype/hb9397/SFR-019/design-doc.md` (앱 구분 없이 프로젝트 공통)
+- 단일앱: `.docs/prototype/developer/SFR-019/design-doc.md`
+- 복수앱: `.docs/prototype/developer/SFR-019/design-doc.md` (앱 구분 없이 프로젝트 공통)
 
 ### 저장 시 규칙
 
@@ -376,9 +378,18 @@ handoff_completed = false
 bundle에 대해서만 `humanize-korean`의 `document-refinement` 프로필을 한 번
 제안한다.
 
+최종 검증된 Markdown의 정규화 상대경로와 각 파일 SHA-256, profile 이름을 정렬해
+`artifact_bundle_fingerprint`를 계산한다. `.docs/.harness/humanize-handoffs.json`
+원자적 ledger에서 같은 fingerprint의 완료 상태(`proposed`, `skipped`, `rejected`,
+`applied`, `revalidated`)를 찾으면 새 session에서도 재제안하지 않는다. 새 결정은
+bundle ID, owner, 파일 hash, 시각과 함께 기록하고 승인 적용 뒤에는 `applied`와
+`revalidated`를 순서대로 갱신한다. ledger 자체는 개선 대상에서 제외하며 기록할 수
+없으면 현재 session 한정이라고 보고한다.
+
 기본은 proposal-only다. 승인 전에는 산출물 파일을 덮어쓰지 않으며 화면 ID,
 요구사항 ID, 라우트, 컴포넌트명, 표, 코드 fence, 수치, 날짜를 보존한다. 사용자가
-제안·건너뛰기·거절 중 하나를 결정하면 `handoff_completed = true`로 기록한다.
+제안·건너뛰기·거절 중 하나를 결정하면 `handoff_completed = true`와 ledger 상태를
+함께 기록한다.
 
 승인된 변경을 반영한 경우 품질 기준 7개, 요구사항 누락 여부, 화면 흐름,
 파일명·라우트·표·코드 fence를 다시 검증한다. 재검증된 최종 Markdown만

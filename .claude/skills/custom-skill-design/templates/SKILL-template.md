@@ -8,10 +8,11 @@ name:
 description: ""
 <!-- 트리거 키워드 3개 이상 포함. "~할 때", "~을 요청할 때" 형식 -->
 allowed-tools: Read
-<!-- 실제 사용 도구만: Read, Write, Glob, Grep, Bash, WebSearch -->
+<!-- 실제 사용하는 안전한 공통 도구만: Read, Write, Glob, Grep, WebSearch -->
+<!-- 제한 없는 Bash 사전 승인 금지. shell은 일반 permission mode와 플랫폼 fallback 사용 -->
 <!-- model: 금지 — 모델 선택은 사용자/환경에 위임 -->
 <!-- agent: fork 금지 — 서브에이전트 사용은 STEP 0 질문 게이트로 처리 -->
-<!-- disable-model-invocation: true  ← 재귀 호출 방지 필요 시에만 -->
+<!-- disable-model-invocation: true  ← 외부 상태 변경·명령 실행·재귀 위험으로 명시 호출만 허용할 때 -->
 ---
 
 <!-- 연계 스킬이 있을 때만 아래 블록 포함 -->
@@ -77,12 +78,9 @@ downstream-skill
 {이 Step에서 무엇을 하는지 한 줄}
 세부 규칙은 `prompts/{파일명}.md`의 [{섹션명}] 섹션을 참조한다.
 
-<!-- Bash가 필요한 경우 -->
-<!--
-```bash
-ls {target-files} 2>/dev/null
-```
--->
+<!-- 외부 명령이 필요한 경우: Read/Glob으로 범위를 먼저 확인하고, Windows·POSIX
+호출 또는 수동 fallback과 종료 코드 판정을 함께 작성한다. 제한 없는 Bash를
+allowed-tools에 추가하지 않는다. -->
 
 ---
 

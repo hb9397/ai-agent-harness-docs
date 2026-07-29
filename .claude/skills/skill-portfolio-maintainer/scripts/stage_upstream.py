@@ -11,6 +11,7 @@ import sys
 from pathlib import Path
 
 from portfolio_common import (
+    has_protected_asset_change,
     hash_tree,
     load_json,
     safe_join,
@@ -21,15 +22,8 @@ from portfolio_common import (
 )
 
 
-PROTECTED_MARKERS = ("scripts/", "templates/", "references/", "prompts/", "agents/", "commands/", "evals/", "tests/", "LICENSE", "NOTICE")
-
-
 def has_protected_change(file_map: list[dict]) -> bool:
-    for item in file_map:
-        local = item.get("local_path") or ""
-        if any(marker in local.replace("\\", "/") for marker in PROTECTED_MARKERS):
-            return True
-    return False
+    return has_protected_asset_change(file_map)
 
 
 def tree_path(candidate: dict, name: str) -> str | None:

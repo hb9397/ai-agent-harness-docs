@@ -1,16 +1,22 @@
 ---
 name: commit
 description: >
-  커밋할 때 반드시 이 스킬을 사용한다.
+  사용자가 커밋 또는 커밋 메시지 생성을 명시적으로 요청했을 때만 이 스킬을 사용한다.
   '커밋해줘', '커밋 메시지 만들어줘', 'commit', '변경 내용 저장',
   '스테이지 올라간 것 커밋' 요청이 오면 이 스킬로 처리한다.
   변경 내용 분석 후 Conventional Commits 규칙의 커밋 메시지를 생성하고 실행.
-allowed-tools: Read, Glob, Grep, Bash
+allowed-tools: Read, Glob, Grep
+disable-model-invocation: true
 ---
 
 # 스마트 커밋
 
-이 스킬이 호출되면 `git diff --staged`와 `git status`로 변경 내용을 분석하고, 아래 규칙에 따라 커밋 메시지를 생성하여 사용자 확인 후 커밋하세요.
+사용자가 명시적으로 호출한 경우에만 `git diff --staged`와 `git status`로 변경 내용을 분석하고,
+아래 규칙에 따라 커밋 메시지를 생성하여 사용자 확인 후 커밋하세요. 리뷰·검증·구현 요청만으로
+커밋 의도를 추론하지 않는다.
+
+이 스킬은 명시 호출 전용이다. Codex에서는 `$commit`, Claude Code에서는
+`/ai-agent-harness:commit`을 호출한 뒤 커밋 범위를 함께 적는다.
 
 ---
 
@@ -33,7 +39,8 @@ allowed-tools: Read, Glob, Grep, Bash
 
 - description은 **한글**로 작성, **50자 이내**
 - scope는 변경된 파일의 모듈·디렉토리명 기반으로 `git diff`에서 추론한다
-- 프로젝트에 `CLAUDE.md`가 있으면 아키텍처 섹션의 모듈명을 우선 참조한다
+- 프로젝트의 정본 `AGENTS.md`가 있으면 아키텍처 섹션의 모듈명을 우선 참조한다.
+  `CLAUDE.md`는 `@AGENTS.md` 브리지인지 확인하고 별도 규칙 원본으로 취급하지 않는다
 - scope 추론이 불명확하면 사용자에게 확인한다
 - body는 "무엇을"이 아닌 **"왜"** 중심으로 작성
 - 여러 성격의 변경이 섞여 있으면 **분리 커밋 제안**

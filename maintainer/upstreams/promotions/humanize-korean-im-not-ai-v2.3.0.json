@@ -25,11 +25,13 @@
     "protected_assets_removed": false
   },
   "runtime": {
-    "claude_allowed_agents": [
+    "claude_allowed_agents": [],
+    "historical_candidate_agents_considered": [
       "humanize-monolith",
       "humanize-diagnostician",
       "humanize-finalizer"
     ],
+    "projection_decision": "Final Codex and Claude runtime packages humanize-korean as one physical skill with zero agents and zero aliases.",
     "codex_adapter": "single-call local skill",
     "document_refinement": "proposal-only before user approval"
   },

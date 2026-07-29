@@ -21,14 +21,28 @@
 
 ## 2. 갱신 계획 사용자 확인
 
-비교 결과를 요약하여 사용자에게 확인받는다:
+기존 파일과 번들 템플릿을 먼저 읽고 파일별로 다음 상태를 분류한다.
+
+- `new`: 대상 파일이 없음
+- `managed`: 정확히 한 쌍의 관리 블록 marker가 있음
+- `unmanaged`: marker가 없고 사용자 또는 구버전 내용이 있음
+- `malformed`: marker가 중복되거나 시작·끝이 맞지 않음
+
+Markdown marker는
+`<!-- ai-agent-harness:managed:start -->` /
+`<!-- ai-agent-harness:managed:end -->`, `.gitignore` marker는
+`# ai-agent-harness:managed:start` /
+`# ai-agent-harness:managed:end`를 사용한다.
+
+각 대상의 현재 내용 hash, 상태, 변경될 관리 블록 diff를 요약하여 사용자에게
+확인받는다. `unmanaged` 또는 `malformed` 파일은 자동 갱신 대상에 넣지 않는다.
 
 > ✋ **갱신 대상 확인**
 >
-> | 유형 | 대상 |
-> |------|------|
-> | `.docs` 안내·정책 | README/.gitignore/_inbox |
-> | 루트 컨텍스트 | AGENTS.md 정본, CLAUDE.md bridge |
+> | 유형 | 대상 | 상태 | 처리 |
+> |------|------|------|------|
+> | `.docs` 안내·정책 | README/.gitignore/_inbox | {new/managed/unmanaged/malformed} | {생성/관리 블록 갱신/보존} |
+> | 루트 컨텍스트 | AGENTS.md 정본, CLAUDE.md bridge | {상태} | {처리} |
 > | legacy local skill copy | 읽기 전용 report만 출력 |
 >
 > 진행하시겠습니까? **(승인 / 수정 / 취소)**
@@ -37,23 +51,38 @@
 
 ## 3. `.docs/` 안내·정책 파일 갱신
 
-`.docs/`가 존재하면(단일·복수 공통) 아래 안내·정책 파일을 최신 템플릿으로 맞춘다.
-README/.gitignore는 harness-setup이 단독 관리하므로 **덮어써도 안전**하고, `_inbox/` 내용은 **절대 건드리지 않는다**.
+`.docs/`가 존재하면(단일·복수 공통) 아래 안내·정책 파일의 **관리 블록만**
+최신 템플릿으로 맞춘다. 관리 블록 밖의 사용자 확장과 `_inbox/` 내용은
+절대 덮어쓰지 않는다.
 
 | 파일 | 단일 앱 템플릿 | 복수 앱 템플릿 | 처리 |
 |------|----------------|----------------|------|
-| `.docs/README.md` | `docs-readme-single.template` | `docs-readme-multi.template` | 덮어쓰기 |
-| `.docs/.gitignore` | `docs-gitignore.template` | (동일) | 덮어쓰기 |
+| `.docs/README.md` | `docs-readme-single.template` | `docs-readme-multi.template` | 없으면 생성, 있으면 관리 블록만 교체 |
+| `.docs/.gitignore` | `docs-gitignore.template` | (동일) | 없으면 생성, 있으면 관리 블록만 교체 |
 | `.docs/_inbox/` | — | — | 없으면 생성(`.gitkeep`+README), 내용 보존 |
 
 번들 리소스는 `SKILL.md`의 **플러그인 리소스 해석 계약**으로 읽는다.
 
 1. 프로젝트 유형에 따라 `templates/docs-readme-single.template` 또는
-   `templates/docs-readme-multi.template`을 `.docs/README.md`에 쓴다.
-2. `templates/docs-gitignore.template`을 `.docs/.gitignore`에 쓴다.
+   `templates/docs-readme-multi.template`의 관리 블록을 준비한다.
+2. `templates/docs-gitignore.template`의 관리 블록을 준비한다.
 3. `.docs/_inbox/`가 없을 때만 디렉토리, 빈 `.gitkeep`,
    `templates/inbox-readme.template` 기반 README를 만든다.
 4. 기존 `_inbox/` 내용은 보존한다.
+
+관리 블록 갱신 규칙:
+
+1. `new`면 템플릿 전체를 새 파일로 생성한다.
+2. `managed`면 시작 marker부터 끝 marker까지만 새 관리 블록으로 교체하고,
+   앞뒤 사용자 내용을 byte-preserve한다.
+3. `unmanaged`면 기존 파일과 제안 템플릿의 diff만 보여주고 파일을 보존한다.
+   사용자가 명시적으로 마이그레이션을 승인하면 기존 내용을 삭제하지 않고
+   관리 블록을 추가하는 merge안을 먼저 사용한다.
+4. 사용자가 전체 교체를 별도로 승인한 경우에만 원본을
+   `.docs/archive/harness-setup/{timestamp}/{상대경로}`에 백업하고 교체한다.
+5. `malformed`면 쓰기를 중단하고 marker 위치와 복구안을 보고한다.
+6. 읽은 뒤 승인받기 전 원본 hash와 쓰기 직전 hash가 다르면 동시 수정으로
+   판단해 쓰기를 중단하고 diff를 다시 산출한다.
 
 `.docs/`가 아직 없으면 초기 세팅의 해당 단일/복수 구조를 적용해 생성한다.
 `AGENTS.md`만 존재한다는 이유로 `.docs/` 생성을 건너뛰지 않는다.
@@ -66,14 +95,19 @@ README/.gitignore는 harness-setup이 단독 관리하므로 **덮어써도 안�
 
 단일 앱:
 - `AGENTS.md`가 없으면 `templates/root-context-single.template` 기반 뼈대를
-  생성한다. 기존 파일은 보존하고 `context-doc` 결과를 기준으로 보강한다.
-- `CLAUDE.md`가 bridge가 아니면 `templates/claude-bridge.template` 기준으로 갱신 후보를 제시한다.
+  생성한다. 기존 파일은 관리 블록만 갱신하고 블록 밖의 프로젝트 규칙은 보존한다.
+- `CLAUDE.md`가 없으면 bridge 템플릿으로 생성한다. 기존 파일은 관리 블록의
+  `@AGENTS.md` bridge만 갱신하고 블록 밖 Claude 전용 차이를 보존한다.
+- marker가 없는 기존 파일은 Section 3의 `unmanaged` 규칙을 그대로 적용한다.
 
 복수 앱:
-- `.docs/root-context/AGENTS.md`가 있으면 루트 `AGENTS.md`로 반영한다.
+- `.docs/root-context/AGENTS.md`와 루트 `AGENTS.md`의 관리 블록을 비교하고,
+  최신 관리 블록만 양쪽에 반영한다. 어느 쪽의 사용자 확장도 다른 쪽에
+  전체 복사해 덮어쓰지 않는다.
 - 두 위치 모두 없으면 `templates/root-context.template`을 확정된 앱 목록으로
   치환해 양쪽에 생성한다.
-- `.docs/root-context/CLAUDE.md`가 bridge가 아니면 bridge 템플릿으로 갱신 후보를 제시한다.
+- `CLAUDE.md`도 bridge 관리 블록만 동기화하고 각 위치의 블록 밖 Claude 전용
+  차이를 보존한다.
 
 ---
 
@@ -83,10 +117,9 @@ README/.gitignore는 harness-setup이 단독 관리하므로 **덮어써도 안�
 
 ### 5-1. 루트 컨텍스트 갱신
 
-`.docs/root-context/AGENTS.md`, `.docs/root-context/CLAUDE.md`를 다시 읽어와 루트에 반영한다.
-
-`.docs/root-context/AGENTS.md`와 `.docs/root-context/CLAUDE.md`를 읽고 검증한 뒤,
-같은 내용을 현재 플랫폼의 파일 도구로 루트 `AGENTS.md`, `CLAUDE.md`에 쓴다.
+`.docs/root-context/AGENTS.md`, `.docs/root-context/CLAUDE.md`를 다시 읽어
+관리 블록을 검증한 뒤, 루트 파일의 같은 관리 블록에만 반영한다. 파일 전체를
+복사하지 않으며 루트와 복사본 각각의 블록 밖 사용자 확장을 보존한다.
 
 > 만약 `.docs/root-context/` 파일이 존재하지 않으면 (다른 스킬에 의해 아직 안 만들어졌거나 삭제된 경우),
 > 갱신하지 않고 사용자에게 알린다.
@@ -128,8 +161,8 @@ Step 2 감지 결과에서 `.docs/{앱}-context.md`가 없는 새 앱 폴더가 
 ```
 ## 갱신 결과
 
-- `.docs/` 안내·정책: README/.gitignore 갱신됨 / `_inbox/` 유지(또는 신규 생성)
-- 루트 컨텍스트: AGENTS 갱신됨 / CLAUDE bridge 갱신됨 / 변경 없음
+- `.docs/` 안내·정책: README/.gitignore 관리 블록 갱신됨 / 사용자 확장 보존 / `_inbox/` 유지(또는 신규 생성)
+- 루트 컨텍스트: AGENTS 관리 블록 갱신됨 / CLAUDE bridge 갱신됨 / 사용자 확장 보존 / 변경 없음
 - (복수앱) 신규 앱 감지: {앱명} (구조 추가됨)
 - legacy local skill copy: 읽기 전용 report N건 / 없음
 - local skill projection 변경: 없음 (`.agents/skills`, `.claude/skills`, `skills`)
@@ -140,4 +173,6 @@ Step 2 감지 결과에서 `.docs/{앱}-context.md`가 없는 새 앱 폴더가 
 이번 실행의 변경 목록이 `.docs/**`, 루트 `AGENTS.md`, 루트 `CLAUDE.md` 안에만
 있는지 확인한다. `.agents/skills/**`, `.claude/skills/**`, `skills/**` 변경이
 하나라도 있으면 성공으로 보고하지 않는다. 템플릿 placeholder와
-`CLAUDE.md` bridge도 함께 검증한다.
+`CLAUDE.md` bridge도 함께 검증한다. 갱신 전후 사용자 관리 블록 밖 내용과
+legacy local skill copy의 hash가 동일한지 확인하고, backup을 만든 경우 대상
+목록과 복구 경로를 결과에 포함한다.

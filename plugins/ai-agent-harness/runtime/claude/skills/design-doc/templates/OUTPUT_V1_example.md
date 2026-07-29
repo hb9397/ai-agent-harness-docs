@@ -495,7 +495,7 @@ acro/
 ```
 DISPLAY                  : Xvfb 가상 디스플레이 번호 (:99)
 OLLAMA_HOST              : http://acro-ai:11434
-DATABASE_URL             : postgresql+asyncpg://acro:secret@acro-db:5432/acrodb
+DATABASE_URL             : postgresql+asyncpg://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
 MAX_RECOVERY_ATTEMPTS    : LangGraph 복구 최대 시도 횟수 (기본값: 3)
 ```
 

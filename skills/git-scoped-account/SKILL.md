@@ -1,10 +1,18 @@
 ---
 name: git-scoped-account
-description: "전역 ~/.gitconfig를 건드리지 않고, git으로 관리하지 않는 프로젝트 최상위 폴더 바로 아래의 애플리케이션 git repo들에 공통 git 계정(user.name/email)을 include.path 방식으로 일괄 적용·확인한다. '이 폴더 아래 repo들 git 계정 한 번에 바꿔줘', '프로젝트마다 git 계정이 달라서 이 트리에만 적용', '전역 설정 안 건드리고 하위 repo user.name/email 일괄 설정/확인', 'gitea/gitlab/github 계정 디렉토리별로 분리' 같은 요청에 사용한다."
-allowed-tools: Read, Write, Bash, Glob
+description: "사용자가 git 계정 적용 또는 출처 확인을 명시적으로 요청했을 때만 사용한다. 전역 ~/.gitconfig를 건드리지 않고, git으로 관리하지 않는 프로젝트 최상위 폴더 바로 아래의 애플리케이션 git repo들에 공통 git 계정(user.name/email)을 include.path 방식으로 일괄 적용·확인한다. '이 폴더 아래 repo들 git 계정 한 번에 바꿔줘', '프로젝트마다 git 계정이 달라서 이 트리에만 적용', '전역 설정 안 건드리고 하위 repo user.name/email 일괄 설정/확인', 'gitea/gitlab/github 계정 디렉토리별로 분리' 같은 명시 요청에 사용한다."
+allowed-tools: Read, Write
+disable-model-invocation: true
 ---
 
 # git-scoped-account
+
+사용자가 계정 적용 또는 상태 확인을 명시적으로 요청한 경우에만 실행한다. 일반 git 작업,
+리뷰, 검증 요청에서 계정 변경 의도를 추론하지 않는다.
+
+이 스킬은 명시 호출 전용이다. Codex에서는 `$git-scoped-account`, Claude
+Code에서는 `/ai-agent-harness:git-scoped-account`를 호출하고 적용 또는 확인
+범위를 함께 적는다.
 
 전역 `~/.gitconfig`는 그대로 두고, git으로 관리하지 않는 프로젝트 최상위 폴더 바로 아래의 애플리케이션 git repo들이
 공통 계정 설정 파일을 `include.path`로 참조하게 만들어, 그 프로젝트 폴더의 하위 repo들에만 git 계정을 일괄 적용한다.
@@ -56,7 +64,12 @@ allowed-tools: Read, Write, Bash, Glob
 
 1. 프로젝트 최상위(컨테이너) 디렉토리에 공통 config 파일을 생성한다. 구조는 `templates/gitconfig-shared.md` 참조.
    - 이미 존재하면 덮어쓰기 전 내용을 보여주고 다시 확인받는다.
-2. 대상 repo 각각의 로컬 config에 `include.path`(공통 파일의 절대경로)를 주입한다.
+2. 변경 전에 공통 config와 모든 대상 repo의 실제 로컬 config 파일을 임시 백업에 **byte 단위로 스냅샷**한다.
+3. 대상 repo 각각의 로컬 config에 `include.path`(공통 파일의 절대경로)를 주입한다.
+   - 같은 값만 정확히 비교해 0개면 추가, 1개면 유지, 2개 이상이면 그 값만 제거 후 1개를 다시 추가한다.
+   - 다른 `include.path` 값은 순서와 내용을 포함해 보존한다.
+4. 한 repo라도 쓰기 또는 검증에 실패하면 이미 바꾼 repo와 공통 config를 스냅샷으로 전부 복구하고, 복구 검증 결과를 보고한다.
+5. 모든 검증이 성공한 뒤에만 임시 백업을 정리한다.
 
 ---
 

@@ -27,6 +27,35 @@ WINDOWS_RESERVED_NAMES = {
     *(f"COM{number}" for number in range(1, 10)),
     *(f"LPT{number}" for number in range(1, 10)),
 }
+PROTECTED_ASSET_DIRECTORIES = frozenset(
+    {
+        "agent",
+        "agents",
+        "asset",
+        "assets",
+        "bin",
+        "command",
+        "commands",
+        "eval",
+        "evals",
+        "example",
+        "examples",
+        "hook",
+        "hooks",
+        "prompt",
+        "prompts",
+        "reference",
+        "references",
+        "script",
+        "scripts",
+        "template",
+        "templates",
+        "test",
+        "tests",
+    }
+)
+PROTECTED_ASSET_FILENAMES = frozenset({"template.md"})
+PROTECTED_ASSET_FILE_PREFIXES = ("license", "notice")
 
 
 def repo_root() -> Path:
@@ -36,6 +65,26 @@ def repo_root() -> Path:
 def load_json(path: Path) -> Any:
     with path.open("r", encoding="utf-8") as fh:
         return json.load(fh)
+
+
+def is_protected_asset_path(path: str) -> bool:
+    """Classify protected assets by complete path segment or root-level filename."""
+    if not isinstance(path, str) or not path.strip():
+        return False
+    parts = PurePosixPath(path.replace("\\", "/")).parts
+    if not parts:
+        return False
+    directory_parts = {part.casefold() for part in parts[:-1]}
+    basename = parts[-1].casefold()
+    return (
+        bool(directory_parts & PROTECTED_ASSET_DIRECTORIES)
+        or basename in PROTECTED_ASSET_FILENAMES
+        or basename.startswith(PROTECTED_ASSET_FILE_PREFIXES)
+    )
+
+
+def has_protected_asset_change(file_map: list[dict[str, Any]]) -> bool:
+    return any(is_protected_asset_path(item.get("local_path") or "") for item in file_map)
 
 
 def write_json(path: Path, value: Any) -> None:

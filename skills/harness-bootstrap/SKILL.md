@@ -5,9 +5,9 @@ description: >
   '하네스 부팅', '기존 코드 분석해서 문서 만들어줘', '레거시 프로젝트 문서화',
   'CLAUDE.md 없는데 생성', '설계 문서 역추출', 'AI 문서 부트스트랩',
   '기존 프로젝트에 하네스 도입' 요청이 오면 이 스킬을 사용한다.
-  기존 코드베이스 → design-doc OUTPUT_V2 형식 설계 문서 + context-doc 결과물(AGENTS.md 정본 + CLAUDE.md bridge + .docs/instruction/*) 자동 도출.
+  기존 코드베이스에 harness-setup의 프로젝트 문서 골격을 먼저 적용한 뒤 design-doc OUTPUT_V2 형식 설계 문서 + context-doc 결과물(AGENTS.md 정본 + CLAUDE.md bridge + .docs/instruction/*)을 자동 도출한다.
   프레임워크 자동 감지. 최소 인터뷰(2회 이하)로 코드에서 추출 불가능한 도메인 맥락만 보충.
-allowed-tools: Read, Glob, Grep, Bash, Write
+allowed-tools: Read, Glob, Grep, Write
 ---
 
 # 하네스 부트스트랩 (harness-bootstrap)
@@ -19,6 +19,8 @@ allowed-tools: Read, Glob, Grep, Bash, Write
 2. **`context-doc` 결과물** — `AGENTS.md` 정본 + `CLAUDE.md` bridge + `.docs/instruction/*-instruction.md`
 
 생성 전 반드시 사용자 확인을 거친다. 파일을 무단으로 생성하지 않는다.
+사용자 스킬은 설치된 `ai-agent-harness` 플러그인에서 제공하며 프로젝트에
+`.agents/skills/`, `.claude/skills/`, `skills/`를 만들거나 동기화하지 않는다.
 
 > 이 스킬은 "레거시/기존 프로젝트에 AI 하네스를 처음 도입"하는 진입점이다.
 > 이후부터는 `design-doc` → `context-doc` 정규 플로우를 그대로 쓰면 된다.
@@ -47,12 +49,48 @@ suppress_child_handoff = false
 handoff_completed = false
 ```
 
+고유 실행 ID는 부모·자식 workflow correlation에만 사용한다. 새 task/session에서
+같은 최종 산출물을 다시 제안하는 것을 막는 키는 아래 영속
+`artifact_fingerprint`다.
+
 Step 5의 `design-doc`, Step 6의 `context-doc` 공개 skill-name handoff에는 같은
 `artifact_bundle_id`와 `handoff_owner`를 전달하고
 `suppress_child_handoff = true`를 명시한다. 자식 workflow는 자신의
 `humanize-korean` 후처리를 실행하지 않고 초안과 검증 결과만 반환해야 한다.
 따라서 이 bundle의 문서 개선 handoff는 Step 7 이후
 `harness-bootstrap`이 한 번만 소유한다.
+
+### 영속 handoff fingerprint와 ledger
+
+Step 7 검증을 마친 최종 Markdown 산출물을 프로젝트 루트 상대경로로 정규화하고
+정렬한다. 각 파일의 내용 SHA-256을 계산한 뒤
+`상대경로 + NUL + 내용 SHA-256` 행으로 만든 canonical manifest 전체의
+SHA-256을 `artifact_fingerprint`로 사용한다.
+
+`.docs/.harness/humanize-handoffs.json`에 다음을 영속 기록한다.
+
+```text
+schema_version
+artifact_fingerprint
+producer = harness-bootstrap
+artifact_bundle_id
+profile = document-refinement
+artifacts[] = {path, sha256}
+events[] = {status, recorded_at}
+```
+
+ledger 자체는 fingerprint 산출물 목록과 `humanize-korean` 대상에서 제외한다.
+status는 `proposed`, `skipped`, `rejected`, `applied`, `revalidated`다. 같은
+fingerprint에 이들 status 중 하나라도 있으면 새 제안을 만들지 않는다.
+`proposed`는 기존 제안이 있음을 보고하고, `skipped`/`rejected`는 결정을
+존중한다. `applied` 후 `revalidated`가 없으면 재제안 없이 Step 7의 구조·참조
+검증만 이어서 수행한다. 경로나 내용 hash가 달라지면 새 fingerprint로 처리한다.
+
+ledger는 sibling 임시 파일에 전체 JSON을 쓴 뒤 flush하고 원자적 replace한다.
+쓰기 직전 ledger hash가 달라졌으면 다시 읽고 fingerprint별 event를 merge한다.
+ledger를 안전하게 기록할 수 없으면 새 proposal을 보여주지 않고 중단한다.
+이 JSON ledger는 Markdown 후처리 대상이 아니며 local skill 디렉터리와 무관한
+허용 경로 `.docs/**` 안에만 둔다.
 
 ## 질문 예산
 
@@ -71,7 +109,9 @@ Step 5의 `design-doc`, Step 6의 `context-doc` 공개 skill-name handoff에는 
 기존 코드베이스 (AI 문서 없음)
         │
         ▼
-/harness-bootstrap
+harness-bootstrap 스킬
+        │
+        ├─ Step 0-C: harness-setup 공개 workflow로 문서 골격 설정
         │
         ├─ Step 1~4: 코드 스캔 + 최소 인터뷰
         │
@@ -92,7 +132,8 @@ Step 5의 `design-doc`, Step 6의 `context-doc` 공개 skill-name handoff에는 
 ## 중간 산출물 재사용
 
 - `.docs/context-base/DESIGN.md`만 먼저 저장해도, 이후에는 저장소 재스캔 없이
-  `@.docs/context-base/DESIGN.md /context-doc`로 정규 컨텍스트 생성 흐름을 다시 탈 수 있다.
+  `@.docs/context-base/DESIGN.md`를 입력으로 `context-doc` 스킬의 정규 컨텍스트
+  생성 흐름을 다시 탈 수 있다.
 - 한 번 부트스트랩이 끝난 프로젝트는 구조 변경 시 `harness-bootstrap`을 반복하기보다
   `design-doc` → `context-doc` 갱신을 기본 경로로 쓴다.
 
@@ -104,12 +145,10 @@ Step 5의 `design-doc`, Step 6의 `context-doc` 공개 skill-name handoff에는 
 
 #### Step 0-A — 플랫폼·실행 방식 확인
 
-사용자에게 아래를 확인한다:
-
-> 1. 서브에이전트(병렬 처리)를 사용할 수 있는 환경인가요? (Claude Code / Codex / 기타)
-> 2. 사용할 경우 병렬 실행을 원하시나요?
-
-서브에이전트 미지원 또는 미사용 선택 시 순차 실행한다.
+현재 플랫폼과 사용 가능한 실행 도구는 먼저 자동 감지한다. deployable unit이
+여러 개여서 독립 스캔을 병렬화할 이점이 있고 현재 플랫폼이 지원할 때만
+병렬 실행 여부를 사용자에게 묻는다. 그 외에는 순차 실행하며 플랫폼 이름을
+사용자가 직접 맞히도록 요구하지 않는다.
 
 #### Step 0-B — 프로젝트 유형 확인 (C-1 확인 단계)
 
@@ -124,8 +163,42 @@ Step 5의 `design-doc`, Step 6의 `context-doc` 공개 skill-name handoff에는 
 >
 > - 프로젝트 유형: **단일 / 복수** 애플리케이션
 > - 부트스트랩 대상 애플리케이션(폴더): `{폴더명}`
+> - 문서 하네스 골격 상태: `{없음 / 부분 존재 / 설정됨}`
+> - `harness-setup` 적용 예정 경로: `.docs/**`, 루트 `AGENTS.md`, `CLAUDE.md`
+> - 사용자 local skill 디렉터리 생성: **없음**
 >
 > 맞습니까? **(승인 / 수정 / 취소)**
+
+---
+
+#### Step 0-C — 프로젝트 문서 골격 설정
+
+Step 0-B 승인 뒤 다음 기준으로 공개 스킬 이름 `harness-setup`에 handoff한다.
+
+- `.docs/`, `AGENTS.md`, `CLAUDE.md` 중 하나라도 없으면 초기 설정 또는
+  복구 workflow를 실행한다.
+- 모두 있어도 `.docs/README.md`, `.docs/.gitignore`, `@AGENTS.md` bridge의
+  계약을 읽기 전용으로 확인하고, 갱신이 필요하면 관리 블록 diff를 반환받는다.
+- Step 0-B에서 확정한 프로젝트 루트·단일/복수 앱 판정·적용 경로 승인을
+  전달하므로 같은 질문을 반복하지 않는다. 새 overwrite 또는 backup 판단이
+  필요한 경우에만 `harness-setup`이 추가 승인을 요청한다.
+
+handoff에는 같은 bundle 컨텍스트를 전달한다.
+
+```text
+artifact_bundle_id = {Step 0에서 만든 값}
+handoff_owner = harness-bootstrap
+suppress_child_handoff = true
+```
+
+`harness-setup`은 `.docs/**`, 루트 `AGENTS.md`, `CLAUDE.md`만 생성·갱신하고
+변경 목록과 금지 경로 불변조건 검증을 반환해야 한다. `.agents/skills/`,
+`.claude/skills/`, `skills/`는 생성·복사·동기화하지 않는다. 기존 local skill
+copy는 읽기 전용 report만 반환한다.
+
+`harness-setup`을 찾을 수 없으면 플러그인 설치가 불완전한 상태로 보고 쓰기를
+중단한다. bootstrap이 private 템플릿을 흉내 내거나 프로젝트에 스킬을 복사해
+우회하지 않는다.
 
 ---
 
@@ -171,22 +244,16 @@ Step 5의 `design-doc`, Step 6의 `context-doc` 공개 skill-name handoff에는 
 
 ### Step 3 — 최소 인터뷰 (최대 2회)
 
-코드에서 **절대 알 수 없는 것**만 묻는다.
+`prompts/interview.md`를 이 단계의 **단일 상세 계약**으로 사용한다. 질문 문구,
+질문 2를 사용할 조건, 한 번만 허용하는 재질문, 묻지 않을 항목, 답변 거부·
+`모름` 처리 규칙은 그 파일을 따른다. 이 본문이나 다른 prompt에 별도 인터뷰
+질문을 중복 정의하지 않는다.
 
-**필수 질문 1** — 도메인·목적·사용자
-> "이 프로젝트는 어떤 사용자가, 어떤 문제를 해결하기 위해 쓰는 시스템인가요?
-> 2~3줄로 설명해 주세요."
+오케스트레이션 상의 불변조건은 다음뿐이다.
 
-**선택 질문 2** — 상위 맥락/제약 (필요시에만)
-> "이 프로젝트가 속한 상위 시스템이 있거나, 반드시 지켜야 할 운영 제약이 있으면 알려주세요.
-> 없으면 '없음'이라고만 답해 주세요."
-
-**묻지 않는 것**:
-- 기술 스택 (매니페스트에서 이미 알 수 있음)
-- 디렉토리 구조, API 목록, 환경 변수 목록 (코드에서 추출)
-- 코딩 컨벤션 세부 (코드 스타일에서 역추론)
-
-답변이 없거나 불충분하면 `미정 — 사용자 미제공` 으로 표시하고 진행한다.
+- 코드에서 알 수 없는 도메인 목적·사용자와 필요한 경우의 상위 운영 제약만 묻는다.
+- 최대 2회이며 질문 예산이 소진되면 `미정 — [이유]`로 진행한다.
+- Step 6의 자식 workflow는 새 인터뷰를 추가하지 않는다.
 
 ---
 
@@ -316,6 +383,10 @@ suppress_child_handoff = true
 
 **공통:**
 - 이미 존재하는 파일이 있으면 덮어쓰기 전에 사용자에게 알림
+- Step 0-C가 만든 `.docs/README.md`, `.docs/.gitignore`, `.docs/_inbox/`와
+  그 사용자 확장을 보존
+- 실행 전후 `.agents/skills/`, `.claude/skills/`, `skills/`의 존재·hash가
+  동일하고 새 local skill 디렉터리가 생기지 않았는지 검증
 
 ---
 
@@ -328,9 +399,17 @@ Step 7의 전체 산출물과 구조 검증이 끝난 뒤 다음 조건을 전�
 - `handoff_owner == harness-bootstrap`
 - `suppress_child_handoff == false`
 - `handoff_completed == false`
+- 같은 `artifact_fingerprint`의 ledger event가 없음
 
-handoff를 제안하거나 실행한 뒤 `handoff_completed = true`로 기록한다.
+제안이 생성되면 사용자에게 보여주기 전에 ledger에 `proposed`를 원자적으로
+기록한다. 건너뜀·거절·승인 적용·재검증 결과는 각각 `skipped`, `rejected`,
+`applied`, `revalidated` event로 추가한다. 승인 적용으로 내용이 바뀌면 최종
+파일 hash로 fingerprint를 다시 계산하고 `supersedes_fingerprint`로 제안 시점
+fingerprint를 연결한다. `applied`와 Step 7 재검증의 `revalidated`는 적용 후
+최종 fingerprint에도 기록해 다음 session의 재제안을 막는다. handoff를 제안하거나 기존 ledger
+결정을 재사용한 뒤 `handoff_completed = true`로 기록한다.
 `design-doc`과 `context-doc` 자식 workflow가 반환한 문서는 별도 handoff하지 않는다.
 후처리는 proposal-only가 기본이며 승인 전 파일 쓰기는 금지한다. 요구사항, 경로,
 ID, 숫자, 날짜, 코드 fence, 표 구조, 의무 수준은 변경하지 않는다. 승인 적용 후에는
 Step 7의 경로·참조·bridge 검증을 다시 수행한다.
+`ai-agent-harness:managed:start/end` marker는 변경하거나 제거하지 않는다.

@@ -7,7 +7,7 @@ description: >
   '에이전트 가이드 만들어줘' 요청이 오면 반드시 이 스킬을 쓴다.
   설계 문서 → 얇은 AGENTS.md 정본(프로젝트 팩트 + 인덱스) + CLAUDE.md bridge + 주제별 .docs/instruction/*-instruction.md 자동 생성.
   프레임워크 종속성이 없으며, 설계 문서에 등장한 주제만 분할 파일로 생성한다.
-allowed-tools: Read, Glob, Grep, Bash, Write, Task
+allowed-tools: Read, Glob, Grep, Write, Agent
 ---
 
 # Context 문서 생성 (context-doc)
@@ -37,12 +37,9 @@ handoff_completed = false
 
 ### STEP 0-A — 플랫폼·실행 방식 확인
 
-사용자에게 아래를 확인한다:
-
-> 1. 서브에이전트(병렬 처리)를 사용할 수 있는 환경인가요? (Claude Code / Codex / 기타)
-> 2. 사용할 경우 병렬 실행을 원하시나요?
-
-서브에이전트 미지원 또는 미사용 선택 시 순차 실행한다.
+`prompts/parallel-setup.md`의 능력 기반 절차를 따른다. 현재 호스트의 병렬 작업 능력은
+노출된 도구로 판단하고, 관찰 가능한 플랫폼 이름을 사용자에게 다시 묻지 않는다.
+병렬 미지원 또는 미사용 선택 시 순차 실행한다.
 
 ### STEP 0-B — 프로젝트 유형 확인 (C-1 확인 단계)
 
@@ -62,14 +59,14 @@ handoff_completed = false
 >
 > 맞습니까? **(승인 / 수정 / 취소)**
 
-### STEP 0-C — 병렬 Task 후보 안내 (STEP 0-A에서 병렬 선호 시에만)
+### STEP 0-C — 병렬 작업 후보 안내 (STEP 0-A에서 병렬 선호 시에만)
 
 `prompts/parallel-setup.md`의 [플랫폼 확인] → [모델 목록 표시] → [실행 방식 선택 — 선호도만 저장] 절차를 따른다.
 
-병렬 선호 시 아래 Task 후보 목록을 미리 안내한다.
+병렬 선호 시 아래 작업 후보 목록을 미리 안내한다.
 실제 생성할 파일은 Step 3-B 분석 후 확정되며, 확정 시점에 `prompts/parallel-setup.md`의 [모델 확정] 절차를 실행한다.
 
-| # | Task (instruction 파일) | 생성 조건 |
+| # | 작업 (instruction 파일) | 생성 조건 |
 |---|------------------------|----------|
 | 1 | `architecture-instruction.md` | 모듈·레이어 경계·의존성 규칙이 있을 때 |
 | 2 | `code-style-instruction.md` | 네이밍·예외처리·주석 규칙이 있을 때 |
@@ -228,7 +225,7 @@ design-doc OUTPUT의 각 섹션은 아래와 같이 매핑된다.
 STEP 0에서 병렬을 선택한 경우, Step 3-B에서 확정된 생성 파일 목록을 사용하여
 `prompts/parallel-setup.md`의 [모델 확정] 절차를 실행한다.
 
-순차를 선택했거나 STEP 0에서 기타(4)를 선택한 경우 이 Step을 건너뛴다.
+순차를 선택했거나 병렬 실행 능력이 없는 경우 이 Step을 건너뛴다.
 
 ---
 
@@ -323,6 +320,16 @@ STEP 0에서 확정한 프로젝트 유형에 따라 저장 경로와 검증 범
 상위 `harness-bootstrap` 등에서 전달된 실행이면 초안과 검증 결과만 반환하고
 후처리를 제안하지 않는다. 직접 호출에서 handoff를 제안하거나 실행한 뒤에는
 `handoff_completed = true`로 기록한다.
+
+새 session·재시도에서도 중복을 막기 위해 최종 검증된 Markdown의 정규화 상대경로와
+각 파일 SHA-256, profile 이름을 정렬해 `artifact_bundle_fingerprint`를 계산한다.
+`.docs/.harness/humanize-handoffs.json`을 fingerprint 키의 원자적 ledger로 사용한다.
+같은 fingerprint에 `proposed`, `skipped`, `rejected`, `applied`, `revalidated` 중
+완료 기록이 있으면 다시 제안하지 않는다. 새 결정은 bundle ID, owner, 파일 hash,
+결정 시각과 함께 원자적으로 기록하고 승인 반영 후에는 `applied`와 `revalidated`
+상태를 순서대로 갱신한다. ledger 자체는 개선 대상 bundle에서 제외한다. ledger를
+기록할 수 없으면 bundle당 1회를 보장했다고 보고하지 않고 현재 session 한정임을
+알린다.
 
 기본은 개선안 제안이며 승인 없이 파일을 덮어쓰지 않는다. 스킬명, 명령어, 경로,
 환경 변수, 정책 문구의 의무 수준은 보존한다. 승인 적용 후 Step 6의 참조·bridge

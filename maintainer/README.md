@@ -7,8 +7,13 @@
 - 별도의 관리자 플러그인은 만들지 않는다.
 - 관리자 스킬 정본은 `maintainer/skills/`에 둔다.
 - `.agents/skills/`와 `.claude/skills/`는 `maintainer/skills/`에서 생성되는 projection이다.
-- 사용자 플러그인 payload는 `skills/`와 향후 `plugins/ai-agent-harness/`에서 구성한다.
+- 사용자 플러그인 payload는 `skills/` 정본에서 생성한 `plugins/ai-agent-harness/`로 구성한다.
 - 관리자 스킬은 사용자 플러그인 source 목록에 포함하지 않는다.
+
+관리자는 별도 관리자 플러그인을 설치하지 않는다. 이 저장소에서는 repo-local 관리자
+projection으로 유지보수 작업을 수행하고, 사용자와 같은 설치 표면을 검증할 때만
+`ai-agent-harness` 사용자 플러그인을 별도 격리 설정에 설치한다. 관리자 projection과
+사용자 플러그인 cache를 같은 디렉터리에 합치지 않는다.
 
 ## 관리자 스킬
 

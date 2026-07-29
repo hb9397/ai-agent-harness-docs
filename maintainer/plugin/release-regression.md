@@ -6,7 +6,7 @@ Generated at: 2026-07-29T00:00:00+00:00
 
 - Overall status: `not-release-ready`
 - Plugin: `ai-agent-harness` `0.1.0`
-- Archive SHA-256: `aafd14e888fc2d3efa9615df6b2f68eef913f3863bef3d0316566ebadb6765aa`
+- Archive SHA-256: `8c576a8ed68bf0a3ea035f04afc6890fd3079b1ab5915e4aa8ff8b07e145623e`
 - Release gate: `not-release-ready`
 - Push/tag/release created: `false`
 
@@ -17,14 +17,14 @@ Generated at: 2026-07-29T00:00:00+00:00
 | `source_projection_integrity` | True |
 | `reproducible_build` | True |
 | `static_local_links` | True |
-| `upstream_3mode_e2e` | True |
-| `user_e2e` | True |
+| `upstream_modes_fixture` | True |
+| `user_contract_fixture` | True |
 | `failure_rollback` | True |
 | `release_gate` | True |
 
 ## Release decision
 
-This candidate remains `not-release-ready` because interactive evidence is still required for `codex-desktop-app, claude-desktop-code`. The isolated Codex and Claude CLI install smokes passed. The script does not update `released` lock state and does not create tags or releases.
+This candidate remains `not-release-ready` because interactive evidence is still required for `codex-cli, codex-desktop-app, claude-code-cli, claude-desktop-code`. The isolated Codex and Claude CLI install smokes passed. The script does not update `released` lock state and does not create tags or releases.
 
 ## Rollback
 

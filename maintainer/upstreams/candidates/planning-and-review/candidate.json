@@ -8,7 +8,7 @@
       "source_id": "superpowers",
       "source_url": "https://github.com/obra/superpowers",
       "officiality": "Reputable third-party skill framework",
-      "observed_activity": "GitHub release page observed 2026-07-29; release result showed v5.1.0, while local prior notes mentioned v6.x, so acceptance must re-query and pin exact SHA.",
+      "observed_activity": "Registry check resolved the latest accepted observation to v6.2.0 at commit 3dcbd5c4b48e02263fbf4a3c01e3fe4f81d584d9 on 2026-07-29.",
       "license": "MIT per GitHub repository page; verify hash before import.",
       "security_surface": "Contains skills, hooks, tests, scripts, plugin manifests, and optional telemetry references. Reference-only avoids importing runtime surface.",
       "fit": "Strong fit for brainstorming, planning, execution, verification, code review, and skill writing workflows.",

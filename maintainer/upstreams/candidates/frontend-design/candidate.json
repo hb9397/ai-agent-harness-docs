@@ -1,19 +1,20 @@
 {
   "id": "frontend-design-reference-candidate",
   "checked_at": "2026-07-29",
-  "status": "candidate-reference",
+  "status": "partially-promoted-historical",
+  "current_state": "anthropic-frontend-design is accepted and embedded as adapted; openai-product-design remains reference-only",
   "internal_skill_group": ["frontend-design", "design-prototype-docs", "create-prototype"],
   "candidate_sources": [
     {
       "source_id": "anthropic-frontend-design",
-      "source_url": "https://claude.com/plugins/frontend-design",
-      "repository_url": "https://github.com/anthropics/claude-code/blob/main/plugins/frontend-design/skills/frontend-design/SKILL.md",
+      "source_url": "https://github.com/anthropics/skills/tree/main/skills/frontend-design",
+      "repository_url": "https://github.com/anthropics/skills/tree/main/skills/frontend-design",
       "officiality": "Anthropic verified Claude plugin",
-      "observed_activity": "Official plugin page crawled 2026-07-28/29; GitHub source observed on main.",
-      "license": "See upstream LICENSE terms before importing files.",
+      "observed_activity": "Official anthropics/skills source was pinned and promoted as an adapted source on 2026-07-29.",
+      "license": "Apache-2.0 license and NOTICE are preserved in maintainer/upstreams/provenance/anthropic-skills.",
       "security_surface": "Skill text only unless upstream plugin assets/scripts are later imported.",
       "fit": "Strong fit for distinctive production frontend guidance.",
-      "decision": "reference-only now; adapted requires explicit file/text comparison and license review."
+      "decision": "Promoted as adapted for skills/frontend-design; this candidate entry is retained as historical discovery evidence."
     },
     {
       "source_id": "openai-product-design",

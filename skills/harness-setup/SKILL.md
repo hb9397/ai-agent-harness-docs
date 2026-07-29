@@ -8,7 +8,7 @@ description: >
   'harness setup', 'harness init' 요청이 오면 이 스킬을 사용한다.
   단일/복수 애플리케이션 프로젝트를 판별하여 .docs 구조와 루트 Agent 컨텍스트를 세팅한다.
   사용자 스킬 설치·갱신은 ai-agent-harness 플러그인이 담당하며, 이 스킬은 프로젝트 local skill copy를 만들거나 덮어쓰지 않는다.
-allowed-tools: Read, Write, Glob, Grep, Bash
+allowed-tools: Read, Write, Glob, Grep
 ---
 
 ## 스킬 연계
@@ -73,12 +73,10 @@ design-doc, context-doc 등 후속 스킬 사용 가능
 
 ## Step 0 — 플랫폼 및 실행 방식 확인
 
-사용자에게 아래를 확인한다:
-
-> 1. 서브에이전트(병렬 처리)를 사용할 수 있는 환경인가요? (Claude Code / Codex / 기타)
-> 2. 사용할 경우 병렬 실행을 원하시나요?
-
-서브에이전트 미지원 또는 미사용 선택 시 순차 실행한다.
+현재 플랫폼과 사용 가능한 실행 도구는 먼저 자동 감지한다. 이 작업은 파일 수가
+적은 초기 세팅에서는 기본적으로 순차 실행한다. 복수 앱 탐색처럼 병렬 처리가
+실질적으로 유리하고 현재 플랫폼이 지원할 때만 병렬 실행 여부를 사용자에게 묻는다.
+플랫폼 이름을 사용자가 직접 맞히도록 요구하지 않는다.
 
 ---
 
@@ -124,8 +122,8 @@ design-doc, context-doc 등 후속 스킬 사용 가능
 
 | 조건 | 모드 | 다음 |
 |------|------|------|
-| `.docs/` 또는 `AGENTS.md`가 없음 | **초기 세팅** | Step 4 |
-| `.docs/`와 `AGENTS.md`가 존재 | **갱신** | Step 5 |
+| `.docs/`와 `AGENTS.md`가 모두 없음 | **초기 세팅** | Step 4 |
+| `.docs/` 또는 `AGENTS.md` 중 하나 이상 존재 | **갱신/복구** | Step 5 |
 
 판별 결과를 사용자에게 알린다:
 
@@ -201,8 +199,8 @@ Step 2 확인 결과에 따라 분기한다.
 `prompts/update-mode.md` 참조.
 
 핵심 작업:
-1. `.docs/` 안내·정책 파일을 최신 템플릿 기준으로 갱신
-2. 루트 `AGENTS.md`와 `CLAUDE.md` bridge를 확인·갱신
+1. `.docs/` 안내·정책 파일의 관리 블록만 최신 템플릿 기준으로 갱신
+2. 루트 `AGENTS.md`와 `CLAUDE.md` bridge를 확인하고 사용자 확장을 보존하며 갱신
 3. 기존 local skill copy가 있으면 읽기 전용 migration report를 출력
 4. 복수앱인 경우 추가로:
    - `.docs/root-context/CLAUDE.md`, `.docs/root-context/AGENTS.md` 갱신
@@ -239,10 +237,13 @@ Step 2 확인 결과에 따라 분기한다.
 8. 다음 단계 안내
 
 > **다음 단계:**
-> - 설계 시작: `/design-doc`
-> - 기존 코드 분석: `/harness-bootstrap`
-> - 컨텍스트 문서 생성: `/context-doc`
-> - 스킬 최신화 재실행: `/harness-setup`
+> - 설계 시작: `design-doc` 스킬
+> - 기존 코드 분석: `harness-bootstrap` 스킬
+> - 컨텍스트 문서 생성: `context-doc` 스킬
+> - 하네스 갱신: `harness-setup` 스킬
+>
+> 명시 호출 예: Codex는 `$harness-setup`, Claude Code 플러그인은
+> `/ai-agent-harness:harness-setup`을 사용한다.
 
 ---
 
@@ -257,19 +258,64 @@ suppress_child_handoff = false
 handoff_completed = false
 ```
 
+`artifact_bundle_id`의 고유 ID는 한 실행 안에서 부모·자식 workflow를 연결하는
+correlation 용도일 뿐, 재실행 중복 방지 키로 사용하지 않는다.
+
 다른 producer가 전달한 `artifact_bundle_id`가 있으면 새 ID를 만들지 않고 전달받은
 값과 `handoff_owner`를 보존한다. 이 경우 이 스킬이 owner가 아니므로
 `suppress_child_handoff = true`로 처리한다.
 
 `AGENTS.md`, `CLAUDE.md`, `.docs/README.md` 등 이번 실행의 Markdown 산출물을 모두
-검증한 뒤, 다음 조건을 전부 만족할 때만 bundle 전체에 대해 `humanize-korean`의
-`document-refinement` 프로필을 **한 번** 제안한다.
+검증한 뒤 다음 순서로 영속 handoff fingerprint를 만든다.
+
+1. 프로젝트 루트 기준 상대경로로 정규화한 최종 Markdown 산출물 목록을 정렬한다.
+2. 각 파일의 최종 내용 SHA-256을 계산한다.
+3. `상대경로 + NUL + 내용 SHA-256` 행을 정렬된 순서로 결합한 canonical
+   manifest의 SHA-256을 `artifact_fingerprint`로 사용한다.
+4. ledger 파일 자체인 `.docs/.harness/humanize-handoffs.json`은 산출물 목록과
+   humanize 대상에서 제외한다.
+
+`.docs/.harness/humanize-handoffs.json`은 새 task/session에서도 중복 제안을
+막는 영속 ledger다. 최소한 다음을 기록한다.
+
+```text
+schema_version
+artifact_fingerprint
+producer = harness-setup
+artifact_bundle_id
+profile = document-refinement
+artifacts[] = {path, sha256}
+events[] = {status, recorded_at}
+```
+
+status는 `proposed`, `skipped`, `rejected`, `applied`, `revalidated` 중 하나다.
+같은 fingerprint에 이 status 중 하나가 이미 있으면 새 proposal을 만들지 않는다.
+`proposed`면 기존 제안의 존재를 보고하고, `skipped`/`rejected`면 그 결정을
+존중한다. `applied`인데 `revalidated`가 없으면 재제안하지 않고 원 producer
+검증만 이어서 수행한다. 산출물 경로나 내용 hash가 바뀌면 새 fingerprint가 되어
+새 제안 후보가 된다.
+
+ledger는 sibling 임시 파일에 전체 JSON을 쓴 뒤 flush하고 원자적 replace한다.
+쓰기 직전 기존 ledger hash가 읽을 때와 달라졌으면 다시 읽어 fingerprint별
+event를 merge하고 재시도한다. ledger를 안전하게 기록할 수 없으면 proposal을
+새로 제시하지 않고 오류를 보고한다. ledger는 Markdown이 아니며
+`humanize-korean`에 전달하지 않는다.
+
+다음 조건을 전부 만족하고 ledger에 같은 fingerprint가 없을 때만 bundle 전체에
+대해 `humanize-korean`의 `document-refinement` 프로필을 **한 번** 제안한다.
 
 - `handoff_owner == harness-setup`
 - `suppress_child_handoff == false`
 - `handoff_completed == false`
 
-제안 실행 후에는 결과와 관계없이 `handoff_completed = true`로 기록해 같은 bundle을
-다시 넘기지 않는다. 기본은 개선안 제안만 수행하며 사용자 승인 전에는 파일을
-덮어쓰지 않는다. 제목, 표, 경로, 명령어, ID, 숫자, 날짜, 의무 수준 표현은 원문
-그대로 보존한다.
+제안이 만들어지면 사용자에게 보여주기 전에 `proposed` event를 원자적으로
+기록한다. 사용자가 건너뛰거나 거절하면 `skipped` 또는 `rejected`, 승인 적용하면
+기존 fingerprint에 `applied`를 기록한다. 적용으로 파일 내용이 바뀌면 최종
+산출물 hash로 fingerprint를 다시 계산하고 `supersedes_fingerprint`에 기존
+fingerprint를 연결한 새 record에도 `applied`를 기록한다. 원 producer
+재검증까지 통과하면 **적용 후 최종 fingerprint**에 `revalidated` event를
+추가한다. 따라서 다음 session은 적용 후 내용을 새 후보로 오인하지 않는다.
+실행 내에서는 결과와 관계없이 `handoff_completed = true`로 기록한다. 기본은
+개선안 제안만 수행하며 사용자 승인 전에는 산출물 파일을 덮어쓰지 않는다. 제목,
+표, 경로, 명령어, ID, 숫자, 날짜, 의무 수준 표현과
+`ai-agent-harness:managed:start/end` marker는 원문 그대로 보존한다.

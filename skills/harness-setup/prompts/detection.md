@@ -9,23 +9,20 @@
 
 ### 감지 순서
 
-1. 현재 디렉토리에서 하네스 관리 레포 식별자를 찾는다:
+1. 현재 플랫폼의 파일 조회 도구로 다음 안정 식별자 조합을 확인한다.
 
-```bash
-# 하네스 관리 레포 식별: maintainer/ 디렉토리 + 현재 계획서 공존 여부
-ls maintainer/skills/harness-plugin-maintainer/SKILL.md 2>/dev/null && ls improvement_plan/20260729/플러그인\ 전환\ 및\ 스킬\ 거버넌스\ 리팩토링\ 작업\ 계획서.md 2>/dev/null
+   - `maintainer/skills/harness-plugin-maintainer/SKILL.md`
+   - `maintainer/plugin/CAPABILITIES.json`
+   - `.agents/plugins/marketplace.json` 또는 `.claude-plugin/marketplace.json`
 
-# 이전 구조 식별 fallback
-ls skills/harness-setup/SKILL.md 2>/dev/null && (ls Docs/Harness_Engineering.md 2>/dev/null || ls Harness_Engineering.md 2>/dev/null)
-```
+   날짜가 들어간 계획서 이름이나 특정 shell 명령은 관리 레포 판정 기준으로 쓰지
+   않는다. 이전 구조 fallback이 필요하면 `skills/harness-setup/SKILL.md`와
+   `Docs/Harness_Engineering.md`의 공존 여부만 읽기 전용으로 확인한다.
 
 2. 위 조건이 성립하면 → **하네스 관리 레포 내부**. 사용자에게 대상 프로젝트 루트 경로를 질문한다. 부모 폴더를 자동 적용하지 않는다.
 
-3. 위 조건 불충족 시, 현재 위치에 `.docs/` 또는 `AGENTS.md`가 있는지 확인:
-
-```bash
-ls -d .docs/ 2>/dev/null || ls AGENTS.md 2>/dev/null
-```
+3. 위 조건 불충족 시, 현재 플랫폼의 파일 조회 도구로 현재 위치의 `.docs/` 또는
+   `AGENTS.md` 존재 여부를 확인한다.
 
 4. `.docs/` 또는 `AGENTS.md`가 존재하면 → **이미 하네스 문서가 있는 프로젝트**. 현재 위치를 프로젝트 루트로 설정.
 
@@ -62,26 +59,14 @@ legacy/custom local skill 후보로만 기록하고, 실행 컨텍스트 판정�
 
 ### 감지 절차
 
-```bash
-# 1. 프로젝트 루트에 매니페스트가 있는지 확인
-ls package.json pom.xml build.gradle go.mod requirements.txt Cargo.toml *.sln *.csproj Gemfile pyproject.toml composer.json 2>/dev/null
+현재 플랫폼의 파일 조회 도구를 사용해 다음을 순서대로 수행한다. Bash, PowerShell
+등 특정 shell 문법을 그대로 실행 전제로 두지 않는다.
 
-# 2. 하위 1 depth 폴더에서 매니페스트 보유 디렉토리 탐색
-for d in */; do
-  [ -d "$d" ] || continue
-  case "$d" in
-    .docs/|.claude/|.agents/|node_modules/|.git/|*-ai-harness-docs/|ai-agent-harness-docs/) continue ;;
-  esac
-  manifests=$(ls "${d}package.json" "${d}pom.xml" "${d}build.gradle" "${d}go.mod" "${d}requirements.txt" "${d}Cargo.toml" "${d}Gemfile" "${d}pyproject.toml" "${d}composer.json" 2>/dev/null | head -1)
-  gitdir=$(ls -d "${d}.git" 2>/dev/null)
-  if [ -n "$manifests" ] || [ -n "$gitdir" ]; then
-    echo "APP_CANDIDATE: $d (manifest: $manifests, git: $gitdir)"
-  fi
-done
-
-# 3. 하네스 관리 레포 디렉토리 탐색 (제외 대상)
-ls -d *-ai-harness-docs/ ai-agent-harness-docs/ 2>/dev/null
-```
+1. 프로젝트 루트의 매니페스트 후보를 확인한다.
+2. 하위 1-depth 디렉토리별 매니페스트와 독립 `.git/` 존재 여부를 확인한다.
+3. `.docs/`, `.claude/`, `.agents/`, `node_modules/`, `.git/`, 관리 하네스
+   저장소는 앱 후보에서 제외한다.
+4. 후보마다 근거가 된 매니페스트 또는 `.git/` 경계를 함께 기록한다.
 
 ### 판정 규칙
 
@@ -98,21 +83,13 @@ ls -d *-ai-harness-docs/ ai-agent-harness-docs/ 2>/dev/null
 
 ## [세팅 모드 판별]
 
-프로젝트 루트(확정)에서 기존 하네스 흔적을 탐색한다.
+프로젝트 루트(확정)에서 현재 플랫폼의 파일 조회 도구로 다음을 읽기 전용
+탐색한다.
 
-```bash
-# 기존 .docs 구조 존재 여부
-ls -d .docs/ 2>/dev/null
-ls .docs/*.md .docs/*-context.md .docs/root-context/ 2>/dev/null | head -10
-
-# 루트 컨텍스트 존재 여부
-ls AGENTS.md CLAUDE.md 2>/dev/null
-
-# legacy local skill copy 후보(읽기 전용 report 대상)
-ls .claude/skills/*/SKILL.md 2>/dev/null | head -5
-ls .agents/skills/*/SKILL.md 2>/dev/null | head -5
-ls skills/*/SKILL.md 2>/dev/null | head -5
-```
+- `.docs/`와 그 안의 Markdown·`root-context/`
+- 루트 `AGENTS.md`, `CLAUDE.md`
+- `.claude/skills/*/SKILL.md`, `.agents/skills/*/SKILL.md`,
+  `skills/*/SKILL.md` legacy/custom local copy 후보
 
 | 조건 | 모드 |
 |------|------|

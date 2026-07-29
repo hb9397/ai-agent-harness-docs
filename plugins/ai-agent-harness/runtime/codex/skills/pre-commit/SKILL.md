@@ -2,11 +2,11 @@
 name: pre-commit
 description: >
   커밋 전 코드 검사가 필요할 때 이 스킬을 사용한다.
-  '커밋 전 검사', '규칙 위반 확인', '코드 점검', 'pre-commit',
+  '커밋 전 검사', '변경 파일 규칙 위반 확인', 'pre-commit',
   '올려도 되는지 확인해줘' 요청이 오면 이 스킬로 처리한다.
   변경 파일 대상으로 에러 처리·민감 정보·TODO 형식 등 규칙 위반을 자동 검사.
-allowed-tools: Read, Glob, Grep, Bash
-disable-model-invocation: true
+  보안·성능·유지보수성·테스트 관점의 코드 리뷰는 multi-review를 사용한다.
+allowed-tools: Read, Glob, Grep
 ---
 
 # 프로젝트 룰 검사
@@ -28,12 +28,22 @@ disable-model-invocation: true
 
 ## 실행 방법
 
-1. `git diff --name-only`로 변경된 파일 목록 수집 (staged + unstaged)
-2. `bash scripts/scan.sh`로 패턴 일괄 검색
+1. 확인된 대상 경계를 기준으로 tracked 변경(staged + unstaged)과 untracked 파일 목록을 수집한다.
+2. 현재 프로젝트의 `scripts/`가 아니라, **설치된 이 스킬 디렉토리**를 기준으로
+   다음 우선순위로 검사기를 실행한다.
+   1. Python이 있으면
+      `python "{현재 스킬 디렉토리}/scripts/scan.py" "{확인된 대상 디렉토리}"`
+      를 실행한다. 호스트에 따라 `python3` 또는 `py -3` 실행기를 사용할 수 있다.
+   2. Python을 사용할 수 없고 Bash가 확인된 경우에만
+      `bash "{현재 스킬 디렉토리}/scripts/scan.sh" "{확인된 대상 디렉토리}"`
+      로 호환 검사기를 실행한다.
+   3. 두 실행 환경을 모두 사용할 수 없거나 스킬 디렉토리 경로를 확인할 수 없으면
+      임의 경로를 추측하지 않고 `prompts/check-rules.md` 기준의 수동 검사로 전환한다.
 3. 스캔 결과 + 수동 분석으로 위반 사항 판정
 4. template.md 형식으로 결과 보고
 
 ## 검사 항목
 
 검사 항목 상세 정의는 `prompts/check-rules.md` 참조.
-`scripts/scan.sh`은 이 규칙의 자동 탐지 구현이다.
+`scripts/scan.py`가 Windows·macOS·Linux 공통 기본 구현이며,
+`scripts/scan.sh`은 기존 Bash 환경을 위한 호환 구현이다.

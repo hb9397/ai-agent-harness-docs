@@ -1,7 +1,7 @@
 ---
 name: doc-audit
-description: "프로젝트 코드와 AI Agent 문서 간의 괴리 분석 및 업데이트 제안"
-allowed-tools: Read, Glob, Grep, Bash, Task
+description: "프로젝트 문서와 실제 코드의 괴리, 의존성·아키텍처·규칙 drift를 읽기 전용으로 감사하고 AGENTS.md·CLAUDE.md·.docs 최신화 제안을 만들 때 사용한다. 사용자가 '문서와 코드가 맞는지 감사', '의존성/아키텍처 규칙 drift 확인', '에이전트 문서 최신화 제안'을 요청하면 적용하며, 승인 전에는 문서를 수정하지 않는다."
+allowed-tools: Read, Glob, Grep, Agent
 ---
 
 # 문서 감사 (doc-audit)
@@ -16,15 +16,15 @@ allowed-tools: Read, Glob, Grep, Bash, Task
 
 `prompts/parallel-setup.md`의 [플랫폼 확인] → [모델 목록 표시] → [실행 방식 선택] 절차를 따른다.
 
-병렬 선택 시 아래 Task 목록을 제시한 뒤 `prompts/parallel-setup.md`의 [모델 확정] 절차를 따른다.
+병렬 선택 시 아래 분석 작업 목록을 제시한 뒤 `prompts/parallel-setup.md`의 [모델 확정] 절차를 따른다.
 
-| # | Task | 분석 내용 |
+| # | 분석 작업 | 분석 내용 |
 |---|------|----------|
 | A | deps-audit | 라이브러리·의존성 괴리 분석 |
 | B | pattern-audit | 코드 패턴·아키텍처 괴리 분석 |
 | C | rulecheck-audit | 문서 규칙 위반 사례 분석 |
 
-순차 선택 시 Task A → B → C 순서로 직접 수행한다.
+순차 선택 시 분석 A → B → C 순서로 직접 수행한다.
 
 #### STEP 0-B — 프로젝트 유형 확인 (C-1 확인 단계)
 
@@ -63,30 +63,30 @@ allowed-tools: Read, Glob, Grep, Bash, Task
 
 ```
 doc-audit (orchestrator)
-├── Task A: deps-audit      → 라이브러리/의존성 괴리 분석
-├── Task B: pattern-audit   → 코드 패턴·아키텍처 괴리 분석
-└── Task C: rulecheck-audit → 문서 규칙 위반 사례 분석
+├── 분석 A: deps-audit      → 라이브러리/의존성 괴리 분석
+├── 분석 B: pattern-audit   → 코드 패턴·아키텍처 괴리 분석
+└── 분석 C: rulecheck-audit → 문서 규칙 위반 사례 분석
 ```
 
-각 Task의 상세 지침은 `prompts/` 참조.
+각 분석 작업의 상세 지침은 `prompts/` 참조.
 
 ---
 
-## Task A — 의존성 분석 (prompts/deps-audit.md)
+## 분석 A — 의존성 분석 (prompts/deps-audit.md)
 
 - 실제 의존성 파일(`requirements.txt`, `package.json`, `pyproject.toml` 등) 수집
 - 문서에 언급된 라이브러리와 실제 사용 라이브러리 비교
 - 추가됐지만 문서에 없는 항목 → **추가 제안**
 - 문서에는 있지만 실제로 제거된 항목 → **삭제 제안**
 
-## Task B — 패턴·아키텍처 분석 (prompts/pattern-audit.md)
+## 분석 B — 패턴·아키텍처 분석 (prompts/pattern-audit.md)
 
 - `git log --oneline -30`, `git diff HEAD~5..HEAD` 로 최근 변경 파악
 - 소스코드 내 반복 패턴, 예외처리, 새 미들웨어/훅/설정 분석
 - 문서에 기술되지 않은 새 패턴 → **추가 제안**
 - 버전 정보(프레임워크, 런타임 등) 불일치 → **수정 제안**
 
-## Task C — 규칙 준수 분석 (prompts/rulecheck-audit.md)
+## 분석 C — 규칙 준수 분석 (prompts/rulecheck-audit.md)
 
 - 문서에 명시된 금지 목록, 필수 패턴을 코드에서 위반하는 사례 탐지
 - 위반 사례가 잦으면 규칙 자체의 완화 또는 보완 필요 여부 판단
@@ -96,7 +96,7 @@ doc-audit (orchestrator)
 
 ## 최종 처리
 
-1. Task A, B, C 결과 취합 + 중복 제거
+1. 분석 A, B, C 결과 취합 + 중복 제거
 2. 중요도 분류: Critical / Major / Minor
 3. 결과 출력 형식은 `templates/audit-report.md` 참조
 4. 대화창에 변경 제안서 내용 바로 출력 (.md 파일 생성 금지)

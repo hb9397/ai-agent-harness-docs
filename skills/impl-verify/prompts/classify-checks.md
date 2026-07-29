@@ -4,7 +4,7 @@
 
 ---
 
-## auto (자동 실행 가능)
+## auto candidate (안전 게이트 통과 전 실행 금지)
 
 다음 키워드/패턴이 본문에 있으면 auto 후보:
 
@@ -14,7 +14,7 @@
 - 빌드/타입: `build`, `tsc`, `lint`, `mypy`, `typecheck`
 - 파일 검증: `파일 존재`, `생성됨`, `삭제됨`, `해시 일치`
 - DB 검증: `SELECT`, `레코드 존재`, `row count`
-- 마이그레이션: `alembic upgrade`, `prisma migrate`, `migrate up/down`
+- 마이그레이션: `alembic upgrade`, `prisma migrate`, `migrate up/down` — 자동 후보가 아니라 manual/금지 분류 신호
 
 판정 기준이 **명시적 조건**이어야 한다:
 - ✅ "200 응답 + body.id 존재"
@@ -22,7 +22,9 @@
 - ❌ "정상 동작"
 - ❌ "잘 됨"
 
-명시적 조건이 없으면 manual로 강등.
+이 키워드는 **후보 탐지 신호일 뿐 실행 권한이 아니다**. 명시적 조건이 없거나
+`references/safe-execution.md`의 실행 파일·인자·cwd·env·스크립트 본문·대상 확인을
+통과하지 못하면 manual/UNKNOWN으로 강등한다.
 
 ---
 
@@ -90,11 +92,11 @@ hybrid 항목은 auto 단계 통과 후 manual 단계로 자동 전환.
 
 | 검증 기준 본문 | 분류 | 근거 |
 |---------------|------|------|
-| "curl POST /api/sites → 201 + body.id 존재" | auto | curl + 명시적 조건 |
-| "pytest tests/sites/ → 전체 통과" | auto | 테스트 명령 + 조건 |
+| "curl POST /api/sites → 201 + body.id 존재" | manual/승인 후보 | 비운영 격리 endpoint·부수효과 확인 전 실행 금지 |
+| "pytest tests/sites/ → 전체 통과" | auto candidate | 테스트 설정·hook·cwd·산출물 확인 후에만 실행 |
 | "로딩 인디케이터 노출" | manual | 시각 판단 |
 | "Tab 순서 자연스러움" | manual | 시각 판단 |
-| "서버 기동 후 /health 200" | auto | curl 가능 + 조건 |
+| "서버 기동 후 /health 200" | hybrid | 서버 기동 동작과 loopback endpoint 확인 필요 |
 | "스토리북 4상태 렌더링" | hybrid | 빌드 auto + 시각 manual |
 | "정상 동작 확인" | manual | 모호함 |
-| "SELECT FROM sites → 1 row" | auto | DB 조회 + 조건 |
+| "SELECT FROM sites → 1 row" | auto candidate | 격리 로컬 DB·제한 쿼리 확인 후에만 실행 |

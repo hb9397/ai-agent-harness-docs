@@ -10,7 +10,7 @@
       "id": "document-refinement-proposal-only",
       "input": "결론적으로, 이 기능은 중요한 역할을 수행할 수 있습니다.",
       "profile": "document-refinement",
-      "expected_behavior": "원본 파일을 승인 없이 변경하지 않고 개선안만 제시한다."
+      "expected_behavior": "원본 파일을 승인 없이 변경하지 않고, `결론적으로`는 문단 기능을 확인할 진단과 수정 후보만 제시한다."
     },
     {
       "id": "approved-atomic-write",
@@ -19,8 +19,15 @@
     },
     {
       "id": "mode-separation",
-      "input": "결론적으로, 이 기능은 중요한 역할을 수행할 수 있습니다.",
-      "expected_behavior": "fast는 최소 치환, standard는 전체 치환, redo는 지정 줄 범위만 standard 강도로 처리한다."
+      "input": "이에 있어서 중요한 점이 있습니다. 결론적으로, 도구를 통해 결과를 확인합니다.",
+      "expected_behavior": "fast는 최소 치환, standard는 안전한 전체 치환, redo는 지정 줄 범위만 standard 강도로 처리한다. 세 모드 모두 `결론적으로`와 `를 통해`를 자동 치환하지 않는다."
+    },
+    {
+      "id": "context-sensitive-diagnostic-only",
+      "input": "사용자는 터널을 통해 이동합니다. 결과는 시스템에 의해 생성됩니다. 결론적으로, 이 문단은 앞선 근거를 요약합니다.",
+      "must_preserve": ["를 통해", "에 의해", "결론적으로"],
+      "must_diagnose": ["A-context-through", "A-context-passive-agent", "D-context-conclusion"],
+      "expected_behavior": "각 span의 줄·열, 진단 근거와 복수 후보를 반환하고 deterministic helper는 어느 후보도 자동 적용하지 않는다."
     }
   ]
 }

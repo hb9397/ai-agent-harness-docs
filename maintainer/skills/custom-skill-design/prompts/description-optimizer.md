@@ -7,8 +7,9 @@
 
 | 환경 | 읽을 섹션 |
 |------|----------|
-| Claude Code | [쿼리 생성] + [사용자 검토] + [자동 최적화] + [적용] |
-| Claude.ai | [쿼리 생성] + [수동 개선] + [적용] |
+| Codex CLI/App | [쿼리 생성] + [사용자 검토] + [격리 실행] + [적용] |
+| Claude Code/Desktop Code | [쿼리 생성] + [사용자 검토] + [격리 실행] + [적용] |
+| Claude.ai/Cowork | [쿼리 생성] + [수동 개선] + [적용] |
 
 ---
 
@@ -77,32 +78,24 @@ should-not-trigger:
 
 ---
 
-## [자동 최적화] — Claude Code 전용
+## [격리 실행] — Codex·Claude CLI/App
 
-```bash
-python -m scripts.run_loop \
-  --eval-set {eval-set-path} \
-  --skill-path {skill-path} \
-  --model {현재 세션 모델 ID} \
-  --max-iterations 5 \
-  --verbose
-```
+이 번들에는 자동 최적화 runner가 포함되어 있지 않다. 존재하지 않는 모듈을 호출하지
+말고 각 플랫폼의 새 task/session에서 같은 query set을 실행한다.
 
-**실행 중 진행상황을 주기적으로 사용자에게 알린다:**
-> "현재 iteration 3/5 진행 중. 현재 점수: train 0.82 / test 0.79"
+1. should-trigger와 should-not-trigger를 번갈아 실행한다.
+2. 플랫폼, 앱/CLI, 새 session 여부, 실제 호출된 스킬을 기록한다.
+3. 각 쿼리를 최소 2회 실행해 우연한 호출을 구분한다.
+4. false negative와 false positive를 따로 집계한다.
+5. description 후보를 한 번에 하나만 바꾸고 같은 query set을 재실행한다.
+6. Codex와 Claude 중 한쪽만 개선되는 후보는 공통 정본에 바로 적용하지 않는다.
 
-**최적화 로직 (스크립트 내부)**:
-- eval set을 train 60% / test 40%로 분할
-- 각 쿼리를 3회 실행해 트리거율 측정
-- 실패 패턴 기반으로 새 description 제안 (extended thinking)
-- train + test 점수 기준으로 최적 description 선택 (overfitting 방지)
-- 최대 5회 반복
-
-결과에서 `best_description`을 추출해 [적용] 단계로 진행한다.
+관리자가 별도 runner를 제공하는 경우에도 파일 존재, 출처, 실행 권한, 출력 schema를
+먼저 검증하고 그 runner의 실제 명령을 테스트 기록에 남긴다.
 
 ---
 
-## [수동 개선] — Claude.ai 환경
+## [수동 개선] — Claude.ai/Cowork
 
 자동화 스크립트 없이 다음 방법으로 개선한다:
 

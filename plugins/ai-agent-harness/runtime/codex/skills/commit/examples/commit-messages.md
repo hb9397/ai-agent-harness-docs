@@ -60,4 +60,5 @@ git diff에서 변경된 파일 경로의 최상위 디렉토리 또는 핵심 �
 | package.json, requirements.txt | deps |
 | README.md, docs/ | docs |
 
-프로젝트 고유 scope (예: 도메인명)는 CLAUDE.md에서 확인한다.
+프로젝트 고유 scope(예: 도메인명)는 정본 `AGENTS.md`에서 확인한다.
+`CLAUDE.md`는 `@AGENTS.md` 브리지일 때만 진입점으로 사용한다.

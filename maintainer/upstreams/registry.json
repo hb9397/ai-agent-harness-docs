@@ -497,7 +497,7 @@
         "structure_checks": ["skills/humanize-korean exists", "runtime allowlist contains only accepted Claude execution agents"],
         "behavior_fixtures": ["meaning-preserving Korean humanization", "document-refinement proposal-only mode"],
         "codex_smoke_prompts": ["Use $humanize-korean on a short .md draft and preserve IDs/dates."],
-        "claude_smoke_prompts": ["Use /humanize-korean on a short .md draft and preserve IDs/dates."]
+        "claude_smoke_prompts": ["Use /ai-agent-harness:humanize-korean on a short .md draft and preserve IDs/dates."]
       }
     }
   ]

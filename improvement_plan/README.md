@@ -8,7 +8,7 @@
 
 | 위치 | 상태 | 설명 |
 |------|------|------|
-| [20260729/플러그인 전환 및 스킬 거버넌스 리팩토링 작업 계획서.md](./20260729/플러그인%20전환%20및%20스킬%20거버넌스%20리팩토링%20작업%20계획서.md) | Phase 0~10 구현 완료 / 릴리스 차단 | 사용자 플러그인 전환, 관리자/사용자 스킬 분리, upstream governance, 문서 최신화, release gate 구현 완료. 실제 릴리스는 Codex CLI·Codex App·Claude Code CLI·Claude Desktop Code 설치 증적과 관리자 최종 승인 전까지 차단 |
+| [20260729/플러그인 전환 및 스킬 거버넌스 리팩토링 작업 계획서.md](./20260729/플러그인%20전환%20및%20스킬%20거버넌스%20리팩토링%20작업%20계획서.md) | Phase 0~10 구현 완료 / 직접 표면 검증 대기 | 사용자 플러그인 전환, 관리자/사용자 스킬 분리, upstream governance, 문서 최신화, release gate 구현 완료. Codex CLI·Claude Code CLI의 로컬 marketplace 설치 smoke는 통과했고 Codex·Claude CLI/앱 네 표면의 실제 모델 호출 증적과 관리자 최종 승인이 남아 있음 |
 
 ---
 
@@ -35,6 +35,8 @@
 - `custom-skill-design`은 관리자 스킬이다.
 - `humanize-korean`은 `im-not-ai`에서 적응 반영한 직접 반입형 스킬이며, 별도 `im-not-ai` 설치 없이 플러그인에서 사용한다.
 - 최종 readiness 감사는 [maintainer/plugin/final-readiness-audit.md](../maintainer/plugin/final-readiness-audit.md)와 [maintainer/plugin/final-readiness-audit.json](../maintainer/plugin/final-readiness-audit.json)에 기록한다.
-- 현재 릴리스 후보는 자동 회귀 검증을 통과했지만, 네 가지 실제 설치 표면 증적이 없어 `not-release-ready` 상태다.
+- 현재 릴리스 후보는 자동 회귀 검증과 Codex CLI·Claude Code CLI의 격리 설치
+  smoke를 통과했다. Codex App·Claude Desktop Code의 직접 증적이 없어
+  `not-release-ready` 상태다.
 
 과거 문서를 볼 때는 위 기준을 우선 적용한다.

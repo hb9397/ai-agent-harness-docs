@@ -1,16 +1,18 @@
 ---
 name: impl-doc
 description: >
-  범용 단계별 구현 지침서를 생성한다.
-  '범용 구현 지침', '작업 순서 정리', '구현 계획', '자동화 구현 가이드',
+  한 애플리케이션 안의 단일 기능·모듈·스크립트·CLI·BE 엔드포인트·FE 컴포넌트처럼
+  독립된 소규모 작업의 단계별 구현 지침서를 생성한다.
+  '범용 구현 지침', '단일 기능 작업 순서', '소규모 구현 계획', '자동화 구현 가이드',
   '스크립트 구현 지침', '도구 구현 계획', '단일 기능 구현 계획',
   'BE 단일 기능', '백엔드 단일 기능 구현', '백엔드 API 1개 추가',
   'FE 단일 기능', '프론트 단일 기능 구현', '컴포넌트 1개 추가',
   '훅 추가', '화면 1개 수정', 'UI 리팩터' 요청이 오면 이 스킬을 사용한다.
   CLI, 자동화 스크립트, 라이브러리, 단독 백엔드 서비스,
   단일 BE 엔드포인트/도메인 로직, 단일 FE 컴포넌트/훅/화면 등
-  단일·소규모 범용 작업의 Phase별 구현 지침을 만든다.
-allowed-tools: Read, Write, Glob, Grep, Bash
+  단일·소규모 범용 작업의 Phase별 구현 지침을 만든다. FE와 BE를 함께 연결하거나
+  여러 화면을 한 로드맵으로 계획하는 요청은 impl-fe-be-doc을 사용한다.
+allowed-tools: Read, Write, Glob, Grep, Agent
 ---
 
 # 범용 구현 지침서 (impl-doc)
@@ -39,7 +41,7 @@ impl-doc  ← 지금 여기
     ↓
 (단일앱) .docs/impl-doc/{사용자}/{YYMMDD}-{seq}.{slug}-impl-{kind}.md
 (복수앱) .docs/{앱}/impl-doc/{사용자}/{YYMMDD}-{seq}.{slug}-impl-{kind}.md
-        예: .docs/be-keai-portal/impl-doc/hb9397/260630-1.user-auth-impl-api.md
+        예: .docs/app-backend/impl-doc/developer/260630-1.user-auth-impl-api.md
     ├─→ 같은 디렉토리의 로드맵 인덱스 문서
     │   {YYMMDD}-0.{앱이름}-roadmap-impl-index.md 생성/갱신 (Step 8)
     ├─→ 실제 구현
@@ -94,12 +96,9 @@ impl-doc  ← 지금 여기
 
 #### Step 0-A — 플랫폼·실행 방식 확인
 
-사용자에게 아래를 확인한다:
-
-> 1. 서브에이전트(병렬 처리)를 사용할 수 있는 환경인가요? (Claude Code / Codex / 기타)
-> 2. 사용할 경우 병렬 실행을 원하시나요?
-
-서브에이전트 미지원 또는 미사용 선택 시 순차 실행한다.
+현재 호스트가 독립 작업을 병렬 실행할 수 있는지는 노출된 도구로 확인한다.
+관찰 가능한 플랫폼 이름을 사용자에게 다시 묻지 않는다. 작업이 서로 독립적이고
+병렬 실행이 실질적으로 유리할 때만 선호를 확인하며, 미지원 또는 미사용 시 순차 실행한다.
 
 #### Step 0-B — 프로젝트 유형 확인 (C-1 확인 단계)
 
@@ -159,6 +158,9 @@ Phase 설계 초안을 대화창에 출력한다:
 ### Step 3 — 태스크 작성
 
 `prompts/task-rules.md`의 규칙에 따라 각 Phase의 태스크를 작성한다.
+산출물의 전체 섹션·필드 순서는 bundled 보호 자산인 `templates/output.md`를 정식
+output contract로 사용한다. 템플릿의 placeholder와 주석은 실제 값으로 채우거나
+최종 출력에서 제거하되, 템플릿 파일 자체를 삭제·이동·대체하지 않는다.
 
 **범용 태스크 ID 체계**:
 
@@ -243,7 +245,7 @@ PKG-XX  : 패키징 (빌드, 배포, 문서화)
 **④ 저장 디렉토리 결정** — 프로젝트 유형에 따라 분기한다.
 
 - **단일 앱**: `.docs/impl-doc/{사용자}/`
-- **복수 앱**: `.docs/{앱}/impl-doc/{사용자}/` (예: `.docs/be-keai-portal/impl-doc/hb9397/`)
+- **복수 앱**: `.docs/{앱}/impl-doc/{사용자}/` (예: `.docs/app-backend/impl-doc/developer/`)
 
 디렉토리가 없으면 생성한다.
 
@@ -260,9 +262,9 @@ PKG-XX  : 패키징 (빌드, 배포, 문서화)
 - `{kind}` — ②에서 받은 구현 종류 한 단어.
 
 예시:
-- `.docs/be-keai-portal/impl-doc/hb9397/260630-1.user-auth-impl-api.md`
-- `.docs/be-keai-portal/impl-doc/hb9397/260630-2.user-auth-impl-db.md`
-- `.docs/fe-keai-portal/impl-doc/hb9397/260630-3.search-result-impl-ui.md`
+- `.docs/app-backend/impl-doc/developer/260630-1.user-auth-impl-api.md`
+- `.docs/app-backend/impl-doc/developer/260630-2.user-auth-impl-db.md`
+- `.docs/app-frontend/impl-doc/developer/260630-3.search-result-impl-ui.md`
 
 **⑥ 중복 검사 및 갱신 처리**
 
@@ -310,7 +312,8 @@ Step 7에서 방금 저장한 문서와 같은 자리에 인덱스 문서를 새
 - `{YYMMDD}` — 인덱스 문서를 처음 만드는 시점의 날짜. 이후 문서 내용이 갱신되어도 파일명은 **바꾸지 않는다** (일반 impl 문서처럼 최신 날짜로 rename하지 않음).
 - `{앱이름}` — 단일앱은 프로젝트명, 복수앱은 대상 애플리케이션 폴더명(예: `collector`, `portal`).
 
-구조는 예시 문서(`.docs/be-keai-collector/impl-doc/lhb9397/260629-2.collector-roadmap-impl-index.md`)를 참고해 아래 섹션을 포함한다:
+구조는 현재 프로젝트의 기존 `*-roadmap-impl-index.md`가 있으면 그 사용자 확장을
+보존해 따르고, 없으면 아래의 일반 섹션 계약으로 새로 만든다:
 - 머리말: 생성 스킬, 작성일자, 갱신일자, 작성/갱신 계정, 목적, 현재 진행 위치
 - `impl-doc 분할 구조` 표: 문서 목록(순서/문서명/상태/범위)
 - 전체 페이즈·단계 경계(있다면) 또는 기능 로드맵 개요
@@ -361,9 +364,18 @@ owner이고 억제되지 않았으며 아직 완료되지 않은 bundle에 대�
 `humanize-korean`의 `document-refinement` 프로필을 한 번 제안한다. 상위
 producer가 owner이면 초안과 검증 결과만 반환한다.
 
+최종 검증된 계획서·인덱스의 정규화 상대경로와 각 파일 SHA-256, profile 이름을
+정렬해 `artifact_bundle_fingerprint`를 계산한다. `.docs/.harness/
+humanize-handoffs.json` 원자적 ledger에 같은 fingerprint의 `proposed`, `skipped`,
+`rejected`, `applied`, `revalidated` 완료 기록이 있으면 새 session에서도
+재제안하지 않는다. 새 결정은 bundle ID, owner, 파일 hash, 시각과 함께 기록하고
+승인 반영 후에는 `applied`와 `revalidated`를 순서대로 갱신한다. ledger 자체는
+개선 대상에서 제외하며 기록할 수 없으면 현재 session 한정 상태로 보고한다.
+
 기본은 proposal-only이며 사용자 승인 전 파일 반영은 금지한다. 단계 번호, 파일
 경로, 명령어, API/요구사항 ID, 숫자, 날짜, 의무 수준 표현은 보존한다.
-제안·건너뛰기·거절 중 하나가 결정되면 `handoff_completed = true`로 기록한다.
+제안·건너뛰기·거절 중 하나가 결정되면 `handoff_completed = true`와 ledger 상태를
+함께 기록한다.
 
 승인된 변경을 반영한 경우 태스크 ID, 파일 경로, 명령어, 검증 시나리오와 Step 8
 인덱스 링크를 다시 검증한다. 재검증된 구현 계획서와 인덱스만 downstream 구현·

@@ -1,3 +1,4 @@
+<!-- ai-agent-harness:managed:start -->
 # {{PROJECT_NAME}} — AI Agent 컨텍스트
 
 > 이 파일은 `harness-setup`이 만든 공통 컨텍스트 정본의 뼈대다.
@@ -30,3 +31,4 @@
   projection을 만들거나 동기화하지 않는다.
 - 공통 규칙은 이 파일에 두고 `CLAUDE.md`에는 Claude 전용 차이만 둔다.
 - 기존 파일과 사용자 코드를 변경하기 전에 적용 범위를 확인한다.
+<!-- ai-agent-harness:managed:end -->

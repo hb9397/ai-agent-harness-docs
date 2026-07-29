@@ -7,23 +7,27 @@
   "skills": [
     {
       "skill": "custom-skill-design",
-      "file_count": 8,
+      "file_count": 9,
       "files": [
         {
+          "path": "maintainer/skills/custom-skill-design/evals/run_evals.py",
+          "sha256": "4842d62821177debcc8ccf58fc399488a30e05db325c45a25442e6b9d4a77b4b"
+        },
+        {
           "path": "maintainer/skills/custom-skill-design/prompts/checklist.md",
-          "sha256": "37be803fd3e88a3aaac8d87fe89b20315ccb07a9a38fe915e74c0bcd716f3226"
+          "sha256": "2617b67e3858a4e2d2be54cbc37d5974f143393949b4de40eacdc8ec5b446f70"
         },
         {
           "path": "maintainer/skills/custom-skill-design/prompts/description-optimizer.md",
-          "sha256": "8d9169051fe323aa3c8a09712df15bd5b9900917add593db1c9340b48792e4c7"
+          "sha256": "3351245849540ffeaa7adf972cd9e765600a74f64f0f3f253a2e0c7cf6020de8"
         },
         {
           "path": "maintainer/skills/custom-skill-design/prompts/design-principles.md",
-          "sha256": "47ae04074ffda4bd893acabbb588f5dfb34b4e9f0b1cd826e771743081df1b54"
+          "sha256": "04f115d3efecf3f5e7b9ba32da0295c8a187b2b96ab43f013433265c56d5ceba"
         },
         {
           "path": "maintainer/skills/custom-skill-design/prompts/eval-loop.md",
-          "sha256": "d708ace7a5e41056273115962b4c33d80e87c17a35b9213b44ad57f4ad228278"
+          "sha256": "f4699342bcebd6d3361ef980242f3d69cf7a900e08c28f87a9b67a89f7234310"
         },
         {
           "path": "maintainer/skills/custom-skill-design/prompts/interview.md",
@@ -31,21 +35,21 @@
         },
         {
           "path": "maintainer/skills/custom-skill-design/SKILL.md",
-          "sha256": "9605b6cfc5fec32e444db11ed8478984f4323c7ba75fa82108b99b531e5631f0"
+          "sha256": "182c4b6cc49880607e6d678e69ba58f7f03bfd296bb5252f4319fb20eebdada5"
         },
         {
           "path": "maintainer/skills/custom-skill-design/templates/skill-summary.md",
-          "sha256": "9b2d2ee22abb18354be4dae60421ecbe17dce230d6dfb7ca08a384e62d39e3dd"
+          "sha256": "656ad2949595589973b67bbbd1bda5343f1788b28037cd5994ba772bb272ca07"
         },
         {
           "path": "maintainer/skills/custom-skill-design/templates/SKILL-template.md",
-          "sha256": "983dccc9e5b1dc226e8cc1727cc9127e430ffe715a13a9e891109445d516688b"
+          "sha256": "0fb23dfdc7f795226c08f20b29cbc89b43e2c3a272e1a1862452c592431316e9"
         }
       ]
     },
     {
       "skill": "harness-plugin-maintainer",
-      "file_count": 18,
+      "file_count": 19,
       "files": [
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/.gitkeep",
@@ -80,12 +84,16 @@
           "sha256": "abc299f861074f4d53b47a80dc12c7678fe0610952e833deabb077567ba3caf9"
         },
         {
+          "path": "maintainer/skills/harness-plugin-maintainer/scripts/run_all_skill_evals.py",
+          "sha256": "aac8b4030668a2cba9c5402381db8db5a0b61cea129cc346842f839d2ffffb8a"
+        },
+        {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/run_release_regression.py",
-          "sha256": "e3a2b6b50e365bc60ece6b58f755717fdf793b65abc835487475ff8ba5a88b96"
+          "sha256": "f19271917955a638acfef33689730aa5b4ef1b3fca0b3f2affaa10f833a625d6"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/smoke_cli_install.py",
-          "sha256": "4465e4572d00ee992cb26ba2a51763ec44fb399f4be6190eb53f4bf8ff3a70a4"
+          "sha256": "c73f0a0f9d2114bc337a28514b3bd232ec75fd129008b486e49171bb51b2b6b9"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projections.py",
@@ -93,15 +101,15 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/validate_plugin.py",
-          "sha256": "85dfe3054f18b3ab84b24a4989a9bafe7012e298567ccb4d223c4c536591f743"
+          "sha256": "b09c458d6e56600337d95163e3e7073144bcb6d3eaf1894b4baed26b8fbdeb57"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/verify_install_surfaces.py",
-          "sha256": "86e0f3a7ab7dd0f0940971f1c80381c45a2802b4e971fc9b26d198f7d589deda"
+          "sha256": "84212cf1cee535ee7c875a03b668a78ebd8f6c089d4a18f8b452e9b0256cda4c"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/SKILL.md",
-          "sha256": "531716177f8ff6d87851350cc328953a8c1cdde27d7e1b177eb0b74910110dc3"
+          "sha256": "4ccc93ba680ae8757e58ba022586ea35e147088900b6f59a0c56892ba0f1c110"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/templates/.gitkeep",
@@ -113,7 +121,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/templates/claude-alias-skill.md",
-          "sha256": "566a888d3a68121157419a57bdf63647a9e7ad9a96cc9fc8feb936392591bb0d"
+          "sha256": "307832decf9e4608d349c2b7164d4a5e7c6107df3a0e25e6b1fc7fe8ea15b17e"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/templates/plugin-license.md",
@@ -163,7 +171,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/evals/run_evals.py",
-          "sha256": "a1d5b957e0bf9bdfb816e86ca413c698263e875f6de3cfa2367d6dde9d4646ed"
+          "sha256": "bb5e46193d87fb412862344fcbfa1a5e75969282af9b6fec3d15061acfeb1e6e"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/references/.gitkeep",
@@ -195,11 +203,11 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/portfolio_common.py",
-          "sha256": "f9f340a0d82b4d367ae72ce81f684147ad8fe048ea68144c1508cd64c843cc7e"
+          "sha256": "c8b77b79eb16b2c3de41c8775177e93d97bb116094a57e8a9c601413b2f49cce"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/promote_upstream.py",
-          "sha256": "68d562512e610c7623879c492da2025ee9b19c323077e7ad23fb25a8f72bcae4"
+          "sha256": "fa55408aa3a4fc0bfe0be06a77b7dd84e97baa4f11c53b8fe4e377c725b13f1b"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/rollback_upstream.py",
@@ -207,7 +215,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/stage_upstream.py",
-          "sha256": "8d1cbfb0408415f487346d4c7bb250294989171df90891105bd2998021442e1e"
+          "sha256": "c664e0b5d3e99610d2208761f903f8d2016d29bac5f3bca5d6e8b2cc941218c6"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py",
@@ -215,7 +223,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/SKILL.md",
-          "sha256": "87ac2ea087c2c5012749d813b9c44e1c58ea389ea07414d23fe63466d3ca767f"
+          "sha256": "d8b3b8b4355b4de90fb299b120d41e760527fe79bf0e627771e2b117c79f9828"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/templates/.gitkeep",

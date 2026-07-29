@@ -18,6 +18,18 @@
       "prompt": "C:\\dev\\empty-dir 아래 repo들에 gitea 계정 적용해줘",
       "expected_output": "바로 아래 1단계에서 .git repo가 0건이면 전체 재귀 스캔 없이 '프로젝트 최상위 폴더 바로 아래에 git repo가 없습니다'로 알리고 종료. 파일 생성/수정 없음.",
       "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "각 repo에 다른 include.path 설정도 이미 있어. 그건 유지하고 C:/dev/project-a/.gitconfig-scoped만 중복 없이 적용해줘.",
+      "expected_output": "전체 로컬 config와 공통 파일을 먼저 byte 스냅샷. --fixed-value --get-all로 관리 대상 값만 세어 0개면 --add, 1개면 무변경, 2개 이상이면 정확한 값만 --fixed-value --unset-all 후 1개 추가. 관련 없는 include.path의 값과 순서는 보존하고 전체 대상 검증.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "repo 5개에 계정을 적용하다가 3번째 repo가 읽기 전용이라 실패했다고 가정해. 어떻게 처리해?",
+      "expected_output": "추가 처리를 중단하고 이미 변경한 repo를 포함한 모든 대상 로컬 config를 작업 전 바이트로 복구. 기존 공통 파일은 원본 바이트로 복구하고 새로 만든 파일은 그 파일만 제거. byte 비교와 git config 구문 검증 후 복구 결과 및 실패 경로 보고. 일부 성공 상태를 남기지 않음.",
+      "files": []
     }
   ]
 }

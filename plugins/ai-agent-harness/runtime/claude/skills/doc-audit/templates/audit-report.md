@@ -4,9 +4,9 @@
 
 ---
 
-## 각 Task 결과 반환 형식
+## 각 분석 작업 결과 반환 형식
 
-각 Task(deps-audit, pattern-audit, rulecheck-audit)는 아래 항목을 포함하여 결과를 반환한다:
+각 분석 작업(deps-audit, pattern-audit, rulecheck-audit)은 아래 항목을 포함하여 결과를 반환한다:
 
 - **대상 문서 + 섹션**
 - **현재 내용** / **제안 내용**

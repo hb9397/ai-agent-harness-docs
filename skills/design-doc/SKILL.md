@@ -1,11 +1,14 @@
 ---
 name: design-doc
 description: >
-  새 기능·화면·프로젝트를 설계할 때 반드시 이 스킬을 사용한다.
+  새 기능·프로젝트의 도메인 요구사항, 범위, 아키텍처, 데이터와 인수 기준을
+  구조화된 설계/PRD로 만들 때 사용한다.
   '설계해줘', '어떻게 만들지 정리해줘', '기획 문서 작성', '요구사항 정리',
   '스펙 작성', 'PRD 만들어줘', 'RFP 분석해서 설계해줘', 'SFR 설계' 요청이 오면 이 스킬로 처리한다.
   인터뷰 또는 RFP/SFR 원문 기반으로 구조화된 설계 문서를 자동 도출한다.
-allowed-tools: Read, Glob, Bash, Write
+  create-prototype 입력용 화면 배치·컴포넌트 목업 문서만 필요하면
+  design-prototype-docs를 사용한다.
+allowed-tools: Read, Glob, Write, Agent
 ---
 
 # 설계 문서 도출 (design-doc)
@@ -49,12 +52,9 @@ OUTPUT 문서를 저장했다면 해당 파일을 그대로 다음 스킬에 넘
 
 ### Step 0 — 플랫폼·실행 방식 확인
 
-사용자에게 아래를 확인한다:
-
-> 1. 서브에이전트(병렬 처리)를 사용할 수 있는 환경인가요? (Claude Code / Codex / 기타)
-> 2. 사용할 경우 병렬 실행을 원하시나요?
-
-서브에이전트 미지원 또는 미사용 선택 시 순차 실행한다.
+현재 호스트가 독립 작업을 병렬 실행할 수 있는지는 노출된 도구로 확인한다.
+관찰 가능한 플랫폼 이름을 사용자에게 다시 묻지 않는다. 작업이 서로 독립적이고
+병렬 실행이 실질적으로 유리할 때만 선호를 확인하며, 미지원 또는 미사용 시 순차 실행한다.
 
 ---
 
@@ -160,6 +160,14 @@ handoff_completed = false
 상위 producer의 `handoff_owner`가 `design-doc`이 아니면
 `suppress_child_handoff = true`로 유지하고 초안과 Step 4 검증 결과만 반환한다.
 
+최종 검증된 Markdown의 정규화 상대경로와 각 파일 SHA-256, profile 이름을 정렬해
+`artifact_bundle_fingerprint`를 계산한다. `.docs/.harness/humanize-handoffs.json`
+원자적 ledger에 같은 fingerprint의 `proposed`, `skipped`, `rejected`, `applied`,
+`revalidated` 완료 기록이 있으면 새 session에서도 다시 제안하지 않는다. 결정 시
+bundle ID, owner, 파일 hash, 시각을 기록하고 승인 반영 뒤에는 `applied`와
+`revalidated`를 순서대로 갱신한다. ledger 파일은 개선 대상 bundle에서 제외한다.
+ledger를 기록할 수 없으면 현재 session 한정 상태로 보고한다.
+
 직접 호출에서는 Step 4에서 필수 섹션, 요구사항 추적, 내부 링크와 저장 경로를 먼저
 검증한 후 다음 조건을 모두 만족할 때 bundle 전체를 `humanize-korean`의
 `document-refinement` 프로필로 한 번만 제안한다.
@@ -170,7 +178,7 @@ handoff_completed = false
 
 기본은 proposal-only이며 승인 전에는 `DESIGN.md`를 수정하지 않는다. 요구사항 ID,
 API 경로, 파일 경로, 표 구조, 숫자, 날짜, 의무 수준 표현은 보존한다. 제안·건너뛰기·
-거절 중 하나로 결정되면 `handoff_completed = true`로 기록한다.
+거절 중 하나로 결정되면 `handoff_completed = true`와 ledger 상태를 함께 기록한다.
 
 승인된 변경을 반영한 경우 Step 4의 필수 섹션, 요구사항 추적, 내부 링크와 저장 경로
 검증을 다시 통과해야 최종 완료로 보고한다. downstream에는 이 재검증을 통과한

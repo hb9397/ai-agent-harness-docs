@@ -35,7 +35,7 @@
     },
     {
       "path": "runtime/claude/skills/code-comment/SKILL.md",
-      "sha256": "e6bdfaedb2e1dbea4e45394fdb98737ef170458763a9b7336e32af8cd43edc18"
+      "sha256": "60a134dfc29e8c3855323a94cb667c81de8d7806253631c0a9fe3bff37dd0a7f"
     },
     {
       "path": "runtime/claude/skills/code-comment/prompts/change-detection.md",
@@ -47,7 +47,7 @@
     },
     {
       "path": "runtime/claude/skills/code-comment/prompts/parallel-setup.md",
-      "sha256": "46aaf5984fd40ddb495fd3ff24f8d00324b81daf195087f183bf0a043e1439a3"
+      "sha256": "6a63e6db3ac98d4db33b1c388b2d92e58b3c589d1251252a485df96ce18c5181"
     },
     {
       "path": "runtime/claude/skills/code-comment/prompts/style-guide.md",
@@ -55,15 +55,15 @@
     },
     {
       "path": "runtime/claude/skills/commit/SKILL.md",
-      "sha256": "fccd053f1e5c5746d3a5a652a246ba2f383f88fb308717954746edf40c3c08ea"
+      "sha256": "dcc0f549e3728ba0f3c0b273a78d5f1a489cff629f78b05b622009164b81abe9"
     },
     {
       "path": "runtime/claude/skills/commit/examples/commit-messages.md",
-      "sha256": "4074d869e7604e0490f8b9657369d386c177c4797b56599c353ac356a122f350"
+      "sha256": "13181915ac9e2b916d17ac4f3d0bc9ed73fcdf057ebf1502c9e6baefff88f2b0"
     },
     {
       "path": "runtime/claude/skills/context-doc/SKILL.md",
-      "sha256": "a37ceb5c4657720fabbc5bf334472b1c61c1487cbd54590ba91a1e59dffc7d12"
+      "sha256": "e6efde256c7be42415ee53408e09fe98b6d8936c2e9d9a1a1bb133360b67555b"
     },
     {
       "path": "runtime/claude/skills/context-doc/evals/evals.json",
@@ -79,7 +79,7 @@
     },
     {
       "path": "runtime/claude/skills/context-doc/prompts/parallel-setup.md",
-      "sha256": "46aaf5984fd40ddb495fd3ff24f8d00324b81daf195087f183bf0a043e1439a3"
+      "sha256": "6a63e6db3ac98d4db33b1c388b2d92e58b3c589d1251252a485df96ce18c5181"
     },
     {
       "path": "runtime/claude/skills/context-doc/templates/AGENTS.md.template",
@@ -119,7 +119,11 @@
     },
     {
       "path": "runtime/claude/skills/create-prototype/SKILL.md",
-      "sha256": "2fc7a4eac66d120814c54592da9a63d481a60cd4dda1e974c15948b5bb645277"
+      "sha256": "4ed8833f17b70cf10d6dbc6f88102bcd7b7a54683d30aef27b9ddcd2528251ac"
+    },
+    {
+      "path": "runtime/claude/skills/create-prototype/evals/run_evals.py",
+      "sha256": "2e2967e3537b105349a740a824d671c4b60ef886d17a28fd76d12c2d9270f36f"
     },
     {
       "path": "runtime/claude/skills/create-prototype/examples/SFR-018.html",
@@ -127,7 +131,7 @@
     },
     {
       "path": "runtime/claude/skills/create-prototype/prompts/parallel-setup.md",
-      "sha256": "46aaf5984fd40ddb495fd3ff24f8d00324b81daf195087f183bf0a043e1439a3"
+      "sha256": "6a63e6db3ac98d4db33b1c388b2d92e58b3c589d1251252a485df96ce18c5181"
     },
     {
       "path": "runtime/claude/skills/create-prototype/references/color-system.md",
@@ -135,11 +139,11 @@
     },
     {
       "path": "runtime/claude/skills/create-prototype/references/html-template.md",
-      "sha256": "8f7fcebe313904d536be8fcb678889c84c35fbdb1b02f30bd81f7d4e5f588953"
+      "sha256": "2999fb6aa5baff8c354840f9efbceddbc292fdc55379527c2260a3de5cb322e5"
     },
     {
       "path": "runtime/claude/skills/design-doc/SKILL.md",
-      "sha256": "1fdb26f9a082689c37b56f6b44d13b3272406614530a6f167885d0b66628ccf0"
+      "sha256": "71ba37f66a0904b9828e6d4c3b1316031777d2fd727a3264b9aef5aa74e19adb"
     },
     {
       "path": "runtime/claude/skills/design-doc/prompts/interview.md",
@@ -171,7 +175,7 @@
     },
     {
       "path": "runtime/claude/skills/design-doc/templates/OUTPUT_V1_example.md",
-      "sha256": "11dae48ced880a8176eebba4d6fa2e2ac409489a88aac98b67104bbda657da79"
+      "sha256": "71f682776970a5ba215487c343c50ccf5cb198005f425fb3bff78a675bb67c99"
     },
     {
       "path": "runtime/claude/skills/design-doc/templates/OUTPUT_V2.md",
@@ -179,7 +183,7 @@
     },
     {
       "path": "runtime/claude/skills/design-prototype-docs/SKILL.md",
-      "sha256": "df9c9caeff7053dc029c439ea317f31746bbd2b6c4598cad3e4a6f85847a37b3"
+      "sha256": "7e619130dab29bd0ac6c940c30f447760f2ac46f3088b60a9da2d8bb9968e6c8"
     },
     {
       "path": "runtime/claude/skills/design-prototype-docs/example/mock_output.md",
@@ -187,7 +191,7 @@
     },
     {
       "path": "runtime/claude/skills/doc-audit/SKILL.md",
-      "sha256": "2acb65b80d52e8fd389fd12bf0fa1d9615804920c21c35ce716f0b68b60be704"
+      "sha256": "ec596aaa3d48976ea525ec5602415ee20befac2ea6a98ac61aac3e2254f71518"
     },
     {
       "path": "runtime/claude/skills/doc-audit/audit-report.md",
@@ -195,39 +199,43 @@
     },
     {
       "path": "runtime/claude/skills/doc-audit/prompts/deps-audit.md",
-      "sha256": "23d146d07c5f56e050d6428150fcdf2bcb761db432af54d93dae34d2e61b9ac8"
+      "sha256": "ee76fb6db874fb0112f420a06ecf39c55a6919bd493d9666d49d530a004c7d04"
     },
     {
       "path": "runtime/claude/skills/doc-audit/prompts/parallel-setup.md",
-      "sha256": "46aaf5984fd40ddb495fd3ff24f8d00324b81daf195087f183bf0a043e1439a3"
+      "sha256": "6a63e6db3ac98d4db33b1c388b2d92e58b3c589d1251252a485df96ce18c5181"
     },
     {
       "path": "runtime/claude/skills/doc-audit/prompts/pattern-audit.md",
-      "sha256": "28c213d11ce3563fe4dd196cbcd3db43cb12c253747d8b4f684811d1999c1223"
+      "sha256": "210e640004fcf39bc5845b0e5b7ad970d305f5165fffc4ea10f7aedc3c9a197c"
     },
     {
       "path": "runtime/claude/skills/doc-audit/prompts/rulecheck-audit.md",
-      "sha256": "703126d31a322cc3b1a2325a6c4763d5124152f8078a10d09386e7a5f0bff9ee"
+      "sha256": "574ecf06260037c62f87e8c7fb7b28a75716d4f22d03072295b53fe2485af26a"
     },
     {
       "path": "runtime/claude/skills/doc-audit/templates/audit-report.md",
-      "sha256": "9b76b5febdbd8b68a7f0fca9354ce7e1a5f7a5eab049599b6db6e12476f7c15c"
+      "sha256": "0b5bfac379be37ee97d1e489fa3bd165ce360922ff974126b5b9518854e83a02"
     },
     {
       "path": "runtime/claude/skills/frontend-design/SKILL.md",
-      "sha256": "31c9d935bab7de5161c4e7acd117fbfc145a32a593ac88ee9f4ba0033e510fba"
+      "sha256": "8132f82f51307563ad4867d1cc822fffbc99dd3b68fb8a95dac31d24ae5750bf"
     },
     {
       "path": "runtime/claude/skills/git-scoped-account/SKILL.md",
-      "sha256": "b947c36c8ce5870a78fee1f0b2d6af5bc7eee6a801aebe10d6b16f08e8ef6dc6"
+      "sha256": "dd77d76d8dc88501197dba76e5eef2d60f6e8bfbe479cd15f1ef6a7f823647aa"
     },
     {
       "path": "runtime/claude/skills/git-scoped-account/evals/evals.json",
-      "sha256": "f01e477f4f1637dc1bcdddc01b5cd7dea19bd3cc7efc5c01f95f4b8f533ba324"
+      "sha256": "c55f43f49929917b3237c654528a3e20a97507682d0855cad5ae5a57eac080d7"
+    },
+    {
+      "path": "runtime/claude/skills/git-scoped-account/evals/run_evals.py",
+      "sha256": "70465cd022d8d47ffe40587c34a18527b7c099aeabc26aa81b62e55bd280c51a"
     },
     {
       "path": "runtime/claude/skills/git-scoped-account/prompts/commands.md",
-      "sha256": "069d4a63d445c1134afe5d76979d6c277a8a927bae972cea7f987db9d9f63b08"
+      "sha256": "6319576166a426158c9f48d6cc5d0e47991080223346e2f57ce952121fb4f9ca"
     },
     {
       "path": "runtime/claude/skills/git-scoped-account/templates/gitconfig-shared.md",
@@ -239,11 +247,15 @@
     },
     {
       "path": "runtime/claude/skills/harness-bootstrap/SKILL.md",
-      "sha256": "0cea3a73e83fe20a176057a2c7a1cb7fdaa758dda61dd60ea31e045267986fe2"
+      "sha256": "d8f71a82c63813065d0171d6b67b060ccde4055ad5a4aba274a41f692d946caf"
     },
     {
       "path": "runtime/claude/skills/harness-bootstrap/evals/evals.json",
-      "sha256": "bcee81a0eaabbd2a5f2432b3fc0d27beddbd6411b9a4471b145f284e9fca9d61"
+      "sha256": "c1335c28105d1a10cd6186baaa204dd0b9191fb7965923b904e2da16b4df7d27"
+    },
+    {
+      "path": "runtime/claude/skills/harness-bootstrap/evals/run_evals.py",
+      "sha256": "d027a8cb71d60d90e7ff72d30c7c7a40be1dddce1bdbd7ba1b8e15bf8694a4e1"
     },
     {
       "path": "runtime/claude/skills/harness-bootstrap/prompts/code-scan.md",
@@ -263,43 +275,43 @@
     },
     {
       "path": "runtime/claude/skills/harness-setup/SKILL.md",
-      "sha256": "cf31566d3b5a5ae0fa36839d31c6f440e32da58dd22970b089562019966a2d2f"
+      "sha256": "469f3ac34ddda8f0f066a9257b0947bf6ddddb6677b1ac4824e08df9e1673aee"
     },
     {
       "path": "runtime/claude/skills/harness-setup/evals/run_evals.py",
-      "sha256": "0c5947ec1f604becaf00e95fe4016b3f652c5ea1776c2e23bf1eddf5b92010ee"
+      "sha256": "387d0558b3d29c8e349ef7c982158bd8be3d7d4e98a52f5982ef8ec81f3079cb"
     },
     {
       "path": "runtime/claude/skills/harness-setup/prompts/detection.md",
-      "sha256": "e58e070f387811eafb7bbbe5086cbcc82523554a66e4bbfd5c5cfbe254e5ae75"
+      "sha256": "5d975d52a2cce65a4a6640eeaa659459d8e56a8df2c65c2e3713d84ffadc6d77"
     },
     {
       "path": "runtime/claude/skills/harness-setup/prompts/multi-app-setup.md",
-      "sha256": "a076787cf14b65405c9abedc8dcc0f991e5922d27fad9a377c4294197147ed0a"
+      "sha256": "cc4078eb9d98296460a27e10b276375226e5677093478d5a8c2a614ad06031d7"
     },
     {
       "path": "runtime/claude/skills/harness-setup/prompts/single-app-setup.md",
-      "sha256": "9a32b0c082defee838159eb2a2d47642855a9e9c00986adf4d4cc09ef1a0218a"
+      "sha256": "de1b00066f4ef7c19ecd3ba56df448fc05e9d19fd6714e198a1624e63447bb31"
     },
     {
       "path": "runtime/claude/skills/harness-setup/prompts/update-mode.md",
-      "sha256": "138ffb565e353d339fc44407f0e7b634a569f443a2e2c88e53e7c3af336a9448"
+      "sha256": "6406221c711fc8a80efa9c9a925c305f35583b124939109bd472944680b344d8"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/claude-bridge.template",
-      "sha256": "76309569852349b1b0d6e4373040435b245dd5a5730a10f0b1bc456f542514c7"
+      "sha256": "1e5b18f93d8ddef6bf5f89dac83342e7ba28bdd9ac67148028c9591cbf20213c"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/docs-gitignore.template",
-      "sha256": "ad7c2094f7626a9af7866aa650d7172d87691f2821bccc591d00e19eda7a64b7"
+      "sha256": "fc34f358886ea50e2cdddce35fc2252663171764420422393140504940fbd6b4"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/docs-readme-multi.template",
-      "sha256": "259dac7358812e5cb8b1a7a1bd61f3d242bc6260e0e20b5c3df79c94075906d0"
+      "sha256": "88bea3e57c2795ae776b8f1278a519b1176c00925762014afc55081fbd2f7346"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/docs-readme-single.template",
-      "sha256": "25264822c0ebc54f70cd8e0f68f1a49745704bd141424f637df9725fccf2e2ba"
+      "sha256": "afa0b7124c2351d1d8baec18b13e4c82577a1f9f28586adfcba683ee8ed5998e"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/inbox-readme.template",
@@ -307,23 +319,23 @@
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/root-context-single.template",
-      "sha256": "ba9d798ac9fd37310a66506eb6397a54dc52bce4ffe3fc4cdfe6c1555c670fe1"
+      "sha256": "a0e44822d3820da0e8b49f77177e231f169db483e114d4ebcd4ac0ded4d1aca5"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/root-context.template",
-      "sha256": "75fa64b5747a2fb5d76d8288e2236c52568adce2b54c31d131d093ecbf2de1df"
+      "sha256": "4cd5e8ad8c3a7d1548a1235e4a74fa620d4ea8656e7c7dfc697f45fce8f60f24"
     },
     {
       "path": "runtime/claude/skills/humanize-korean/SKILL.md",
-      "sha256": "3633a03a640aae8b7581da26a3bfc6b240d6f2a083363d68829ae0803dc1b9c8"
+      "sha256": "5f52c6b76ce0ba0464f09f6f3ed74722c556bd41a671610a765cd3168e88971e"
     },
     {
       "path": "runtime/claude/skills/humanize-korean/evals/evals.json",
-      "sha256": "c7727713e92326bbbe3f8c3721e4f4da1b3d42790d0bafbc65b4eea1b9ecc1e6"
+      "sha256": "28fc2dd7f6c9032232a415c3ed8522b5643881ae8ebc8ea7d2f7f10a89ff0a61"
     },
     {
       "path": "runtime/claude/skills/humanize-korean/evals/run_evals.py",
-      "sha256": "65052831dcec20c8220506461cff016f84b1c3c9510150ba9e77d837c3de83d5"
+      "sha256": "7659781d2462a9273d4d1a16508fc64cb48a4cf85050114d8366a50793eeb63c"
     },
     {
       "path": "runtime/claude/skills/humanize-korean/references/document-refinement.md",
@@ -331,15 +343,15 @@
     },
     {
       "path": "runtime/claude/skills/humanize-korean/references/taxonomy.md",
-      "sha256": "7cd52bb2eaf4d794c0b21fc525ee1afabb825c76d4ebf375fde8528ce90faa68"
+      "sha256": "9fcded40f17dc3ca8f564abfd9865cb9f41330437ea2684d9ef148a9426347c5"
     },
     {
       "path": "runtime/claude/skills/humanize-korean/scripts/humanize_korean.py",
-      "sha256": "200040974128b846c3e5c77b573d26b44773cf2afcae7b81e48334360ac251ff"
+      "sha256": "078518f71e61fad627b8436277ae5a6ec9c6d177577a89228e9fe4a7fa6cf094"
     },
     {
       "path": "runtime/claude/skills/impl-doc/SKILL.md",
-      "sha256": "62ad2df39614fc010387b986c9c6dc3a5e4c8290643405a51daaec3c95743166"
+      "sha256": "a1719fcebb1a646804e4a3207946531a231c58a150009effcd9b79d59d9d816f"
     },
     {
       "path": "runtime/claude/skills/impl-doc/prompts/analysis.md",
@@ -367,7 +379,7 @@
     },
     {
       "path": "runtime/claude/skills/impl-fe-be-doc/SKILL.md",
-      "sha256": "6560729a497b2618499b2acbec168f29975efdff78ea8b400d2284033b7aabd0"
+      "sha256": "cf7aa756d684f98bbd31f2ee4eab61855a48e0eba402154633424e58560151ed"
     },
     {
       "path": "runtime/claude/skills/impl-fe-be-doc/prompts/analysis.md",
@@ -407,7 +419,7 @@
     },
     {
       "path": "runtime/claude/skills/impl-reuse-scan/SKILL.md",
-      "sha256": "bbb446bcc52da285353b9bbba1e825ac9f5ce89cc8e04a4dea320e3e12624b10"
+      "sha256": "320511ef292e19da596cf69c86ce9088361c701ca5f43df61bd8ac99b65ab683"
     },
     {
       "path": "runtime/claude/skills/impl-reuse-scan/prompts/decision-interview.md",
@@ -439,11 +451,15 @@
     },
     {
       "path": "runtime/claude/skills/impl-verify/SKILL.md",
-      "sha256": "eed32f5017777510d0c1e31323c1a66e48b42ac19cfbbb64af427b09cfc8241c"
+      "sha256": "d1cc44c3a4e85c13ff7649e23e60342c98bcb2cb421dd03970dc4d6c36a72667"
+    },
+    {
+      "path": "runtime/claude/skills/impl-verify/evals/run_evals.py",
+      "sha256": "26786f8a5aec591694a0f467a529acae52a6c2ad5a25175aceec9e1d8c1ebc56"
     },
     {
       "path": "runtime/claude/skills/impl-verify/prompts/classify-checks.md",
-      "sha256": "b01babefde854e61e94d983a21f67cb0ec5be1f45e731de4b36d716d9b876596"
+      "sha256": "edfaea6ea1b113bd0979174f63a5d01cdd675848bb5e5092dfedaa694a4ad641"
     },
     {
       "path": "runtime/claude/skills/impl-verify/prompts/extract-checks.md",
@@ -451,7 +467,7 @@
     },
     {
       "path": "runtime/claude/skills/impl-verify/prompts/run-auto.md",
-      "sha256": "0541848726848b5aa311a72833f8b3066879f5bd437b828ab13543a73ef191bc"
+      "sha256": "1742bf899ebb1fbb0486414911ce918acd3975c18e19220f428233149acb3133"
     },
     {
       "path": "runtime/claude/skills/impl-verify/prompts/run-manual.md",
@@ -463,7 +479,7 @@
     },
     {
       "path": "runtime/claude/skills/impl-verify/references/safe-execution.md",
-      "sha256": "7c637f4b14c57d5f738d6a5d61c9b3c7604403352c4b78527d1e2e9802997608"
+      "sha256": "97665b9f5b4c9f4403aadd20d2d484ab8aaecafe548467201986851c1ae83835"
     },
     {
       "path": "runtime/claude/skills/impl-verify/templates/verification-report.md",
@@ -471,7 +487,7 @@
     },
     {
       "path": "runtime/claude/skills/multi-review/SKILL.md",
-      "sha256": "6ce9f9c974b16785a81c826889ec2729f916296e533872ab8df6e2ba6f9fcbcf"
+      "sha256": "3096967625fc676ba45db48ee08138422c3e77c05743773fef0c1356c0f71202"
     },
     {
       "path": "runtime/claude/skills/multi-review/prompts/maintainability.md",
@@ -479,7 +495,7 @@
     },
     {
       "path": "runtime/claude/skills/multi-review/prompts/parallel-setup.md",
-      "sha256": "46aaf5984fd40ddb495fd3ff24f8d00324b81daf195087f183bf0a043e1439a3"
+      "sha256": "6a63e6db3ac98d4db33b1c388b2d92e58b3c589d1251252a485df96ce18c5181"
     },
     {
       "path": "runtime/claude/skills/multi-review/prompts/performance.md",
@@ -499,15 +515,23 @@
     },
     {
       "path": "runtime/claude/skills/pre-commit/SKILL.md",
-      "sha256": "fcc9a562b6794bbf8d949835203fe1ff04023e289a4de3d3e4d62fb1e864dfb4"
+      "sha256": "53fd2d74727b0722745421e334fa87a6746e21d21c02e100fab510d7ca8d7739"
+    },
+    {
+      "path": "runtime/claude/skills/pre-commit/evals/run_evals.py",
+      "sha256": "699af36de5d241d9057d5612f0ef1d92e307f3ff2ffb11cca4dfb671a1e6fee0"
     },
     {
       "path": "runtime/claude/skills/pre-commit/prompts/check-rules.md",
       "sha256": "b4519f55602d01c9c12a2ddaabe47cce2d41017f36e1f8a1b7783812c4a22132"
     },
     {
+      "path": "runtime/claude/skills/pre-commit/scripts/scan.py",
+      "sha256": "c3f4dd26994ad7d808ff1167ba41bf34655d0c3085428ef49bc3c1b6eee0c113"
+    },
+    {
       "path": "runtime/claude/skills/pre-commit/scripts/scan.sh",
-      "sha256": "403a2a31fa15176fbc657a9e93a6c814d247a541c2d0494c355f1707c46617df"
+      "sha256": "3841e5435ce969fe6c8a5cc2f4c0c8e56dffc7251366920f39e91dc41d6a20d3"
     },
     {
       "path": "runtime/claude/skills/pre-commit/template.md",
@@ -515,7 +539,7 @@
     },
     {
       "path": "runtime/codex/skills/code-comment/SKILL.md",
-      "sha256": "e6bdfaedb2e1dbea4e45394fdb98737ef170458763a9b7336e32af8cd43edc18"
+      "sha256": "60a134dfc29e8c3855323a94cb667c81de8d7806253631c0a9fe3bff37dd0a7f"
     },
     {
       "path": "runtime/codex/skills/code-comment/prompts/change-detection.md",
@@ -527,7 +551,7 @@
     },
     {
       "path": "runtime/codex/skills/code-comment/prompts/parallel-setup.md",
-      "sha256": "46aaf5984fd40ddb495fd3ff24f8d00324b81daf195087f183bf0a043e1439a3"
+      "sha256": "6a63e6db3ac98d4db33b1c388b2d92e58b3c589d1251252a485df96ce18c5181"
     },
     {
       "path": "runtime/codex/skills/code-comment/prompts/style-guide.md",
@@ -535,15 +559,15 @@
     },
     {
       "path": "runtime/codex/skills/commit/SKILL.md",
-      "sha256": "fccd053f1e5c5746d3a5a652a246ba2f383f88fb308717954746edf40c3c08ea"
+      "sha256": "dcc0f549e3728ba0f3c0b273a78d5f1a489cff629f78b05b622009164b81abe9"
     },
     {
       "path": "runtime/codex/skills/commit/examples/commit-messages.md",
-      "sha256": "4074d869e7604e0490f8b9657369d386c177c4797b56599c353ac356a122f350"
+      "sha256": "13181915ac9e2b916d17ac4f3d0bc9ed73fcdf057ebf1502c9e6baefff88f2b0"
     },
     {
       "path": "runtime/codex/skills/context-doc/SKILL.md",
-      "sha256": "a37ceb5c4657720fabbc5bf334472b1c61c1487cbd54590ba91a1e59dffc7d12"
+      "sha256": "e6efde256c7be42415ee53408e09fe98b6d8936c2e9d9a1a1bb133360b67555b"
     },
     {
       "path": "runtime/codex/skills/context-doc/evals/evals.json",
@@ -559,7 +583,7 @@
     },
     {
       "path": "runtime/codex/skills/context-doc/prompts/parallel-setup.md",
-      "sha256": "46aaf5984fd40ddb495fd3ff24f8d00324b81daf195087f183bf0a043e1439a3"
+      "sha256": "6a63e6db3ac98d4db33b1c388b2d92e58b3c589d1251252a485df96ce18c5181"
     },
     {
       "path": "runtime/codex/skills/context-doc/templates/AGENTS.md.template",
@@ -599,7 +623,11 @@
     },
     {
       "path": "runtime/codex/skills/create-prototype/SKILL.md",
-      "sha256": "2fc7a4eac66d120814c54592da9a63d481a60cd4dda1e974c15948b5bb645277"
+      "sha256": "4ed8833f17b70cf10d6dbc6f88102bcd7b7a54683d30aef27b9ddcd2528251ac"
+    },
+    {
+      "path": "runtime/codex/skills/create-prototype/evals/run_evals.py",
+      "sha256": "2e2967e3537b105349a740a824d671c4b60ef886d17a28fd76d12c2d9270f36f"
     },
     {
       "path": "runtime/codex/skills/create-prototype/examples/SFR-018.html",
@@ -607,7 +635,7 @@
     },
     {
       "path": "runtime/codex/skills/create-prototype/prompts/parallel-setup.md",
-      "sha256": "46aaf5984fd40ddb495fd3ff24f8d00324b81daf195087f183bf0a043e1439a3"
+      "sha256": "6a63e6db3ac98d4db33b1c388b2d92e58b3c589d1251252a485df96ce18c5181"
     },
     {
       "path": "runtime/codex/skills/create-prototype/references/color-system.md",
@@ -615,11 +643,11 @@
     },
     {
       "path": "runtime/codex/skills/create-prototype/references/html-template.md",
-      "sha256": "8f7fcebe313904d536be8fcb678889c84c35fbdb1b02f30bd81f7d4e5f588953"
+      "sha256": "2999fb6aa5baff8c354840f9efbceddbc292fdc55379527c2260a3de5cb322e5"
     },
     {
       "path": "runtime/codex/skills/design-doc/SKILL.md",
-      "sha256": "1fdb26f9a082689c37b56f6b44d13b3272406614530a6f167885d0b66628ccf0"
+      "sha256": "71ba37f66a0904b9828e6d4c3b1316031777d2fd727a3264b9aef5aa74e19adb"
     },
     {
       "path": "runtime/codex/skills/design-doc/prompts/interview.md",
@@ -651,7 +679,7 @@
     },
     {
       "path": "runtime/codex/skills/design-doc/templates/OUTPUT_V1_example.md",
-      "sha256": "11dae48ced880a8176eebba4d6fa2e2ac409489a88aac98b67104bbda657da79"
+      "sha256": "71f682776970a5ba215487c343c50ccf5cb198005f425fb3bff78a675bb67c99"
     },
     {
       "path": "runtime/codex/skills/design-doc/templates/OUTPUT_V2.md",
@@ -659,7 +687,7 @@
     },
     {
       "path": "runtime/codex/skills/design-prototype-docs/SKILL.md",
-      "sha256": "df9c9caeff7053dc029c439ea317f31746bbd2b6c4598cad3e4a6f85847a37b3"
+      "sha256": "7e619130dab29bd0ac6c940c30f447760f2ac46f3088b60a9da2d8bb9968e6c8"
     },
     {
       "path": "runtime/codex/skills/design-prototype-docs/example/mock_output.md",
@@ -667,7 +695,7 @@
     },
     {
       "path": "runtime/codex/skills/doc-audit/SKILL.md",
-      "sha256": "2acb65b80d52e8fd389fd12bf0fa1d9615804920c21c35ce716f0b68b60be704"
+      "sha256": "ec596aaa3d48976ea525ec5602415ee20befac2ea6a98ac61aac3e2254f71518"
     },
     {
       "path": "runtime/codex/skills/doc-audit/audit-report.md",
@@ -675,39 +703,43 @@
     },
     {
       "path": "runtime/codex/skills/doc-audit/prompts/deps-audit.md",
-      "sha256": "23d146d07c5f56e050d6428150fcdf2bcb761db432af54d93dae34d2e61b9ac8"
+      "sha256": "ee76fb6db874fb0112f420a06ecf39c55a6919bd493d9666d49d530a004c7d04"
     },
     {
       "path": "runtime/codex/skills/doc-audit/prompts/parallel-setup.md",
-      "sha256": "46aaf5984fd40ddb495fd3ff24f8d00324b81daf195087f183bf0a043e1439a3"
+      "sha256": "6a63e6db3ac98d4db33b1c388b2d92e58b3c589d1251252a485df96ce18c5181"
     },
     {
       "path": "runtime/codex/skills/doc-audit/prompts/pattern-audit.md",
-      "sha256": "28c213d11ce3563fe4dd196cbcd3db43cb12c253747d8b4f684811d1999c1223"
+      "sha256": "210e640004fcf39bc5845b0e5b7ad970d305f5165fffc4ea10f7aedc3c9a197c"
     },
     {
       "path": "runtime/codex/skills/doc-audit/prompts/rulecheck-audit.md",
-      "sha256": "703126d31a322cc3b1a2325a6c4763d5124152f8078a10d09386e7a5f0bff9ee"
+      "sha256": "574ecf06260037c62f87e8c7fb7b28a75716d4f22d03072295b53fe2485af26a"
     },
     {
       "path": "runtime/codex/skills/doc-audit/templates/audit-report.md",
-      "sha256": "9b76b5febdbd8b68a7f0fca9354ce7e1a5f7a5eab049599b6db6e12476f7c15c"
+      "sha256": "0b5bfac379be37ee97d1e489fa3bd165ce360922ff974126b5b9518854e83a02"
     },
     {
       "path": "runtime/codex/skills/frontend-design/SKILL.md",
-      "sha256": "31c9d935bab7de5161c4e7acd117fbfc145a32a593ac88ee9f4ba0033e510fba"
+      "sha256": "8132f82f51307563ad4867d1cc822fffbc99dd3b68fb8a95dac31d24ae5750bf"
     },
     {
       "path": "runtime/codex/skills/git-scoped-account/SKILL.md",
-      "sha256": "b947c36c8ce5870a78fee1f0b2d6af5bc7eee6a801aebe10d6b16f08e8ef6dc6"
+      "sha256": "dd77d76d8dc88501197dba76e5eef2d60f6e8bfbe479cd15f1ef6a7f823647aa"
     },
     {
       "path": "runtime/codex/skills/git-scoped-account/evals/evals.json",
-      "sha256": "f01e477f4f1637dc1bcdddc01b5cd7dea19bd3cc7efc5c01f95f4b8f533ba324"
+      "sha256": "c55f43f49929917b3237c654528a3e20a97507682d0855cad5ae5a57eac080d7"
+    },
+    {
+      "path": "runtime/codex/skills/git-scoped-account/evals/run_evals.py",
+      "sha256": "70465cd022d8d47ffe40587c34a18527b7c099aeabc26aa81b62e55bd280c51a"
     },
     {
       "path": "runtime/codex/skills/git-scoped-account/prompts/commands.md",
-      "sha256": "069d4a63d445c1134afe5d76979d6c277a8a927bae972cea7f987db9d9f63b08"
+      "sha256": "6319576166a426158c9f48d6cc5d0e47991080223346e2f57ce952121fb4f9ca"
     },
     {
       "path": "runtime/codex/skills/git-scoped-account/templates/gitconfig-shared.md",
@@ -719,11 +751,15 @@
     },
     {
       "path": "runtime/codex/skills/harness-bootstrap/SKILL.md",
-      "sha256": "0cea3a73e83fe20a176057a2c7a1cb7fdaa758dda61dd60ea31e045267986fe2"
+      "sha256": "d8f71a82c63813065d0171d6b67b060ccde4055ad5a4aba274a41f692d946caf"
     },
     {
       "path": "runtime/codex/skills/harness-bootstrap/evals/evals.json",
-      "sha256": "bcee81a0eaabbd2a5f2432b3fc0d27beddbd6411b9a4471b145f284e9fca9d61"
+      "sha256": "c1335c28105d1a10cd6186baaa204dd0b9191fb7965923b904e2da16b4df7d27"
+    },
+    {
+      "path": "runtime/codex/skills/harness-bootstrap/evals/run_evals.py",
+      "sha256": "d027a8cb71d60d90e7ff72d30c7c7a40be1dddce1bdbd7ba1b8e15bf8694a4e1"
     },
     {
       "path": "runtime/codex/skills/harness-bootstrap/prompts/code-scan.md",
@@ -743,43 +779,43 @@
     },
     {
       "path": "runtime/codex/skills/harness-setup/SKILL.md",
-      "sha256": "cf31566d3b5a5ae0fa36839d31c6f440e32da58dd22970b089562019966a2d2f"
+      "sha256": "469f3ac34ddda8f0f066a9257b0947bf6ddddb6677b1ac4824e08df9e1673aee"
     },
     {
       "path": "runtime/codex/skills/harness-setup/evals/run_evals.py",
-      "sha256": "0c5947ec1f604becaf00e95fe4016b3f652c5ea1776c2e23bf1eddf5b92010ee"
+      "sha256": "387d0558b3d29c8e349ef7c982158bd8be3d7d4e98a52f5982ef8ec81f3079cb"
     },
     {
       "path": "runtime/codex/skills/harness-setup/prompts/detection.md",
-      "sha256": "e58e070f387811eafb7bbbe5086cbcc82523554a66e4bbfd5c5cfbe254e5ae75"
+      "sha256": "5d975d52a2cce65a4a6640eeaa659459d8e56a8df2c65c2e3713d84ffadc6d77"
     },
     {
       "path": "runtime/codex/skills/harness-setup/prompts/multi-app-setup.md",
-      "sha256": "a076787cf14b65405c9abedc8dcc0f991e5922d27fad9a377c4294197147ed0a"
+      "sha256": "cc4078eb9d98296460a27e10b276375226e5677093478d5a8c2a614ad06031d7"
     },
     {
       "path": "runtime/codex/skills/harness-setup/prompts/single-app-setup.md",
-      "sha256": "9a32b0c082defee838159eb2a2d47642855a9e9c00986adf4d4cc09ef1a0218a"
+      "sha256": "de1b00066f4ef7c19ecd3ba56df448fc05e9d19fd6714e198a1624e63447bb31"
     },
     {
       "path": "runtime/codex/skills/harness-setup/prompts/update-mode.md",
-      "sha256": "138ffb565e353d339fc44407f0e7b634a569f443a2e2c88e53e7c3af336a9448"
+      "sha256": "6406221c711fc8a80efa9c9a925c305f35583b124939109bd472944680b344d8"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/claude-bridge.template",
-      "sha256": "76309569852349b1b0d6e4373040435b245dd5a5730a10f0b1bc456f542514c7"
+      "sha256": "1e5b18f93d8ddef6bf5f89dac83342e7ba28bdd9ac67148028c9591cbf20213c"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/docs-gitignore.template",
-      "sha256": "ad7c2094f7626a9af7866aa650d7172d87691f2821bccc591d00e19eda7a64b7"
+      "sha256": "fc34f358886ea50e2cdddce35fc2252663171764420422393140504940fbd6b4"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/docs-readme-multi.template",
-      "sha256": "259dac7358812e5cb8b1a7a1bd61f3d242bc6260e0e20b5c3df79c94075906d0"
+      "sha256": "88bea3e57c2795ae776b8f1278a519b1176c00925762014afc55081fbd2f7346"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/docs-readme-single.template",
-      "sha256": "25264822c0ebc54f70cd8e0f68f1a49745704bd141424f637df9725fccf2e2ba"
+      "sha256": "afa0b7124c2351d1d8baec18b13e4c82577a1f9f28586adfcba683ee8ed5998e"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/inbox-readme.template",
@@ -787,23 +823,23 @@
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/root-context-single.template",
-      "sha256": "ba9d798ac9fd37310a66506eb6397a54dc52bce4ffe3fc4cdfe6c1555c670fe1"
+      "sha256": "a0e44822d3820da0e8b49f77177e231f169db483e114d4ebcd4ac0ded4d1aca5"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/root-context.template",
-      "sha256": "75fa64b5747a2fb5d76d8288e2236c52568adce2b54c31d131d093ecbf2de1df"
+      "sha256": "4cd5e8ad8c3a7d1548a1235e4a74fa620d4ea8656e7c7dfc697f45fce8f60f24"
     },
     {
       "path": "runtime/codex/skills/humanize-korean/SKILL.md",
-      "sha256": "3633a03a640aae8b7581da26a3bfc6b240d6f2a083363d68829ae0803dc1b9c8"
+      "sha256": "5f52c6b76ce0ba0464f09f6f3ed74722c556bd41a671610a765cd3168e88971e"
     },
     {
       "path": "runtime/codex/skills/humanize-korean/evals/evals.json",
-      "sha256": "c7727713e92326bbbe3f8c3721e4f4da1b3d42790d0bafbc65b4eea1b9ecc1e6"
+      "sha256": "28fc2dd7f6c9032232a415c3ed8522b5643881ae8ebc8ea7d2f7f10a89ff0a61"
     },
     {
       "path": "runtime/codex/skills/humanize-korean/evals/run_evals.py",
-      "sha256": "65052831dcec20c8220506461cff016f84b1c3c9510150ba9e77d837c3de83d5"
+      "sha256": "7659781d2462a9273d4d1a16508fc64cb48a4cf85050114d8366a50793eeb63c"
     },
     {
       "path": "runtime/codex/skills/humanize-korean/references/document-refinement.md",
@@ -811,15 +847,15 @@
     },
     {
       "path": "runtime/codex/skills/humanize-korean/references/taxonomy.md",
-      "sha256": "7cd52bb2eaf4d794c0b21fc525ee1afabb825c76d4ebf375fde8528ce90faa68"
+      "sha256": "9fcded40f17dc3ca8f564abfd9865cb9f41330437ea2684d9ef148a9426347c5"
     },
     {
       "path": "runtime/codex/skills/humanize-korean/scripts/humanize_korean.py",
-      "sha256": "200040974128b846c3e5c77b573d26b44773cf2afcae7b81e48334360ac251ff"
+      "sha256": "078518f71e61fad627b8436277ae5a6ec9c6d177577a89228e9fe4a7fa6cf094"
     },
     {
       "path": "runtime/codex/skills/impl-doc/SKILL.md",
-      "sha256": "62ad2df39614fc010387b986c9c6dc3a5e4c8290643405a51daaec3c95743166"
+      "sha256": "a1719fcebb1a646804e4a3207946531a231c58a150009effcd9b79d59d9d816f"
     },
     {
       "path": "runtime/codex/skills/impl-doc/prompts/analysis.md",
@@ -847,7 +883,7 @@
     },
     {
       "path": "runtime/codex/skills/impl-fe-be-doc/SKILL.md",
-      "sha256": "6560729a497b2618499b2acbec168f29975efdff78ea8b400d2284033b7aabd0"
+      "sha256": "cf7aa756d684f98bbd31f2ee4eab61855a48e0eba402154633424e58560151ed"
     },
     {
       "path": "runtime/codex/skills/impl-fe-be-doc/prompts/analysis.md",
@@ -887,7 +923,7 @@
     },
     {
       "path": "runtime/codex/skills/impl-reuse-scan/SKILL.md",
-      "sha256": "bbb446bcc52da285353b9bbba1e825ac9f5ce89cc8e04a4dea320e3e12624b10"
+      "sha256": "320511ef292e19da596cf69c86ce9088361c701ca5f43df61bd8ac99b65ab683"
     },
     {
       "path": "runtime/codex/skills/impl-reuse-scan/prompts/decision-interview.md",
@@ -919,11 +955,15 @@
     },
     {
       "path": "runtime/codex/skills/impl-verify/SKILL.md",
-      "sha256": "eed32f5017777510d0c1e31323c1a66e48b42ac19cfbbb64af427b09cfc8241c"
+      "sha256": "d1cc44c3a4e85c13ff7649e23e60342c98bcb2cb421dd03970dc4d6c36a72667"
+    },
+    {
+      "path": "runtime/codex/skills/impl-verify/evals/run_evals.py",
+      "sha256": "26786f8a5aec591694a0f467a529acae52a6c2ad5a25175aceec9e1d8c1ebc56"
     },
     {
       "path": "runtime/codex/skills/impl-verify/prompts/classify-checks.md",
-      "sha256": "b01babefde854e61e94d983a21f67cb0ec5be1f45e731de4b36d716d9b876596"
+      "sha256": "edfaea6ea1b113bd0979174f63a5d01cdd675848bb5e5092dfedaa694a4ad641"
     },
     {
       "path": "runtime/codex/skills/impl-verify/prompts/extract-checks.md",
@@ -931,7 +971,7 @@
     },
     {
       "path": "runtime/codex/skills/impl-verify/prompts/run-auto.md",
-      "sha256": "0541848726848b5aa311a72833f8b3066879f5bd437b828ab13543a73ef191bc"
+      "sha256": "1742bf899ebb1fbb0486414911ce918acd3975c18e19220f428233149acb3133"
     },
     {
       "path": "runtime/codex/skills/impl-verify/prompts/run-manual.md",
@@ -943,7 +983,7 @@
     },
     {
       "path": "runtime/codex/skills/impl-verify/references/safe-execution.md",
-      "sha256": "7c637f4b14c57d5f738d6a5d61c9b3c7604403352c4b78527d1e2e9802997608"
+      "sha256": "97665b9f5b4c9f4403aadd20d2d484ab8aaecafe548467201986851c1ae83835"
     },
     {
       "path": "runtime/codex/skills/impl-verify/templates/verification-report.md",
@@ -951,7 +991,7 @@
     },
     {
       "path": "runtime/codex/skills/multi-review/SKILL.md",
-      "sha256": "6ce9f9c974b16785a81c826889ec2729f916296e533872ab8df6e2ba6f9fcbcf"
+      "sha256": "3096967625fc676ba45db48ee08138422c3e77c05743773fef0c1356c0f71202"
     },
     {
       "path": "runtime/codex/skills/multi-review/prompts/maintainability.md",
@@ -959,7 +999,7 @@
     },
     {
       "path": "runtime/codex/skills/multi-review/prompts/parallel-setup.md",
-      "sha256": "46aaf5984fd40ddb495fd3ff24f8d00324b81daf195087f183bf0a043e1439a3"
+      "sha256": "6a63e6db3ac98d4db33b1c388b2d92e58b3c589d1251252a485df96ce18c5181"
     },
     {
       "path": "runtime/codex/skills/multi-review/prompts/performance.md",
@@ -979,15 +1019,23 @@
     },
     {
       "path": "runtime/codex/skills/pre-commit/SKILL.md",
-      "sha256": "fcc9a562b6794bbf8d949835203fe1ff04023e289a4de3d3e4d62fb1e864dfb4"
+      "sha256": "53fd2d74727b0722745421e334fa87a6746e21d21c02e100fab510d7ca8d7739"
+    },
+    {
+      "path": "runtime/codex/skills/pre-commit/evals/run_evals.py",
+      "sha256": "699af36de5d241d9057d5612f0ef1d92e307f3ff2ffb11cca4dfb671a1e6fee0"
     },
     {
       "path": "runtime/codex/skills/pre-commit/prompts/check-rules.md",
       "sha256": "b4519f55602d01c9c12a2ddaabe47cce2d41017f36e1f8a1b7783812c4a22132"
     },
     {
+      "path": "runtime/codex/skills/pre-commit/scripts/scan.py",
+      "sha256": "c3f4dd26994ad7d808ff1167ba41bf34655d0c3085428ef49bc3c1b6eee0c113"
+    },
+    {
       "path": "runtime/codex/skills/pre-commit/scripts/scan.sh",
-      "sha256": "403a2a31fa15176fbc657a9e93a6c814d247a541c2d0494c355f1707c46617df"
+      "sha256": "3841e5435ce969fe6c8a5cc2f4c0c8e56dffc7251366920f39e91dc41d6a20d3"
     },
     {
       "path": "runtime/codex/skills/pre-commit/template.md",

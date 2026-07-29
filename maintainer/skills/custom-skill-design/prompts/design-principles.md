@@ -51,8 +51,8 @@ downstream-skill 입력으로 사용 가능
 ---
 name: skill-name                          # kebab-case
 description: "트리거 상황 명시 — 언제, 어떤 키워드에 호출되는지"
-allowed-tools: Read, Write, Glob, Grep, Bash   # 실제 사용하는 것만
-disable-model-invocation: true            # 재귀 호출 방지 필요 시에만
+allowed-tools: Read, Write, Glob, Grep     # 실제 사용하는 안전한 공통 도구만
+disable-model-invocation: true            # 외부 상태 변경·명령 실행·재귀 위험으로 명시 호출만 허용할 때
 ---
 ```
 
@@ -60,12 +60,20 @@ disable-model-invocation: true            # 재귀 호출 방지 필요 시에�
 
 - **`model:` 필드 금지** — 모델 선택은 사용자·환경에 위임한다. frontmatter에 하드코딩하지 않는다.
 - **`agent: fork` 하드코딩 금지** — 서브에이전트/병렬 사용 여부는 STEP 0에서 사용자에게 질문하는 게이트로 처리한다. frontmatter로 강제하지 않는다.
+- **제한 없는 `Bash` 사전 승인 금지** — shell이 필요해도 `allowed-tools`에
+  무제한 `Bash`를 넣지 않는다. 실행은 플랫폼의 일반 permission mode로 넘기고
+  Windows·POSIX 절차 또는 수동 fallback을 함께 쓴다.
+- **부작용 스킬 자동 호출 금지** — 커밋, Git 설정, 작업지침 명령 실행처럼 외부
+  상태를 바꾸거나 임의 명령을 실행하는 스킬은 `disable-model-invocation: true`와
+  플랫폼별 직접 호출 예시를 함께 둔다.
 
 ### 플랫폼 중립 원칙 (C-3)
 
-- frontmatter는 **Claude frontmatter 형식**을 유지한다 (name, description, allowed-tools).
+- frontmatter는 Codex가 무시해도 안전하고 Claude Code가 해석할 수 있는 공통 최소
+  필드(`name`, `description`, `allowed-tools`)를 사용한다.
 - 본문은 **Codex 등 타 플랫폼에서도 해석 가능한 중립 서술**로 작성한다.
-- Claude 전용 기능(sub-agent Task, present_files 등)은 STEP 0에서 "사용 여부 질문 게이트"로 분기한다.
+- 플랫폼 전용 기능(sub-agent/Agent, 앱 전용 UI 등)은 STEP 0에서 지원 여부를 감지하고
+  미지원 환경의 순차 fallback을 제공한다.
 
 ### description 작성 기준
 
@@ -137,21 +145,14 @@ SKILL.md 상단에 분기표를 둔다:
 한 번에 최대 3개 초과 금지
 ```
 
-### Bash 명령 작성 규칙 (Bash 사용 스킬)
+### 외부 명령 작성 규칙 (외부 명령 사용 스킬)
 
-```bash
-# 감지 먼저, 실행은 조건부로
-ls target-file-a target-file-b 2>/dev/null
-# → 감지된 것만 실행
-
-# 대용량 파일은 범위 제한 필수
-cat package.json | grep -E '"dependencies"' -A 30
-git diff --stat HEAD~3..HEAD   # stat 먼저
-
-# 변경 없으면 즉시 종료 (fallback 스캔 금지)
-CHANGED=$(git diff --name-only HEAD 2>/dev/null)
-[ -z "$CHANGED" ] && echo "변경 없음 — 종료" && exit 0
-```
+- 먼저 `Glob`·`Read` 등 공통 도구로 대상 존재 여부와 범위를 확인한다.
+- 외부 명령은 감지된 대상에만 실행하고 종료 코드와 stderr를 판정한다.
+- 대용량 출력은 파일·줄·결과 수를 제한하고, 변경이 없으면 즉시 종료한다.
+- 플랫폼 중립 스크립트를 우선하며 Windows와 POSIX 호출 예 또는 수동 fallback을
+  함께 둔다.
+- `allowed-tools`에서 제한 없는 shell을 사전 승인하지 않는다.
 
 ### 병렬 처리 규칙 (해당 스킬만)
 
@@ -187,21 +188,21 @@ CHANGED=$(git diff --name-only HEAD 2>/dev/null)
 부적합: 선행 결과 필요, 동일 파일 동시 수정, 2개 이하 관점
 ```
 
-### 병렬 Task 수 기준
+### 병렬 sub-agent 수 기준
 
 ```
 2개 이하 → 순차 실행
-3~6개    → 병렬 Task
+3~6개    → 병렬 sub-agent
 7개 이상 → 재설계 (관점 과다)
 ```
 
 ### SKILL.md 내 병렬 구조 표기법
 
 ```markdown
-아래 N개 관점을 Task로 병렬 실행한다.
+아래 N개 관점을 독립 sub-agent로 병렬 실행한다.
 sub-agent 미지원 환경이면 순차로 직접 수행한다.
 
-├── Task A: [관점명] → `prompts/a.md` 참조
-├── Task B: [관점명] → `prompts/b.md` 참조
-└── Task C: [관점명] → `prompts/c.md` 참조
+├── 작업 A: [관점명] → `prompts/a.md` 참조
+├── 작업 B: [관점명] → `prompts/b.md` 참조
+└── 작업 C: [관점명] → `prompts/c.md` 참조
 ```

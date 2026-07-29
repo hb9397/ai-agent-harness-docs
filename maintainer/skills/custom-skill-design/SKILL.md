@@ -1,7 +1,7 @@
 ---
 name: custom-skill-design
-description: "사용자 인터뷰를 통해 AI Agent Skill을 설계·생성·테스트·고도화한다. '스킬 만들어줘', '스킬 설계', '스킬 개선', 'SKILL.md 작성', '워크플로우를 스킬로', '스킬 테스트', '스킬 트리거 최적화' 같은 표현이 나오면 반드시 이 스킬을 사용한다. 새 스킬 설계부터 기존 워크플로우 전환, eval 루프를 통한 품질 검증, description 트리거 최적화까지 스킬 생애주기 전체를 담당한다."
-allowed-tools: Read, Write, Glob, Grep, Bash
+description: "관리자가 사용자용 또는 관리자용 AI Agent Skill을 설계·생성·테스트·고도화할 때 사용한다. '스킬 만들어줘', '스킬 설계', '스킬 개선', 'SKILL.md 작성', '워크플로우를 스킬로', '스킬 테스트', '스킬 트리거 최적화' 요청을 사용자/관리자 정본 경계와 Codex·Claude 실행 표면에 맞게 처리한다."
+allowed-tools: Read, Write, Glob, Grep
 ---
 
 ## 스킬 연계
@@ -40,7 +40,7 @@ IDE / Claude Code 에서 즉시 사용 가능한 완성 스킬
 | "스킬 새로 만들어줘" / 아이디어만 | Step 1-A → 2 → 3 → 4 → 5 → 6 |
 | 기존 워크플로우 → 스킬 전환 | Step 1-B → 2 → 3 → 4 → 5 → 6 |
 | 기존 SKILL.md 고도화 | Step 1-C → 4 → 5 → 6 |
-| 구조 점검만 | Step 4 (체크리스트만) |
+| 구조 점검만 | Step 4 (보고만, 파일 수정 없음) |
 | eval / 테스트만 실행 | Step 5 |
 | description 트리거 최적화만 | Step 6 |
 
@@ -62,10 +62,10 @@ IDE / Claude Code 에서 즉시 사용 가능한 완성 스킬
 > "위 내용을 기반으로 스킬을 설계할까요? 빠진 게 있으면 알려주세요."
 
 **1-C. 기존 스킬 고도화**
-```bash
-cat [경로]/SKILL.md | head -100
-ls [경로]/prompts/ [경로]/templates/ 2>/dev/null
-```
+`Read`로 `[경로]/SKILL.md`의 frontmatter와 워크플로를 확인하고, `Glob`으로
+`[경로]/prompts/**`, `[경로]/templates/**`, `[경로]/references/**`,
+`[경로]/scripts/**`, `[경로]/evals/**`의 실제 파일 목록을 확인한다. 플랫폼 전용
+shell 구문으로 존재 여부를 추측하지 않는다.
 → 구조 파악 후 Step 4(검증)으로 이동.
 
 ---
@@ -113,10 +113,17 @@ ls [경로]/prompts/ [경로]/templates/ 2>/dev/null
 
 ### 3-2. 저장 경로 결정
 
-```bash
-TARGET_DIR="./{skill-name}"
-mkdir -p "$TARGET_DIR/prompts" "$TARGET_DIR/templates" "$TARGET_DIR/evals"
-```
+파일을 만들기 전에 먼저 배포 대상을 분류한다.
+
+| 대상 | 관리 저장소 안의 정본 |
+|------|----------------------|
+| 사용자 플러그인에 배포할 스킬 | `skills/{skill-name}/` |
+| 관리자만 이 저장소에서 사용할 스킬 | `maintainer/skills/{skill-name}/` |
+
+- 관리 저장소 밖에서 작업하는 경우에는 사용자가 명시한 현재 프로젝트 경로만 사용한다.
+- `./{skill-name}` 같은 저장소 루트 임시 정본은 만들지 않는다.
+- 사용자용인지 관리자용인지 불명확하면 파일 생성 전에 한 번 확인한다.
+- 정본 분류와 대상 경로를 Step 2 설계 요약에 포함하고 승인받는다.
 
 ### 3-3. 테스트 케이스 초안 (Step 2에서 Yes면 바로 작성)
 
@@ -152,7 +159,10 @@ mkdir -p "$TARGET_DIR/prompts" "$TARGET_DIR/templates" "$TARGET_DIR/evals"
   - [항목]: [이유] → [권장 수정 방향]
 ```
 
-보완 필요 항목은 자동 수정 후 재점검. 전체 통과 후 Step 5로 이동.
+- `구조 점검만` 진입이면 보완 필요 항목과 근거만 보고하고 파일을 수정하지 않는다.
+- 생성·개선 요청이면 사용자가 승인한 범위 안에서만 보완하고 재점검한다.
+- 보호 자산의 삭제·이동·교체는 이 단계에서 자동 수행하지 않는다.
+- 전체 통과 후 Step 5로 이동한다.
 
 ---
 
@@ -180,7 +190,8 @@ assertions 초안 작성 (실행 중 병행)
 
 | 환경 | 방식 |
 |------|------|
-| Claude Code (sub-agent 가능) | with-skill / baseline 병렬 실행, eval 뷰어 |
+| Codex CLI/App | 별도 task에서 with-skill / baseline 실행, 파일·트리거 결과 기록 |
+| Claude Code/Desktop Code | with-skill / baseline 실행, 지원 시 sub-agent 병렬화 |
 | Claude.ai | 순차 실행, 결과를 대화창에 직접 출력 |
 | Cowork | `eval-loop.md`의 [Cowork] 섹션 참조 |
 
@@ -201,15 +212,20 @@ assertions 초안 작성 (실행 중 병행)
 
 1. should-trigger / should-not-trigger 쿼리 20개 생성
 2. 사용자 검토 및 수정
-3. 최적화 루프 실행 (Claude Code 환경만 자동화 가능)
+3. Codex·Claude에서 격리된 trigger matrix 실행
 4. 최적 description을 SKILL.md frontmatter에 적용
 
 ### 환경별 가용성
 
 | 환경 | 가용 여부 |
 |------|----------|
-| Claude Code | 자동 최적화 스크립트 사용 가능 |
+| Codex CLI/App | 수동 trigger matrix 또는 관리자가 별도로 제공한 runner |
+| Claude Code/Desktop Code | 수동 trigger matrix 또는 관리자가 별도로 제공한 runner |
 | Claude.ai | 수동으로 description 개선 제안만 |
+
+이 스킬 번들에는 description 자동 최적화 runner가 포함되어 있지 않다. 존재하지 않는
+`scripts.run_loop`를 호출하지 않으며, runner를 별도로 도입하려면 출처·권한·eval을
+검증한 뒤 보호 자산 승인 절차를 거친다.
 
 ---
 
@@ -224,12 +240,10 @@ assertions 초안 작성 (실행 중 병행)
 - 나중에 / 취소 시: 현재 위치에만 저장하고 안내한다.
 - 원본 하네스 관리 레포 경로를 모르면 사용자에게 묻는다.
 
-현재 위치가 원본 하네스 관리 레포 내부이면 `maintainer/skills/{skill-name}/`가 정본인지 확인하고, 필요한 경우 관리자 projection 생성기를 실행한다.
-
-```bash
-python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projections.py
-python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projections.py --check
-```
+현재 위치가 원본 하네스 관리 레포 내부이면
+`maintainer/skills/{skill-name}/`가 정본인지 확인한다. projection 갱신이 필요하면
+`harness-plugin-maintainer`를 명시 호출해 **관리자 projection 동기화와 check만**
+요청한다. 다른 관리자 스킬의 내부 스크립트 경로를 직접 호출하지 않는다.
 
 ---
 
@@ -249,7 +263,7 @@ python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projecti
 
 배포 방법:
   1. 관리자용 스킬이면 원본 하네스 관리 레포의 maintainer/skills/{skill-name}/ 에 저장한 뒤
-     sync_manager_projections.py로 .agents/.claude repo-local projection을 갱신
+     harness-plugin-maintainer를 명시 호출해 .agents/.claude repo-local projection을 갱신·검증
   2. 사용자용 스킬이면 사용자 플러그인 원본 skills/{skill-name}/ 에 저장한 뒤
      harness-plugin-maintainer의 플러그인 생성 흐름으로 배포
 
@@ -273,3 +287,9 @@ python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projecti
 경계에 맞게 크게 재구성한 수정 파생물이다. 원본은 Apache License 2.0으로 배포된다.
 적용한 커밋과 파일 대응표는
 `maintainer/upstreams/provenance/anthropic-skills/`에서 관리한다.
+
+## 검증
+
+```bash
+python maintainer/skills/custom-skill-design/evals/run_evals.py
+```

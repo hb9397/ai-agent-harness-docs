@@ -54,7 +54,11 @@
       "artifact_bundle_id": "required and stable across nested producer calls",
       "handoff_owner": "outermost producer",
       "suppress_child_handoff": true,
-      "handoff_completed": "set after propose, skip, or reject so the same bundle is never offered twice"
+      "handoff_completed": "in-session state set after propose, skip, reject, apply, or revalidate",
+      "artifact_bundle_fingerprint": "SHA-256 over the sorted normalized Markdown paths, each content SHA-256, and the profile name",
+      "persistent_ledger": ".docs/.harness/humanize-handoffs.json; atomically keyed by artifact_bundle_fingerprint so retries and new sessions do not offer unchanged content twice",
+      "ledger_states": ["proposed", "skipped", "rejected", "applied", "revalidated"],
+      "ledger_excluded_from_bundle": true
     },
     "required_order": [
       "producer structural validation",

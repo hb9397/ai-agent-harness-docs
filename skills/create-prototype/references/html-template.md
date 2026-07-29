@@ -50,8 +50,7 @@ script/{PREFIX}-001-common.js      ← 공통 JS (선택, 공유 함수가 있�
 <!-- 화면별 JS (항상 포함) -->
 <script src="../script/{PREFIX}-001-{slug}.js"></script>
 
-<!-- <style> 블록 사용 금지 — 모든 CSS는 위 CSS 파일에 클래스로 정의 -->
-<!-- 인라인 style="" 원칙적 금지 — JS 동적 주입 등 불가피한 경우만 허용 -->
+<!-- <style> 블록과 인라인 style/on* 속성 금지 — 모든 CSS와 이벤트는 외부 파일에 정의 -->
 </head>
 ```
 
@@ -340,13 +339,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function renderData(data) {
   const container = document.getElementById('card-container');
-  container.innerHTML = data.cards.map(card => `
-    <div class="list-card" onclick="alert('${card.title}')">
-      <div style="font-size:28px;">${card.icon}</div>
-      <h3>${card.title}</h3>
-      <p>${card.desc}</p>
-    </div>
-  `).join('');
+  const fragment = document.createDocumentFragment();
+
+  for (const card of Array.isArray(data.cards) ? data.cards : []) {
+    const item = document.createElement('button');
+    item.type = 'button';
+    item.className = 'list-card';
+
+    const icon = document.createElement('span');
+    icon.className = 'list-card__icon';
+    icon.textContent = String(card.icon ?? '');
+
+    const title = document.createElement('h3');
+    title.textContent = String(card.title ?? '');
+
+    const description = document.createElement('p');
+    description.textContent = String(card.desc ?? '');
+
+    item.append(icon, title, description);
+    item.addEventListener('click', () => alert(String(card.title ?? '')));
+    fragment.append(item);
+  }
+
+  container.replaceChildren(fragment);
 }
 
 // 화면 전용 이벤트 핸들러 (필요 시)
@@ -356,7 +371,9 @@ function closeModal(id) {
   else document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
 }
 function togglePanel(name) {
-  document.querySelector('[data-panel="' + name + '"]').classList.toggle('active');
+  const panel = [...document.querySelectorAll('[data-panel]')]
+    .find((candidate) => candidate.dataset.panel === name);
+  if (panel) panel.classList.toggle('active');
 }
 ```
 
@@ -382,12 +399,32 @@ function getStatusClass(status) {
 }
 ```
 
+### DOM·데이터 안전 규칙
+
+- 임베드 JSON과 사용자 입력은 신뢰하지 않는다.
+- JSON을 HTML에 넣기 전 직렬화 결과의 `<`를 `\u003c`로 이스케이프해 `</script>` 종료를 막는다.
+- 동적 텍스트는 `textContent`, 노드는 `createElement`/`replaceChildren`, 이벤트는 `addEventListener`로만 연결한다.
+- `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`, 인라인 `on*` 이벤트 속성은 사용하지 않는다.
+- URL, 클래스명, DOM id처럼 구조에 영향을 주는 값은 미리 정한 allowlist와 형식 검사를 통과한 값만 사용한다.
+- 동적 스타일은 검증된 클래스 전환을 우선한다. 꼭 필요한 수치만 범위 검증 후 사전 정의한 CSS custom property에 `style.setProperty`로 넣는다.
+
 ---
 
 ## 화면 유형별 body 구조
 
 HTML `<body>` 안에는 콘텐츠 마크업과 `<script type="application/json">` 태그만 존재한다.
 `<script src>` 및 로직 `<script>` 태그는 모두 `<head>`에 선언되어 있으므로 `<body>` 안에 쓰지 않는다.
+
+아래 예시에서 사용하는 레이아웃 클래스는 화면별 CSS 파일에 정의한다.
+
+```css
+.screen--with-nav { height: calc(100vh - 36px); overflow: auto; }
+.screen--viewport { height: 100vh; }
+.page-body { background: var(--bg); }
+.page-content { max-width: 1200px; margin: 0 auto; padding: 30px 40px; }
+.page-title { margin-bottom: 20px; font-size: 20px; font-weight: 700; }
+.list-card__icon { font-size: 28px; }
+```
 
 ### 유형 A: 다중 화면 (링크 이동)
 
@@ -401,7 +438,7 @@ HTML `<body>` 안에는 콘텐츠 마크업과 `<script type="application/json">
     <a class="tab-btn" href="{PREFIX}-001-detail.html">상세</a>
   </nav>
 
-  <div class="screen" style="height:calc(100vh - 36px); overflow:auto;">
+  <div class="screen screen--with-nav">
     <div id="card-container"><!-- script/{PREFIX}-001-entry.js 가 renderData()로 채움 --></div>
   </div>
 
@@ -420,7 +457,7 @@ HTML `<body>` 안에는 콘텐츠 마크업과 `<script type="application/json">
 
 ```html
 <body>
-  <div class="screen" style="height:100vh;">
+  <div class="screen screen--viewport">
     <div class="screen-label">
       <span class="badge">{PREFIX}-001</span> {화면 설명}
     </div>
@@ -441,9 +478,9 @@ HTML `<body>` 안에는 콘텐츠 마크업과 `<script type="application/json">
 ### 유형 C: 단일 화면 (목록/대시보드)
 
 ```html
-<body style="background: var(--bg);">
-  <div style="padding: 30px 40px; max-width: 1200px; margin: 0 auto;">
-    <h1 style="font-size:20px; font-weight:700; margin-bottom:20px;">{화면명}</h1>
+<body class="page-body">
+  <div class="page-content">
+    <h1 class="page-title">{화면명}</h1>
     <div id="data-container"><!-- renderData()가 채움 --></div>
   </div>
 
@@ -470,21 +507,23 @@ CSS는 화면별 CSS 파일에, JS 함수는 화면별 JS 파일에 작성한다
 .modal-overlay.active { display: flex; }
 .modal-box { background: var(--surface); width: 600px; max-width: 90%; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
 .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg); }
+.modal-title { font-size: 16px; font-weight: 700; }
+.modal-close { border: 0; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 20px; }
 .modal-body { padding: 24px 20px; overflow-y: auto; }
 .modal-footer { padding: 16px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; background: var(--bg); }
 ```
 
 ```html
 <!-- display/{PREFIX}-001-{slug}.html body 안 -->
-<div id="myModal" class="modal-overlay" onclick="if(event.target===this)closeModal()">
+<div id="myModal" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-header">
-      <h3 style="font-size:16px; font-weight:700;">제목</h3>
-      <button onclick="closeModal()" style="background:transparent; border:none; font-size:20px; cursor:pointer; color:var(--text-muted);">&times;</button>
+      <h3 class="modal-title">제목</h3>
+      <button type="button" class="modal-close" data-modal-close="myModal" aria-label="닫기">&times;</button>
     </div>
     <div class="modal-body">내용</div>
     <div class="modal-footer">
-      <button class="btn btn-primary" onclick="closeModal()">확인</button>
+      <button type="button" class="btn btn-primary" data-modal-close="myModal">확인</button>
     </div>
   </div>
 </div>
@@ -497,6 +536,17 @@ function closeModal(id) {
   if (id) document.getElementById(id).classList.remove('active');
   else document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('[data-modal-close]').forEach(button => {
+    button.addEventListener('click', () => closeModal(button.dataset.modalClose));
+  });
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', event => {
+      if (event.target === overlay) closeModal(overlay.id);
+    });
+  });
+});
 ```
 
 ---

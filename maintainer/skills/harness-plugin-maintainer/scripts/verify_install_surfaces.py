@@ -26,6 +26,7 @@ SURFACES = [
     "claude-desktop-code",
 ]
 CLI_SMOKE_REL = Path("maintainer/plugin/cli-smoke.json")
+MANUAL_SURFACE_TEMPLATE_REL = Path("maintainer/plugin/manual-surface-test-template.md")
 
 DEFAULT_GENERATED_AT = "2026-07-29T00:00:00+00:00"
 
@@ -185,14 +186,20 @@ def load_cli_smoke(root: Path) -> dict:
     required = {"codex", "claude"}
     passed = (
         evidence.get("status") == "passed"
+        and evidence.get("evidence_level") == "marketplace-install-and-cache-smoke"
+        and evidence.get("model_invocation_verified") is False
         and required.issubset(platforms)
-        and all(platforms[name].get("status") == "passed" for name in required)
+        and all(
+            platforms[name].get("status") == "passed"
+            and platforms[name].get("model_invocation_verified") is False
+            for name in required
+        )
     )
     return {
         **evidence,
         "status": "passed" if passed else "failed",
         "summary": (
-            "isolated marketplace add/install/list/uninstall/remove passed"
+            "isolated marketplace add/install/list/uninstall/remove and cache inspection passed; model invocation not tested"
             if passed
             else "CLI smoke evidence is incomplete or failed"
         ),
@@ -200,28 +207,30 @@ def load_cli_smoke(root: Path) -> dict:
 
 
 def write_release_checklist(root: Path, evidence: dict) -> None:
-    cli_verified = all(
-        evidence["surfaces"][surface]["status"] == "verified"
+    cli_smoke_verified = all(
+        evidence["surfaces"][surface]["status"] == "install-smoke-verified"
         for surface in ("codex-cli", "claude-code-cli")
     )
-    if cli_verified:
+    if cli_smoke_verified:
         gate_reason = (
-            "isolated Codex and Claude Code CLI installation smokes passed. Codex "
-            "Desktop/App and Claude Desktop Code installation, restart, and new-session "
-            "discovery still require interactive manual evidence."
+            "isolated Codex and Claude Code CLI installation smokes passed, but an "
+            "installation/cache smoke is not a model invocation. Codex and Claude CLI/App "
+            "all still require direct invocation, output, restart, and new-session "
+            "manual evidence."
         )
         completed_cli = (
-            "- Codex CLI: marketplace add/list/remove, plugin add/list/remove, installed "
-            "cache 18 skills / 0 agents, `harness-setup` and `humanize-korean`.\n"
-            "- Claude Code CLI: strict plugin/marketplace validation, marketplace "
+            "- Codex CLI install smoke: marketplace add/list/remove, plugin add/list/remove, installed "
+            "cache 18 skills / 0 agents, including `harness-setup` and `humanize-korean` "
+            "skill directories (not model invocation).\n"
+            "- Claude Code CLI install smoke: strict plugin/marketplace validation, marketplace "
             "add/list/remove, plugin install/list/uninstall, installed cache 18 skills / "
-            "0 agents."
+            "0 agents (not model invocation)."
         )
         pending_cli = ""
     else:
         gate_reason = (
-            "isolated CLI installation evidence is incomplete, and both interactive app "
-            "surfaces still require manual evidence."
+            "isolated CLI installation evidence is incomplete, and all four CLI/App "
+            "surfaces still require direct model-invocation evidence."
         )
         completed_cli = "- CLI install smoke: incomplete."
         pending_cli = (
@@ -277,8 +286,13 @@ Reason: {gate_reason}
 
 ## Required before release-ready
 
-{pending_cli}- Codex app: install from Git-backed marketplace, restart/new task, verify marker/version, update to vN+1.
-- Claude Desktop Code: local and SSH host cache/version verification, app restart/new session, unsupported cloud/WSL path documented.
+{pending_cli}- Direct test record: copy `{MANUAL_SURFACE_TEMPLATE_REL.as_posix()}` to `maintainer/plugin/manual-evidence/YYYYMMDD/{{surface}}.md` and retain one fresh fixture per surface.
+- All four surfaces: invoke both `harness-setup` and `humanize-korean`, verify proposal-only behavior, verify generated allowlist, verify no `.agents/skills`, `.claude/skills`, or `skills`, and preserve managed-block extensions.
+- All four surfaces: reopen a new task/session and verify the same artifact fingerprint is not proposed again; retain the `.docs/.harness/humanize-handoffs.json` event.
+- All four surfaces: cancel before a proposed write and verify original hashes and user sentinels are preserved.
+- Codex app: install the candidate marketplace, restart/new task, verify marker/version, update to vN+1.
+- Claude Desktop Code: local host cache/version verification and app restart/new session; repeat on SSH only when SSH is a declared support surface. Document unsupported cloud/WSL paths.
+- Link reviewer-approved direct records from this checklist before changing any surface to `verified`.
 - Legacy migration: run read-only inventory, backup/remove only with explicit approval, verify plugin single discovery.
 """
     write_text(root / "maintainer" / "plugin" / "release-checklist.md", checklist)
@@ -293,7 +307,7 @@ def main() -> int:
     cli_smoke_passed = cli_smoke["status"] == "passed"
     surfaces = {
         "codex-cli": {
-            "status": "verified" if cli_smoke_passed else "blocked",
+            "status": "install-smoke-verified" if cli_smoke_passed else "blocked",
             "summary": (
                 cli_smoke["summary"]
                 if cli_smoke_passed
@@ -307,7 +321,7 @@ def main() -> int:
             "summary": "Interactive Plugins UI install/update requires app surface and cannot be completed from this shell.",
         },
         "claude-code-cli": {
-            "status": "verified" if cli_smoke_passed else "blocked",
+            "status": "install-smoke-verified" if cli_smoke_passed else "blocked",
             "summary": (
                 cli_smoke["summary"]
                 if cli_smoke_passed
@@ -330,6 +344,19 @@ def main() -> int:
         "plugin": validate_plugin_metadata(root),
         "humanize_korean": verify_humanize_proposal(root),
         "legacy_migration": legacy_migration_readonly_fixture(),
+        "manual_surface_test": {
+            "template": MANUAL_SURFACE_TEMPLATE_REL.as_posix(),
+            "required_checks": [
+                "explicit harness-setup invocation",
+                "explicit humanize-korean invocation with proposal-only result",
+                "setup output allowlist",
+                "no local skill directories created",
+                "managed-block user extensions preserved",
+                "same fingerprint not re-proposed in a new task/session",
+                "cancelled write leaves original hashes unchanged",
+                "reviewed evidence record linked from release checklist",
+            ],
+        },
         "cli_probes": {
             "codex_help": codex_help,
             "codex_plugin_help": codex_plugin,

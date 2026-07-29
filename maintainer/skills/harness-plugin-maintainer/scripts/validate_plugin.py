@@ -52,6 +52,8 @@ CLAUDE_MANIFEST_FIELDS = {
     "keywords",
     "skills",
 }
+EXPLICIT_ONLY_SKILLS = {"commit", "git-scoped-account", "impl-verify"}
+MODEL_ROUTABLE_SKILLS = {"multi-review", "pre-commit"}
 
 
 def error(errors: list[str], message: str) -> None:
@@ -136,12 +138,136 @@ def validate_skill_files(root: Path, errors: list[str]) -> None:
     plugin_root = root / PLUGIN_ROOT_REL
     for path in list((plugin_root / "runtime" / "codex" / "skills").glob("*/SKILL.md")) + list((plugin_root / "runtime" / "claude" / "skills").glob("*/SKILL.md")):
         text = path.read_text(encoding="utf-8")
-        if not FRONTMATTER_RE.match(text):
+        frontmatter_match = FRONTMATTER_RE.match(text)
+        if not frontmatter_match:
             error(errors, f"missing SKILL frontmatter: {path}")
+            continue
+        frontmatter = frontmatter_match.group(0)
         if re.search(r"(?m)^model\s*:", text):
             error(errors, f"model field forbidden: {path}")
         if "agent: fork" in text:
             error(errors, f"agent: fork forbidden: {path}")
+        allowed_line = next(
+            (
+                line.split(":", 1)[1]
+                for line in frontmatter.splitlines()
+                if line.startswith("allowed-tools:")
+            ),
+            "",
+        )
+        allowed_tools = {
+            item.strip().strip("[]\"'")
+            for item in allowed_line.split(",")
+            if item.strip()
+        }
+        if "Bash" in allowed_tools:
+            error(errors, f"unrestricted Bash pre-approval forbidden: {path}")
+        if "Task" in allowed_tools:
+            error(errors, f"legacy Task tool forbidden: {path}")
+
+        skill_name = path.parent.name
+        explicit_only = bool(
+            re.search(
+                r"(?m)^disable-model-invocation\s*:\s*true\s*$",
+                frontmatter,
+            )
+        )
+        if skill_name in EXPLICIT_ONLY_SKILLS:
+            if not explicit_only:
+                error(errors, f"side-effect skill must be explicit-only: {path}")
+            if f"${skill_name}" not in text:
+                error(errors, f"Codex direct invocation example missing: {path}")
+            if f"/{PLUGIN_ID}:{skill_name}" not in text:
+                error(errors, f"Claude direct invocation example missing: {path}")
+        if skill_name in MODEL_ROUTABLE_SKILLS and explicit_only:
+            error(errors, f"review/check skill must remain model-routable: {path}")
+        if skill_name == "pre-commit" and "bash scripts/scan.sh" in text:
+            error(errors, f"pre-commit script path must be bundle-relative: {path}")
+
+
+def validate_source_permission_policy(root: Path, errors: list[str]) -> None:
+    for base in (root / "skills", root / "maintainer" / "skills"):
+        for path in sorted(base.glob("*/SKILL.md")):
+            text = path.read_text(encoding="utf-8")
+            frontmatter_match = FRONTMATTER_RE.match(text)
+            if not frontmatter_match:
+                error(errors, f"canonical SKILL frontmatter missing: {path}")
+                continue
+            allowed_line = next(
+                (
+                    line.split(":", 1)[1]
+                    for line in frontmatter_match.group(0).splitlines()
+                    if line.startswith("allowed-tools:")
+                ),
+                "",
+            )
+            allowed_tools = {
+                item.strip().strip("[]\"'")
+                for item in allowed_line.split(",")
+                if item.strip()
+            }
+            if "Bash" in allowed_tools:
+                error(errors, f"canonical skill pre-approves unrestricted Bash: {path}")
+            if "Task" in allowed_tools:
+                error(errors, f"canonical skill uses legacy Task tool: {path}")
+
+    alias_template = (
+        root
+        / "maintainer"
+        / "skills"
+        / "harness-plugin-maintainer"
+        / "templates"
+        / "claude-alias-skill.md"
+    )
+    if re.search(
+        r"(?m)^allowed-tools\s*:.*\bBash\b",
+        alias_template.read_text(encoding="utf-8"),
+    ):
+        error(errors, "Claude alias template pre-approves unrestricted Bash")
+
+    manager_skill = (
+        root
+        / "maintainer"
+        / "skills"
+        / "harness-plugin-maintainer"
+        / "SKILL.md"
+    ).read_text(encoding="utf-8")
+    if "disable-model-invocation: true" not in manager_skill:
+        error(errors, "plugin build manager must be explicit-only")
+    for invocation in ("$harness-plugin-maintainer", "/harness-plugin-maintainer"):
+        if invocation not in manager_skill:
+            error(errors, f"plugin build manager invocation example missing: {invocation}")
+
+
+def validate_manual_surface_contract(root: Path, errors: list[str]) -> None:
+    template = (
+        root / "maintainer" / "plugin" / "manual-surface-test-template.md"
+    ).read_text(encoding="utf-8")
+    required_fragments = [
+        "## Codex CLI 예시",
+        "## Codex 앱 예시",
+        "## Claude Code CLI 예시",
+        "## Claude Desktop Code 예시",
+        "$harness-setup",
+        "$humanize-korean",
+        "/ai-agent-harness:harness-setup",
+        "/ai-agent-harness:humanize-korean",
+        "### A. 최초 설정",
+        "### B. 갱신과 사용자 확장 보존",
+        "### C. 새 session 중복 handoff 방지",
+        "### D. 중단 시 원본 보존",
+        ".agents/skills",
+        ".claude/skills",
+        "maintainer/plugin/manual-evidence/YYYYMMDD/{surface}.md",
+        "자동 설치 smoke와 실제 모델 호출은 별도 증적",
+        "POSIX shell 확인 예",
+        "PowerShell 확인 예",
+    ]
+    for fragment in required_fragments:
+        if fragment not in template:
+            error(errors, f"manual surface test contract missing: {fragment}")
+    if template.count("A·B·C·D") < 4:
+        error(errors, "all four direct surfaces must execute scenarios A-D")
 
 
 def validate_notices(root: Path, errors: list[str]) -> None:
@@ -294,6 +420,8 @@ def validate_payload_integrity(root: Path, errors: list[str]) -> None:
 def main() -> int:
     root = repo_root()
     errors: list[str] = []
+    validate_source_permission_policy(root, errors)
+    validate_manual_surface_contract(root, errors)
     plugin_root = root / PLUGIN_ROOT_REL
     if not plugin_root.exists():
         error(errors, "plugin root missing; run build_plugin.py first")

@@ -1,7 +1,7 @@
 ---
 name: {alias_name}
 description: "{alias_description}"
-allowed-tools: Read, Write, Edit, Bash
+allowed-tools: Read, Write, Edit
 ---
 
 # {alias_title}

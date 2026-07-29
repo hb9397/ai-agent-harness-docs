@@ -29,6 +29,9 @@ AI Agent Harness는 Codex, Claude Code 등 여러 에이전트가 같은 프로�
 | 관리자 projection | 3 | `.agents/skills/`, `.claude/skills/` | repo-local 관리자 사용용 |
 
 사용자 플러그인에는 관리자 스킬을 포함하지 않는다.
+공유 runtime의 `allowed-tools`에는 제한 없는 `Bash`를 넣지 않는다. shell 명령은
+플랫폼의 일반 permission mode에서 승인받고, 커밋·Git 설정·작업지침 명령 실행은
+명시 호출 전용으로 제한한다.
 
 ---
 
@@ -71,6 +74,9 @@ AI Agent Harness는 Codex, Claude Code 등 여러 에이전트가 같은 프로�
 | `harness-plugin-maintainer` | `maintainer/skills/harness-plugin-maintainer` | 플러그인 build, validate, release gate, 설치 표면 증적 관리 |
 
 관리자 스킬은 `.agents/skills`와 `.claude/skills`에 repo-local projection으로만 둔다.
+별도의 관리자 플러그인은 만들지 않는다. 관리자는 정본 유지보수에는 repo-local
+projection을 사용하고, 사용자 경험 검증에는 일반 사용자용 `ai-agent-harness`
+플러그인을 격리된 CLI/App 설정에 설치해 사용한다.
 
 ---
 
@@ -137,8 +143,11 @@ Markdown 산출물을 만드는 스킬 7종:
 8. 원 producer가 index, bridge, 구조, link를 다시 검증한다.
 9. downstream 스킬은 승인·재검증된 최종 Markdown만 입력으로 사용한다.
 
-제안, 건너뛰기, 거절 중 하나가 결정되면 `handoff_completed=true`로 기록해 같은
-bundle을 다시 제안하지 않는다.
+제안, 건너뛰기, 거절, 적용, 재검증 상태는 실행 중
+`handoff_completed=true`로 두고, 최종 Markdown 상대경로·내용 SHA-256·profile로
+계산한 fingerprint를 `.docs/.harness/humanize-handoffs.json`에 원자적으로
+기록한다. 같은 fingerprint가 완료 상태이면 새 session에서도 다시 제안하지 않는다.
+ledger 자체는 문서 개선 대상에서 제외한다.
 
 사용자가 문서 개선을 건너뛰거나 거절해도 원본 하네스 흐름은 계속 가능해야 한다.
 
@@ -172,8 +181,9 @@ skills/ 사용자 정본 수정
 ```
 
 공식 manifest·marketplace, 결정적 archive, 격리된 Codex/Claude CLI 설치 smoke는
-자동 검증 대상으로 둔다. Codex와 Claude 앱의 설치·재시작·새 세션 증적이 부족하면
-릴리스 후보는 `not-release-ready`다.
+자동 검증 대상으로 둔다. 설치 smoke는 실제 모델 호출 성공을 의미하지 않는다.
+Codex/Claude CLI·앱 네 표면의 설치·명시 호출·산출물·재시작·새 세션 증적이
+부족하면 릴리스 후보는 `not-release-ready`다.
 
 ---
 

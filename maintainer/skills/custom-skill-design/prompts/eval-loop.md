@@ -7,13 +7,14 @@
 
 | 환경 | 읽을 섹션 |
 |------|----------|
-| Claude Code (sub-agent 가능) | [병렬 실행] + [평가] + [개선] |
+| Codex CLI/App | [격리 실행] + [평가] + [개선] |
+| Claude Code/Desktop Code | [격리 실행] + [평가] + [개선] |
 | Claude.ai | [순차 실행] + [평가] + [개선] |
 | Cowork / headless | [Cowork] + [평가] + [개선] |
 
 ---
 
-## [병렬 실행] Claude Code 환경
+## [격리 실행] Codex·Claude CLI/App
 
 ### 워크스페이스 구조
 
@@ -32,9 +33,10 @@
 
 ### 실행 순서
 
-**같은 턴에** with-skill과 baseline을 동시에 spawn한다. 순서를 나눠서 내지 않는다.
+sub-agent를 지원하고 두 실행이 독립적이면 같은 턴에 with-skill과 baseline을
+병렬 실행한다. 지원하지 않으면 서로 다른 새 task/session에서 순차 실행한다.
 
-with-skill 프롬프트:
+with-skill 실행 요청:
 ```
 Skill path: {skill-path}
 Task: {eval prompt}
@@ -42,7 +44,7 @@ Input files: {파일 목록 또는 "none"}
 Save outputs to: {workspace}/iteration-N/eval-{name}/with_skill/outputs/
 ```
 
-baseline 프롬프트:
+baseline 실행 요청:
 ```
 Task: {eval prompt}  ← 스킬 없이, 동일 프롬프트
 Input files: {파일 목록 또는 "none"}
@@ -61,14 +63,14 @@ Save outputs to: {workspace}/iteration-N/eval-{name}/baseline/outputs/
 
 ### 타이밍 데이터 캡처
 
-subagent 완료 알림에서 `total_tokens`와 `duration_ms`를 즉시 저장한다.
-이 데이터는 알림 외에 다시 얻을 수 없다.
+실행 표면에서 `total_tokens`와 `duration_ms`를 제공할 때만 즉시 저장한다.
+제공하지 않는 표면에서는 `null`로 기록하고 추정값을 만들지 않는다.
 
 ```json
 {
-  "total_tokens": 0,
-  "duration_ms": 0,
-  "total_duration_seconds": 0
+  "total_tokens": null,
+  "duration_ms": null,
+  "total_duration_seconds": null
 }
 ```
 
@@ -95,7 +97,8 @@ baseline 비교는 생략한다. 정량 벤치마크도 생략한다.
 - sub-agent 있음 → 병렬 실행 가능
 - 브라우저 없음 → eval 뷰어 실행 시 `--static {output_path}` 옵션 사용
 - 사용자가 "Submit All Reviews" 클릭 시 `feedback.json` 다운로드 → workspace에 복사
-- Description 최적화 스크립트 (`run_loop.py`) 사용 가능
+- description 최적화는 동일한 수동 query matrix를 사용한다. 별도 runner가 실제로
+  제공된 환경에서만 출처·파일 존재·권한을 확인한 뒤 사용한다.
 
 ---
 

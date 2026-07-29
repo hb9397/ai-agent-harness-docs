@@ -1,13 +1,13 @@
 ---
 name: create-prototype
 description: >
-  폐기 가능한 HTML UI 검증 프로토타입 생성 스킬. `/create-prototype` 명령어로 트리거되며,
-  요구사항 번호(SFR, REQ, UC 등 프로젝트별 prefix) 기반 화면 프로토타입을 HTML 파일로 생성한다.
+  폐기 가능한 HTML UI 검증 프로토타입 생성 스킬. 요구사항 번호(SFR, REQ, UC 등
+  프로젝트별 prefix) 기반 화면 프로토타입을 HTML 파일로 생성한다.
   Tailwind CSS CDN + Noto Sans KR 기반이며, 실제 서비스 수준의 인터랙티브 프로토타입을 만든다.
   "검증용 프로토타입", "UI 프로토타입", "HTML 목업", "SFR 화면 시안",
   "REQ 화면 시안" 요청에 사용한다. Markdown 화면 설계 문서는 design-prototype-docs,
   실제 앱 소스 구현은 frontend-design이 담당한다.
-allowed-tools: Read, Write, Glob, Grep, Bash
+allowed-tools: Read, Write, Glob, Grep, Agent
 ---
 
 # Create Prototype — HTML UI 프로토타입 생성기
@@ -39,7 +39,9 @@ handoff한다.
 
 ## 워크플로우
 
-`/create-prototype` 명령이 들어오면 먼저 사용자 메시지에서 아래 4가지를 사전 추출한다.
+직접 호출할 때는 Codex에서 `$create-prototype`, Claude Code에서
+`/ai-agent-harness:create-prototype`를 사용한다. 스킬이 호출되면 먼저 사용자
+메시지에서 아래 4가지를 사전 추출한다.
 
 | 항목 | 추출 기준 |
 |---|---|
@@ -62,7 +64,7 @@ handoff한다.
 `prompts/parallel-setup.md`의 [플랫폼 확인] → [모델 목록 표시] → [실행 방식 선택 — 선호도만 저장] 절차를 따른다.
 
 병렬 선호 시: 화면 목록은 STEP 2에서 확정된다.
-화면 목록 확정 후 STEP 4에서 Task 목록을 제시하고 `prompts/parallel-setup.md`의 [모델 확정] 절차를 실행한다.
+화면 목록 확정 후 STEP 4에서 작업 목록을 제시하고 `prompts/parallel-setup.md`의 [모델 확정] 절차를 실행한다.
 
 순차 선택 시 STEP 1로 직접 진행한다.
 
@@ -117,9 +119,9 @@ handoff한다.
 
 STEP 0에서 선호도를 저장했으면 그 결과를 사용한다. 그렇지 않으면 여기서 실행 방식을 묻는다.
 
-**병렬 선택 시** 아래 Task 목록을 제시한다:
+**병렬 선택 시** 아래 작업 목록을 제시한다:
 
-| # | Task | 담당 |
+| # | 작업 | 담당 |
 |---|------|------|
 | 1 | screen-{슬러그} | 화면명-HTML+CSS+JS+JSON 일체 |
 | … | … | … (화면 수만큼 행 추가) |
@@ -264,16 +266,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function renderData(data) {
   const container = document.getElementById('card-container');
-  container.innerHTML = data.cards.map(card => `
-    <div class="list-card" onclick="alert('${card.title}')">
-      <div class="list-card__icon">${card.icon}</div>
-      <h3>${card.title}</h3>
-    </div>
-  `).join('');
+  const fragment = document.createDocumentFragment();
+
+  for (const card of Array.isArray(data.cards) ? data.cards : []) {
+    const item = document.createElement('button');
+    item.type = 'button';
+    item.className = 'list-card';
+
+    const icon = document.createElement('span');
+    icon.className = 'list-card__icon';
+    icon.textContent = String(card.icon ?? '');
+
+    const title = document.createElement('h3');
+    title.textContent = String(card.title ?? '');
+
+    item.append(icon, title);
+    item.addEventListener('click', () => alert(String(card.title ?? '')));
+    fragment.append(item);
+  }
+
+  container.replaceChildren(fragment);
 }
 ```
 
 위 예시의 `.list-card__icon` 시각 속성은 화면별 CSS 파일에 정의한다.
+임베드한 JSON을 포함한 모든 데이터는 신뢰하지 않는다. 동적 DOM은 `createElement`,
+`textContent`, `replaceChildren`, `addEventListener`로 구성하며 `innerHTML`,
+`outerHTML`, `insertAdjacentHTML`, `document.write`, 인라인 `on*` 핸들러를 쓰지 않는다.
 
 > **data/ 폴더 JSON 유지**: HTML에 임베드하더라도 `data/{PREFIX}-001-{slug}-data.json`은 삭제하지 않는다.
 > 원본 보관·diff 검토·재구성 목적으로 항상 유지한다.
@@ -336,7 +355,7 @@ function renderData(data) {
 
 예시 (단일앱):
 ```
-.docs/prototype/hb9397/SFR-019/
+.docs/prototype/developer/SFR-019/
 ├── display/
 ├── data/
 ├── css/
@@ -357,15 +376,17 @@ function renderData(data) {
 - Google Fonts: `Noto Sans KR` (본문) + `JetBrains Mono` (코드/숫자)
 - **Tailwind CSS CDN**: `<script src="https://cdn.tailwindcss.com"></script>` — `<head>` 맨 앞에 배치
 - CSS 변수(`:root`)로 색상 체계 관리 — Tailwind 유틸리티는 **보조**로만 사용
-- **CSS-first 원칙** — 모든 스타일은 `css/` 폴더의 파일에 클래스로 정의한다. `<style>` 블록 금지, 인라인 `style=""` 원칙적 금지 (JS 동적 주입 등 불가피한 경우만 허용)
+- **CSS-first 원칙** — 모든 스타일은 `css/` 폴더의 파일에 클래스로 정의한다. `<style>` 블록과 인라인 `style` 속성, 인라인 `on*` 이벤트 속성을 금지한다.
 - **HTML 내 `<script>` 블록 금지** — `<script type="application/json" id="page-data">` 하나만 허용
 - **모든 `<script src>` 는 `<head>`에 선언** — `<head>` 선언 순서: Tailwind CDN → 공통 CSS → 화면별 CSS → 공통 JS (선택) → 화면별 JS
+- **동적 상태도 클래스 우선** — 상태는 검증된 클래스 allowlist로 전환한다. 불가피한 수치형 값은 범위·형식을 검증한 뒤 미리 정의한 CSS custom property 하나에만 `style.setProperty`로 설정한다.
+- **JSON 임베드 안전성** — JSON 직렬화 결과의 `<`를 `\u003c`로 이스케이프해 `</script>` 종료를 막고, 읽을 때는 `textContent` + `JSON.parse`만 사용한다.
 
 ### Tailwind 사용 원칙
 
 - 레이아웃 보조: `flex`, `gap-*`, `p-*`, `mt-*`, `grid`, `w-full` 등
 - 텍스트 보조: `text-sm`, `font-bold`, `truncate` 등
-- **색상은 항상 CSS 변수 사용** — `style="color: var(--primary)"` 형태
+- **색상은 항상 CSS 변수와 CSS 클래스 사용** — 예: `.status-primary { color: var(--primary); }`
 - Tailwind의 색상 유틸리티(text-blue-500 등)는 사용하지 않는다
 - 핵심 컴포넌트(.btn, .card, .sidebar 등)는 CSS 파일에 커스텀 CSS로 정의
 
@@ -407,7 +428,9 @@ function renderData(data) {
 | `references/color-system.md` | 메인 색상 → 전체 팔레트 파생 규칙 | STEP 3에서 색상 확정 후 |
 | `examples/SFR-018.html` | 디자인 품질 기준 (화면 구성, 레이아웃, 색상 활용) | STEP 5에서 디자인 참고 |
 
-> **CSS 변수 주의**: 예제 파일(SFR-018.html)은 구 방식의 단일 파일이다. 코드 구조는 따르지 않는다.
+> **레거시 예제 주의**: 보호 자산 `examples/SFR-018.html`은 구 방식의 단일 파일이며
+> 인라인 스타일·이벤트 핸들러·문자열 기반 DOM 생성이 남아 있을 수 있다.
+> 화면 구성과 시각 품질만 참고하고 코드 구조나 DOM 작성법은 복사하지 않는다.
 > 생성 시 항상 `--primary`, `--primary-light`, `--primary-mid`, `--nav-bg` 변수명을 사용한다.
 
 ---
@@ -425,9 +448,12 @@ function renderData(data) {
 | CSS 선언 순서 | `<head>` 내 CSS 순서: Tailwind CDN → 공통 CSS → 화면별 CSS |
 | JS 선언 순서 | `<head>` 내 JS 순서: 공통 JS (선택) → 화면별 JS (CSS 뒤에 위치) |
 | `<style>` 블록 없음 | 모든 HTML에 `<style>` 태그가 없는가 |
-| 인라인 style 남용 | `style=""` 속성이 레이아웃·컴포넌트 스타일에 사용되지 않았는가 (JS 동적 주입 외 사용 시 CSS 파일로 이동) |
+| 인라인 속성 없음 | `style` 속성과 `onclick` 등 인라인 `on*` 이벤트 속성이 모두 없는가 |
 | HTML 내 `<script>` | `<body>` 안에 `<script type="application/json" id="page-data">` 외 다른 `<script>` 태그가 없는가 |
 | DOMContentLoaded | 모든 화면별 JS 파일이 `document.addEventListener('DOMContentLoaded', ...)` 안에서 DOM을 조작하는가 |
+| XSS sink 없음 | 데이터로 `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`를 호출하지 않는가 |
+| 안전한 DOM 생성 | 동적 텍스트는 `textContent`, 이벤트는 `addEventListener`, 노드 교체는 `replaceChildren`을 사용하는가 |
+| 안전한 JSON 임베드 | JSON 직렬화 시 `<`가 `\u003c`로 이스케이프되고 `textContent`로만 읽는가 |
 | fetch() 없음 | 모든 파일에 `fetch(` 문자열이 없는가 |
 | 데이터 임베드 | 각 HTML에 `<script type="application/json" id="page-data">` 가 존재하는가 |
 | JSON 원본 보관 | `data/` 폴더에 각 화면에 대응하는 JSON 파일이 존재하는가 |

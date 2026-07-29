@@ -21,7 +21,12 @@ sys.dont_write_bytecode = True
 sys.path.insert(0, str(SCRIPTS))
 
 import check_upstreams  # noqa: E402
-from portfolio_common import hash_tree, safe_join, sha256_path  # noqa: E402
+from portfolio_common import (  # noqa: E402
+    hash_tree,
+    is_protected_asset_path,
+    safe_join,
+    sha256_path,
+)
 
 
 def run(args: list[str], expect: int = 0) -> subprocess.CompletedProcess[str]:
@@ -218,7 +223,7 @@ def test_actual_tree_hashes_and_post_stage_mutation_block() -> None:
             "id": "actual-tree-hash",
             "upstream": {"source_id": "fixture", "ref": "v1.0.0", "sha": "a" * 40},
             "trees": {"source": "candidate-source", "runtime": "runtime-preview"},
-            "file_map": [{"upstream_path": "SKILL.md", "local_path": "skills/example/SKILL.md"}],
+            "file_map": [{"upstream_path": "SKILL.md", "local_path": "skills/sample/SKILL.md"}],
             "validation": {"fixture": "actual tree hashes"},
         }
         candidate_file = temporary_root / "candidate.json"
@@ -306,6 +311,38 @@ def test_protected_asset_requires_asset_approval() -> None:
     ])
 
 
+def test_protected_asset_path_variants_are_classified() -> None:
+    protected_paths = [
+        "skills/demo/assets/icon.svg",
+        "skills\\demo\\ASSETS\\icon.svg",
+        "skills/demo/asset/icon.svg",
+        "skills/demo/examples/sample.md",
+        "skills/demo/example/sample.md",
+        "skills/demo/templates/report.md",
+        "skills/demo/template/report.md",
+        "skills/demo/scripts/check.py",
+        "skills/demo/script/check.py",
+        "skills/demo/evals/evals.json",
+        "skills/demo/eval/evals.json",
+        "skills/demo/template.md",
+        "template.md",
+        "skills/demo/LICENSE",
+        "skills/demo/NOTICE.txt",
+    ]
+    for path in protected_paths:
+        assert is_protected_asset_path(path), path
+
+    ordinary_paths = [
+        "skills/demo/SKILL.md",
+        "skills/demo/references.md",
+        "skills/demo/template.md.bak",
+        "skills/demo/assets-old/icon.svg",
+        "skills/demo/examples-old/sample.md",
+    ]
+    for path in ordinary_paths:
+        assert not is_protected_asset_path(path), path
+
+
 def test_destructive_requires_destructive_approval() -> None:
     candidate = FIXTURES / "destructive-candidate.json"
     run([str(SCRIPTS / "stage_upstream.py"), "--candidate", str(candidate)])
@@ -314,7 +351,9 @@ def test_destructive_requires_destructive_approval() -> None:
         "--candidate-id",
         "destructive-change",
         "--approval-id",
-        "APPROVAL-GENERAL"
+        "APPROVAL-GENERAL",
+        "--asset-approval-id",
+        "APPROVAL-ASSET",
     ], expect=2)
     run([
         str(SCRIPTS / "promote_upstream.py"),
@@ -322,6 +361,8 @@ def test_destructive_requires_destructive_approval() -> None:
         "destructive-change",
         "--approval-id",
         "APPROVAL-GENERAL",
+        "--asset-approval-id",
+        "APPROVAL-ASSET",
         "--destructive-approval-id",
         "APPROVAL-DESTRUCTIVE",
         "--dry-run"
@@ -360,6 +401,7 @@ def main() -> int:
         test_public_scripts_have_real_help,
         test_self_update_blocks_same_session,
         test_protected_asset_requires_asset_approval,
+        test_protected_asset_path_variants_are_classified,
         test_destructive_requires_destructive_approval,
         test_im_not_ai_dogfood_stages_and_dry_run_promotes,
     ]

@@ -24,7 +24,7 @@
     "plugin_id": "ai-agent-harness",
     "version": "0.1.0",
     "archive": "plugins/ai-agent-harness-0.1.0.zip",
-    "archive_sha256": "aafd14e888fc2d3efa9615df6b2f68eef913f3863bef3d0316566ebadb6765aa",
+    "archive_sha256": "8c576a8ed68bf0a3ea035f04afc6890fd3079b1ab5915e4aa8ff8b07e145623e",
     "logical_user_skills": 18,
     "manager_skills": 3,
     "codex_physical_skills": 18,
@@ -39,18 +39,29 @@
     "source_projection_integrity": true,
     "reproducible_build": true,
     "static_local_links": true,
-    "upstream_3mode_e2e": true,
-    "user_e2e": true,
+    "upstream_modes_fixture": {
+      "passed": true,
+      "evidence_level": "isolated-contract-fixture",
+      "live_stage_or_promote_executed": false
+    },
+    "user_contract_fixture": {
+      "passed": true,
+      "evidence_level": "filesystem-and-script-fixture",
+      "live_agent_skill_invocation_executed": false
+    },
     "failure_rollback": true,
     "codex_cli_install_smoke": true,
     "claude_cli_install_smoke": true,
+    "codex_cli_model_invocation": false,
+    "claude_cli_model_invocation": false,
+    "canonical_skill_eval_runners": 10,
     "release_gate": true
   },
   "surface_evidence": [
     {
       "surface": "codex-cli",
-      "status": "verified",
-      "reason": "Codex CLI 0.146.0 isolated marketplace add, plugin add/list, 18 skills / 0 agents cache inspection, remove and cleanup passed."
+      "status": "install-smoke-verified",
+      "reason": "Codex CLI 0.146.0 isolated marketplace add, plugin add/list, 18 skills / 0 agents cache inspection, remove and cleanup passed; model invocation was not performed."
     },
     {
       "surface": "codex-desktop-app",
@@ -59,8 +70,8 @@
     },
     {
       "surface": "claude-code-cli",
-      "status": "verified",
-      "reason": "Claude Code 2.1.220 strict validation, isolated marketplace add, plugin install/list, 18 skills / 0 agents cache inspection, uninstall and cleanup passed."
+      "status": "install-smoke-verified",
+      "reason": "Claude Code 2.1.220 strict validation, isolated marketplace add, plugin install/list, 18 skills / 0 agents cache inspection, uninstall and cleanup passed; model invocation was not performed."
     },
     {
       "surface": "claude-desktop-code",
@@ -77,8 +88,9 @@
     "requires_explicit_manager_approval_before_publish": true
   },
   "remaining_work": [
-    "Collect Codex Desktop/App install, restart/new task, marker/version, and update evidence.",
-    "Collect Claude Desktop Code local/SSH cache, restart/new session, and unsupported cloud/WSL path evidence.",
-    "After all evidence passes, request explicit manager approval for push, tag, release, and released lock update."
+    "Collect Codex CLI and Claude Code CLI direct harness-setup/humanize-korean invocation, scenarios A-D, and reviewer-approved records.",
+    "Collect Codex Desktop/App direct invocation, restart/new task, marker/version, and scenarios A-D evidence.",
+    "Collect Claude Desktop Code local-host direct invocation, restart/new session, and scenarios A-D evidence; repeat on SSH only when SSH is a declared support surface.",
+    "Link all four reviewed records from the release checklist before changing any surface to verified."
   ]
 }

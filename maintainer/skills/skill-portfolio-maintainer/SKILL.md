@@ -1,7 +1,7 @@
 ---
 name: skill-portfolio-maintainer
 description: "관리자가 사용자 스킬 포트폴리오의 외부 공식·유명 스킬 참고 관계, provenance, protected asset 영향, upstream 최신화 후보를 조사하고 반영 계획을 관리할 때 사용한다. 사용자 플러그인 패키징이나 릴리스 생성은 담당하지 않는다."
-allowed-tools: Read, Write, Glob, Grep, Bash
+allowed-tools: Read, Write, Glob, Grep
 ---
 
 # Skill Portfolio Maintainer

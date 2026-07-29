@@ -1,12 +1,16 @@
 ---
 name: harness-plugin-maintainer
 description: "관리자가 사용자용 ai-agent-harness 플러그인의 Codex·Claude runtime projection, manifest, smoke test, 릴리스 후보를 생성·검증할 때 사용한다. 사용자 스킬 upstream 품질 개선 자체는 담당하지 않는다."
-allowed-tools: Read, Write, Glob, Grep, Bash
+allowed-tools: Read, Write, Glob, Grep
+disable-model-invocation: true
 ---
 
 # Harness Plugin Maintainer
 
 사용자 플러그인 생성과 검증을 관리하는 관리자 전용 스킬이다.
+생성된 plugin tree와 archive를 교체할 수 있으므로 명시 호출 전용이다. 이 관리
+저장소에서 Codex는 `$harness-plugin-maintainer`, Claude Code는
+`/harness-plugin-maintainer`로 호출하고 build·check·smoke 중 수행 범위를 적는다.
 
 ## 책임
 
@@ -126,6 +130,7 @@ Phase 10에서는 `scripts/run_release_regression.py`를 실행한다.
 
 ```bash
 python maintainer/skills/harness-plugin-maintainer/evals/run_evals.py
+python maintainer/skills/harness-plugin-maintainer/scripts/run_all_skill_evals.py
 python maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py --check
 python maintainer/skills/harness-plugin-maintainer/scripts/validate_plugin.py
 python maintainer/skills/harness-plugin-maintainer/scripts/smoke_cli_install.py

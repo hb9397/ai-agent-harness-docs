@@ -56,6 +56,10 @@ def test_general_file_defaults_to_proposal_without_crash() -> None:
         assert report["status"] == "ok"
         assert report["proposal_only"] is True
         assert report["written"] is False
+        assert report["contextual_rewrites_applied"] is False
+        assert [item["rule_id"] for item in report["diagnostics"]] == [
+            "D-context-conclusion"
+        ]
         assert source.read_text(encoding="utf-8") == original
 
 
@@ -73,7 +77,9 @@ def test_approved_file_write_is_atomic_and_preserves_newlines() -> None:
         assert report["written"] is True
         written = source.read_bytes()
         assert b"\r\n" in written
-        assert "결론적으로" not in written.decode("utf-8")
+        decoded = written.decode("utf-8")
+        assert "결론적으로" in decoded
+        assert "중요한 역할을 할 수 있습니다" in decoded
 
         replace_calls: list[tuple[Path, Path]] = []
         original_replace: Callable[[str | bytes | Path, str | bytes | Path], None] = humanize_korean.os.replace
@@ -98,7 +104,7 @@ def test_approved_file_write_is_atomic_and_preserves_newlines() -> None:
 def test_fast_standard_and_redo_are_distinct() -> None:
     original = (
         "결론적으로, 이 기능은 중요한 역할을 수행할 수 있습니다.\n"
-        "결론적으로, 두 번째 작업은 도구를 통해 진행할 수 있습니다.\n"
+        "이에 있어서 두 번째 작업은 도구를 통해 진행할 수 있습니다.\n"
     )
     fast = humanize_korean.refine(original, mode="fast")
     standard = humanize_korean.refine(original, mode="standard")
@@ -106,7 +112,10 @@ def test_fast_standard_and_redo_are_distinct() -> None:
 
     assert fast != standard
     assert "결론적으로" in fast
-    assert "결론적으로" not in standard
+    assert "결론적으로" in standard
+    assert "도구를 통해" in standard
+    assert "이에 있어서" in fast
+    assert "이에 있어서" not in standard
     assert redo.splitlines(keepends=True)[0] == original.splitlines(keepends=True)[0]
     assert redo.splitlines(keepends=True)[1] == standard.splitlines(keepends=True)[1]
 
@@ -131,7 +140,60 @@ def test_protected_tokens_code_quotes_and_tables_are_preserved() -> None:
     assert "| SFR-021 | 결론적으로, 표를 통해 관리합니다. |" in refined
     assert "print('결론적으로, 코드를 통해 수행할 수 있습니다')" in refined
     assert "\"결론적으로, 인용을 통해 수행할 수 있습니다\"" in refined
-    assert "본문은 중요한 역할을 할 수 있습니다." in refined
+    assert "결론적으로, 본문은 중요한 역할을 할 수 있습니다." in refined
+
+    diagnostics = humanize_korean.diagnose_contextual(original)
+    assert [(item["rule_id"], item["line"]) for item in diagnostics] == [
+        ("D-context-conclusion", 9)
+    ]
+
+
+def test_context_sensitive_phrases_are_diagnosed_without_rewrite() -> None:
+    original = (
+        "사용자는 터널을 통해 이동합니다.\n"
+        "결과는 시스템에 의해 생성됩니다.\n"
+        "결론적으로, 이 문단은 앞선 근거를 요약합니다.\n"
+    )
+    report = parse_json(run([str(SCRIPT), "--text", original]).stdout)
+
+    assert report["refined_text"] == original
+    assert report["contextual_rewrites_applied"] is False
+    assert "contextual_review_required" in report["warnings"]
+    assert [
+        (item["rule_id"], item["line"], item["column"], item["span"], item["action"])
+        for item in report["diagnostics"]
+    ] == [
+        ("A-context-through", 1, 8, "을 통해", "review-and-propose"),
+        ("A-context-passive-agent", 2, 8, "에 의해", "review-and-propose"),
+        ("D-context-conclusion", 3, 1, "결론적으로,", "review-and-propose"),
+    ]
+    assert all(item["reason"] for item in report["diagnostics"])
+    assert all(len(item["suggestions"]) >= 2 for item in report["diagnostics"])
+    assert humanize_korean.diagnose_contextual("소결론적으로 구분한 표제입니다.") == []
+
+
+def test_redo_diagnostics_stay_inside_selected_range() -> None:
+    original = (
+        "결론적으로, 첫 번째 문장입니다.\n"
+        "두 번째 작업은 도구를 통해 진행합니다.\n"
+    )
+    report = parse_json(
+        run(
+            [
+                str(SCRIPT),
+                "--text",
+                original,
+                "--mode",
+                "redo",
+                "--redo-range",
+                "2:2",
+            ]
+        ).stdout
+    )
+
+    assert [(item["rule_id"], item["line"]) for item in report["diagnostics"]] == [
+        ("A-context-through", 2)
+    ]
 
 
 def test_installed_skill_has_no_manager_repo_path_dependency() -> None:
@@ -159,6 +221,7 @@ def test_installed_skill_has_no_manager_repo_path_dependency() -> None:
         )
         assert report["proposal_only"] is True
         assert report["written"] is False
+        assert report["diagnostics"][0]["rule_id"] == "D-context-conclusion"
         assert target.read_text(encoding="utf-8") == original
 
 
@@ -168,6 +231,8 @@ def main() -> int:
         test_approved_file_write_is_atomic_and_preserves_newlines,
         test_fast_standard_and_redo_are_distinct,
         test_protected_tokens_code_quotes_and_tables_are_preserved,
+        test_context_sensitive_phrases_are_diagnosed_without_rewrite,
+        test_redo_diagnostics_stay_inside_selected_range,
         test_installed_skill_has_no_manager_repo_path_dependency,
     ]
     for test in tests:

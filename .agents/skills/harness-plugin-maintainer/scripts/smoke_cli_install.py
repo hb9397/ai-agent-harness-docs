@@ -147,6 +147,8 @@ def installed_payload_contract(install_root: Path, platform: str) -> dict[str, A
         "skill_count": len(skill_names),
         "agent_count": 0,
         "required_skills": ["harness-setup", "humanize-korean"],
+        "evidence_level": "installed-cache-payload",
+        "model_invocation_verified": False,
         "nested_marketplaces": 0,
     }
 
@@ -243,6 +245,8 @@ def codex_smoke(root: Path, command: list[str]) -> dict[str, Any]:
         "cli_version": version,
         "marketplace": PLUGIN_ID,
         "plugin_id": QUALIFIED_PLUGIN_ID,
+        "evidence_level": "marketplace-install-and-cache-smoke",
+        "model_invocation_verified": False,
         "installed_payload": payload,
         "cleanup": "passed",
     }
@@ -351,6 +355,8 @@ def claude_smoke(root: Path, command: list[str]) -> dict[str, Any]:
         "cli_version": version,
         "marketplace": PLUGIN_ID,
         "plugin_id": QUALIFIED_PLUGIN_ID,
+        "evidence_level": "marketplace-install-and-cache-smoke",
+        "model_invocation_verified": False,
         "installed_payload": payload,
         "cleanup": "passed",
     }
@@ -425,6 +431,8 @@ def main(argv: list[str] | None = None) -> int:
         "plugin_id": PLUGIN_ID,
         "qualified_plugin_id": QUALIFIED_PLUGIN_ID,
         "marketplace_source": ".",
+        "evidence_level": "marketplace-install-and-cache-smoke",
+        "model_invocation_verified": False,
         "platforms": {},
     }
     try:

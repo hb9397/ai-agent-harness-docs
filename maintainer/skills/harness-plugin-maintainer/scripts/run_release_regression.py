@@ -165,7 +165,7 @@ def selected_workspace_manifest(root: Path) -> list[dict[str, str]]:
     ]
 
 
-def upstream_e2e_isolated(root: Path) -> dict[str, Any]:
+def upstream_modes_fixture(root: Path) -> dict[str, Any]:
     before = selected_workspace_manifest(root)
     with tempfile.TemporaryDirectory(prefix="harness-phase10-upstream-") as tmp:
         tmp_root = Path(tmp)
@@ -198,6 +198,8 @@ def upstream_e2e_isolated(root: Path) -> dict[str, Any]:
         mirror_hash = sha256_file(mirror / "handoff-record.json")
     after = selected_workspace_manifest(root)
     return {
+        "evidence_level": "isolated-contract-fixture",
+        "live_stage_or_promote_executed": False,
         "cases": cases,
         "handoff_record_sha256": mirror_hash,
         "workspace_baseline_preserved": before == after,
@@ -205,7 +207,7 @@ def upstream_e2e_isolated(root: Path) -> dict[str, Any]:
     }
 
 
-def user_e2e(root: Path) -> dict[str, Any]:
+def user_contract_fixture(root: Path) -> dict[str, Any]:
     script = root / "skills" / "humanize-korean" / "scripts" / "humanize_korean.py"
     setup_eval = root / "skills" / "harness-setup" / "evals" / "run_evals.py"
     run(root, [str(setup_eval)])
@@ -260,6 +262,8 @@ def user_e2e(root: Path) -> dict[str, Any]:
         )
         passed = proposal_only and protected_preserved and approved_write and setup_output_allowlist
         return {
+            "evidence_level": "filesystem-and-script-fixture",
+            "live_agent_skill_invocation_executed": False,
             "harness_setup_eval_passed": True,
             "project_created_without_manager_clone": True,
             "im_not_ai_clone_required": False,
@@ -373,8 +377,8 @@ def write_report(root: Path, evidence: dict[str, Any]) -> None:
         "source_projection_integrity",
         "reproducible_build",
         "static_local_links",
-        "upstream_3mode_e2e",
-        "user_e2e",
+        "upstream_modes_fixture",
+        "user_contract_fixture",
         "failure_rollback",
         "release_gate",
     ]:
@@ -409,8 +413,8 @@ def main() -> int:
         "source_projection_integrity": source_projection_integrity(root),
         "reproducible_build": build,
         "static_local_links": local_links(root),
-        "upstream_3mode_e2e": upstream_e2e_isolated(root),
-        "user_e2e": user_e2e(root),
+        "upstream_modes_fixture": upstream_modes_fixture(root),
+        "user_contract_fixture": user_contract_fixture(root),
         "failure_rollback": failure_rollback_isolated(root),
         "release_gate": release_gate(root),
     }

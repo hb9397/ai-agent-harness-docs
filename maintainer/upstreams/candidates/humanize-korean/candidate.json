@@ -1,7 +1,8 @@
 {
   "id": "humanize-korean-im-not-ai",
   "checked_at": "2026-07-29",
-  "status": "candidate-only",
+  "status": "promoted-historical",
+  "superseded_by": "maintainer/upstreams/promotions/humanize-korean-im-not-ai-v2.3.0.json",
   "internal_skill_group": ["humanize-korean"],
   "candidate_sources": [
     {
@@ -11,17 +12,13 @@
       "observed_tag": "v2.3.0",
       "observed_commit_sha": "82137e858763dadb99561f194c5c00465735017b",
       "officiality": "Reputable third-party GitHub repository selected by maintainer request",
-      "observed_activity": "Pinned candidate basis from prior analysis; Phase 4 must re-query GitHub before staging.",
-      "license": "Expected MIT, but license URL/hash and third-party included text must be verified in Phase 4 before any import.",
-      "security_surface": "May include agents, commands, scripts, references, tests, and executable paths. No files imported in Phase 3.",
+      "observed_activity": "Historical Phase 3 candidate. Phase 4 verification and adapted promotion were completed.",
+      "license": "MIT license URL, content hash, packaged license, and NOTICE closure were verified during promotion.",
+      "security_surface": "Agents, commands, scripts, references, tests, and executable paths were reviewed; final runtime packages one local skill and zero agents.",
       "fit": "Strong fit for Korean humanized prose and document refinement proposal flow.",
-      "decision": "candidate only; not embedded, not packaged, not released."
+      "decision": "Promoted as an adapted humanize-korean source and packaged in the user plugin; this file is retained as historical candidate evidence."
     }
   ],
-  "blocked_until": [
-    "tag, commit, tree, and file hashes are re-verified",
-    "LICENSE hash and NOTICE scope are recorded",
-    "scripts/hooks/network/binary/symlink/submodule review passes",
-    "Phase 4 candidate source and adapters pass tests"
-  ]
+  "blocked_until": [],
+  "historical_note": "Do not use this candidate record as the current runtime state; use the promotion, lock, provenance, and plugin capability records."
 }

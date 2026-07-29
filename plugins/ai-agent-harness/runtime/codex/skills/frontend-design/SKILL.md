@@ -6,7 +6,7 @@ description: >
   '웹 페이지를 실제 앱에 적용', '기존 화면 리디자인' 요청에 사용한다.
   설계 문서만 필요하면 design-prototype-docs, 폐기 가능한 HTML 검증 시안이면
   create-prototype을 사용하며, 이 스킬은 실제 제품 소스코드 구현을 담당한다.
-allowed-tools: Read, Write, Glob, Grep, Bash
+allowed-tools: Read, Write, Glob, Grep
 ---
 
 # 프론트엔드 디자인 (frontend-design)

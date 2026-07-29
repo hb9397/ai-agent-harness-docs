@@ -1,7 +1,7 @@
 ---
 name: humanize-korean
 description: "AI·번역투·기계적 문체가 섞인 한국어 문서를 의미·수치·고유명사·인용을 보존하면서 자연스럽게 다듬을 때 사용한다. 문서 산출물 개선은 proposal-only로 수행한다."
-allowed-tools: Read, Write, Edit, Bash
+allowed-tools: Read, Write, Edit
 ---
 
 # Humanize Korean
@@ -24,10 +24,11 @@ allowed-tools: Read, Write, Edit, Bash
 ## 실행 원칙
 
 1. 먼저 원문 목적과 보호 토큰을 식별한다.
-2. 문체만 다듬고 사실·요구사항·구조는 보존한다.
+2. 탐지 근거가 있는 span만 다루고, 문체만 다듬되 사실·요구사항·구조는 보존한다.
 3. 변경률이 30%를 넘으면 경고하고, 50%를 넘으면 중단한다.
 4. 문서 산출물은 기본적으로 “개선안 제안”만 한다. 실제 파일 반영은 사용자 승인 뒤 별도 수행한다.
 5. 부분 재윤문 요청이면 지정 범위 밖 문장은 그대로 둔다.
+6. `~를 통해`, `~에 의해`, `결론적으로`는 출현만으로 오류가 아니다. 수단·경로·주체·문단 관계를 진단한 뒤 유지·삭제·재작성 후보를 제안하며 기계적으로 치환하지 않는다.
 
 ## 보호 토큰
 
@@ -55,6 +56,7 @@ allowed-tools: Read, Write, Edit, Bash
 - 원문 의미를 보존한 윤문안을 작성한다.
 - 표, 코드 fence, 경로, ID, 숫자, 날짜는 그대로 둔다.
 - 문서 산출물 개선안은 “변경 제안 요약 + 수정안” 형태로 제시한다.
+- 문맥 의존 표현은 `span + 진단 근거 + 후보`를 먼저 제시한다. 후보 중 하나를 자동 정답처럼 적용하지 않는다.
 
 ### STEP 2 — 자체 검증
 
@@ -72,7 +74,7 @@ allowed-tools: Read, Write, Edit, Bash
 
 ## 로컬 보조 스크립트
 
-필요하면 현재 로드한 `SKILL.md`의 부모 디렉터리를 `{skill_dir}`로 두고 `{skill_dir}/scripts/humanize_korean.py`를 사용해 deterministic 보호 토큰 검사와 변경률 검사를 실행한다. 관리 저장소의 `skills/...` 상대경로를 가정하지 않는다.
+필요하면 현재 로드한 `SKILL.md`의 부모 디렉터리를 `{skill_dir}`로 두고 `{skill_dir}/scripts/humanize_korean.py`를 사용해 deterministic 보호 토큰 검사, 변경률 검사와 문맥 의존 표현 진단을 실행한다. 관리 저장소의 `skills/...` 상대경로를 가정하지 않는다. 스크립트의 `diagnostics`는 검토 후보이며, 해당 span을 자동 치환하지 않는다.
 
 예:
 

@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "plugin_root": "plugins/ai-agent-harness",
   "archive": "plugins/ai-agent-harness-0.1.0.zip",
-  "archive_sha256": "aafd14e888fc2d3efa9615df6b2f68eef913f3863bef3d0316566ebadb6765aa",
+  "archive_sha256": "8c576a8ed68bf0a3ea035f04afc6890fd3079b1ab5915e4aa8ff8b07e145623e",
   "marketplaces": {
     "codex": ".agents/plugins/marketplace.json",
     "claude": ".claude-plugin/marketplace.json"
