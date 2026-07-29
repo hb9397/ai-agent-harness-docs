@@ -1818,7 +1818,7 @@ Hugging Face 레포는 AI/ML 작업 단위로 스킬을 나눈다.
 
 | 레포 | 주된 단위 | 파일/디렉토리 패턴 | 설치 단위 | 분류 기준 |
 |------|-----------|--------------------|-----------|-----------|
-| `본 저장소 skills/` | 내부 Agent Skill | `skills/{name}/SKILL.md` + templates/prompts | repo SoT, 필요 시 `.agents/skills`/`.claude/skills` 동기화 | 설계→컨텍스트→프로토타입→구현→품질 게이트 |
+| `본 저장소 skills/` (2026-05-27 당시) | 내부 Agent Skill | `skills/{name}/SKILL.md` + templates/prompts | 당시 repo SoT와 local sync 방식 — 현행 아님 | 설계→컨텍스트→프로토타입→구현→품질 게이트 |
 | `anthropics/skills` | Skill | `skills/{name}/SKILL.md` | Claude plugin set | 산출물/작업 유형 |
 | `openai/skills` | Skill | `skills/.system`, `skills/.curated` | Codex `$skill-installer` | 시스템/curated 계층 + 작업 유형 |
 | `obra/superpowers` | Methodology skill | `skills/{name}/SKILL.md` + harness별 plugin | Plugin | 개발 프로세스 단계 |

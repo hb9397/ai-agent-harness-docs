@@ -5,6 +5,10 @@
     "ref": "v1.1.0",
     "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
   },
+  "trees": {
+    "source": "skills/humanize-korean",
+    "runtime": "skills/humanize-korean"
+  },
   "file_map": [
     {
       "upstream_path": "templates/report.md",

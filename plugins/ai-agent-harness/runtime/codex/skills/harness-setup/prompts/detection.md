@@ -31,7 +31,9 @@ ls -d .docs/ 2>/dev/null || ls AGENTS.md 2>/dev/null
 
 5. 위 모두 불충족 → 사용자에게 프로젝트 루트 경로를 직접 질문.
 
-`.claude/skills/` 또는 `.agents/skills/`가 존재하면 legacy local skill copy 후보로만 기록하고, 실행 컨텍스트 판정의 주 기준으로 쓰지 않는다.
+`.claude/skills/`, `.agents/skills/` 또는 `skills/*/SKILL.md`가 존재하면
+legacy/custom local skill 후보로만 기록하고, 실행 컨텍스트 판정의 주 기준으로
+쓰지 않는다.
 
 ### 하네스 관리 레포에서 실행 시 추가 확인
 
@@ -109,6 +111,7 @@ ls AGENTS.md CLAUDE.md 2>/dev/null
 # legacy local skill copy 후보(읽기 전용 report 대상)
 ls .claude/skills/*/SKILL.md 2>/dev/null | head -5
 ls .agents/skills/*/SKILL.md 2>/dev/null | head -5
+ls skills/*/SKILL.md 2>/dev/null | head -5
 ```
 
 | 조건 | 모드 |
@@ -116,4 +119,6 @@ ls .agents/skills/*/SKILL.md 2>/dev/null | head -5
 | `.docs/` 또는 `AGENTS.md`가 존재 | **갱신 모드** |
 | 위 조건 불충족 | **초기 세팅 모드** |
 
-> `.claude/skills/` 또는 `.agents/skills/`만 있는 경우: legacy local skill copy 후보로 보고하되, 문서 하네스가 없으면 **초기 세팅**으로 분류한다.
+> `.claude/skills/`, `.agents/skills/` 또는 `skills/*/SKILL.md`만 있는 경우:
+> legacy/custom local skill 후보로 보고하되, 문서 하네스가 없으면 **초기 세팅**으로
+> 분류한다. 이 경로들은 세팅 모드와 관계없이 생성·수정·동기화하지 않는다.

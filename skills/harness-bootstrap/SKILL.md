@@ -35,6 +35,25 @@ allowed-tools: Read, Glob, Grep, Bash, Write
 4. **공개 산출물 계약을 재사용한다**. `design-doc` OUTPUT_V2 형식과 `context-doc`의 AGENTS 정본 + CLAUDE bridge 구조를 따른다.
 5. **프레임워크 중립**. 매니페스트 파일 기반으로 자동 감지한다.
 
+## 산출물 bundle과 후처리 소유권
+
+`harness-bootstrap`은 이 통합 실행의 최외곽 producer다. Step 0에서 다음 컨텍스트를
+한 번 만든다.
+
+```text
+artifact_bundle_id = harness-bootstrap:{정규화한 프로젝트 루트}:{이번 실행의 고유 ID}
+handoff_owner = harness-bootstrap
+suppress_child_handoff = false
+handoff_completed = false
+```
+
+Step 5의 `design-doc`, Step 6의 `context-doc` 공개 skill-name handoff에는 같은
+`artifact_bundle_id`와 `handoff_owner`를 전달하고
+`suppress_child_handoff = true`를 명시한다. 자식 workflow는 자신의
+`humanize-korean` 후처리를 실행하지 않고 초안과 검증 결과만 반환해야 한다.
+따라서 이 bundle의 문서 개선 handoff는 Step 7 이후
+`harness-bootstrap`이 한 번만 소유한다.
+
 ## 질문 예산
 
 사용자 질문 총합은 **최대 3회**다.
@@ -196,7 +215,20 @@ allowed-tools: Read, Glob, Grep, Bash, Write
 
 ### Step 5 — design-doc OUTPUT 초안 생성 및 확인
 
-`../design-doc/templates/OUTPUT_V2.md` 양식을 그대로 사용해 설계 문서 초안을 생성한다.
+공개 스킬 이름 `design-doc`으로 handoff하여 OUTPUT_V2 설계 문서 초안을
+생성한다. 다른 스킬의 `templates/**` 경로나 구현 파일을 직접 읽지 않는다.
+
+handoff 입력에는 Step 2 인벤토리, Step 3 답변, Step 4 매핑 결과와 다음 실행
+컨텍스트를 함께 전달한다.
+
+```text
+artifact_bundle_id = {Step 0에서 만든 값}
+handoff_owner = harness-bootstrap
+suppress_child_handoff = true
+```
+
+이 handoff에서는 준비된 관찰·답변을 입력으로 사용하고 추가 인터뷰나 자식
+`humanize-korean` 후처리를 요청하지 않는다.
 
 - 작성 지침(주석)은 제거한 상태로 출력
 - 해당하지 않는 스케일 섹션은 삭제
@@ -214,10 +246,19 @@ allowed-tools: Read, Glob, Grep, Bash, Write
 
 ### Step 6 — context-doc 파이프라인 실행
 
-Step 5 OUTPUT을 입력으로 삼아 `context-doc` 스킬의 워크플로우를 그대로 실행한다.
+Step 5 OUTPUT을 입력으로 삼아 공개 스킬 이름 `context-doc`으로 handoff한다.
+다른 스킬의 `prompts/**` 또는 `templates/**` 내부 경로를 직접 참조하지 않는다.
+
+handoff에는 다음 실행 컨텍스트를 전달한다.
+
+```text
+artifact_bundle_id = {Step 0에서 만든 값}
+handoff_owner = harness-bootstrap
+suppress_child_handoff = true
+```
 
 - AGENTS.md 정본에 들어갈 프로젝트 팩트 + 지침 인덱스 초안 작성
-- `../context-doc/prompts/analysis-instruction.md` 기준으로 주제별 instruction 파일 분류
+- `context-doc`의 공개 workflow로 주제별 instruction 파일 분류
 - AGENTS 정본 + CLAUDE bridge + 각 `*-instruction.md` 구조 활용
 - 모노레포 감지 시 `.docs/instruction/` 배치 질문 (context-doc의 Step 2와 동일)
 
@@ -280,8 +321,16 @@ Step 5 OUTPUT을 입력으로 삼아 `context-doc` 스킬의 워크플로우를 
 
 ## 문서 개선 후처리
 
-`DESIGN.md`, `AGENTS.md`, `CLAUDE.md` 초안 생성 후에는 `humanize-korean`의 `document-refinement` 프로필로 한국어 문장 개선안을 제안할 수 있다.
+Step 7의 전체 산출물과 구조 검증이 끝난 뒤 다음 조건을 전부 만족할 때만
+`artifact_bundle_id` 전체를 `humanize-korean`의 `document-refinement` 프로필로
+한 번 넘긴다.
 
-- 후처리는 proposal-only가 기본이다.
-- 승인 전 파일 쓰기는 금지한다.
-- 요구사항, 경로, ID, 숫자, 날짜, 코드 fence, 표 구조, 의무 수준은 변경하지 않는다.
+- `handoff_owner == harness-bootstrap`
+- `suppress_child_handoff == false`
+- `handoff_completed == false`
+
+handoff를 제안하거나 실행한 뒤 `handoff_completed = true`로 기록한다.
+`design-doc`과 `context-doc` 자식 workflow가 반환한 문서는 별도 handoff하지 않는다.
+후처리는 proposal-only가 기본이며 승인 전 파일 쓰기는 금지한다. 요구사항, 경로,
+ID, 숫자, 날짜, 코드 fence, 표 구조, 의무 수준은 변경하지 않는다. 승인 적용 후에는
+Step 7의 경로·참조·bridge 검증을 다시 수행한다.

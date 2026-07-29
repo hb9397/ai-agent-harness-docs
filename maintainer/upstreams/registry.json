@@ -59,19 +59,19 @@
     {
       "id": "anthropic-frontend-design",
       "source_class": "official",
-      "integration_mode": "reference",
+      "integration_mode": "adapted",
       "lifecycle": "active",
       "upstream": {
         "kind": "repository",
-        "source_url": "https://github.com/anthropics/claude-code/blob/main/plugins/frontend-design/skills/frontend-design/SKILL.md",
-        "repository": "https://github.com/anthropics/claude-code",
+        "source_url": "https://github.com/anthropics/skills/tree/main/skills/frontend-design",
+        "repository": "https://github.com/anthropics/skills",
         "tracking": "branch",
         "tag_pattern": null,
         "allow_prerelease": false,
-        "watched_paths": ["plugins/frontend-design/skills/frontend-design/SKILL.md"]
+        "watched_paths": ["skills/frontend-design/SKILL.md", "skills/frontend-design/LICENSE.txt"]
       },
       "target": {
-        "local_skills": ["frontend-design", "design-prototype-docs", "create-prototype"],
+        "local_skills": ["frontend-design"],
         "platform_targets": ["codex", "claude-code"]
       },
       "policy": {
@@ -82,20 +82,41 @@
         "license_change": "block"
       },
       "provenance": {
-        "license_spdx": null,
-        "license_url": null,
-        "license_sha256": null,
-        "notice_path": null,
-        "classification_evidence_url": "https://claude.com/plugins/frontend-design",
+        "license_spdx": "Apache-2.0",
+        "license_url": "https://github.com/anthropics/skills/blob/main/skills/frontend-design/LICENSE.txt",
+        "license_sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+        "notice_path": "maintainer/upstreams/provenance/anthropic-skills/NOTICE.md",
+        "classification_evidence_url": "maintainer/upstreams/provenance/anthropic-skills/file-map.json",
         "classification_checked_at": "2026-07-29",
-        "file_map": [{"upstream_path": "plugins/frontend-design/skills/frontend-design/SKILL.md", "local_path": "skills/frontend-design/SKILL.md", "treatment": "reference-only"}]
+        "file_map": [
+          {
+            "upstream_path": "skills/frontend-design/SKILL.md",
+            "local_path": "skills/frontend-design/SKILL.md",
+            "treatment": "translated-restructured-modified"
+          },
+          {
+            "upstream_path": "skills/frontend-design/LICENSE.txt",
+            "local_path": "maintainer/upstreams/provenance/anthropic-skills/LICENSE",
+            "treatment": "notice-preserved"
+          }
+        ]
       },
       "protection": {
-        "protected_globs": ["**/skills/**", "**/templates/**", "**/assets/**", "LICENSE*"]
+        "protected_globs": [
+          "**/skills/**",
+          "**/scripts/**",
+          "**/templates/**",
+          "**/assets/**",
+          "LICENSE*",
+          "NOTICE*"
+        ]
       },
       "validation": {
-        "structure_checks": ["no upstream file content copied without adapted classification"],
-        "behavior_fixtures": ["frontend visual quality guidance remains platform-neutral"],
+        "structure_checks": [
+          "adapted source notice and Apache-2.0 license remain present",
+          "frontend-design carries a prominent modification notice"
+        ],
+        "behavior_fixtures": ["frontend visual quality guidance remains platform-neutral and production-scoped"],
         "codex_smoke_prompts": [],
         "claude_smoke_prompts": []
       }
@@ -367,42 +388,63 @@
     {
       "id": "skill-creator-guides",
       "source_class": "official",
-      "integration_mode": "reference",
+      "integration_mode": "adapted",
       "lifecycle": "active",
       "upstream": {
-        "kind": "documentation",
-        "source_url": "https://claude.com/skills",
-        "repository": null,
-        "tracking": "documentation",
+        "kind": "repository",
+        "source_url": "https://github.com/anthropics/skills/tree/main/skills/skill-creator",
+        "repository": "https://github.com/anthropics/skills",
+        "tracking": "branch",
         "tag_pattern": null,
         "allow_prerelease": false,
-        "watched_paths": []
+        "watched_paths": ["skills/skill-creator/SKILL.md", "skills/skill-creator/LICENSE.txt"]
       },
       "target": {
         "local_skills": ["custom-skill-design"],
-        "platform_targets": ["codex", "claude-code", "docs"]
+        "platform_targets": ["maintainer"]
       },
       "policy": {
-        "channel": "latest-docs",
-        "pin": "documentation-date",
+        "channel": "stable",
+        "pin": "commit-sha",
         "apply": "explicit-approval",
-        "deletion": "not-applicable",
-        "license_change": "review"
+        "deletion": "separate-explicit-approval",
+        "license_change": "block"
       },
       "provenance": {
-        "license_spdx": null,
-        "license_url": null,
-        "license_sha256": null,
-        "notice_path": null,
-        "classification_evidence_url": "https://claude.com/skills",
+        "license_spdx": "Apache-2.0",
+        "license_url": "https://github.com/anthropics/skills/blob/main/skills/skill-creator/LICENSE.txt",
+        "license_sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+        "notice_path": "maintainer/upstreams/provenance/anthropic-skills/NOTICE.md",
+        "classification_evidence_url": "maintainer/upstreams/provenance/anthropic-skills/file-map.json",
         "classification_checked_at": "2026-07-29",
-        "file_map": [{"upstream_path": null, "local_path": "maintainer/skills/custom-skill-design/**", "treatment": "reference-only"}]
+        "file_map": [
+          {
+            "upstream_path": "skills/skill-creator/SKILL.md",
+            "local_path": "maintainer/skills/custom-skill-design/**",
+            "treatment": "translated-restructured-manager-workflow"
+          },
+          {
+            "upstream_path": "skills/skill-creator/LICENSE.txt",
+            "local_path": "maintainer/upstreams/provenance/anthropic-skills/LICENSE",
+            "treatment": "notice-preserved"
+          }
+        ]
       },
       "protection": {
-        "protected_globs": ["**/templates/**", "**/prompts/**", "**/evals/**"]
+        "protected_globs": [
+          "**/scripts/**",
+          "**/templates/**",
+          "**/prompts/**",
+          "**/evals/**",
+          "LICENSE*",
+          "NOTICE*"
+        ]
       },
       "validation": {
-        "structure_checks": ["skill authoring workflow remains platform-neutral"],
+        "structure_checks": [
+          "manager-only skill is excluded from the user plugin",
+          "adapted source notice and Apache-2.0 license remain present"
+        ],
         "behavior_fixtures": [],
         "codex_smoke_prompts": [],
         "claude_smoke_prompts": []

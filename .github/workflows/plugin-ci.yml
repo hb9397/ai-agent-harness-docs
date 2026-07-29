@@ -14,13 +14,30 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
       - name: Validate upstream registry
         run: python maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py
-      - name: Build plugin
-        run: python maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py
+      - name: Run user-skill regression suites
+        run: |
+          python skills/harness-setup/evals/run_evals.py
+          python skills/humanize-korean/evals/run_evals.py
+      - name: Run maintainer regression suites
+        run: |
+          python maintainer/skills/skill-portfolio-maintainer/evals/run_evals.py
+          python maintainer/skills/harness-plugin-maintainer/evals/run_evals.py
+      - name: Check deterministic generated payload
+        run: python maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py --check
       - name: Validate plugin
         run: python maintainer/skills/harness-plugin-maintainer/scripts/validate_plugin.py
-      - name: Check deterministic build
-        run: python maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py --check
+      - name: Install official plugin CLIs
+        run: |
+          npm install --global @openai/codex@0.146.0
+          npm install --global @anthropic-ai/claude-code@2.1.220
+      - name: Smoke isolated Codex and Claude installs
+        run: python maintainer/skills/harness-plugin-maintainer/scripts/smoke_cli_install.py
       - name: Check manager projections
         run: python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projections.py --check
+      - name: Ensure checks did not mutate tracked output
+        run: git diff --exit-code

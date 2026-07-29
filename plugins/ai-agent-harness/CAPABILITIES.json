@@ -21,10 +21,7 @@
     "multi-review",
     "pre-commit"
   ],
-  "aliases": {
-    "humanize": "humanize-korean",
-    "humanize-redo": "humanize-korean"
-  },
+  "aliases": {},
   "maintainer_skills_excluded_from_user_plugin": [
     "custom-skill-design",
     "harness-plugin-maintainer",
@@ -39,20 +36,12 @@
     "skills_path": "./runtime/codex/skills"
   },
   "claude": {
-    "physical_skills": 20,
-    "physical_agents": 3,
+    "physical_skills": 18,
+    "physical_agents": 0,
     "skills_path": "./runtime/claude/skills",
-    "agents_path": "./runtime/claude/agents",
-    "runtime_agents": [
-      "humanize-monolith",
-      "humanize-diagnostician",
-      "humanize-finalizer"
-    ],
-    "aliases": {
-      "humanize-korean": "humanize-korean",
-      "humanize": "humanize-korean",
-      "humanize-redo": "humanize-korean"
-    }
+    "runtime_agents": [],
+    "aliases": {},
+    "canonical_humanize_skill": "humanize-korean"
   },
   "markdown_artifact_flow": {
     "producer_count": 7,

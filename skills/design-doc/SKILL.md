@@ -145,10 +145,33 @@ OUTPUT 초안을 대화창에 출력하고 사용자에게 확인을 요청한�
 
 ---
 
-## 문서 개선 후처리
+## 문서 개선 후처리와 완료 게이트
 
-`DESIGN.md` 초안 작성 후에는 `humanize-korean`의 `document-refinement` 프로필로 한국어 문장 개선안을 제안할 수 있다.
+직접 호출에서는 다음 실행 컨텍스트를 만들고, 상위 producer가 전달한 값이 있으면
+새로 만들지 않고 그대로 보존한다.
 
-- 기본은 proposal-only다.
-- 사용자 승인 전에는 `DESIGN.md`를 직접 수정하지 않는다.
-- 요구사항 ID, API 경로, 파일 경로, 표 구조, 숫자, 날짜, 의무 수준 표현은 보존한다.
+```text
+artifact_bundle_id = design-doc:{정규화한 프로젝트 루트}:{이번 실행의 고유 ID}
+handoff_owner = design-doc
+suppress_child_handoff = false
+handoff_completed = false
+```
+
+상위 producer의 `handoff_owner`가 `design-doc`이 아니면
+`suppress_child_handoff = true`로 유지하고 초안과 Step 4 검증 결과만 반환한다.
+
+직접 호출에서는 Step 4에서 필수 섹션, 요구사항 추적, 내부 링크와 저장 경로를 먼저
+검증한 후 다음 조건을 모두 만족할 때 bundle 전체를 `humanize-korean`의
+`document-refinement` 프로필로 한 번만 제안한다.
+
+- `handoff_owner == design-doc`
+- `suppress_child_handoff == false`
+- `handoff_completed == false`
+
+기본은 proposal-only이며 승인 전에는 `DESIGN.md`를 수정하지 않는다. 요구사항 ID,
+API 경로, 파일 경로, 표 구조, 숫자, 날짜, 의무 수준 표현은 보존한다. 제안·건너뛰기·
+거절 중 하나로 결정되면 `handoff_completed = true`로 기록한다.
+
+승인된 변경을 반영한 경우 Step 4의 필수 섹션, 요구사항 추적, 내부 링크와 저장 경로
+검증을 다시 통과해야 최종 완료로 보고한다. downstream에는 이 재검증을 통과한
+최종 Markdown만 전달한다.

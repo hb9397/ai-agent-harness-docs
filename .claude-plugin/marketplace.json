@@ -1,0 +1,17 @@
+{
+  "name": "ai-agent-harness",
+  "owner": {
+    "name": "AI Agent Harness Maintainers",
+    "url": "https://github.com/epoko77-ai/ai-agent-harness-docs"
+  },
+  "description": "AI Agent Harness user skills for Codex and Claude Code projects.",
+  "plugins": [
+    {
+      "name": "ai-agent-harness",
+      "source": "./plugins/ai-agent-harness",
+      "displayName": "AI Agent Harness",
+      "description": "Project harness plugin for Codex and Claude Code.",
+      "version": "0.1.0"
+    }
+  ]
+}

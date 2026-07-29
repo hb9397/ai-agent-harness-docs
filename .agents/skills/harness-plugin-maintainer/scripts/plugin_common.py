@@ -47,7 +47,14 @@ def sha256_file(path: Path) -> str:
 
 
 def iter_files(root: Path) -> list[Path]:
-    return sorted(path for path in root.rglob("*") if path.is_file() and "__pycache__" not in path.parts and path.suffix != ".pyc")
+    return sorted(
+        (
+            path
+            for path in root.rglob("*")
+            if path.is_file() and "__pycache__" not in path.parts and path.suffix != ".pyc"
+        ),
+        key=lambda path: path.relative_to(root).as_posix(),
+    )
 
 
 def tree_manifest(root: Path) -> list[dict[str, str]]:

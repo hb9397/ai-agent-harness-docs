@@ -1,13 +1,13 @@
 ---
 name: create-prototype
 description: >
-  HTML UI 프로토타입 생성 스킬. `/create-prototype` 명령어로 트리거되며,
+  폐기 가능한 HTML UI 검증 프로토타입 생성 스킬. `/create-prototype` 명령어로 트리거되며,
   요구사항 번호(SFR, REQ, UC 등 프로젝트별 prefix) 기반 화면 프로토타입을 HTML 파일로 생성한다.
   Tailwind CSS CDN + Noto Sans KR 기반이며, 실제 서비스 수준의 인터랙티브 프로토타입을 만든다.
-  "프로토타입 만들어줘", "화면 설계", "UI 프로토타입", "HTML 화면", "화면 구현",
-  "SFR 화면", "REQ 화면", "목업", "화면 시안" 등의 요청에도 반드시 이 스킬을 사용한다.
-  화면이나 프로토타입이라는 단어가 포함된 요청이면 거의 항상 이 스킬을 쓴다.
-allowed-tools: Read, Write, Glob, Task
+  "검증용 프로토타입", "UI 프로토타입", "HTML 목업", "SFR 화면 시안",
+  "REQ 화면 시안" 요청에 사용한다. Markdown 화면 설계 문서는 design-prototype-docs,
+  실제 앱 소스 구현은 frontend-design이 담당한다.
+allowed-tools: Read, Write, Glob, Grep, Bash
 ---
 
 # Create Prototype — HTML UI 프로토타입 생성기
@@ -20,6 +20,20 @@ Tailwind CSS CDN과 Noto Sans KR 폰트를 사용하며, `file://` 직접 열기
 > `<style>` 블록과 HTML 내부 `<script>` 블록(JSON embed 제외)은 사용하지 않는다.
 > 모든 `<script src>` 태그는 반드시 `<head>`에 선언한다.
 > 데이터는 `fetch()` 없이 HTML에 직접 임베드한다.
+
+---
+
+## 진입 라우팅
+
+| 최종 산출물 | 담당 스킬 |
+|---|---|
+| 화면 요구사항·흐름·컴포넌트 배치를 설명하는 Markdown | `design-prototype-docs` |
+| `.docs/prototype/` 아래 검증용 HTML/CSS/JS/JSON | `create-prototype` |
+| 실제 앱 디렉터리에 반영할 제품 코드 | `frontend-design` |
+
+프로토타입은 요구사항 검증을 위한 폐기 가능한 산출물이다. 사용자가 실제 앱 적용을
+요청하면 이 스킬로 비슷한 코드를 만든 뒤 복사하지 말고 `frontend-design`으로
+handoff한다.
 
 ---
 
@@ -112,11 +126,10 @@ STEP 0에서 선호도를 저장했으면 그 결과를 사용한다. 그렇지 
 
 분할 단위를 먼저 확인한다:
 
-> "화면 분할 단위를 선택해주세요.
-> | 분할 단위 | 설명 |
-> |---|---|
-> | 화면 단위 (권장) | 화면 1개 = 서브에이전트 1개 (HTML+CSS+JS+JSON 함께) |
-> | 파일 종류별 | HTML·JS 담당 / CSS 담당 / JSON 담당으로 분리 |"
+> "화면이 여러 개면 화면 단위로 병렬화할까요?
+> 화면 1개를 한 작업 단위로 묶어 HTML+CSS+JS+JSON을 함께 생성합니다."
+
+HTML 구조, 화면별 CSS, JS, JSON은 서로 의존하므로 파일 종류별로 나누지 않는다.
 
 이후 `prompts/parallel-setup.md`의 [모델 확정] 절차를 따른다.
 
@@ -253,12 +266,14 @@ function renderData(data) {
   const container = document.getElementById('card-container');
   container.innerHTML = data.cards.map(card => `
     <div class="list-card" onclick="alert('${card.title}')">
-      <div style="font-size:28px;">${card.icon}</div>
+      <div class="list-card__icon">${card.icon}</div>
       <h3>${card.title}</h3>
     </div>
   `).join('');
 }
 ```
+
+위 예시의 `.list-card__icon` 시각 속성은 화면별 CSS 파일에 정의한다.
 
 > **data/ 폴더 JSON 유지**: HTML에 임베드하더라도 `data/{PREFIX}-001-{slug}-data.json`은 삭제하지 않는다.
 > 원본 보관·diff 검토·재구성 목적으로 항상 유지한다.

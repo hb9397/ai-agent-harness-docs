@@ -84,14 +84,10 @@ def source_projection_integrity(root: Path) -> dict[str, Any]:
         "claude_manager_projection_3": claude == manager,
         "plugin_codex_18": plugin["codex_physical_skills"] == 18,
         "plugin_codex_agents_0": plugin["codex_physical_agents"] == 0,
-        "plugin_claude_20": plugin["claude_physical_skills"] == 20,
-        "plugin_claude_agents_3": plugin["claude_physical_agents"] == 3,
+        "plugin_claude_18": plugin["claude_physical_skills"] == 18,
+        "plugin_claude_agents_0": plugin["claude_physical_agents"] == 0,
         "plugin_admin_0": plugin["admin_in_payload"] == [],
-        "alias_mapping": plugin["humanize_aliases"] == {
-            "humanize-korean": "humanize-korean",
-            "humanize": "humanize-korean",
-            "humanize-redo": "humanize-korean",
-        },
+        "canonical_humanize_only": plugin["humanize_aliases"] == {},
     }
     return {
         "counts": {
@@ -154,6 +150,8 @@ def selected_workspace_manifest(root: Path) -> list[dict[str, str]]:
     selected.extend(
         path
         for path in [
+            root / ".agents" / "plugins" / "marketplace.json",
+            root / ".claude-plugin" / "marketplace.json",
             root / "maintainer" / "plugin" / "release.json",
             root / "maintainer" / "plugin" / "release-checklist.md",
             root / "maintainer" / "plugin" / "install-verification.json",
@@ -209,6 +207,8 @@ def upstream_e2e_isolated(root: Path) -> dict[str, Any]:
 
 def user_e2e(root: Path) -> dict[str, Any]:
     script = root / "skills" / "humanize-korean" / "scripts" / "humanize_korean.py"
+    setup_eval = root / "skills" / "harness-setup" / "evals" / "run_evals.py"
+    run(root, [str(setup_eval)])
     with tempfile.TemporaryDirectory(prefix="harness-phase10-user-") as tmp:
         project = Path(tmp) / "project"
         docs = project / ".docs" / "impl-doc" / "lhb9397"
@@ -227,19 +227,50 @@ def user_e2e(root: Path) -> dict[str, Any]:
         before = sha256_file(artifact)
         completed = run(root, [str(script), "--file", str(artifact), "--profile", "document-refinement"])
         after = sha256_file(artifact)
-        output = completed.stdout
+        proposal = json.loads(completed.stdout)
         protected = ["CORE-07", ".docs/impl-doc/lhb9397/260729-1.selector-recovery-impl-doc.md", "python -m pytest tests/test_selector.py"]
-        approved = artifact.read_text(encoding="utf-8") + "\n\n<!-- approved humanize-korean summary: wording clarified, protected tokens preserved -->\n"
-        artifact.write_text(approved, encoding="utf-8", newline="\n")
+        approved_completed = run(
+            root,
+            [
+                str(script),
+                "--file",
+                str(artifact),
+                "--profile",
+                "document-refinement",
+                "--write-approved",
+            ],
+        )
+        approved = json.loads(approved_completed.stdout)
+        final_text = artifact.read_text(encoding="utf-8")
+        forbidden_skill_roots = [
+            project / ".agents" / "skills",
+            project / ".claude" / "skills",
+            project / "skills",
+        ]
+        setup_output_allowlist = all(not path.exists() for path in forbidden_skill_roots)
+        proposal_only = before == after and proposal["proposal_only"] and not proposal["written"]
+        protected_preserved = all(
+            token in proposal["refined_text"] and token in final_text for token in protected
+        )
+        approved_write = (
+            approved["written"]
+            and not approved["proposal_only"]
+            and final_text == approved["refined_text"]
+            and final_text.startswith("# Selector Recovery\n")
+        )
+        passed = proposal_only and protected_preserved and approved_write and setup_output_allowlist
         return {
+            "harness_setup_eval_passed": True,
             "project_created_without_manager_clone": True,
             "im_not_ai_clone_required": False,
-            "proposal_only": before == after,
-            "protected_tokens_preserved": all(token in output for token in protected),
-            "approved_write_preserves_structure": all(token in artifact.read_text(encoding="utf-8") for token in protected),
-            "downstream_uses_approved_final": True,
+            "setup_output_allowlist_preserved": setup_output_allowlist,
+            "local_skill_directories_created": not setup_output_allowlist,
+            "proposal_only": proposal_only,
+            "protected_tokens_preserved": protected_preserved,
+            "approved_write_preserves_structure": approved_write,
+            "downstream_uses_approved_final": final_text == approved["refined_text"],
             "skip_or_reject_preserves_original": before == after,
-            "passed": before == after and all(token in output for token in protected),
+            "passed": passed,
         }
 
 
@@ -265,31 +296,55 @@ def failure_rollback_isolated(root: Path) -> dict[str, Any]:
             "archive_sha256": sha256_file(root / "plugins" / f"{PLUGIN_ID}-{PLUGIN_VERSION}.zip"),
             "released_lock": load_json(root / "maintainer" / "upstreams" / "lock.json"),
         }
-        write_json(tmp_root / "released-baseline.json", released)
+        baseline_path = tmp_root / "released-baseline.json"
+        active_path = tmp_root / "active-state.json"
+        write_json(baseline_path, released)
+        shutil.copyfile(baseline_path, active_path)
+        baseline_sha = sha256_file(baseline_path)
+        failed_candidate = {**released, "version": "0.1.1-failed", "archive_sha256": "0" * 64}
+        write_json(active_path, failed_candidate)
+        mutation_observed = sha256_file(active_path) != baseline_sha
+        shutil.copyfile(baseline_path, active_path)
+        isolated_baseline_restored = sha256_file(active_path) == baseline_sha
         write_json(
             tmp_root / "rollback-result.json",
             {
-                "failures": [{"case": case, "blocked": True, "rollback": "restored isolated released baseline"} for case in failure_cases],
+                "failures": [
+                    {
+                        "case": case,
+                        "blocked": True,
+                        "rollback": "restored isolated released baseline",
+                    }
+                    for case in failure_cases
+                ],
                 "method": "restore previous released lock and plugin version in isolated fixture",
+                "mutation_observed": mutation_observed,
+                "baseline_restored": isolated_baseline_restored,
             },
         )
     after = selected_workspace_manifest(root)
     return {
         "failure_cases": failure_cases,
         "rollback_method": "isolated released lock/plugin version restore",
+        "failed_candidate_diff_observed": mutation_observed,
+        "isolated_baseline_restored": isolated_baseline_restored,
         "workspace_baseline_preserved": before == after,
-        "passed": before == after,
+        "passed": before == after and mutation_observed and isolated_baseline_restored,
     }
 
 
 def release_gate(root: Path) -> dict[str, Any]:
     install = load_json(root / "maintainer" / "plugin" / "install-verification.json")
+    missing = install["release_gate"]["missing_required_surfaces"]
     return {
         "status": install["release_gate"]["status"],
-        "missing_required_surfaces": install["release_gate"]["missing_required_surfaces"],
+        "missing_required_surfaces": missing,
         "push_tag_release_created": False,
         "released_lock_updated": False,
-        "reason": "Phase 10 does not publish. Phase 7 installation surfaces are still missing or manual-required.",
+        "reason": (
+            "Phase 10 does not publish. Isolated Codex and Claude CLI installs passed; "
+            f"manual evidence remains for: {', '.join(missing)}."
+        ),
         "passed": install["release_gate"]["status"] == "not-release-ready" and not install["release_gate"]["push_tag_release_created"],
     }
 
@@ -329,7 +384,12 @@ def write_report(root: Path, evidence: dict[str, Any]) -> None:
             "",
             "## Release decision",
             "",
-            "This candidate remains `not-release-ready` because actual Codex CLI/App and Claude Code CLI/Desktop install evidence is incomplete. The script does not update `released` lock state and does not create tags or releases.",
+            (
+                "This candidate remains `not-release-ready` because interactive evidence is "
+                f"still required for `{', '.join(checks['release_gate']['missing_required_surfaces'])}`. "
+                "The isolated Codex and Claude CLI install smokes passed. The script does not "
+                "update `released` lock state and does not create tags or releases."
+            ),
             "",
             "## Rollback",
             "",

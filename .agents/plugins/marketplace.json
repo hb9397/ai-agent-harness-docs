@@ -1,0 +1,20 @@
+{
+  "name": "ai-agent-harness",
+  "interface": {
+    "displayName": "AI Agent Harness"
+  },
+  "plugins": [
+    {
+      "name": "ai-agent-harness",
+      "source": {
+        "source": "local",
+        "path": "./plugins/ai-agent-harness"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

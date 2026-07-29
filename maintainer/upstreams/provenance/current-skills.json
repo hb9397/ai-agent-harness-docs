@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "generated_at": "2026-07-29",
-  "scope": "Phase 4 complete: 18 user skills plus 3 maintainer skills",
+  "scope": "Post-refactor audit: 18 user skills plus 3 maintainer skills",
   "counts": {
     "user_skills": 18,
     "maintainer_skills": 3,
@@ -22,7 +22,7 @@
     {"name": "design-doc", "area": "user", "mode": "reference", "sources": ["superpowers", "gstack"], "direct_import": false, "evidence": "Planning and interview workflow is conceptually similar to Superpowers/gstack planning workflows; local template is not marked as upstream import."},
     {"name": "design-prototype-docs", "area": "user", "mode": "reference", "sources": ["anthropic-frontend-design", "openai-product-design", "gstack"], "direct_import": false, "evidence": "Screen/prototype planning concepts are reference-only at Phase 3."},
     {"name": "doc-audit", "area": "user", "mode": "reference", "sources": ["openai-agents-md", "claude-memory", "superpowers"], "direct_import": false, "evidence": "Document drift verification is reference-only; no external file content imported."},
-    {"name": "frontend-design", "area": "user", "mode": "reference", "sources": ["anthropic-frontend-design", "openai-product-design"], "direct_import": false, "evidence": "Current SKILL.md shares high-level distinctive frontend design goals with official skills. Phase 3 does not assert copied text."},
+    {"name": "frontend-design", "area": "user", "mode": "adapted", "sources": ["anthropic-frontend-design", "openai-product-design"], "direct_import": true, "evidence": "The local production-UI workflow is a translated and substantially restructured derivative of Anthropic Skills frontend-design, with additional harness routing, validation, and platform-neutral rules. OpenAI product-design remains reference-only."},
     {"name": "git-scoped-account", "area": "user", "mode": "native", "sources": ["internal-harness-native"], "direct_import": false, "evidence": "Local operational Git-account workflow."},
     {"name": "harness-bootstrap", "area": "user", "mode": "reference", "sources": ["openai-agents-md", "claude-memory", "superpowers"], "direct_import": false, "evidence": "Combines local scan workflow with AGENTS/CLAUDE context contracts and planning concepts."},
     {"name": "harness-setup", "area": "user", "mode": "reference", "sources": ["openai-agents-md", "claude-memory"], "direct_import": false, "evidence": "Project context setup follows AGENTS.md and CLAUDE.md import docs; templates are local."},
@@ -33,13 +33,10 @@
     {"name": "impl-verify", "area": "user", "mode": "reference", "sources": ["superpowers"], "direct_import": false, "evidence": "Verification-before-completion concepts are reference-only."},
     {"name": "multi-review", "area": "user", "mode": "reference", "sources": ["superpowers", "gstack"], "direct_import": false, "evidence": "Multi-perspective review concepts are reference-only."},
     {"name": "pre-commit", "area": "user", "mode": "reference", "sources": ["superpowers"], "direct_import": false, "evidence": "Pre-completion verification/checking workflow is reference-only; local scan.sh is not marked imported."},
-    {"name": "custom-skill-design", "area": "maintainer", "mode": "reference", "sources": ["skill-creator-guides", "superpowers"], "direct_import": false, "evidence": "Skill authoring workflow references official skill creator concepts and Superpowers writing-skills ideas; no direct import asserted."},
+    {"name": "custom-skill-design", "area": "maintainer", "mode": "adapted", "sources": ["skill-creator-guides", "superpowers"], "direct_import": true, "evidence": "The manager-only workflow is a translated and substantially restructured derivative of Anthropic Skills skill-creator, extended with interviews, governance, projection, testing, and release boundaries. Superpowers remains reference-only."},
     {"name": "harness-plugin-maintainer", "area": "maintainer", "mode": "native", "sources": ["internal-harness-native"], "direct_import": false, "evidence": "Phase 6 implementation. Local deterministic plugin build, validation, manager projection, and release-candidate metadata tooling."},
     {"name": "skill-portfolio-maintainer", "area": "maintainer", "mode": "native", "sources": ["internal-harness-native"], "direct_import": false, "evidence": "Phase 5 implementation. Local upstream check, discovery, staging, approval-gated promote, rollback, and eval tooling."}
   ],
   "candidates": [],
-  "open_questions": [
-    "Confirm whether frontend-design contains translated text from Anthropic official frontend-design before any adapted classification.",
-    "Confirm whether custom-skill-design contains translated text from official skill creator or Superpowers writing-skills before any adapted classification."
-  ]
+  "open_questions": []
 }

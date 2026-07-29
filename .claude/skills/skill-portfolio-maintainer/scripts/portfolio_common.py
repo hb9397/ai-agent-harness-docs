@@ -12,12 +12,21 @@ import sys
 import time
 import urllib.error
 import urllib.request
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Any
 
 
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
+IDENTIFIER_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 RATE_LIMIT_STATUS = {403, 429}
+WINDOWS_RESERVED_NAMES = {
+    "CON",
+    "PRN",
+    "AUX",
+    "NUL",
+    *(f"COM{number}" for number in range(1, 10)),
+    *(f"LPT{number}" for number in range(1, 10)),
+}
 
 
 def repo_root() -> Path:
@@ -44,14 +53,110 @@ def sha256_path(path: Path) -> str:
     return digest.hexdigest()
 
 
-def safe_join(root: Path, relative: str) -> Path:
+def validate_candidate_id(value: str) -> str:
+    if not isinstance(value, str) or not IDENTIFIER_RE.fullmatch(value):
+        raise ValueError(
+            "candidate id must be 1-128 ASCII letters, digits, dots, underscores, or hyphens "
+            "and must start with a letter or digit"
+        )
+    if value in {".", ".."} or value.rstrip(" .") != value:
+        raise ValueError("candidate id contains an unsafe trailing or dot-only segment")
+    if value.split(".", 1)[0].upper() in WINDOWS_RESERVED_NAMES:
+        raise ValueError("candidate id uses a reserved Windows device name")
+    return value
+
+
+def validate_relative_path(relative: str, *, allow_glob: bool = False) -> str:
+    if not isinstance(relative, str) or not relative:
+        raise ValueError("path must be a non-empty string")
     if "\x00" in relative:
         raise ValueError("path contains NUL")
-    path = (root / relative).resolve()
+    if not allow_glob and any(character in relative for character in "*?[]"):
+        raise ValueError(f"glob syntax is not allowed here: {relative}")
+
+    posix = PurePosixPath(relative.replace("\\", "/"))
+    windows = PureWindowsPath(relative)
+    if posix.is_absolute() or windows.is_absolute() or windows.drive:
+        raise ValueError(f"absolute path blocked: {relative}")
+    if any(part in {"", ".", ".."} for part in posix.parts):
+        raise ValueError(f"dot segment or traversal blocked: {relative}")
+    return relative
+
+
+def safe_join(root: Path, relative: str, *, reject_symlinks: bool = False) -> Path:
+    validate_relative_path(relative)
     root_resolved = root.resolve()
-    if not str(path).startswith(str(root_resolved)):
+    unresolved = root_resolved / Path(relative)
+    if reject_symlinks:
+        current = root_resolved
+        for part in Path(relative).parts:
+            current = current / part
+            if current.exists() and current.is_symlink():
+                raise ValueError(f"symlink path blocked: {relative}")
+
+    path = unresolved.resolve()
+    try:
+        path.relative_to(root_resolved)
+    except ValueError:
         raise ValueError(f"path traversal blocked: {relative}")
+    if reject_symlinks and path.exists() and path.is_symlink():
+        raise ValueError(f"symlink path blocked: {relative}")
     return path
+
+
+def hash_tree(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        raise ValueError(f"tree path does not exist: {path}")
+    if path.is_symlink():
+        raise ValueError(f"symlink tree blocked: {path}")
+
+    if path.is_file():
+        files = [path]
+        base = path.parent
+    elif path.is_dir():
+        entries = sorted(path.rglob("*"), key=lambda item: item.relative_to(path).as_posix())
+        for entry in entries:
+            relative = entry.relative_to(path).as_posix()
+            if entry.is_symlink():
+                raise ValueError(f"symlink entry blocked: {relative}")
+            if ".git" in entry.relative_to(path).parts:
+                raise ValueError(f"git metadata or submodule entry blocked: {relative}")
+            if entry.name == ".gitmodules":
+                raise ValueError(f"git submodule declaration blocked: {relative}")
+        files = [entry for entry in entries if entry.is_file()]
+        base = path
+    else:
+        raise ValueError(f"unsupported tree entry: {path}")
+    if not files:
+        raise ValueError(f"tree contains no files: {path}")
+
+    digest = hashlib.sha256()
+    digest.update(b"skill-portfolio-tree-v1\0")
+    byte_count = 0
+    for file_path in files:
+        relative = file_path.relative_to(base).as_posix()
+        data = file_path.read_bytes()
+        if b"\x00" in data[:8192]:
+            raise ValueError(f"binary file blocked: {relative}")
+        if data.startswith(b"version https://git-lfs.github.com/spec/"):
+            raise ValueError(f"Git LFS pointer blocked: {relative}")
+        try:
+            data.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            raise ValueError(f"non-UTF-8 or binary file blocked: {relative}") from exc
+        encoded_path = relative.encode("utf-8")
+        digest.update(len(encoded_path).to_bytes(8, "big"))
+        digest.update(encoded_path)
+        digest.update(len(data).to_bytes(8, "big"))
+        digest.update(data)
+        byte_count += len(data)
+
+    return {
+        "algorithm": "sha256-tree-v1",
+        "sha256": digest.hexdigest(),
+        "file_count": len(files),
+        "byte_count": byte_count,
+    }
 
 
 def mask_token(value: str) -> str:

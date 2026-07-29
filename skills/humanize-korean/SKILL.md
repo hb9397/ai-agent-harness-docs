@@ -47,7 +47,7 @@ allowed-tools: Read, Write, Edit, Bash
 - 모드는 기본 `standard`다.
   - `fast`: 최소 변경, 명백한 AI/번역투만 완화
   - `standard`: 문장 리듬과 반복 표현까지 다듬음
-  - `redo`: 사용자가 지정한 문제 범위만 재윤문
+  - `redo`: 사용자가 지정한 줄 범위만 `standard` 강도로 재윤문하며 범위 밖은 바꾸지 않음
 - 산출물 `.md` 후처리라면 `document-refinement` 프로필을 사용한다.
 
 ### STEP 1 — 개선안 작성
@@ -68,15 +68,17 @@ allowed-tools: Read, Write, Edit, Bash
 - 일반 텍스트 요청: 윤문본을 답변한다.
 - 파일 요청: 기본은 patch proposal 또는 별도 개선안 파일이다.
 - `document-refinement`: 사용자 승인 전에는 원본 파일을 쓰지 않는다.
+- 승인받은 파일 반영은 `--write-approved`를 명시한 경우에만 수행하며, 검증을 통과한 뒤 같은 디렉터리의 임시 파일을 원자적으로 교체한다.
 
 ## 로컬 보조 스크립트
 
-필요하면 `scripts/humanize_korean.py`를 사용해 deterministic 보호 토큰 검사와 변경률 검사를 실행한다.
+필요하면 현재 로드한 `SKILL.md`의 부모 디렉터리를 `{skill_dir}`로 두고 `{skill_dir}/scripts/humanize_korean.py`를 사용해 deterministic 보호 토큰 검사와 변경률 검사를 실행한다. 관리 저장소의 `skills/...` 상대경로를 가정하지 않는다.
 
 예:
 
 ```bash
-python skills/humanize-korean/scripts/humanize_korean.py --file .docs/example.md --profile document-refinement
+python "{skill_dir}/scripts/humanize_korean.py" --file .docs/example.md --profile document-refinement
+python "{skill_dir}/scripts/humanize_korean.py" --file .docs/example.md --mode redo --redo-range 12:18
 ```
 
 ## 참고 자료
@@ -84,3 +86,5 @@ python skills/humanize-korean/scripts/humanize_korean.py --file .docs/example.md
 - `references/document-refinement.md`
 - `references/taxonomy.md`
 - `evals/evals.json`
+
+회귀 검증은 현재 스킬 디렉터리의 `evals/run_evals.py`를 실행한다.

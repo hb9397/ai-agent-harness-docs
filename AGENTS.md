@@ -7,17 +7,18 @@
 ## 현재 전환 상태
 
 - 기준 계획서: `improvement_plan/20260729/플러그인 전환 및 스킬 거버넌스 리팩토링 작업 계획서.md`
-- 현재 단계: Phase 1, 사용자·관리자 원본 분리
-- Phase 0의 inventory·license·platform 기준선은 아직 별도 산출물로 고정되지 않았다. 해당 산출물이 없는 상태에서는 배포 가능 artifact를 만들지 않는다.
+- Phase 0~10 구현과 최종 감사 보완을 진행한 `0.1.0` 릴리스 후보가 있다.
+- inventory, upstream provenance, license/NOTICE, plugin build, 설치 표면과 회귀검증 기준선은 `maintainer/` 아래에서 관리한다.
+- CLI 자동 설치 검증과 Codex·Claude 앱 수동 증적이 모두 충족되기 전에는 `release-ready`로 표시하지 않는다.
 
 ## 정본 경로
 
 | 영역 | 정본 | 생성물 또는 대상 |
 |---|---|---|
-| 사용자 스킬 원본 | `skills/` | 향후 `plugins/ai-agent-harness/**` 사용자 payload |
+| 사용자 스킬 원본 | `skills/` | `plugins/ai-agent-harness/**` 사용자 payload |
 | 관리자 스킬 원본 | `maintainer/skills/` | `.agents/skills/`, `.claude/skills/` repo-local projection |
 | 관리자 upstream·provenance | `maintainer/upstreams/` | 외부 공식·유명 스킬 조사 및 반영 증적 |
-| 관리자 inventory·plugin metadata | `maintainer/inventory/`, `maintainer/plugin/` | Phase 0 이후 machine-readable 기준선 |
+| 관리자 inventory·plugin metadata | `maintainer/inventory/`, `maintainer/plugin/` | machine-readable 기준선과 릴리스 증적 |
 | 운영 문서 | `README.md`, `Docs/` | 사용자 설치·하네스 흐름 설명 |
 
 ## 사용자 스킬과 관리자 스킬
@@ -26,6 +27,7 @@
 - `maintainer/skills/`는 이 저장소 관리자만 사용하는 repo-local 스킬의 정본이다.
 - 관리자 스킬은 사용자 플러그인 payload에 포함하지 않는다.
 - 사용자 스킬은 `.agents/skills/` 또는 `.claude/skills/` repo-local projection에 포함하지 않는다.
+- 실제 사용자 프로젝트에서도 `harness-setup`은 `.agents/skills/`, `.claude/skills/`, `skills/`를 생성·복사·동기화하지 않는다. 사용자 스킬은 설치된 플러그인에서만 제공한다.
 - `custom-skill-design`은 관리자 스킬이며 `maintainer/skills/custom-skill-design/`에서만 편집한다.
 - `skill-portfolio-maintainer`는 사용자 스킬 포트폴리오, 외부 upstream, provenance, protected asset 영향 관리를 담당한다.
 - `harness-plugin-maintainer`는 Codex·Claude 사용자 플러그인 생성, 검증, 릴리스를 담당한다.

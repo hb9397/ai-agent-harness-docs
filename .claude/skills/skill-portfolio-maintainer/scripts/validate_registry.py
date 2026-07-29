@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import sys
@@ -132,10 +133,26 @@ def validate_docs(root: Path, errors: list[str]) -> None:
             error(errors, f"missing doc: {path.relative_to(root)}")
 
     imported_text = imports.read_text(encoding="utf-8") if imports.exists() else ""
-    if "Phase 4 promotes one confirmed `adapted`" not in imported_text:
-        error(errors, "Imported_Skill_Provenance.md must state Phase 4 adapted import status")
-    if "humanize-korean" not in imported_text or "accepted adapted" not in imported_text:
-        error(errors, "Imported_Skill_Provenance.md must keep humanize-korean accepted adapted")
+    registry = load_json(root / "maintainer" / "upstreams" / "registry.json")
+    direct_sources = [
+        source
+        for source in registry.get("sources", [])
+        if source.get("lifecycle") == "active"
+        and source.get("integration_mode") in {"vendored", "adapted"}
+    ]
+    if not direct_sources:
+        error(errors, "registry must retain at least one active vendored/adapted source")
+    for source in direct_sources:
+        sid = source.get("id", "<missing-id>")
+        local_skills = source.get("target", {}).get("local_skills", [])
+        for skill_name in local_skills:
+            if skill_name not in imported_text:
+                error(
+                    errors,
+                    f"Imported_Skill_Provenance.md must document {sid} target {skill_name}",
+                )
+    if "accepted adapted" not in imported_text:
+        error(errors, "Imported_Skill_Provenance.md must describe accepted adapted status")
 
 
 def validate_phase5_skill_files(root: Path, errors: list[str]) -> None:
@@ -144,6 +161,7 @@ def validate_phase5_skill_files(root: Path, errors: list[str]) -> None:
         "scripts/build_plugin.py",
         "scripts/validate_plugin.py",
         "scripts/freeze_manager_inventory.py",
+        "scripts/smoke_cli_install.py",
         "scripts/verify_install_surfaces.py",
         "scripts/run_release_regression.py",
         "scripts/plugin_common.py",
@@ -193,11 +211,21 @@ def self_test() -> int:
     return 0
 
 
-def main() -> int:
-    if "--self-test" in sys.argv[1:]:
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Validate the upstream registry, lock state, provenance, and portfolio skill files."
+    )
+    parser.add_argument("--root", type=Path, default=repo_root(), help="harness repository root")
+    parser.add_argument("--self-test", action="store_true", help="run validator fixture self-tests")
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    if args.self_test:
         return self_test()
 
-    root = repo_root()
+    root = args.root.resolve()
     errors: list[str] = []
     validate_registry(root, errors)
     validate_docs(root, errors)
@@ -212,4 +240,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(main(sys.argv[1:]))

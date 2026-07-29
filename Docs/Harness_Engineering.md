@@ -24,8 +24,8 @@ AI Agent Harness는 Codex, Claude Code 등 여러 에이전트가 같은 프로�
 |------|---:|------|------|
 | 사용자 스킬 정본 | 18 | `skills/` | 플러그인 payload에 포함 |
 | 관리자 스킬 정본 | 3 | `maintainer/skills/` | 이 저장소에서만 사용 |
-| Codex runtime projection | 18 skills | `plugins/ai-agent-harness/runtime/codex/skills/` | 사용자 플러그인 산출물 |
-| Claude runtime projection | 20 skills + 3 agents | `plugins/ai-agent-harness/runtime/claude/` | `humanize` alias와 Claude agent 포함 |
+| Codex runtime projection | 18 skills, 0 agents | `plugins/ai-agent-harness/runtime/codex/skills/` | 사용자 플러그인 산출물 |
+| Claude runtime projection | 18 skills, 0 agents | `plugins/ai-agent-harness/runtime/claude/` | Codex와 같은 canonical 사용자 스킬만 포함 |
 | 관리자 projection | 3 | `.agents/skills/`, `.claude/skills/` | repo-local 관리자 사용용 |
 
 사용자 플러그인에는 관리자 스킬을 포함하지 않는다.
@@ -89,6 +89,11 @@ plugin 설치
 
 사용자는 관리자 저장소를 clone하지 않는다. 플러그인 설치와 프로젝트 문서 생성만 수행한다.
 
+`harness-setup`의 사용자 프로젝트 출력 allowlist는 `.docs/**`, 루트 `AGENTS.md`,
+`CLAUDE.md`다. `.agents/skills/**`, `.claude/skills/**`, `skills/**`를 생성·복사·
+동기화하는 동작은 금지한다. 기존 local skill copy는 읽기 전용으로 보고하고 승인
+없는 이동·삭제를 하지 않는다.
+
 ---
 
 ## 6. `.docs`, `AGENTS.md`, `CLAUDE.md` 계약
@@ -122,13 +127,18 @@ Markdown 산출물을 만드는 스킬 7종:
 
 후처리 계약:
 
-1. 원 producer가 산출물 구조와 링크를 검증한다.
-2. 산출물 bundle을 `humanize-korean`의 `document-refinement` profile에 넘긴다.
-3. `humanize-korean`은 개선안과 diff를 제시한다.
-4. 보호 token, 경로, 코드블록, 표, 링크, 식별자를 보존한다.
-5. 사용자가 승인한 변경만 반영한다.
-6. 원 producer가 index, bridge, 구조, link를 다시 검증한다.
-7. downstream 스킬은 승인된 최종 Markdown만 입력으로 사용한다.
+1. 최외곽 producer가 안정적인 `artifact_bundle_id`와 `handoff_owner`를 만든다.
+2. 중첩 producer에는 같은 ID와 owner, `suppress_child_handoff=true`를 전달한다.
+3. 원 producer가 산출물 구조와 링크를 검증한다.
+4. owner만 bundle 전체를 `humanize-korean`의 `document-refinement` profile에 한 번 넘긴다.
+5. `humanize-korean`은 개선안과 diff만 제시한다.
+6. 보호 token, 경로, 코드블록, 표, 링크, 식별자를 보존한다.
+7. 사용자가 승인한 변경만 원자적으로 반영한다.
+8. 원 producer가 index, bridge, 구조, link를 다시 검증한다.
+9. downstream 스킬은 승인·재검증된 최종 Markdown만 입력으로 사용한다.
+
+제안, 건너뛰기, 거절 중 하나가 결정되면 `handoff_completed=true`로 기록해 같은
+bundle을 다시 제안하지 않는다.
 
 사용자가 문서 개선을 건너뛰거나 거절해도 원본 하네스 흐름은 계속 가능해야 한다.
 
@@ -161,7 +171,9 @@ skills/ 사용자 정본 수정
 → 별도 승인 후 tag/push/release
 ```
 
-Phase 7 기준 릴리스 후보는 생성됐지만 네 핵심 설치 표면 증적이 부족해 `not-release-ready`다.
+공식 manifest·marketplace, 결정적 archive, 격리된 Codex/Claude CLI 설치 smoke는
+자동 검증 대상으로 둔다. Codex와 Claude 앱의 설치·재시작·새 세션 증적이 부족하면
+릴리스 후보는 `not-release-ready`다.
 
 ---
 
@@ -190,17 +202,20 @@ read-only inventory
 | 영역 | 검증 |
 |------|------|
 | source/projection | 사용자 18종, 관리자 3종, 관리자 projection sync |
-| plugin | Codex 18 skills, Claude 20 skills + 3 agents, 관리자 0 |
+| plugin | Codex 18 skills, Claude 18 skills, 양쪽 agents 0, 관리자 0 |
 | Markdown | producer 검증, humanize proposal-only, 승인 후 재검증 |
 | upstream | registry schema, lock, provenance, license/NOTICE |
-| release | archive checksum, install-verification, release-checklist |
+| setup | 사용자 프로젝트 skill 디렉터리 미생성, `.docs/**`·AGENTS·CLAUDE output allowlist |
+| release | archive checksum, official manifest/catalog, isolated CLI install, app 수동 증적 |
 
 대표 명령:
 
 ```text
 python maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py --check
 python maintainer/skills/harness-plugin-maintainer/scripts/validate_plugin.py
+python maintainer/skills/harness-plugin-maintainer/scripts/smoke_cli_install.py
 python maintainer/skills/harness-plugin-maintainer/scripts/verify_install_surfaces.py
+python skills/harness-setup/evals/run_evals.py
 python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projections.py --check
 python maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py
 ```

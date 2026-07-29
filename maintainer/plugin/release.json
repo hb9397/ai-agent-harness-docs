@@ -5,12 +5,20 @@
   "version": "0.1.0",
   "plugin_root": "plugins/ai-agent-harness",
   "archive": "plugins/ai-agent-harness-0.1.0.zip",
-  "archive_sha256": "10233c461833265a4d061d218e7d1800102569c27c2a927222a2dd5151f8dd7a",
+  "archive_sha256": "aafd14e888fc2d3efa9615df6b2f68eef913f3863bef3d0316566ebadb6765aa",
+  "marketplaces": {
+    "codex": ".agents/plugins/marketplace.json",
+    "claude": ".claude-plugin/marketplace.json"
+  },
+  "packaged_upstreams": [
+    "anthropic-frontend-design",
+    "im-not-ai"
+  ],
   "logical_user_skills": 18,
   "codex_physical_skills": 18,
   "codex_physical_agents": 0,
-  "claude_physical_skills": 20,
-  "claude_physical_agents": 3,
+  "claude_physical_skills": 18,
+  "claude_physical_agents": 0,
   "markdown_producers": [
     "harness-setup",
     "harness-bootstrap",

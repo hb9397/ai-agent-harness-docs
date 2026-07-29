@@ -1,0 +1,9 @@
+{
+  "id": "../../escaped-candidate",
+  "upstream": {
+    "source_id": "evil",
+    "ref": "v9.9.9",
+    "sha": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+  },
+  "file_map": []
+}

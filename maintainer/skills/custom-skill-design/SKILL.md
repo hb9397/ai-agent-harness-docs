@@ -262,5 +262,14 @@ python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projecti
   - 테스트 케이스 추가 및 재검증
   - Description 트리거 최적화 (Step 6)
   - 연계 스킬과의 통합 테스트
-  - harness-setup으로 프로젝트 일괄 배포
+  - harness-plugin-maintainer로 사용자 플러그인 재빌드·검증
 ```
+
+## 출처 및 변경 고지
+
+이 관리자용 스킬은
+[`anthropics/skills`의 `skill-creator`](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
+내용을 한국어로 번역하고 이 하네스의 인터뷰, 거버넌스, projection, 테스트, 플러그인 릴리스
+경계에 맞게 크게 재구성한 수정 파생물이다. 원본은 Apache License 2.0으로 배포된다.
+적용한 커밋과 파일 대응표는
+`maintainer/upstreams/provenance/anthropic-skills/`에서 관리한다.

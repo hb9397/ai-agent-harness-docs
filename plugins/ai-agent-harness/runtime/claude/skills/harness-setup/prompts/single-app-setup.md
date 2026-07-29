@@ -13,17 +13,17 @@
 
 ## 1. 플러그인 설치 상태 안내
 
-이 스킬은 프로젝트 local skill copy를 만들지 않는다. 사용자가 `design-doc`, `context-doc` 등 후속 스킬을 아직 사용할 수 없다면 `ai-agent-harness` 플러그인 설치·새 세션 시작을 안내한다.
+이 스킬은 프로젝트 local skill copy를 만들지 않는다. `.agents/skills/`,
+`.claude/skills/`, `skills/`는 생성·동기화 대상이 아니다. 사용자가 `design-doc`,
+`context-doc` 등 후속 스킬을 아직 사용할 수 없다면 `ai-agent-harness` 플러그인
+설치·새 세션 시작을 안내한다.
 
 ---
 
 ## 2. 산출물 디렉토리 확인
 
-`.docs/` 디렉토리가 없으면 생성한다:
-
-```bash
-mkdir -p .docs
-```
+`.docs/` 디렉토리가 없으면 현재 플랫폼의 파일 도구로 생성한다. 특정 shell의
+명령 문법을 전제로 하지 않는다.
 
 > 단일 앱에서의 `.docs/` 산출물 경로 표준:
 >
@@ -46,18 +46,16 @@ mkdir -p .docs
 | `.docs/.gitignore` | `templates/docs-gitignore.template` | 로컬 전용(미추적) 영역 지정 |
 | `.docs/_inbox/README.md` | `templates/inbox-readme.template` | `_inbox/` 용도 설명 |
 
-```bash
-# 안내 README (구조·산출물·스킬 매핑)
-cp "[plugin:harness-setup]/templates/docs-readme-single.template" .docs/README.md
+템플릿은 `SKILL.md`의 **플러그인 리소스 해석 계약**으로 읽고 다음 대상에 쓴다.
 
-# 로컬 전용 영역 지정 .gitignore
-cp "[plugin:harness-setup]/templates/docs-gitignore.template" .docs/.gitignore
+| 번들 리소스 | 대상 |
+|-------------|------|
+| `templates/docs-readme-single.template` | `.docs/README.md` |
+| `templates/docs-gitignore.template` | `.docs/.gitignore` |
+| `templates/inbox-readme.template` | `.docs/_inbox/README.md` |
 
-# 에이전트 임시 입력 공간 _inbox (대표적 로컬 전용 영역)
-mkdir -p .docs/_inbox
-: > .docs/_inbox/.gitkeep
-cp "[plugin:harness-setup]/templates/inbox-readme.template" .docs/_inbox/README.md
-```
+`.docs/_inbox/`가 없으면 디렉토리와 빈 `.gitkeep`을 만든다. 기존
+`.docs/_inbox/` 안의 파일은 읽거나 덮어쓰거나 삭제하지 않는다.
 
 > **`_inbox/`의 의미**: 에이전트에게 읽힐 파일(스크린샷·로그·표 등)을 잠시 올려두는 공간이다.
 > `.docs/.gitignore`가 `/_inbox/*`를 무시하므로 그 안의 파일은 git에 올라가지 않고, `.gitkeep`·`README.md`만 추적되어 폴더 구조만 공유된다.
@@ -67,17 +65,21 @@ cp "[plugin:harness-setup]/templates/inbox-readme.template" .docs/_inbox/README.
 
 ## 3. 루트 컨텍스트 파일 생성
 
-단일 앱에서 루트 `AGENTS.md`는 공통 컨텍스트 정본이다. 이미 있으면 보존하고, 없으면 `context-doc` 실행을 안내한다.
+단일 앱에서 루트 `AGENTS.md`는 공통 컨텍스트 정본이다.
 
-루트 `CLAUDE.md`는 `@AGENTS.md` bridge만 둔다. 없으면 `templates/claude-bridge.template`로 생성한다.
+- 없으면 번들 리소스 `templates/root-context-single.template`을 읽고
+  `{{PROJECT_NAME}}`, `{{PROJECT_ROOT}}`를 확정값으로 치환해 생성한다.
+- 이미 있으면 사용자 내용을 보존한다. setup 관리 뼈대가 누락됐다는 이유로 기존
+  프로젝트 규칙을 덮어쓰지 않으며, `context-doc` 보강 후보로 보고한다.
 
-```bash
-cp "[plugin:harness-setup]/templates/claude-bridge.template" CLAUDE.md
-```
+루트 `CLAUDE.md`는 `@AGENTS.md` bridge만 둔다. 없으면 번들 리소스
+`templates/claude-bridge.template`을 읽어 생성한다. 이미 존재하지만 bridge가
+아니면 차이를 먼저 보여주고 사용자 승인 후 갱신한다.
 
 ## 4. legacy local skill copy 읽기 전용 report
 
-`.agents/skills/` 또는 `.claude/skills/`가 있으면 삭제·수정하지 않고 다음만 보고한다.
+`.agents/skills/`, `.claude/skills/` 또는 `skills/*/SKILL.md`가 있으면
+삭제·수정하지 않고 다음만 보고한다.
 
 - 발견 경로
 - 스킬 디렉토리명
@@ -98,13 +100,26 @@ cp "[plugin:harness-setup]/templates/claude-bridge.template" CLAUDE.md
 │   ├── README.md           ← harness-setup 생성 (구조·산출물 안내)
 │   ├── .gitignore          ← harness-setup 생성 (로컬 전용 영역 지정)
 │   └── _inbox/             ← 에이전트 임시 입력 공간 (내용 git 미추적)
-├── AGENTS.md               ← context-doc이 생성/관리하는 공통 정본
+├── AGENTS.md               ← harness-setup이 뼈대 생성, context-doc이 보강
 ├── CLAUDE.md               ← @AGENTS.md bridge
 └── (기존 소스코드)
 ```
 
 > 📌 단일 애플리케이션에서는:
-> - `AGENTS.md`는 `context-doc` 스킬이 생성·관리한다.
+> - `AGENTS.md` 뼈대는 `harness-setup`이 만들고, 프로젝트 팩트와 instruction
+>   인덱스는 `context-doc`이 보강한다.
 > - `CLAUDE.md`는 `@AGENTS.md` bridge다.
 > - `.docs/` 이하 산출물은 소스코드와 함께 동일 git 레포에서 형상관리한다.
 > - 사용자 스킬은 프로젝트 local copy가 아니라 `ai-agent-harness` 플러그인으로 사용한다.
+> - `.agents/skills/`, `.claude/skills/`, `skills/`에는 사용자 스킬을 생성하거나
+>   동기화하지 않는다.
+
+## 6. 실행 후 불변조건 검증
+
+이번 실행의 생성·변경 목록을 확인한다.
+
+- 허용 경로: `.docs/**`, `AGENTS.md`, `CLAUDE.md`
+- 금지 경로: `.agents/skills/**`, `.claude/skills/**`, `skills/**`
+- 모든 템플릿 placeholder가 치환됐고 `CLAUDE.md`가 `@AGENTS.md` bridge인지 확인
+
+금지 경로가 변경됐거나 placeholder가 남아 있으면 세팅 성공으로 보고하지 않는다.

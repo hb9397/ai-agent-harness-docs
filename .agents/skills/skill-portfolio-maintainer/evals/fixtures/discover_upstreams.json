@@ -20,5 +20,20 @@
       "fit": ["planning", "verification"],
       "security_surface": ["skills", "hooks"]
     }
-  ]
+  ],
+  "search_results": {
+    "agent skill korean": [
+      {
+        "full_name": "example/korean-agent-skill",
+        "html_url": "https://github.com/example/korean-agent-skill",
+        "owner": {
+          "login": "example"
+        },
+        "license": {
+          "spdx_id": "Apache-2.0"
+        },
+        "updated_at": "2026-07-29T00:00:00Z"
+      }
+    ]
+  }
 }

@@ -1,8 +1,30 @@
 {
-  "id": "ai-agent-harness",
-  "name": "AI Agent Harness",
+  "name": "ai-agent-harness",
   "version": "0.1.0",
   "description": "Project harness plugin for Codex and Claude Code.",
-  "generated_by": "harness-plugin-maintainer",
-  "skills": "./runtime/codex/skills"
+  "author": {
+    "name": "AI Agent Harness Maintainers",
+    "url": "https://github.com/epoko77-ai/ai-agent-harness-docs"
+  },
+  "homepage": "https://github.com/epoko77-ai/ai-agent-harness-docs",
+  "repository": "https://github.com/epoko77-ai/ai-agent-harness-docs",
+  "keywords": [
+    "agent-harness",
+    "skills",
+    "codex",
+    "claude-code"
+  ],
+  "skills": "./runtime/codex/skills/",
+  "interface": {
+    "displayName": "AI Agent Harness",
+    "shortDescription": "Reusable project harness skills for Codex and Claude Code.",
+    "longDescription": "Install the shared project setup, documentation, implementation, review, and Korean document refinement workflows.",
+    "developerName": "AI Agent Harness Maintainers",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/epoko77-ai/ai-agent-harness-docs"
+  }
 }

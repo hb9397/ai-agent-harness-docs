@@ -5,25 +5,38 @@
     {
       "id": "anthropic-frontend-design",
       "observed": {
-        "source_url": "https://github.com/anthropics/claude-code/blob/main/plugins/frontend-design/skills/frontend-design/SKILL.md",
+        "source_url": "https://github.com/anthropics/skills/tree/main",
         "checked_at": "2026-07-29",
         "ref": "main",
-        "sha": null,
-        "note": "Official Claude plugin page and GitHub source observed; exact commit pin deferred to maintainer acceptance."
+        "sha": "b29e7cf65e5cb78a5ac33d582270551bc74a14eb",
+        "note": "Observed by check_upstreams.py with status=ok"
       },
-      "accepted": null,
-      "embedded": null,
+      "accepted": {
+        "ref": "main",
+        "sha": "b29e7cf65e5cb78a5ac33d582270551bc74a14eb",
+        "accepted_at": "2026-07-29",
+        "mode": "adapted",
+        "evidence": "maintainer/upstreams/provenance/anthropic-skills/file-map.json"
+      },
+      "embedded": {
+        "ref": "main",
+        "sha": "b29e7cf65e5cb78a5ac33d582270551bc74a14eb",
+        "embedded_at": "2026-07-29",
+        "targets": [
+          "skills/frontend-design"
+        ]
+      },
       "packaged": null,
       "released": null
     },
     {
       "id": "openai-product-design",
       "observed": {
-        "source_url": "https://github.com/openai/role-specific-plugins/tree/main/plugins/product-design",
+        "source_url": "https://github.com/openai/role-specific-plugins/tree/main",
         "checked_at": "2026-07-29",
         "ref": "main",
-        "sha": null,
-        "note": "Official OpenAI role-specific plugin repository and product page observed."
+        "sha": "fe5608d2512a7d6a7b9821ce8a88c48464ecd6e4",
+        "note": "Observed by check_upstreams.py with status=ok"
       },
       "accepted": null,
       "embedded": null,
@@ -33,11 +46,11 @@
     {
       "id": "superpowers",
       "observed": {
-        "source_url": "https://github.com/obra/superpowers/releases",
+        "source_url": "https://github.com/obra/superpowers/releases/tag/v6.2.0",
         "checked_at": "2026-07-29",
-        "ref": "v5.1.0",
-        "sha": null,
-        "note": "GitHub release page observed latest v5.1.0 in current browse result; local installed cache may differ and must not be assumed accepted."
+        "ref": "v6.2.0",
+        "sha": "3dcbd5c4b48e02263fbf4a3c01e3fe4f81d584d9",
+        "note": "Observed by check_upstreams.py with status=ok"
       },
       "accepted": null,
       "embedded": null,
@@ -47,11 +60,11 @@
     {
       "id": "gstack",
       "observed": {
-        "source_url": "https://github.com/garrytan/gstack",
+        "source_url": "https://github.com/garrytan/gstack/tree/main",
         "checked_at": "2026-07-29",
         "ref": "main",
-        "sha": null,
-        "note": "Repository observed as MIT-licensed role workflow reference; no file import."
+        "sha": "a3259400a366593e0c909dd9ac3e59752efd2488",
+        "note": "Observed by check_upstreams.py with status=ok"
       },
       "accepted": null,
       "embedded": null,
@@ -103,14 +116,27 @@
     {
       "id": "skill-creator-guides",
       "observed": {
-        "source_url": "https://claude.com/skills",
+        "source_url": "https://github.com/anthropics/skills/tree/main",
         "checked_at": "2026-07-29",
-        "ref": "documentation",
-        "sha": null,
-        "note": "Skill authoring reference only."
+        "ref": "main",
+        "sha": "b29e7cf65e5cb78a5ac33d582270551bc74a14eb",
+        "note": "Observed by check_upstreams.py with status=ok"
       },
-      "accepted": null,
-      "embedded": null,
+      "accepted": {
+        "ref": "main",
+        "sha": "b29e7cf65e5cb78a5ac33d582270551bc74a14eb",
+        "accepted_at": "2026-07-29",
+        "mode": "adapted",
+        "evidence": "maintainer/upstreams/provenance/anthropic-skills/file-map.json"
+      },
+      "embedded": {
+        "ref": "main",
+        "sha": "b29e7cf65e5cb78a5ac33d582270551bc74a14eb",
+        "embedded_at": "2026-07-29",
+        "targets": [
+          "maintainer/skills/custom-skill-design"
+        ]
+      },
       "packaged": null,
       "released": null
     },
@@ -121,7 +147,7 @@
         "checked_at": "2026-07-29",
         "ref": "v2.3.0",
         "sha": "82137e858763dadb99561f194c5c00465735017b",
-        "note": "GitHub tag list re-checked on 2026-07-29; v2.3.0 is the latest observed stable tag."
+        "note": "Observed by check_upstreams.py with status=ok"
       },
       "accepted": {
         "ref": "v2.3.0",
@@ -134,7 +160,10 @@
         "ref": "v2.3.0",
         "sha": "82137e858763dadb99561f194c5c00465735017b",
         "embedded_at": "2026-07-29",
-        "targets": ["skills/humanize-korean", "maintainer/plugin/runtime-allowlist.json"]
+        "targets": [
+          "skills/humanize-korean",
+          "maintainer/plugin/runtime-allowlist.json"
+        ]
       },
       "packaged": null,
       "released": null

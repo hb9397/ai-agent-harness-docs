@@ -13,7 +13,6 @@
 | 프로젝트 루트 | `{{PROJECT_NAME}}/` | git 관리 안 함 |
 {{APP_LIST}}
 | AI 문서 | `.docs/` | 별도 git 레포 |
-| 하네스 정본 | `{{HARNESS_REPO_NAME}}/` | 별도 git 레포 |
 
 ---
 

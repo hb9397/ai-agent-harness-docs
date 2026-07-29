@@ -7,7 +7,9 @@ import argparse
 import copy
 import json
 import shutil
+import stat
 import sys
+import tempfile
 import zipfile
 from pathlib import Path
 
@@ -18,10 +20,9 @@ from plugin_common import (
     PLUGIN_VERSION,
     copy_tree_clean,
     ensure_no_symlink,
-    generated_marker,
     load_json,
-    remove_dir,
     repo_root,
+    sha256_file,
     tree_manifest,
     user_skills,
     write_json,
@@ -49,6 +50,15 @@ TEXT_SUFFIXES = {
     ".yml",
     ".yaml",
 }
+PLUGIN_DISPLAY_NAME = "AI Agent Harness"
+PLUGIN_DESCRIPTION = "Project harness plugin for Codex and Claude Code."
+MARKETPLACE_NAME = "ai-agent-harness"
+MAINTAINER_NAME = "AI Agent Harness Maintainers"
+REPOSITORY_URL = "https://github.com/epoko77-ai/ai-agent-harness-docs"
+ROOT_CODEX_MARKETPLACE = Path(".agents") / "plugins" / "marketplace.json"
+ROOT_CLAUDE_MARKETPLACE = Path(".claude-plugin") / "marketplace.json"
+EXECUTABLE_SUFFIXES = {".sh"}
+PACKAGED_INTEGRATION_MODES = {"adapted", "vendored"}
 
 
 def copy_user_skills(root: Path, plugin_root: Path, capabilities: dict) -> None:
@@ -66,71 +76,76 @@ def copy_user_skills(root: Path, plugin_root: Path, capabilities: dict) -> None:
         copy_tree_clean(root / "skills" / skill, claude_skills / skill)
 
 
-def add_claude_aliases(root: Path, plugin_root: Path, runtime_allowlist: dict) -> None:
-    template = (root / "maintainer" / "skills" / "harness-plugin-maintainer" / "templates" / "claude-alias-skill.md").read_text(encoding="utf-8")
-    aliases = {
-        "humanize": "Humanize",
-        "humanize-redo": "Humanize Redo",
-    }
-    for alias, title in aliases.items():
-        write_text(
-            plugin_root / "runtime" / "claude" / "skills" / alias / "SKILL.md",
-            template.format(
-                alias_name=alias,
-                alias_title=title,
-                alias_description=f"Claude compatibility alias for humanize-korean ({alias}).",
-            ),
-        )
-
-    agent_template = (root / "maintainer" / "skills" / "harness-plugin-maintainer" / "templates" / "claude-agent.md").read_text(encoding="utf-8")
-    for agent in runtime_allowlist["claude_runtime_agents"]:
-        write_text(
-            plugin_root / "runtime" / "claude" / "agents" / f"{agent}.md",
-            agent_template.format(agent_name=agent),
-        )
-
-
-def copy_im_not_ai_root(root: Path, plugin_root: Path) -> None:
-    target = plugin_root / "runtime" / "claude" / "im-not-ai-root"
-    target.mkdir(parents=True, exist_ok=True)
-    copy_tree_clean(root / "skills" / "humanize-korean" / "references", target / "references")
-    copy_tree_clean(root / "skills" / "humanize-korean" / "scripts", target / "scripts")
-    copy_tree_clean(root / "skills" / "humanize-korean" / "evals", target / "evals")
-
-
-def manifest(plugin_root: Path, platform: str) -> dict:
+def manifest(platform: str) -> dict:
     runtime_key = "codex" if platform == "codex" else "claude"
     payload = {
-        "id": PLUGIN_ID,
-        "name": "AI Agent Harness",
+        "name": PLUGIN_ID,
         "version": PLUGIN_VERSION,
-        "description": "Project harness plugin for Codex and Claude Code.",
-        "generated_by": GENERATED_BY,
-        "skills": f"./runtime/{runtime_key}/skills",
+        "description": PLUGIN_DESCRIPTION,
+        "author": {
+            "name": MAINTAINER_NAME,
+            "url": REPOSITORY_URL,
+        },
+        "homepage": REPOSITORY_URL,
+        "repository": REPOSITORY_URL,
+        "keywords": ["agent-harness", "skills", "codex", "claude-code"],
+        "skills": f"./runtime/{runtime_key}/skills/",
     }
-    if platform == "claude":
-        payload["agents"] = "./runtime/claude/agents"
-        payload["im_not_ai_root"] = "./runtime/claude/im-not-ai-root"
+    if platform == "codex":
+        payload["interface"] = {
+            "displayName": PLUGIN_DISPLAY_NAME,
+            "shortDescription": "Reusable project harness skills for Codex and Claude Code.",
+            "longDescription": "Install the shared project setup, documentation, implementation, review, and Korean document refinement workflows.",
+            "developerName": MAINTAINER_NAME,
+            "category": "Productivity",
+            "capabilities": ["Read", "Write"],
+            "websiteURL": REPOSITORY_URL,
+        }
+    else:
+        payload["displayName"] = PLUGIN_DISPLAY_NAME
     return payload
 
 
-def marketplace(plugin_root: Path, platform: str) -> dict:
-    entry = {
-        "id": PLUGIN_ID,
-        "name": "AI Agent Harness",
-        "description": "Install ai-agent-harness user skills without cloning the management repository.",
-        "source": "./",
-        "manifest": "./.codex-plugin/plugin.json" if platform == "codex" else "./.claude-plugin/plugin.json",
-        "repository": "https://github.com/epoko77-ai/ai-agent-harness-docs",
-        "license": "SEE LICENSE AND THIRD_PARTY_NOTICES.md",
-    }
+def marketplace(platform: str) -> dict:
     if platform == "codex":
-        entry["category"] = "developer-productivity"
-        entry["policy"] = "private-git-backed"
-    return {"schema_version": "1.0.0", "generated_by": GENERATED_BY, "plugins": [entry]}
+        return {
+            "name": MARKETPLACE_NAME,
+            "interface": {"displayName": PLUGIN_DISPLAY_NAME},
+            "plugins": [
+                {
+                    "name": PLUGIN_ID,
+                    "source": {
+                        "source": "local",
+                        "path": f"./{PLUGIN_ROOT_REL.as_posix()}",
+                    },
+                    "policy": {
+                        "installation": "AVAILABLE",
+                        "authentication": "ON_INSTALL",
+                    },
+                    "category": "Productivity",
+                }
+            ],
+        }
+    return {
+        "name": MARKETPLACE_NAME,
+        "owner": {
+            "name": MAINTAINER_NAME,
+            "url": REPOSITORY_URL,
+        },
+        "description": "AI Agent Harness user skills for Codex and Claude Code projects.",
+        "plugins": [
+            {
+                "name": PLUGIN_ID,
+                "source": f"./{PLUGIN_ROOT_REL.as_posix()}",
+                "displayName": PLUGIN_DISPLAY_NAME,
+                "description": PLUGIN_DESCRIPTION,
+                "version": PLUGIN_VERSION,
+            }
+        ],
+    }
 
 
-def build_capabilities(root: Path, runtime_allowlist: dict, markdown_flow: dict, plugin_root: Path) -> dict:
+def build_capabilities(root: Path, runtime_allowlist: dict, markdown_flow: dict) -> dict:
     base = load_json(root / "maintainer" / "plugin" / "CAPABILITIES.json")
     value = copy.deepcopy(base)
     value.update({
@@ -143,12 +158,12 @@ def build_capabilities(root: Path, runtime_allowlist: dict, markdown_flow: dict,
             "skills_path": "./runtime/codex/skills",
         },
         "claude": {
-            "physical_skills": 20,
-            "physical_agents": 3,
+            "physical_skills": 18,
+            "physical_agents": 0,
             "skills_path": "./runtime/claude/skills",
-            "agents_path": "./runtime/claude/agents",
             "runtime_agents": runtime_allowlist["claude_runtime_agents"],
             "aliases": runtime_allowlist["capability_aliases"],
+            "canonical_humanize_skill": "humanize-korean",
         },
         "markdown_artifact_flow": {
             "producer_count": len(markdown_flow["producer_skills"]),
@@ -160,25 +175,57 @@ def build_capabilities(root: Path, runtime_allowlist: dict, markdown_flow: dict,
     return value
 
 
-def notices(root: Path, plugin_root: Path) -> None:
+def packaged_sources(root: Path) -> list[dict]:
+    registry = load_json(root / "maintainer" / "upstreams" / "registry.json")
+    logical_skills = set(load_json(root / "maintainer" / "plugin" / "CAPABILITIES.json")["logical_user_skills"])
+    sources: list[dict] = []
+    for source in registry.get("sources", []):
+        if source.get("lifecycle") != "active" or source.get("integration_mode") not in PACKAGED_INTEGRATION_MODES:
+            continue
+        target_skills = set(source.get("target", {}).get("local_skills", []))
+        if not target_skills & logical_skills:
+            continue
+        sources.append(source)
+    return sorted(sources, key=lambda item: item["id"])
+
+
+def notices(root: Path, plugin_root: Path, sources: list[dict]) -> None:
     license_template = (root / "maintainer" / "skills" / "harness-plugin-maintainer" / "templates" / "plugin-license.md").read_text(encoding="utf-8")
     write_text(plugin_root / "LICENSE", license_template)
     (plugin_root / "licenses").mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(root / "maintainer" / "upstreams" / "provenance" / "im-not-ai" / "LICENSE", plugin_root / "licenses" / "im-not-ai-LICENSE")
+    for source in sources:
+        source_id = source["id"]
+        provenance = source.get("provenance", {})
+        required = ["license_spdx", "license_url", "license_sha256", "notice_path"]
+        missing = [field for field in required if not provenance.get(field)]
+        if missing:
+            raise RuntimeError(f"{source_id}: packaged source provenance missing {missing}")
+        notice_source = root / provenance["notice_path"]
+        license_source = notice_source.parent / "LICENSE"
+        if not license_source.is_file():
+            raise RuntimeError(f"{source_id}: packaged source license missing: {license_source}")
+        if not notice_source.is_file():
+            raise RuntimeError(f"{source_id}: packaged source notice missing: {notice_source}")
+        shutil.copyfile(license_source, plugin_root / "licenses" / f"{source_id}-LICENSE")
     shutil.copyfile(root / "THIRD_PARTY_NOTICES.md", plugin_root / "THIRD_PARTY_NOTICES.md")
 
 
-def lock(root: Path, plugin_root: Path, artifact_manifest: list[dict]) -> dict:
+def lock(root: Path, artifact_manifest: list[dict], sources: list[dict]) -> dict:
     upstream_lock = load_json(root / "maintainer" / "upstreams" / "lock.json")
     packaged = copy.deepcopy(upstream_lock)
+    packaged_ids = {source["id"] for source in sources}
+    matched: set[str] = set()
     for state in packaged.get("states", []):
-        if state.get("id") == "im-not-ai":
+        if state.get("id") in packaged_ids:
+            matched.add(state["id"])
             state["packaged"] = {
                 "plugin_id": PLUGIN_ID,
                 "version": PLUGIN_VERSION,
                 "packaged_at": "2026-07-29",
                 "artifact_manifest_sha256": next(item["sha256"] for item in artifact_manifest if item["path"] == "CAPABILITIES.json"),
             }
+    if matched != packaged_ids:
+        raise RuntimeError(f"packaged sources missing lock state: {sorted(packaged_ids - matched)}")
     packaged["generated_by"] = GENERATED_BY
     packaged["released_state_preserved"] = True
     return packaged
@@ -190,46 +237,74 @@ def write_archive(plugin_root: Path) -> Path:
         archive.unlink()
     fixed_dt = (2026, 7, 29, 0, 0, 0)
     with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
-        for path in sorted(p for p in plugin_root.rglob("*") if p.is_file()):
+        files = sorted(
+            (path for path in plugin_root.rglob("*") if path.is_file()),
+            key=lambda path: path.relative_to(plugin_root).as_posix(),
+        )
+        for path in files:
             info = zipfile.ZipInfo(str(path.relative_to(plugin_root)).replace("\\", "/"), fixed_dt)
-            info.external_attr = 0o644 << 16
+            mode = 0o755 if path.suffix.lower() in EXECUTABLE_SUFFIXES else 0o644
+            info.create_system = 3
+            info.external_attr = (stat.S_IFREG | mode) << 16
+            info.compress_type = zipfile.ZIP_DEFLATED
+            info._compresslevel = 9
             zf.writestr(info, path.read_bytes())
     return archive
 
 
 def normalize_text_payload(plugin_root: Path) -> None:
-    for path in sorted(p for p in plugin_root.rglob("*") if p.is_file() and p.suffix in TEXT_SUFFIXES):
+    for path in sorted(
+        p
+        for p in plugin_root.rglob("*")
+        if p.is_file() and (p.suffix.lower() in TEXT_SUFFIXES or not p.suffix)
+    ):
         try:
-            text = path.read_text(encoding="utf-8")
+            original = path.read_bytes()
+            text = original.decode("utf-8")
         except UnicodeDecodeError:
             continue
-        lines = [line.rstrip() for line in text.splitlines()]
-        path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8", newline="\n")
+        normalized = text.replace("\r\n", "\n").replace("\r", "\n")
+        normalized_bytes = normalized.encode("utf-8")
+        if normalized_bytes != original:
+            path.write_bytes(normalized_bytes)
 
 
-def build(root: Path) -> dict:
-    plugin_root = root / PLUGIN_ROOT_REL
-    remove_dir(plugin_root)
+def reset_plugin_output(plugin_root: Path, output_root: Path) -> None:
+    resolved_root = output_root.resolve()
+    resolved_plugin = plugin_root.resolve()
+    try:
+        resolved_plugin.relative_to(resolved_root)
+    except ValueError as exc:
+        raise RuntimeError(f"refusing to reset plugin outside output root: {plugin_root}") from exc
+    if resolved_plugin == resolved_root:
+        raise RuntimeError(f"refusing to reset output root itself: {plugin_root}")
+    if plugin_root.exists():
+        shutil.rmtree(plugin_root)
+
+
+def build(root: Path, output_root: Path | None = None) -> dict:
+    target_root = output_root if output_root is not None else root
+    plugin_root = target_root / PLUGIN_ROOT_REL
+    reset_plugin_output(plugin_root, target_root)
     plugin_root.mkdir(parents=True, exist_ok=True)
 
     capabilities = load_json(root / "maintainer" / "plugin" / "CAPABILITIES.json")
     runtime_allowlist = load_json(root / "maintainer" / "plugin" / "runtime-allowlist.json")
     markdown_flow = load_json(root / "maintainer" / "inventory" / "markdown-artifact-flow.json")
+    sources = packaged_sources(root)
 
     copy_user_skills(root, plugin_root, capabilities)
-    add_claude_aliases(root, plugin_root, runtime_allowlist)
-    copy_im_not_ai_root(root, plugin_root)
-    notices(root, plugin_root)
+    notices(root, plugin_root, sources)
 
-    write_json(plugin_root / ".codex-plugin" / "plugin.json", manifest(plugin_root, "codex"))
-    write_json(plugin_root / ".claude-plugin" / "plugin.json", manifest(plugin_root, "claude"))
-    write_json(plugin_root / ".agents" / "plugins" / "marketplace.json", marketplace(plugin_root, "codex"))
-    write_json(plugin_root / ".claude-plugin" / "marketplace.json", marketplace(plugin_root, "claude"))
-    write_json(plugin_root / "CAPABILITIES.json", build_capabilities(root, runtime_allowlist, markdown_flow, plugin_root))
+    write_json(plugin_root / ".codex-plugin" / "plugin.json", manifest("codex"))
+    write_json(plugin_root / ".claude-plugin" / "plugin.json", manifest("claude"))
+    write_json(target_root / ROOT_CODEX_MARKETPLACE, marketplace("codex"))
+    write_json(target_root / ROOT_CLAUDE_MARKETPLACE, marketplace("claude"))
+    write_json(plugin_root / "CAPABILITIES.json", build_capabilities(root, runtime_allowlist, markdown_flow))
     normalize_text_payload(plugin_root)
 
     artifact_manifest = tree_manifest(plugin_root)
-    write_json(plugin_root / "UPSTREAMS.lock.json", lock(root, plugin_root, artifact_manifest))
+    write_json(plugin_root / "UPSTREAMS.lock.json", lock(root, artifact_manifest, sources))
     artifact_manifest = tree_manifest(plugin_root)
     write_json(plugin_root / "MANIFEST.sha256.json", {"generated_by": GENERATED_BY, "files": artifact_manifest})
     archive = write_archive(plugin_root)
@@ -240,28 +315,78 @@ def build(root: Path) -> dict:
         "plugin_id": PLUGIN_ID,
         "version": PLUGIN_VERSION,
         "plugin_root": str(PLUGIN_ROOT_REL).replace("\\", "/"),
-        "archive": str(archive.relative_to(root)).replace("\\", "/"),
-        "archive_sha256": __import__("plugin_common").sha256_file(archive),
+        "archive": str(archive.relative_to(target_root)).replace("\\", "/"),
+        "archive_sha256": sha256_file(archive),
+        "marketplaces": {
+            "codex": str(ROOT_CODEX_MARKETPLACE).replace("\\", "/"),
+            "claude": str(ROOT_CLAUDE_MARKETPLACE).replace("\\", "/"),
+        },
+        "packaged_upstreams": [source["id"] for source in sources],
         "logical_user_skills": 18,
         "codex_physical_skills": 18,
         "codex_physical_agents": 0,
-        "claude_physical_skills": 20,
-        "claude_physical_agents": 3,
+        "claude_physical_skills": 18,
+        "claude_physical_agents": 0,
         "markdown_producers": MARKDOWN_PRODUCERS,
         "released_state_preserved": True,
         "push_tag_release_created": False,
     }
-    write_json(root / "maintainer" / "plugin" / "release.json", release)
+    write_json(target_root / "maintainer" / "plugin" / "release.json", release)
     ensure_no_symlink(plugin_root)
     return release
 
 
-def check(root: Path) -> int:
-    release_before = load_json(root / "maintainer" / "plugin" / "release.json") if (root / "maintainer" / "plugin" / "release.json").exists() else None
-    build(root)
-    release_after = load_json(root / "maintainer" / "plugin" / "release.json")
-    if release_before and release_before != release_after:
-        print("ERROR: plugin build drift detected", file=sys.stderr)
+def compare_tree(expected_root: Path, actual_root: Path) -> list[str]:
+    expected = {item["path"]: item["sha256"] for item in tree_manifest(expected_root)}
+    actual = {item["path"]: item["sha256"] for item in tree_manifest(actual_root)} if actual_root.is_dir() else {}
+    messages: list[str] = []
+    for path in sorted(expected.keys() - actual.keys()):
+        messages.append(f"missing generated plugin file: {path}")
+    for path in sorted(actual.keys() - expected.keys()):
+        messages.append(f"unexpected generated plugin file: {path}")
+    for path in sorted(expected.keys() & actual.keys()):
+        if expected[path] != actual[path]:
+            messages.append(f"changed generated plugin file: {path}")
+    return messages
+
+
+def compare_file(expected: Path, actual: Path, label: str) -> list[str]:
+    if not actual.is_file():
+        return [f"missing generated {label}: {actual}"]
+    if expected.read_bytes() != actual.read_bytes():
+        return [f"changed generated {label}: {actual}"]
+    return []
+
+
+def check(root: Path, canonical_root: Path | None = None) -> int:
+    actual_root = canonical_root if canonical_root is not None else root
+    messages: list[str] = []
+    with tempfile.TemporaryDirectory(prefix="ai-agent-harness-build-check-") as tmp:
+        expected_root = Path(tmp)
+        release = build(root, output_root=expected_root)
+        messages.extend(compare_tree(expected_root / PLUGIN_ROOT_REL, actual_root / PLUGIN_ROOT_REL))
+        messages.extend(
+            compare_file(
+                expected_root / release["archive"],
+                actual_root / release["archive"],
+                "plugin archive",
+            )
+        )
+        messages.extend(
+            compare_file(
+                expected_root / "maintainer" / "plugin" / "release.json",
+                actual_root / "maintainer" / "plugin" / "release.json",
+                "release metadata",
+            )
+        )
+        for label, rel in [
+            ("Codex marketplace", ROOT_CODEX_MARKETPLACE),
+            ("Claude marketplace", ROOT_CLAUDE_MARKETPLACE),
+        ]:
+            messages.extend(compare_file(expected_root / rel, actual_root / rel, label))
+    if messages:
+        for message in messages:
+            print(f"ERROR: {message}", file=sys.stderr)
         return 1
     print("plugin build check passed")
     return 0

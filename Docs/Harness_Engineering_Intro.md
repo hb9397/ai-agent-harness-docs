@@ -23,7 +23,10 @@ AI를 팀에서 쓰면 모델과 도구가 갈린다. 어떤 사람은 Codex를 
 - 외부 스킬을 참고한 것인지 직접 가져온 것인지 추적하기 어렵다.
 - 업데이트가 “어느 파일을 복사해야 하는가” 문제로 변한다.
 
-플러그인 방식에서는 사용자는 플러그인 설치와 `harness-setup`만 수행한다. 스킬 패키징, 플랫폼별 projection, 외부 upstream 최신화는 관리자가 이 저장소에서 처리한다.
+플러그인 방식에서는 사용자는 플러그인 설치와 `harness-setup`만 수행한다. `harness-setup`은
+프로젝트의 `.docs`, `AGENTS.md`, `CLAUDE.md`만 만들고 사용자 스킬 폴더는 만들지
+않는다. 스킬 패키징, 플랫폼별 runtime, 외부 upstream 최신화는 관리자가 이
+저장소에서 처리한다.
 
 ---
 
@@ -60,12 +63,12 @@ AI를 팀에서 쓰면 모델과 도구가 갈린다. 어떤 사람은 Codex를 
 2. 새 task/session을 연다.
 3. harness-setup을 실행한다.
 4. 단일 앱인지 복수 앱인지 확인한다.
-5. .docs, AGENTS.md, CLAUDE.md를 생성한다.
+5. .docs, AGENTS.md, CLAUDE.md를 생성하고 local skill 디렉터리가 생기지 않았는지 확인한다.
 6. design-doc 또는 harness-bootstrap으로 설계 문서를 만든다.
 7. context-doc으로 에이전트 컨텍스트를 정리한다.
 8. impl-doc 또는 impl-fe-be-doc으로 구현 계획을 만든다.
-9. humanize-korean 개선안을 검토하고 승인 여부를 정한다.
-10. 승인된 최종 Markdown을 기준으로 구현·검증을 진행한다.
+9. 최외곽 producer가 한 번 제안한 humanize-korean 개선안을 검토한다.
+10. 승인 반영 후 원 producer의 구조 재검증을 통과한 최종 Markdown으로 구현·검증을 진행한다.
 ```
 
 RFP가 있으면 더 이상 `rfp-ingest`를 쓰지 않는다. RFP 파일이나 핵심 요구사항을 설계·프로토타입·구현 계획 스킬에 직접 제공한다.

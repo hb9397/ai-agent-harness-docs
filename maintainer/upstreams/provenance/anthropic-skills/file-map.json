@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "source_ids": [
+    "anthropic-frontend-design",
+    "skill-creator-guides"
+  ],
+  "accepted_ref": "main",
+  "accepted_sha": "b29e7cf65e5cb78a5ac33d582270551bc74a14eb",
+  "files": [
+    {
+      "upstream_path": "skills/frontend-design/SKILL.md",
+      "local_path": "skills/frontend-design/SKILL.md",
+      "treatment": "translated-restructured-modified",
+      "packaged": true
+    },
+    {
+      "upstream_path": "skills/skill-creator/SKILL.md",
+      "local_path": "maintainer/skills/custom-skill-design/**",
+      "treatment": "translated-restructured-manager-workflow",
+      "packaged": false
+    }
+  ]
+}

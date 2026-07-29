@@ -55,15 +55,14 @@ python maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py
 생성 대상:
 
 ```text
+repo root/
+  .agents/plugins/marketplace.json
+  .claude-plugin/marketplace.json
 plugins/ai-agent-harness/
   .codex-plugin/plugin.json
   .claude-plugin/plugin.json
-  .agents/plugins/marketplace.json
-  .claude-plugin/marketplace.json
   runtime/codex/skills/**
   runtime/claude/skills/**
-  runtime/claude/agents/**
-  runtime/claude/im-not-ai-root/**
   LICENSE
   licenses/{upstream-id}-LICENSE
   THIRD_PARTY_NOTICES.md
@@ -80,17 +79,19 @@ plugins/ai-agent-harness/
 - logical user skill 18
 - 관리자 스킬 0
 - Codex physical skill 18, agent 0
-- Claude physical skill 20, agent 3
-- `humanize`·`humanize-redo` alias가 `humanize-korean`으로 매핑
+- Claude physical skill 18, agent 0
+- `humanize-korean`만 canonical 문서 개선 스킬로 패키징
+- manifest `name`과 marketplace `name`이 kebab-case 공식 식별자 형식
+- Codex·Claude marketplace가 관리 저장소 루트에서 `./plugins/ai-agent-harness`를 가리킴
 - Markdown producer 7종과 public handoff
 - `model:`과 `agent: fork` 금지
 - plugin root 밖 상대경로 금지
-- NOTICE·license·lock closure
-- generated marker 존재
+- 모든 packaged adapted·vendored source의 NOTICE·license·lock closure
+- archive mode와 LF line ending, generated metadata marker
 
 ### 4. check
 
-`build_plugin.py --check`와 `validate_plugin.py`를 함께 실행한다. drift가 있으면 source나 builder를 고친 뒤 다시 build한다.
+`build_plugin.py --check`와 `validate_plugin.py`를 함께 실행한다. `--check`는 임시 디렉터리에 expected artifact를 생성해 canonical plugin tree, archive, release metadata, repo-root marketplace와 비교하며 canonical 파일을 수정하지 않는다. drift가 있으면 source나 builder를 고친 뒤 다시 build한다.
 
 ### 5. handoff
 
@@ -98,9 +99,13 @@ plugins/ai-agent-harness/
 
 ### 6. install surface verification
 
-Phase 7에서는 `scripts/verify_install_surfaces.py`를 실행한다.
+`scripts/smoke_cli_install.py`로 Codex와 Claude Code의 실제 CLI 설치 흐름을 격리
+검증하고, `scripts/verify_install_surfaces.py`로 릴리스 게이트 증적을 갱신한다.
 
-- 현재 host의 Codex CLI와 Claude CLI 명령 표면을 probe한다.
+- CLI smoke는 임시 `CODEX_HOME`, `CLAUDE_CONFIG_DIR`,
+  `CLAUDE_CODE_PLUGIN_CACHE_DIR`만 사용한다.
+- 양쪽 모두 marketplace 등록 → plugin 설치 → 목록과 설치 cache의 18 skills /
+  0 agents 확인 → uninstall/remove까지 수행한다.
 - desktop/app/SSH 등 interactive surface는 release checklist에 수동 검증 항목으로 남긴다.
 - local에서 가능한 release candidate metadata, archive checksum, `humanize-korean` proposal-only, legacy local skill copy migration fixture를 검증한다.
 - 네 가지 핵심 surface(Codex CLI·Codex App·Claude Code CLI·Claude Desktop Code) 증적이 모두 없으면 `release-ready`로 표시하지 않는다.
@@ -123,6 +128,7 @@ Phase 10에서는 `scripts/run_release_regression.py`를 실행한다.
 python maintainer/skills/harness-plugin-maintainer/evals/run_evals.py
 python maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py --check
 python maintainer/skills/harness-plugin-maintainer/scripts/validate_plugin.py
+python maintainer/skills/harness-plugin-maintainer/scripts/smoke_cli_install.py
 python maintainer/skills/harness-plugin-maintainer/scripts/verify_install_surfaces.py
 python maintainer/skills/harness-plugin-maintainer/scripts/run_release_regression.py
 python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projections.py --check

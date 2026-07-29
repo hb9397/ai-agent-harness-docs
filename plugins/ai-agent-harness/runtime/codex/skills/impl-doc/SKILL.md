@@ -344,10 +344,27 @@ Step 7에서 방금 저장한 문서와 같은 자리에 인덱스 문서를 새
 
 ---
 
-## 문서 개선 후처리
+## 문서 개선 후처리와 완료 게이트
 
-구현 계획서와 로드맵 인덱스 초안 생성 후에는 `humanize-korean`의 `document-refinement` 프로필로 문장 개선안을 제안할 수 있다.
+직접 호출에서는 구현 계획서와 로드맵 인덱스를 하나의 bundle로 묶는다. 상위
+producer가 전달한 실행 컨텍스트가 있으면 새 ID나 owner를 만들지 않는다.
 
-- 기본은 proposal-only다.
-- 사용자 승인 전 파일 반영은 금지한다.
-- 단계 번호, 파일 경로, 명령어, API/요구사항 ID, 숫자, 날짜, 의무 수준 표현은 보존한다.
+```text
+artifact_bundle_id = impl-doc:{정규화한 프로젝트 루트}:{이번 실행의 고유 ID}
+handoff_owner = impl-doc
+suppress_child_handoff = false
+handoff_completed = false
+```
+
+Step 7의 계획서 저장 검증과 Step 8의 인덱스 링크·분할 구조 검증을 모두 마친 뒤,
+owner이고 억제되지 않았으며 아직 완료되지 않은 bundle에 대해서만
+`humanize-korean`의 `document-refinement` 프로필을 한 번 제안한다. 상위
+producer가 owner이면 초안과 검증 결과만 반환한다.
+
+기본은 proposal-only이며 사용자 승인 전 파일 반영은 금지한다. 단계 번호, 파일
+경로, 명령어, API/요구사항 ID, 숫자, 날짜, 의무 수준 표현은 보존한다.
+제안·건너뛰기·거절 중 하나가 결정되면 `handoff_completed = true`로 기록한다.
+
+승인된 변경을 반영한 경우 태스크 ID, 파일 경로, 명령어, 검증 시나리오와 Step 8
+인덱스 링크를 다시 검증한다. 재검증된 구현 계획서와 인덱스만 downstream 구현·
+검증 스킬의 입력으로 사용한다.

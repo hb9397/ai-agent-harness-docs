@@ -12,8 +12,8 @@
         "claude_projection": 3,
         "codex_physical_skills": 18,
         "codex_physical_agents": 0,
-        "claude_physical_skills": 20,
-        "claude_physical_agents": 3
+        "claude_physical_skills": 18,
+        "claude_physical_agents": 0
       },
       "checks": {
         "user_skills_18": true,
@@ -22,15 +22,15 @@
         "claude_manager_projection_3": true,
         "plugin_codex_18": true,
         "plugin_codex_agents_0": true,
-        "plugin_claude_20": true,
-        "plugin_claude_agents_3": true,
+        "plugin_claude_18": true,
+        "plugin_claude_agents_0": true,
         "plugin_admin_0": true,
-        "alias_mapping": true
+        "canonical_humanize_only": true
       },
       "passed": true
     },
     "reproducible_build": {
-      "archive_sha256": "10233c461833265a4d061d218e7d1800102569c27c2a927222a2dd5151f8dd7a",
+      "archive_sha256": "aafd14e888fc2d3efa9615df6b2f68eef913f3863bef3d0316566ebadb6765aa",
       "same_archive_hash": true,
       "same_manifest": true,
       "release_metadata_matches": true,
@@ -69,8 +69,11 @@
       "passed": true
     },
     "user_e2e": {
+      "harness_setup_eval_passed": true,
       "project_created_without_manager_clone": true,
       "im_not_ai_clone_required": false,
+      "setup_output_allowlist_preserved": true,
+      "local_skill_directories_created": false,
       "proposal_only": true,
       "protected_tokens_preserved": true,
       "approved_write_preserves_structure": true,
@@ -93,20 +96,20 @@
         "new plugin release regression"
       ],
       "rollback_method": "isolated released lock/plugin version restore",
+      "failed_candidate_diff_observed": true,
+      "isolated_baseline_restored": true,
       "workspace_baseline_preserved": true,
       "passed": true
     },
     "release_gate": {
       "status": "not-release-ready",
       "missing_required_surfaces": [
-        "codex-cli",
         "codex-desktop-app",
-        "claude-code-cli",
         "claude-desktop-code"
       ],
       "push_tag_release_created": false,
       "released_lock_updated": false,
-      "reason": "Phase 10 does not publish. Phase 7 installation surfaces are still missing or manual-required.",
+      "reason": "Phase 10 does not publish. Isolated Codex and Claude CLI installs passed; manual evidence remains for: codex-desktop-app, claude-desktop-code.",
       "passed": true
     }
   }

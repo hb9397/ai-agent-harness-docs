@@ -16,6 +16,25 @@ allowed-tools: Read, Glob, Grep, Bash, Write, Task
 
 ## STEP 0 — 플랫폼·실행 방식 확인 + 프로젝트 유형 확인
 
+### STEP 0-0 — 상위 산출물 bundle 확인
+
+상위 producer가 전달한 실행 컨텍스트가 있는지 먼저 확인한다.
+
+- `artifact_bundle_id`가 있으면 그 값과 `handoff_owner`를 그대로 보존한다.
+- `handoff_owner != context-doc`이면 `suppress_child_handoff = true`로 유지한다.
+- 전달된 컨텍스트가 없으면 직접 호출로 표시하고, STEP 0-B에서 프로젝트 루트를
+  확정한 직후 다음 값을 만든다.
+
+```text
+artifact_bundle_id = context-doc:{정규화한 프로젝트 루트}:{이번 실행의 고유 ID}
+handoff_owner = context-doc
+suppress_child_handoff = false
+handoff_completed = false
+```
+
+같은 `artifact_bundle_id`로 초안 재생성이나 승인 반영을 반복해도 새 bundle로
+취급하지 않는다.
+
 ### STEP 0-A — 플랫폼·실행 방식 확인
 
 사용자에게 아래를 확인한다:
@@ -293,7 +312,18 @@ STEP 0에서 확정한 프로젝트 유형에 따라 저장 경로와 검증 범
 
 ## 문서 개선 후처리
 
-`AGENTS.md`와 `CLAUDE.md` 산출물은 저장 전 또는 저장 직후 `humanize-korean`의 `document-refinement` 프로필로 개선안을 제안할 수 있다.
+전체 `AGENTS.md`, `CLAUDE.md`, 생성된 instruction 파일의 경로·참조·bridge 검증을
+마친 뒤 다음 조건을 전부 만족할 때만 bundle 전체를 `humanize-korean`의
+`document-refinement` 프로필로 한 번 넘긴다.
 
-- 기본은 개선안 제안이며, 승인 없이 파일을 덮어쓰지 않는다.
-- 스킬명, 명령어, 경로, 환경 변수, 정책 문구의 의무 수준은 보존한다.
+- `handoff_owner == context-doc`
+- `suppress_child_handoff == false`
+- `handoff_completed == false`
+
+상위 `harness-bootstrap` 등에서 전달된 실행이면 초안과 검증 결과만 반환하고
+후처리를 제안하지 않는다. 직접 호출에서 handoff를 제안하거나 실행한 뒤에는
+`handoff_completed = true`로 기록한다.
+
+기본은 개선안 제안이며 승인 없이 파일을 덮어쓰지 않는다. 스킬명, 명령어, 경로,
+환경 변수, 정책 문구의 의무 수준은 보존한다. 승인 적용 후 Step 6의 참조·bridge
+검증을 다시 수행해야 최종 완료로 보고한다.

@@ -21,10 +21,7 @@
     "multi-review",
     "pre-commit"
   ],
-  "aliases": {
-    "humanize": "humanize-korean",
-    "humanize-redo": "humanize-korean"
-  },
+  "aliases": {},
   "maintainer_skills_excluded_from_user_plugin": [
     "custom-skill-design",
     "harness-plugin-maintainer",

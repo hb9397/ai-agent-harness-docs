@@ -358,9 +358,28 @@ STEP 0-C에서 확인한 식별자를 폴더명에 사용한다.
 
 ---
 
-## 문서 개선 후처리
+## 문서 개선 후처리와 완료 게이트
 
-프로토타입 설계 문서 초안 작성 후에는 `humanize-korean`의 `document-refinement` 프로필로 문장 개선안을 제안할 수 있다.
+직접 호출에서는 다음 실행 컨텍스트를 만들며, 상위 producer가 전달한 값이 있으면
+그 값과 소유권을 그대로 사용한다.
 
-- 승인 전에는 산출물 파일을 덮어쓰지 않는다.
-- 화면 ID, 요구사항 ID, 라우트, 컴포넌트명, 표, 코드 fence, 수치, 날짜는 그대로 둔다.
+```text
+artifact_bundle_id = design-prototype-docs:{정규화한 프로젝트 루트}:{이번 실행의 고유 ID}
+handoff_owner = design-prototype-docs
+suppress_child_handoff = false
+handoff_completed = false
+```
+
+상위 producer가 owner이면 `suppress_child_handoff = true`로 유지하고 이 스킬에서는
+별도 후처리를 제안하지 않는다. 직접 호출에서는 품질 기준 7개와
+`create-prototype` 전달 전제조건을 먼저 검증한 뒤, owner이고 아직 완료되지 않은
+bundle에 대해서만 `humanize-korean`의 `document-refinement` 프로필을 한 번
+제안한다.
+
+기본은 proposal-only다. 승인 전에는 산출물 파일을 덮어쓰지 않으며 화면 ID,
+요구사항 ID, 라우트, 컴포넌트명, 표, 코드 fence, 수치, 날짜를 보존한다. 사용자가
+제안·건너뛰기·거절 중 하나를 결정하면 `handoff_completed = true`로 기록한다.
+
+승인된 변경을 반영한 경우 품질 기준 7개, 요구사항 누락 여부, 화면 흐름,
+파일명·라우트·표·코드 fence를 다시 검증한다. 재검증된 최종 Markdown만
+`create-prototype`에 전달한다.

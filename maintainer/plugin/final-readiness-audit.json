@@ -24,13 +24,13 @@
     "plugin_id": "ai-agent-harness",
     "version": "0.1.0",
     "archive": "plugins/ai-agent-harness-0.1.0.zip",
-    "archive_sha256": "10233c461833265a4d061d218e7d1800102569c27c2a927222a2dd5151f8dd7a",
+    "archive_sha256": "aafd14e888fc2d3efa9615df6b2f68eef913f3863bef3d0316566ebadb6765aa",
     "logical_user_skills": 18,
     "manager_skills": 3,
     "codex_physical_skills": 18,
     "codex_physical_agents": 0,
-    "claude_physical_skills": 20,
-    "claude_physical_agents": 3,
+    "claude_physical_skills": 18,
+    "claude_physical_agents": 0,
     "markdown_producer_handoff_count": 7
   },
   "automated_evidence": {
@@ -42,13 +42,15 @@
     "upstream_3mode_e2e": true,
     "user_e2e": true,
     "failure_rollback": true,
+    "codex_cli_install_smoke": true,
+    "claude_cli_install_smoke": true,
     "release_gate": true
   },
-  "blocked_surfaces": [
+  "surface_evidence": [
     {
       "surface": "codex-cli",
-      "status": "blocked",
-      "reason": "WindowsApps denied Codex CLI process start on this host."
+      "status": "verified",
+      "reason": "Codex CLI 0.146.0 isolated marketplace add, plugin add/list, 18 skills / 0 agents cache inspection, remove and cleanup passed."
     },
     {
       "surface": "codex-desktop-app",
@@ -57,8 +59,8 @@
     },
     {
       "surface": "claude-code-cli",
-      "status": "blocked",
-      "reason": "Claude CLI is missing on this host."
+      "status": "verified",
+      "reason": "Claude Code 2.1.220 strict validation, isolated marketplace add, plugin install/list, 18 skills / 0 agents cache inspection, uninstall and cleanup passed."
     },
     {
       "surface": "claude-desktop-code",
@@ -75,9 +77,7 @@
     "requires_explicit_manager_approval_before_publish": true
   },
   "remaining_work": [
-    "Collect Codex CLI marketplace/plugin install, update, and remove evidence.",
     "Collect Codex Desktop/App install, restart/new task, marker/version, and update evidence.",
-    "Collect Claude Code CLI install, list, update, uninstall, reload, and skill invocation evidence.",
     "Collect Claude Desktop Code local/SSH cache, restart/new session, and unsupported cloud/WSL path evidence.",
     "After all evidence passes, request explicit manager approval for push, tag, release, and released lock update."
   ]

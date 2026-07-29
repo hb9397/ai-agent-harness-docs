@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "verified_at": "2026-07-29T00:00:00+09:00",
+  "plugin_id": "ai-agent-harness",
+  "qualified_plugin_id": "ai-agent-harness@ai-agent-harness",
+  "marketplace_source": ".",
+  "platforms": {
+    "codex": {
+      "status": "passed",
+      "cli_version": "codex-cli 0.146.0",
+      "marketplace": "ai-agent-harness",
+      "plugin_id": "ai-agent-harness@ai-agent-harness",
+      "installed_payload": {
+        "version": "0.1.0",
+        "skill_count": 18,
+        "agent_count": 0,
+        "required_skills": [
+          "harness-setup",
+          "humanize-korean"
+        ],
+        "nested_marketplaces": 0
+      },
+      "cleanup": "passed"
+    },
+    "claude": {
+      "status": "passed",
+      "cli_version": "2.1.220 (Claude Code)",
+      "marketplace": "ai-agent-harness",
+      "plugin_id": "ai-agent-harness@ai-agent-harness",
+      "installed_payload": {
+        "version": "0.1.0",
+        "skill_count": 18,
+        "agent_count": 0,
+        "required_skills": [
+          "harness-setup",
+          "humanize-korean"
+        ],
+        "nested_marketplaces": 0
+      },
+      "cleanup": "passed"
+    }
+  },
+  "status": "passed"
+}
