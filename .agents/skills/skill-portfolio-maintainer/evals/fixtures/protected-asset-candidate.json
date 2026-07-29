@@ -1,0 +1,18 @@
+{
+  "id": "protected-asset-change",
+  "upstream": {
+    "source_id": "example-vendored",
+    "ref": "v1.1.0",
+    "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "file_map": [
+    {
+      "upstream_path": "templates/report.md",
+      "local_path": "skills/example/templates/report.md",
+      "treatment": "modified"
+    }
+  ],
+  "validation": {
+    "fixture": "protected asset change"
+  }
+}

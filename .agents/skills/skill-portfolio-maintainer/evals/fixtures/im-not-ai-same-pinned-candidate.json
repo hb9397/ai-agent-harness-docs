@@ -1,0 +1,24 @@
+{
+  "id": "im-not-ai-v2.3.0-dogfood",
+  "upstream": {
+    "source_id": "im-not-ai",
+    "ref": "v2.3.0",
+    "sha": "82137e858763dadb99561f194c5c00465735017b"
+  },
+  "file_map": [
+    {
+      "upstream_path": "README.md",
+      "local_path": "skills/humanize-korean/SKILL.md",
+      "treatment": "adapted-summary"
+    },
+    {
+      "upstream_path": "references/**",
+      "local_path": "skills/humanize-korean/references/**",
+      "treatment": "adapted-local"
+    }
+  ],
+  "validation": {
+    "bootstrap_hash_match": true,
+    "document_refinement_proposal_only": true
+  }
+}

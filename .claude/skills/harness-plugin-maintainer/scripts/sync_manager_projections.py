@@ -31,8 +31,12 @@ def repo_root() -> Path:
     return Path(__file__).resolve().parents[4]
 
 
+def is_generated_cache(path: Path) -> bool:
+    return "__pycache__" in path.parts or path.suffix == ".pyc"
+
+
 def iter_files(root: Path) -> list[Path]:
-    return sorted(path for path in root.rglob("*") if path.is_file())
+    return sorted(path for path in root.rglob("*") if path.is_file() and not is_generated_cache(path))
 
 
 def digest(path: Path) -> str:
@@ -76,7 +80,7 @@ def check_projection(source_root: Path, projection_root: Path) -> list[str]:
 def copy_skill(source: Path, target: Path) -> None:
     if target.exists():
         shutil.rmtree(target)
-    shutil.copytree(source, target, copy_function=shutil.copy2)
+    shutil.copytree(source, target, copy_function=shutil.copy2, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
 
 
 def apply_projection(source_root: Path, projection_root: Path) -> None:

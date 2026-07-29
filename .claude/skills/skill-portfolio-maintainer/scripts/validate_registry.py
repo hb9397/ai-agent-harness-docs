@@ -138,6 +138,27 @@ def validate_docs(root: Path, errors: list[str]) -> None:
         error(errors, "Imported_Skill_Provenance.md must keep humanize-korean accepted adapted")
 
 
+def validate_phase5_skill_files(root: Path, errors: list[str]) -> None:
+    base = root / "maintainer" / "skills" / "skill-portfolio-maintainer"
+    required = [
+        "scripts/check_upstreams.py",
+        "scripts/discover_upstreams.py",
+        "scripts/stage_upstream.py",
+        "scripts/promote_upstream.py",
+        "scripts/rollback_upstream.py",
+        "scripts/portfolio_common.py",
+        "references/reference-mode.md",
+        "references/vendored-mode.md",
+        "references/adapted-mode.md",
+        "templates/upstream-review-report.md",
+        "templates/asset-impact-report.md",
+        "evals/run_evals.py",
+    ]
+    for item in required:
+        if not (base / item).exists():
+            error(errors, f"skill-portfolio-maintainer missing Phase 5 file: {item}")
+
+
 def self_test() -> int:
     checks: list[tuple[str, bool]] = [
         ("invalid integration mode", "copied" not in MODES),
@@ -164,6 +185,7 @@ def main() -> int:
     errors: list[str] = []
     validate_registry(root, errors)
     validate_docs(root, errors)
+    validate_phase5_skill_files(root, errors)
 
     if errors:
         for item in errors:

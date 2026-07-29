@@ -1,0 +1,24 @@
+{
+  "id": "destructive-change",
+  "upstream": {
+    "source_id": "example-vendored",
+    "ref": "v1.2.0",
+    "sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "file_map": [
+    {
+      "upstream_path": "SKILL.md",
+      "local_path": "skills/example/SKILL.md",
+      "treatment": "modified"
+    }
+  ],
+  "destructive_changes": [
+    {
+      "path": "skills/example/templates/legacy.md",
+      "action": "delete"
+    }
+  ],
+  "validation": {
+    "fixture": "destructive change"
+  }
+}

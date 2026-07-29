@@ -1,0 +1,15 @@
+{
+  "id": "malicious-path",
+  "upstream": {
+    "source_id": "evil",
+    "ref": "v9.9.9",
+    "sha": "cccccccccccccccccccccccccccccccccccccccc"
+  },
+  "file_map": [
+    {
+      "upstream_path": "../../outside.txt",
+      "local_path": "skills/example/SKILL.md",
+      "treatment": "modified"
+    }
+  ]
+}

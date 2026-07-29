@@ -1,0 +1,24 @@
+{
+  "seeds": [
+    {
+      "id": "official-doc-authoring-skill",
+      "class": "official",
+      "url": "https://example.invalid/official-doc-authoring-skill",
+      "maintainer": "example-official",
+      "license": "MIT",
+      "activity": "active",
+      "fit": ["context-doc", "design-doc", "impl-doc"],
+      "security_surface": ["skills", "templates"]
+    },
+    {
+      "id": "superpowers",
+      "class": "reputable-third-party",
+      "url": "https://github.com/obra/superpowers",
+      "maintainer": "obra",
+      "license": "MIT",
+      "activity": "active",
+      "fit": ["planning", "verification"],
+      "security_surface": ["skills", "hooks"]
+    }
+  ]
+}

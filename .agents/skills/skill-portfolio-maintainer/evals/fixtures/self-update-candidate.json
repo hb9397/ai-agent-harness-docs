@@ -1,0 +1,16 @@
+{
+  "id": "skill-portfolio-maintainer-self-update",
+  "self_update_same_session": true,
+  "upstream": {
+    "source_id": "internal-harness-native",
+    "ref": "main",
+    "sha": "dddddddddddddddddddddddddddddddddddddddd"
+  },
+  "file_map": [
+    {
+      "upstream_path": "maintainer/skills/skill-portfolio-maintainer/SKILL.md",
+      "local_path": "maintainer/skills/skill-portfolio-maintainer/SKILL.md",
+      "treatment": "modified"
+    }
+  ]
+}

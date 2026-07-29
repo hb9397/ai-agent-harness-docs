@@ -1,0 +1,13 @@
+{
+  "im-not-ai": {
+    "status": "ok",
+    "ref": "v2.3.0",
+    "sha": "82137e858763dadb99561f194c5c00465735017b",
+    "source_url": "https://github.com/epoko77-ai/im-not-ai/releases/tag/v2.3.0"
+  },
+  "superpowers": {
+    "status": "error",
+    "error": "HTTP 429: rate limit",
+    "note": "current pinned state preserved"
+  }
+}
