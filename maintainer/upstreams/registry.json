@@ -411,9 +411,8 @@
     {
       "id": "im-not-ai",
       "source_class": "reputable-third-party",
-      "integration_mode": "unknown",
-      "intended_integration_mode": "adapted",
-      "lifecycle": "candidate",
+      "integration_mode": "adapted",
+      "lifecycle": "active",
       "upstream": {
         "kind": "repository",
         "source_url": "https://github.com/epoko77-ai/im-not-ai",
@@ -435,22 +434,28 @@
         "license_change": "block"
       },
       "provenance": {
-        "license_spdx": null,
-        "license_url": null,
-        "license_sha256": null,
+        "license_spdx": "MIT",
+        "license_url": "https://github.com/epoko77-ai/im-not-ai/blob/v2.3.0/LICENSE",
+        "license_sha256": "c3a7f056828e0fad11268c360b7e609eb5b6d7e2925d2d3e29a70beec63a35a1",
         "notice_path": "maintainer/upstreams/provenance/im-not-ai/NOTICE.md",
         "classification_evidence_url": "https://github.com/epoko77-ai/im-not-ai/releases/tag/v2.3.0",
         "classification_checked_at": "2026-07-29",
-        "file_map": []
+        "file_map": [
+          {"upstream_path": "README.md", "local_path": "skills/humanize-korean/SKILL.md", "treatment": "adapted-summary"},
+          {"upstream_path": "LICENSE", "local_path": "maintainer/upstreams/provenance/im-not-ai/LICENSE", "treatment": "notice-preserved"},
+          {"upstream_path": "references/**", "local_path": "skills/humanize-korean/references/**", "treatment": "adapted-local"},
+          {"upstream_path": "scripts/**", "local_path": "skills/humanize-korean/scripts/humanize_korean.py", "treatment": "local-adapter"},
+          {"upstream_path": "agents/**", "local_path": "maintainer/plugin/runtime-allowlist.json", "treatment": "allowlist-only"}
+        ]
       },
       "protection": {
         "protected_globs": ["**/scripts/**", "**/templates/**", "**/assets/**", "**/references/**", "**/prompts/**", "**/agents/**", "**/commands/**", "**/hooks/**", "**/bin/**", "**/example/**", "**/examples/**", "**/evals/**", "**/tests/**", "LICENSE*", "NOTICE*"]
       },
       "validation": {
-        "structure_checks": ["candidate stays outside skills/humanize-korean until Phase 4 promote"],
+        "structure_checks": ["skills/humanize-korean exists", "runtime allowlist contains only accepted Claude execution agents"],
         "behavior_fixtures": ["meaning-preserving Korean humanization", "document-refinement proposal-only mode"],
-        "codex_smoke_prompts": [],
-        "claude_smoke_prompts": []
+        "codex_smoke_prompts": ["Use $humanize-korean on a short .md draft and preserve IDs/dates."],
+        "claude_smoke_prompts": ["Use /humanize-korean on a short .md draft and preserve IDs/dates."]
       }
     }
   ]

@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-07-29",
+  "source": {
+    "id": "im-not-ai",
+    "repository": "https://github.com/epoko77-ai/im-not-ai",
+    "tag": "v2.3.0",
+    "commit_sha": "82137e858763dadb99561f194c5c00465735017b"
+  },
+  "files": [
+    {
+      "upstream_path": "README.md",
+      "local_path": "skills/humanize-korean/SKILL.md",
+      "treatment": "adapted-summary",
+      "note": "Architecture, usage, safety principles, and change-rate constraints are re-expressed for harness plugin usage."
+    },
+    {
+      "upstream_path": "LICENSE",
+      "local_path": "maintainer/upstreams/provenance/im-not-ai/LICENSE",
+      "treatment": "notice-preserved",
+      "note": "MIT license text preserved for third-party notice tracking."
+    },
+    {
+      "upstream_path": "references/**",
+      "local_path": "skills/humanize-korean/references/**",
+      "treatment": "adapted-local",
+      "note": "Taxonomy and document-refinement guidance are reduced to harness-safe local references."
+    },
+    {
+      "upstream_path": "scripts/**",
+      "local_path": "skills/humanize-korean/scripts/humanize_korean.py",
+      "treatment": "local-adapter",
+      "note": "Local deterministic guard script; upstream scripts are not executed or vendored."
+    },
+    {
+      "upstream_path": "agents/**",
+      "local_path": "maintainer/plugin/runtime-allowlist.json",
+      "treatment": "allowlist-only",
+      "note": "Only runtime agent names needed for Claude projection are retained; no agent prompt files are vendored in Phase 4."
+    }
+  ],
+  "excluded": [
+    "assets/**",
+    ".github/**",
+    "tests/**",
+    "install.sh",
+    "uninstall.sh",
+    "update.sh",
+    "commands/**",
+    ".claude-plugin/**",
+    "gemini-extension.json"
+  ]
+}

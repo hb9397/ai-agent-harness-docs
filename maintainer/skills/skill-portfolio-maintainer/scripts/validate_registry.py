@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate upstream registry, lock, and Phase 3 provenance docs."""
+"""Validate upstream registry, lock, and skill provenance docs."""
 
 from __future__ import annotations
 
@@ -108,10 +108,15 @@ def validate_registry(root: Path, errors: list[str]) -> None:
 
     skills = current.get("skills", []) if isinstance(current, dict) else []
     candidates = current.get("candidates", []) if isinstance(current, dict) else []
-    if len(skills) != 20:
-        error(errors, f"current-skills.json must describe 20 current skills, got {len(skills)}")
-    if not any(item.get("name") == "humanize-korean" for item in candidates):
-        error(errors, "current-skills.json missing humanize-korean candidate")
+    if len(skills) != 21:
+        error(errors, f"current-skills.json must describe 21 current skills, got {len(skills)}")
+    if candidates:
+        error(errors, f"current-skills.json must not keep candidates after Phase 4 promotion, got {len(candidates)}")
+    humanize = next((item for item in skills if item.get("name") == "humanize-korean"), None)
+    if not humanize:
+        error(errors, "current-skills.json missing promoted humanize-korean skill")
+    elif humanize.get("mode") != "adapted" or "im-not-ai" not in humanize.get("sources", []):
+        error(errors, "humanize-korean must be adapted from im-not-ai")
     for item in skills + candidates:
         for sid in item.get("sources", []):
             if sid not in source_ids:
@@ -127,10 +132,10 @@ def validate_docs(root: Path, errors: list[str]) -> None:
             error(errors, f"missing doc: {path.relative_to(root)}")
 
     imported_text = imports.read_text(encoding="utf-8") if imports.exists() else ""
-    if "no confirmed current `vendored` or `adapted`" not in imported_text:
-        error(errors, "Imported_Skill_Provenance.md must state Phase 3 has no confirmed imports")
-    if "humanize-korean" not in imported_text or "pending candidate" not in imported_text:
-        error(errors, "Imported_Skill_Provenance.md must keep humanize-korean pending")
+    if "Phase 4 promotes one confirmed `adapted`" not in imported_text:
+        error(errors, "Imported_Skill_Provenance.md must state Phase 4 adapted import status")
+    if "humanize-korean" not in imported_text or "accepted adapted" not in imported_text:
+        error(errors, "Imported_Skill_Provenance.md must keep humanize-korean accepted adapted")
 
 
 def self_test() -> int:

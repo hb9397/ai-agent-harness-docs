@@ -142,3 +142,13 @@ OUTPUT 초안을 대화창에 출력하고 사용자에게 확인을 요청한�
 - **복수 앱**: 기본 경로 `{project}/.docs/{앱 디렉토리명}/context-base/DESIGN.md`
 - `context-base/` 디렉토리가 없으면 생성한다.
 - 동일 경로에 파일이 이미 있으면 **갱신**(덮어쓰기 전 사용자 확인)한다.
+
+---
+
+## 문서 개선 후처리
+
+`DESIGN.md` 초안 작성 후에는 `humanize-korean`의 `document-refinement` 프로필로 한국어 문장 개선안을 제안할 수 있다.
+
+- 기본은 proposal-only다.
+- 사용자 승인 전에는 `DESIGN.md`를 직접 수정하지 않는다.
+- 요구사항 ID, API 경로, 파일 경로, 표 구조, 숫자, 날짜, 의무 수준 표현은 보존한다.

@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-07-29",
+  "source": {
+    "id": "im-not-ai",
+    "tag": "v2.3.0",
+    "commit_sha": "82137e858763dadb99561f194c5c00465735017b",
+    "source_url": "https://github.com/epoko77-ai/im-not-ai/tree/v2.3.0"
+  },
+  "claude_runtime_agents": [
+    "humanize-monolith",
+    "humanize-diagnostician",
+    "humanize-finalizer"
+  ],
+  "blocked_claude_runtime_agents": [
+    "korean-ai-tell-taxonomist",
+    "translationese-research-distiller",
+    "korean-translation-scholar",
+    "taxonomy-gap-analyzer",
+    "post-editese-metric-engineer",
+    "quick-rules-integrator",
+    "ai-tell-detector",
+    "korean-style-rewriter",
+    "content-fidelity-auditor",
+    "naturalness-reviewer",
+    "humanize-web-architect"
+  ],
+  "codex_runtime": {
+    "logical_skill": "humanize-korean",
+    "adapter": "single-call-skill",
+    "claude_agent_dependency": false
+  },
+  "claude_runtime": {
+    "physical_entries": ["humanize-korean", "humanize", "humanize-redo"],
+    "plugin_root_env": "CLAUDE_PLUGIN_ROOT",
+    "python_launcher_order": ["py -3", "python3", "python"],
+    "model_field_allowed": false
+  },
+  "capability_aliases": {
+    "humanize-korean": "humanize-korean",
+    "humanize": "humanize-korean",
+    "humanize-redo": "humanize-korean"
+  }
+}

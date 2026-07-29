@@ -206,3 +206,13 @@ Step 2 확인 결과에 따라 분기한다.
 > - 기존 코드 분석: `/harness-bootstrap`
 > - 컨텍스트 문서 생성: `/context-doc`
 > - 스킬 최신화 재실행: `/harness-setup`
+
+---
+
+## 문서 개선 후처리
+
+이 스킬이 `AGENTS.md`, `CLAUDE.md`, `.docs/README.md` 같은 Markdown 산출물을 만든 뒤에는 `humanize-korean`의 `document-refinement` 프로필을 선택적으로 제안한다.
+
+- 기본은 개선안 제안만 수행한다.
+- 사용자 승인 전에는 생성된 파일을 직접 덮어쓰지 않는다.
+- 제목, 표, 경로, 명령어, ID, 숫자, 날짜, 의무 수준 표현은 원문 그대로 보존한다.

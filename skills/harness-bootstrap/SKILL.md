@@ -275,3 +275,13 @@ Step 5 OUTPUT을 입력으로 삼아 `context-doc` 스킬의 워크플로우를 
 
 **공통:**
 - 이미 존재하는 파일이 있으면 덮어쓰기 전에 사용자에게 알림
+
+---
+
+## 문서 개선 후처리
+
+`DESIGN.md`, `AGENTS.md`, `CLAUDE.md` 초안 생성 후에는 `humanize-korean`의 `document-refinement` 프로필로 한국어 문장 개선안을 제안할 수 있다.
+
+- 후처리는 proposal-only가 기본이다.
+- 승인 전 파일 쓰기는 금지한다.
+- 요구사항, 경로, ID, 숫자, 날짜, 코드 fence, 표 구조, 의무 수준은 변경하지 않는다.

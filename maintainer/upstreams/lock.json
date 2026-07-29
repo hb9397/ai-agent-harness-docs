@@ -121,10 +121,21 @@
         "checked_at": "2026-07-29",
         "ref": "v2.3.0",
         "sha": "82137e858763dadb99561f194c5c00465735017b",
-        "note": "Previously verified candidate basis. Phase 4 must re-check tag, tree, license hash, and file hashes before acceptance."
+        "note": "GitHub tag list re-checked on 2026-07-29; v2.3.0 is the latest observed stable tag."
       },
-      "accepted": null,
-      "embedded": null,
+      "accepted": {
+        "ref": "v2.3.0",
+        "sha": "82137e858763dadb99561f194c5c00465735017b",
+        "accepted_at": "2026-07-29",
+        "mode": "adapted",
+        "evidence": "maintainer/upstreams/promotions/humanize-korean-im-not-ai-v2.3.0.json"
+      },
+      "embedded": {
+        "ref": "v2.3.0",
+        "sha": "82137e858763dadb99561f194c5c00465735017b",
+        "embedded_at": "2026-07-29",
+        "targets": ["skills/humanize-korean", "maintainer/plugin/runtime-allowlist.json"]
+      },
       "packaged": null,
       "released": null
     }

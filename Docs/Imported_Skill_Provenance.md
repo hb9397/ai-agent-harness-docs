@@ -1,14 +1,27 @@
 # Imported Skill Provenance
 
-Phase 3 found no confirmed current `vendored` or `adapted` upstream skill files in the repository.
+Phase 4 promotes one confirmed `adapted` upstream relationship into the user skill set.
 
 ## Current State
 
 | Item | Status | Notes |
 |---|---|---|
-| Current 17 user skills | no confirmed direct import | Some skills have `reference` relationships; see `Docs/External_Skill_References.md`. |
+| Current 18 user skills | one adapted source | `humanize-korean` is adapted from `epoko77-ai/im-not-ai` v2.3.0. Other user skills remain native or reference-only. |
 | Current 3 maintainer skills | no confirmed direct import | `custom-skill-design` has reference relationships only at Phase 3. |
-| `humanize-korean` | pending candidate | No `skills/humanize-korean/**` files exist yet. Phase 4 must verify and record `im-not-ai` provenance before any source promotion. |
+| `humanize-korean` | accepted adapted | Upstream: `epoko77-ai/im-not-ai` v2.3.0, commit `82137e858763dadb99561f194c5c00465735017b`, MIT. |
+
+## Accepted Adapted Sources
+
+| Local skill | Upstream | Version | Treatment |
+|---|---|---|---|
+| `skills/humanize-korean` | `https://github.com/epoko77-ai/im-not-ai` | `v2.3.0` / `82137e858763dadb99561f194c5c00465735017b` | Adapted guidance and local guard script. Full upstream runtime is not vendored. |
+
+Details:
+
+- Notice: `maintainer/upstreams/provenance/im-not-ai/NOTICE.md`
+- File map: `maintainer/upstreams/provenance/im-not-ai/file-map.json`
+- Promotion decision: `maintainer/upstreams/promotions/humanize-korean-im-not-ai-v2.3.0.json`
+- Runtime allowlist: `maintainer/plugin/runtime-allowlist.json`
 
 ## Required For Future Direct Imports
 

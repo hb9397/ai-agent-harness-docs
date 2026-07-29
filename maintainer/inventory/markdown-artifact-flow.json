@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-07-29",
+  "purpose": "Track skills that produce shared Markdown artifacts and must hand off to humanize-korean for optional document refinement.",
+  "producer_skills": [
+    {
+      "skill": "harness-setup",
+      "artifacts": ["AGENTS.md", "CLAUDE.md", ".docs/README.md"],
+      "handoff": "Offer humanize-korean document-refinement proposal after artifact generation."
+    },
+    {
+      "skill": "harness-bootstrap",
+      "artifacts": ["DESIGN.md", "AGENTS.md", "CLAUDE.md"],
+      "handoff": "Offer humanize-korean document-refinement proposal after final draft."
+    },
+    {
+      "skill": "context-doc",
+      "artifacts": ["AGENTS.md", "CLAUDE.md"],
+      "handoff": "Offer humanize-korean document-refinement proposal before final save or after draft generation."
+    },
+    {
+      "skill": "design-doc",
+      "artifacts": ["DESIGN.md"],
+      "handoff": "Offer humanize-korean document-refinement proposal after OUTPUT_V2 draft."
+    },
+    {
+      "skill": "design-prototype-docs",
+      "artifacts": ["prototype design .md"],
+      "handoff": "Offer humanize-korean document-refinement proposal before prototype handoff."
+    },
+    {
+      "skill": "impl-doc",
+      "artifacts": ["implementation plan .md", "implementation roadmap index"],
+      "handoff": "Offer humanize-korean document-refinement proposal after phase plan draft."
+    },
+    {
+      "skill": "impl-fe-be-doc",
+      "artifacts": ["FE/BE implementation plan .md", "implementation roadmap index"],
+      "handoff": "Offer humanize-korean document-refinement proposal after phase plan draft."
+    }
+  ],
+  "policy": {
+    "default": "proposal-only",
+    "requires_user_approval_before_write": true,
+    "protected_contract": "skills/humanize-korean/references/document-refinement.md"
+  }
+}

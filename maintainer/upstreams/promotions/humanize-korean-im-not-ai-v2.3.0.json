@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-07-29",
+  "promotion": {
+    "source_id": "im-not-ai",
+    "target_skill": "humanize-korean",
+    "decision": "accepted-adapted",
+    "accepted_tag": "v2.3.0",
+    "accepted_commit_sha": "82137e858763dadb99561f194c5c00465735017b",
+    "latest_observed_tag": "v2.3.0",
+    "latest_observed_at": "2026-07-29",
+    "basis": [
+      "GitHub tag list shows v2.3.0 as latest tag on 2026-07-29.",
+      "README v2.3.0 describes Claude Code and Codex CLI support.",
+      "MIT license permits adaptation with notice preservation.",
+      "Only storage-safe adapted guidance and a local deterministic guard script are promoted."
+    ]
+  },
+  "safety_review": {
+    "upstream_scripts_executed": false,
+    "path_traversal_found": false,
+    "symlink_or_submodule_promoted": false,
+    "binary_or_lfs_promoted": false,
+    "external_network_runtime_dependency": false,
+    "protected_assets_removed": false
+  },
+  "runtime": {
+    "claude_allowed_agents": [
+      "humanize-monolith",
+      "humanize-diagnostician",
+      "humanize-finalizer"
+    ],
+    "codex_adapter": "single-call local skill",
+    "document_refinement": "proposal-only before user approval"
+  },
+  "validation": {
+    "tests": [
+      "python maintainer/upstreams/provenance/im-not-ai/tests/test_humanize_korean.py",
+      "python maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py",
+      "python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projections.py --check"
+    ]
+  }
+}

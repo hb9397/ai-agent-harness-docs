@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-07-29",
+  "logical_user_skills": [
+    "code-comment",
+    "commit",
+    "context-doc",
+    "create-prototype",
+    "design-doc",
+    "design-prototype-docs",
+    "doc-audit",
+    "frontend-design",
+    "git-scoped-account",
+    "harness-bootstrap",
+    "harness-setup",
+    "humanize-korean",
+    "impl-doc",
+    "impl-fe-be-doc",
+    "impl-reuse-scan",
+    "impl-verify",
+    "multi-review",
+    "pre-commit"
+  ],
+  "aliases": {
+    "humanize": "humanize-korean",
+    "humanize-redo": "humanize-korean"
+  },
+  "maintainer_skills_excluded_from_user_plugin": [
+    "custom-skill-design",
+    "harness-plugin-maintainer",
+    "skill-portfolio-maintainer"
+  ]
+}
