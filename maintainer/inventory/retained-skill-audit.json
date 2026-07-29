@@ -1,0 +1,135 @@
+{
+  "phase": 2,
+  "generated_at": "2026-07-29",
+  "scope": "retained user skills after removing agent-sync, rfp-ingest, and moving custom-skill-design to maintainer/skills",
+  "retained_user_skill_count": 17,
+  "retained_user_skills": [
+    "code-comment",
+    "commit",
+    "context-doc",
+    "create-prototype",
+    "design-doc",
+    "design-prototype-docs",
+    "doc-audit",
+    "frontend-design",
+    "git-scoped-account",
+    "harness-bootstrap",
+    "harness-setup",
+    "impl-doc",
+    "impl-fe-be-doc",
+    "impl-reuse-scan",
+    "impl-verify",
+    "multi-review",
+    "pre-commit"
+  ],
+  "markdown_writers": [
+    {
+      "skill": "harness-setup",
+      "writer_type": "required",
+      "artifact_contract": ".docs scaffolding, root AGENTS.md canonical context, CLAUDE.md bridge"
+    },
+    {
+      "skill": "harness-bootstrap",
+      "writer_type": "required",
+      "artifact_contract": "DESIGN.md plus context-doc-compatible AGENTS.md, CLAUDE.md bridge, instruction files"
+    },
+    {
+      "skill": "context-doc",
+      "writer_type": "required",
+      "artifact_contract": "AGENTS.md canonical context, CLAUDE.md bridge, instruction files"
+    },
+    {
+      "skill": "design-doc",
+      "writer_type": "conditional",
+      "artifact_contract": "DESIGN.md only when the user approves save"
+    },
+    {
+      "skill": "design-prototype-docs",
+      "writer_type": "required",
+      "artifact_contract": "prototype design-doc.md"
+    },
+    {
+      "skill": "impl-doc",
+      "writer_type": "required",
+      "artifact_contract": "implementation plan .md plus roadmap index"
+    },
+    {
+      "skill": "impl-fe-be-doc",
+      "writer_type": "required",
+      "artifact_contract": "FE/BE or screen implementation plan .md plus roadmap index"
+    }
+  ],
+  "findings": [
+    {
+      "id": "P2-F001",
+      "status": "remediated",
+      "rule": "removed-skill-reference",
+      "skills": ["code-comment", "context-doc", "create-prototype", "doc-audit", "multi-review"],
+      "paths": [
+        "skills/code-comment/prompts/parallel-setup.md",
+        "skills/context-doc/prompts/parallel-setup.md",
+        "skills/create-prototype/prompts/parallel-setup.md",
+        "skills/doc-audit/prompts/parallel-setup.md",
+        "skills/multi-review/prompts/parallel-setup.md"
+      ],
+      "impact": "parallel setup tables referenced removed agent-sync and rfp-ingest skills.",
+      "protected_asset": false,
+      "remediation": "Removed deleted skill names from current execution tables."
+    },
+    {
+      "id": "P2-F002",
+      "status": "remediated",
+      "rule": "rfp-direct-input",
+      "skills": ["design-doc", "design-prototype-docs", "impl-fe-be-doc"],
+      "paths": [
+        "skills/design-doc/SKILL.md",
+        "skills/design-prototype-docs/SKILL.md",
+        "skills/impl-fe-be-doc/SKILL.md",
+        "skills/impl-fe-be-doc/prompts/screen-analysis.md"
+      ],
+      "impact": "downstream skills could imply dependency on the removed RFP ingest skill.",
+      "protected_asset": false,
+      "remediation": "Added direct RFP/SFR raw input interpretation contract without copying removed skill logic."
+    },
+    {
+      "id": "P2-F003",
+      "status": "remediated",
+      "rule": "agents-canonical-context",
+      "skills": ["context-doc", "harness-bootstrap", "harness-setup", "doc-audit"],
+      "paths": [
+        "skills/context-doc/SKILL.md",
+        "skills/context-doc/prompts/analysis-claude.md",
+        "skills/context-doc/templates/AGENTS.md.template",
+        "skills/context-doc/templates/CLAUDE.md.template",
+        "skills/harness-bootstrap/SKILL.md",
+        "skills/harness-setup/SKILL.md",
+        "skills/harness-setup/prompts/detection.md",
+        "skills/harness-setup/prompts/single-app-setup.md",
+        "skills/harness-setup/prompts/multi-app-setup.md",
+        "skills/harness-setup/prompts/update-mode.md",
+        "skills/harness-setup/templates/root-context.template",
+        "skills/harness-setup/templates/claude-bridge.template",
+        "skills/doc-audit/SKILL.md"
+      ],
+      "impact": "old contract duplicated common content between CLAUDE.md and AGENTS.md.",
+      "protected_asset": true,
+      "remediation": "Converted common context to AGENTS.md canonical output and CLAUDE.md to @AGENTS.md bridge."
+    },
+    {
+      "id": "P2-F004",
+      "status": "recorded-for-later",
+      "rule": "platform-neutrality-readonly-audit",
+      "skills": ["all retained skills"],
+      "paths": ["skills/**"],
+      "impact": "full line-level platform neutrality cleanup is delegated to CORE-23 remediation and later platform test phases.",
+      "protected_asset": "mixed",
+      "remediation": "This audit records Phase 2 search hits and writer inventory; remaining non-blocking wording is handled in later phases."
+    }
+  ],
+  "phase2_search_results": {
+    "current_skill_agent_sync_or_rfp_ingest_refs": 0,
+    "custom_skill_design_in_user_skills": false,
+    "agent_sync_directory_exists": false,
+    "rfp_ingest_directory_exists": false
+  }
+}

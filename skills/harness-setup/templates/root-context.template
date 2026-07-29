@@ -1,7 +1,8 @@
 # {{PROJECT_NAME}} — AI Agent 컨텍스트
 
-> 이 파일은 `harness-setup` 스킬이 자동 생성·관리한다.
-> 직접 수정하지 말고, 앱별 컨텍스트 파일을 수정한 뒤 `/harness-setup`을 재실행한다.
+> 이 파일은 `harness-setup` 스킬이 생성·갱신하는 공통 컨텍스트 정본이다.
+> Claude Code에서는 `CLAUDE.md` bridge가 이 파일을 `@AGENTS.md`로 가져온다.
+> 직접 수정이 필요하면 앱별 컨텍스트 파일을 먼저 수정한 뒤 `/harness-setup`을 재실행한다.
 
 ---
 
@@ -46,6 +47,7 @@
 
 ## 관리 원칙
 
-- 이 파일(`CLAUDE.md`/`AGENTS.md`)은 어떤 git 레포에도 속하지 않는다.
+- 이 파일(`AGENTS.md`)은 어떤 git 레포에도 속하지 않는다.
+- `CLAUDE.md`는 공통 본문을 복제하지 않고 `@AGENTS.md` bridge만 둔다.
 - `/harness-setup` 재실행으로만 갱신한다.
-- 원본 복사본: `.docs/root-context/CLAUDE.md`, `.docs/root-context/AGENTS.md`
+- 원본 복사본: `.docs/root-context/AGENTS.md`, `.docs/root-context/CLAUDE.md`

@@ -31,7 +31,7 @@
 |------|--------|------|
 | `harness-setup` | 이 README, `.gitignore`, `_inbox/` | `.docs/README.md`, `.docs/.gitignore`, `.docs/_inbox/` |
 | `design-doc` | 설계 문서 | `.docs/context-base/DESIGN.md` |
-| `context-doc` | 컨텍스트 + instruction | `CLAUDE.md`, `AGENTS.md`, `.docs/instruction/*-instruction.md` |
+| `context-doc` | 컨텍스트 + instruction | `AGENTS.md`, `CLAUDE.md` bridge, `.docs/instruction/*-instruction.md` |
 | `impl-doc` / `impl-fe-be-doc` | 구현 지침 | `.docs/impl-doc/{사용자}/{기능}.md` |
 | `design-prototype-docs` | 프로토타입 설계 문서 | `.docs/prototype/{사용자}/{식별자}/design-doc.md` |
 | `create-prototype` | HTML 프로토타입 | `.docs/prototype/{사용자}/{PREFIX}-{번호}/` |

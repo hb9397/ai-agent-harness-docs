@@ -7,8 +7,8 @@
 
 | 호출 지점 | 실행할 섹션 순서 |
 |----------|----------------|
-| STEP 0 — 고정 Task 스킬 (multi-review, doc-audit, agent-sync, context-doc) | [플랫폼 확인] → [모델 목록 표시] → [실행 방식 선택] → [모델 확정] |
-| STEP 0 — 동적 Task 스킬 (create-prototype, code-comment, rfp-ingest, impl-fe-be-doc, impl-doc, impl-reuse-scan, impl-verify) | [플랫폼 확인] → [모델 목록 표시] → [실행 방식 선택 — 선호도만 저장] |
+| STEP 0 — 고정 Task 스킬 (multi-review, doc-audit, context-doc) | [플랫폼 확인] → [모델 목록 표시] → [실행 방식 선택] → [모델 확정] |
+| STEP 0 — 동적 Task 스킬 (create-prototype, code-comment, impl-fe-be-doc, impl-doc, impl-reuse-scan, impl-verify) | [플랫폼 확인] → [모델 목록 표시] → [실행 방식 선택 — 선호도만 저장] |
 | Task 목록 확정 후 — 동적 Task 스킬 | [모델 확정] |
 
 ---

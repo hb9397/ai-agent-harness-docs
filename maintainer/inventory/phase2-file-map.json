@@ -1,0 +1,48 @@
+{
+  "phase": 2,
+  "generated_at": "2026-07-29",
+  "hash_algorithm": "git-blob-sha1",
+  "purpose": "Record protected template movement and transformation relationships for Phase 2.",
+  "entries": [
+    {
+      "source_path": "skills/harness-setup/templates/root-context.template",
+      "target_path": "skills/harness-setup/templates/root-context.template",
+      "before_hash": "84fafe43f755ad179dbd4259b62500c59be483ec",
+      "after_hash": "e40db29b144fab2471996ddd766f513dfd1bf570",
+      "relationship": "modified",
+      "asset_type": "template",
+      "reason": "Convert root context template to AGENTS.md canonical context."
+    },
+    {
+      "source_path": null,
+      "target_path": "skills/harness-setup/templates/claude-bridge.template",
+      "before_hash": null,
+      "after_hash": "60d28f36422721114eef712860f5d63479a6645f",
+      "relationship": "added",
+      "asset_type": "template",
+      "reason": "Create Claude Code bridge template that imports AGENTS.md."
+    },
+    {
+      "source_path": "skills/context-doc/templates/CLAUDE.md.template",
+      "target_path": "skills/context-doc/templates/AGENTS.md.template",
+      "before_hash": "f9216b79b3a89ada437f15572a943da28532f223",
+      "after_hash": "98a3b031aeaba6df2ec7572b059a7eb64c53aa84",
+      "relationship": "copied-and-retargeted",
+      "asset_type": "template",
+      "reason": "Preserve the previous full context body as the new AGENTS.md canonical template."
+    },
+    {
+      "source_path": "skills/context-doc/templates/CLAUDE.md.template",
+      "target_path": "skills/context-doc/templates/CLAUDE.md.template",
+      "before_hash": "f9216b79b3a89ada437f15572a943da28532f223",
+      "after_hash": "60d28f36422721114eef712860f5d63479a6645f",
+      "relationship": "replaced-with-bridge",
+      "asset_type": "template",
+      "reason": "Convert Claude template to @AGENTS.md bridge."
+    }
+  ],
+  "notes": [
+    "skills/agent-sync/** and skills/rfp-ingest/** were removed as explicit Phase 2 decisions.",
+    "Deleted rfp-ingest templates/prompts were within the removed skill payload."
+  ]
+}

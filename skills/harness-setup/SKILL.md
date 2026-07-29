@@ -4,37 +4,38 @@ description: >
   프로젝트에 AI 하네스를 설치·설정·갱신한다.
   '하네스 설정', '하네스 세팅', '프로젝트 세팅', '스킬 설치',
   '하네스 설치', 'setup', '초기 설정', '프로젝트 초기화',
-  '하네스 갱신', '스킬 최신화', '하네스 업데이트',
+  '하네스 갱신', '하네스 업데이트',
   'harness setup', 'harness init' 요청이 오면 이 스킬을 사용한다.
-  이 저장소(ai-agent-harness-docs / {프로젝트명}-ai-harness-docs)를 clone 받은 뒤,
-  단일/복수 애플리케이션 프로젝트를 판별하여 스킬·컨텍스트 구조를 자동 세팅한다.
-  이미 세팅된 프로젝트에서 재실행하면 스킬·컨텍스트를 최신화한다.
+  단일/복수 애플리케이션 프로젝트를 판별하여 .docs 구조와 루트 Agent 컨텍스트를 세팅한다.
+  사용자 스킬 설치·갱신은 ai-agent-harness 플러그인이 담당하며, 이 스킬은 프로젝트 local skill copy를 만들거나 덮어쓰지 않는다.
 allowed-tools: Read, Write, Glob, Grep, Bash
 ---
 
 ## 스킬 연계
 
 ```
-{하네스 레포}/skills/*
+ai-agent-harness plugin
     ↓
 harness-setup  ← 지금 여기
     ↓
-프로젝트에 .claude/skills, .agents/skills, .docs/ 구조 세팅
+프로젝트 .docs/ 구조 + AGENTS.md 정본 + CLAUDE.md bridge 세팅
     ↓
 design-doc, context-doc 등 후속 스킬 사용 가능
 ```
 
 ---
 
-## harness-setup ↔ agent-sync 책임 경계
+## 책임 경계
 
-이 스킬과 `agent-sync`는 동기화 **방향**이 다르다. 아래 경계를 엄격히 준수한다.
+이 스킬은 프로젝트 문서 하네스만 관리한다.
 
-| 영역 | 소유 스킬 | 비고 |
-|------|-----------|------|
-| 원본 하네스 레포 → 프로젝트 `.claude/skills`·`.agents/skills` **pull** | **harness-setup 전담** | 상류→하류 단방향 |
-| 복수앱 **루트 미관리** `CLAUDE.md`/`AGENTS.md` + `.docs/root-context/` 복사본 | **harness-setup 전담** | agent-sync 접근 **금지** |
-| git 관리 컨텍스트 횡적 일치(CLAUDE↔AGENTS), 로컬 `.claude/skills↔.agents/skills` 미러 | **agent-sync** | 횡적·변경기반 |
+| 영역 | 처리 |
+|------|------|
+| 사용자 스킬 설치·업데이트 | `ai-agent-harness` 플러그인 설치·업데이트가 담당 |
+| 프로젝트 `.docs/` 구조 | harness-setup이 생성·갱신 |
+| 루트 `AGENTS.md` | harness-setup이 공통 컨텍스트 정본으로 생성·갱신 |
+| 루트 `CLAUDE.md` | harness-setup이 `@AGENTS.md` bridge와 Claude 전용 delta만 생성 |
+| 기존 `.agents/skills`, `.claude/skills` local copy | 읽기 전용으로 보고하고, 명시 승인 전에는 변경 금지 |
 
 ---
 
@@ -55,8 +56,8 @@ design-doc, context-doc 등 후속 스킬 사용 가능
 
 | 감지 결과 | 의미 | 다음 동작 |
 |-----------|------|-----------|
-| 원본 하네스 레포 내부에서 실행 중 | 최초 세팅 또는 외부 프로젝트 대상 | **부모 폴더**를 프로젝트 루트 후보로 설정 → Step 2 |
-| 이미 배포된 프로젝트에서 실행 중 | 갱신 모드 | **현재 위치**를 프로젝트 루트로 설정 → Step 2 |
+| 사용자 프로젝트 내부에서 실행 중 | 최초 세팅 또는 갱신 | **현재 위치**를 프로젝트 루트 후보로 설정 → Step 2 |
+| 하네스 관리 레포 내부에서 실행 중 | 관리자 작업 위치 | 사용자에게 대상 프로젝트 루트 경로 질문 → Step 2 |
 | 판별 불가 | — | 사용자에게 프로젝트 루트 경로를 직접 질문 |
 
 감지 결과를 사용자에게 보여주고 **반드시 확인**받는다:
@@ -91,12 +92,14 @@ design-doc, context-doc 등 후속 스킬 사용 가능
 
 | 조건 | 모드 | 다음 |
 |------|------|------|
-| `.claude/skills/` 또는 `.agents/skills/`에 스킬 파일 없음 | **초기 세팅** | Step 4 |
-| `.claude/skills/` 또는 `.agents/skills/`에 스킬 파일 존재 | **갱신** | Step 5 |
+| `.docs/` 또는 `AGENTS.md`가 없음 | **초기 세팅** | Step 4 |
+| `.docs/`와 `AGENTS.md`가 존재 | **갱신** | Step 5 |
 
 판별 결과를 사용자에게 알린다:
 
 > "기존 하네스가 **감지되지 않았습니다** / **감지되었습니다**. 초기 세팅 / 갱신을 진행합니다."
+
+`.claude/skills/` 또는 `.agents/skills/`가 발견되면 legacy local skill copy 후보로만 기록한다. 이 단계에서 생성·수정·삭제하지 않는다.
 
 ---
 
@@ -109,10 +112,10 @@ Step 2 확인 결과에 따라 분기한다.
 `prompts/single-app-setup.md` 참조.
 
 핵심 작업:
-1. 애플리케이션 루트에 `.claude/skills/`, `.agents/skills/` 생성 (이미 있으면 무시)
-2. 원본 하네스 레포의 `skills/` 전체를 위 두 경로에 복사
-3. `.docs/` 안내·정책 파일 생성: `.docs/README.md`(구조·산출물 안내), `.docs/.gitignore`(로컬 전용 영역 지정), `.docs/_inbox/`(에이전트 임시 입력 공간, 내용 git 미추적)
-4. 멀티플랫폼(Claude Code, Codex 등) 고려 이유 안내
+1. `.docs/` 안내·정책 파일 생성: `.docs/README.md`(구조·산출물 안내), `.docs/.gitignore`(로컬 전용 영역 지정), `.docs/_inbox/`(에이전트 임시 입력 공간, 내용 git 미추적)
+2. 루트 `AGENTS.md`가 없으면 공통 컨텍스트 정본 생성 안내
+3. 루트 `CLAUDE.md`가 없으면 `@AGENTS.md` bridge 생성
+4. 기존 local skill copy가 있으면 읽기 전용 migration report만 출력
 
 ### Step 4-B — 복수 애플리케이션 세팅
 
@@ -120,13 +123,13 @@ Step 2 확인 결과에 따라 분기한다.
 
 핵심 작업:
 1. 프로젝트 최상위 폴더에 구조 생성 (**이 폴더는 `git init` 하지 않는다**)
-2. `.claude/skills/`, `.agents/skills/` 생성 + 스킬 복사
-3. `.docs/` 디렉토리 생성 (별도 git 레포로 관리 예정)
-4. 앱별 빈 컨텍스트 파일 생성: `.docs/{앱}-context.md`
-5. 앱별 하위 구조 생성: `.docs/{앱}/instruction/`
-6. `.docs/root-context/` 생성 (루트 컨텍스트 파일 복사본 보관용)
-7. 루트 `CLAUDE.md`, `AGENTS.md` 생성 (git 미관리, 이 스킬이 단독 관리)
-8. `.docs/root-context/CLAUDE.md`, `.docs/root-context/AGENTS.md` 에 동일 복사본 생성
+2. `.docs/` 디렉토리 생성 (별도 git 레포로 관리 예정)
+3. 앱별 빈 컨텍스트 파일 생성: `.docs/{앱}-context.md`
+4. 앱별 하위 구조 생성: `.docs/{앱}/instruction/`
+5. `.docs/root-context/` 생성 (루트 컨텍스트 파일 복사본 보관용)
+6. 루트 `AGENTS.md` 생성 (git 미관리, 이 스킬이 단독 관리)
+7. 루트 `CLAUDE.md` bridge 생성 (git 미관리, 이 스킬이 단독 관리)
+8. `.docs/root-context/AGENTS.md`, `.docs/root-context/CLAUDE.md` 복사본 생성
 9. `.docs/` 안내·정책 파일 생성: `.docs/README.md`(구조·산출물 안내), `.docs/.gitignore`(로컬 전용 영역 지정), `.docs/_inbox/`(에이전트 임시 입력 공간, 내용 git 미추적)
 
 루트 `CLAUDE.md`/`AGENTS.md` 작성 시 `templates/root-context.template` 참조.
@@ -140,8 +143,6 @@ Step 2 확인 결과에 따라 분기한다.
 > 생성된 구조:
 > ```
 > {프로젝트 루트}/
-> ├── .claude/skills/...
-> ├── .agents/skills/...
 > ├── .docs/
 > │   ├── README.md           ← 구조·산출물 안내
 > │   ├── .gitignore          ← 로컬 전용 영역 지정
@@ -152,9 +153,8 @@ Step 2 확인 결과에 따라 분기한다.
 > ```
 >
 > 📌 멀티플랫폼 안내:
-> - `.claude/skills/` → Claude Code 전용 경로
-> - `.agents/skills/` → Codex 등 다른 AI 에이전트 플랫폼 경로
-> - 두 경로에 동일한 스킬을 배치하여 어떤 플랫폼에서든 동일한 하네스를 사용할 수 있습니다.
+> - 스킬은 프로젝트 local copy가 아니라 `ai-agent-harness` 플러그인으로 사용합니다.
+> - `AGENTS.md`는 공통 정본, `CLAUDE.md`는 `@AGENTS.md` bridge입니다.
 
 → Step 6으로 이동.
 
@@ -165,17 +165,20 @@ Step 2 확인 결과에 따라 분기한다.
 `prompts/update-mode.md` 참조.
 
 핵심 작업:
-1. 원본 하네스 레포의 `skills/` 현재 버전과 프로젝트에 배포된 스킬을 비교
-2. 변경된 스킬만 갱신 (추가/수정/삭제)
-3. 복수앱인 경우 추가로:
+1. `.docs/` 안내·정책 파일을 최신 템플릿 기준으로 갱신
+2. 루트 `AGENTS.md`와 `CLAUDE.md` bridge를 확인·갱신
+3. 기존 local skill copy가 있으면 읽기 전용 migration report를 출력
+4. 복수앱인 경우 추가로:
    - `.docs/root-context/CLAUDE.md`, `.docs/root-context/AGENTS.md` 갱신
    - 루트 `CLAUDE.md`, `AGENTS.md` 를 `.docs/root-context/` 기준으로 갱신
-4. 갱신 전 사용자 확인
+5. 갱신 전 사용자 확인
 
 > ✋ **확인 게이트**
 >
 > 갱신 대상:
-> - 스킬: {추가 N개 / 수정 N개 / 삭제 N개 / 변경 없음}
+> - `.docs` 안내·정책: {갱신 필요 / 변경 없음}
+> - 루트 컨텍스트: {AGENTS 갱신 필요 / CLAUDE bridge 갱신 필요 / 변경 없음}
+> - legacy local skill copy: {읽기 전용 report N건 / 없음}
 > - (복수앱) 루트 컨텍스트: {갱신 필요 / 변경 없음}
 >
 > 진행하시겠습니까? **(승인 / 취소)**
@@ -195,7 +198,8 @@ Step 2 확인 결과에 따라 분기한다.
 3. 생성·갱신된 파일 목록 (`.docs/README.md`, `.docs/.gitignore`, `.docs/_inbox/` 포함)
 4. (복수앱) 감지된 애플리케이션 폴더 목록
 5. `.docs/_inbox/`는 에이전트에게 읽힐 파일을 잠시 올려두는 로컬 전용 공간이며 내용은 git에 올라가지 않는다는 안내
-6. 다음 단계 안내
+6. 기존 local skill copy가 있으면 승인 전에는 변경하지 않았다는 안내
+7. 다음 단계 안내
 
 > **다음 단계:**
 > - 설계 시작: `/design-doc`

@@ -53,8 +53,8 @@ allowed-tools: Read, Glob, Grep, Bash, Task
 | 문서 | 설명 |
 |------|------|
 | `README.md` | 프로젝트 개요 및 전체 구조 (핵심) |
-| `CLAUDE.md` | Claude / 공통 Agent 지침 |
-| `AGENTS.md` | Codex/OpenAI Agent 지침 (`CLAUDE.md`와 동일 본문 권장) |
+| `AGENTS.md` | 공통 Agent 지침 정본 |
+| `CLAUDE.md` | Claude Code bridge (`@AGENTS.md` + Claude 전용 차이) |
 | `.docs/instruction/**/*.md` | 세부 코딩 규칙, 아키텍처 가이드 등 (있는 경우) |
 
 ---
@@ -102,4 +102,4 @@ doc-audit (orchestrator)
 4. 대화창에 변경 제안서 내용 바로 출력 (.md 파일 생성 금지)
 5. **사용자에게 확인 요청** — 승인 전 문서 파일 절대 수정 금지
 
-> ⚠️ 승인 후 반영은 `agent-sync` 스킬 또는 직접 수정으로 진행한다.
+> ⚠️ 승인 후 반영은 대상 문서를 직접 수정하는 방식으로 진행한다. `AGENTS.md`가 공통 정본이며, `CLAUDE.md`는 bridge 구조를 유지한다.

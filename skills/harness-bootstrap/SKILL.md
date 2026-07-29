@@ -5,7 +5,7 @@ description: >
   '하네스 부팅', '기존 코드 분석해서 문서 만들어줘', '레거시 프로젝트 문서화',
   'CLAUDE.md 없는데 생성', '설계 문서 역추출', 'AI 문서 부트스트랩',
   '기존 프로젝트에 하네스 도입' 요청이 오면 이 스킬을 사용한다.
-  기존 코드베이스 → design-doc OUTPUT_V2 형식 설계 문서 + context-doc 결과물(CLAUDE.md + AGENTS.md + .docs/instruction/*) 자동 도출.
+  기존 코드베이스 → design-doc OUTPUT_V2 형식 설계 문서 + context-doc 결과물(AGENTS.md 정본 + CLAUDE.md bridge + .docs/instruction/*) 자동 도출.
   프레임워크 자동 감지. 최소 인터뷰(2회 이하)로 코드에서 추출 불가능한 도메인 맥락만 보충.
 allowed-tools: Read, Glob, Grep, Bash, Write
 ---
@@ -16,14 +16,14 @@ allowed-tools: Read, Glob, Grep, Bash, Write
 코드를 직접 분석해서 다음 두 산출물을 한 번에 도출한다.
 
 1. **`design-doc` OUTPUT_V2 형식 설계 문서** (프로젝트 설계 스냅샷)
-2. **`context-doc` 결과물** — `CLAUDE.md` + 동일 내용의 `AGENTS.md` + `.docs/instruction/*-instruction.md`
+2. **`context-doc` 결과물** — `AGENTS.md` 정본 + `CLAUDE.md` bridge + `.docs/instruction/*-instruction.md`
 
 생성 전 반드시 사용자 확인을 거친다. 파일을 무단으로 생성하지 않는다.
 
 > 이 스킬은 "레거시/기존 프로젝트에 AI 하네스를 처음 도입"하는 진입점이다.
 > 이후부터는 `design-doc` → `context-doc` 정규 플로우를 그대로 쓰면 된다.
 
-> **템플릿 재사용 예외**: 이 스킬은 `design-doc`과 `context-doc`의 파이프라인을 한 번에 실행하는 통합 스킬이므로, 해당 스킬의 templates/prompts를 직접 참조한다 (`../design-doc/templates/`, `../context-doc/prompts/`, `../context-doc/templates/`). 이는 "스킬 간 참조 금지" 원칙의 명시적 예외이다.
+> **공개 계약 재사용**: 이 스킬은 `design-doc`과 `context-doc`의 공개 산출물 계약을 한 번에 수행하는 통합 스킬이다. 다른 스킬의 내부 구현 경로에 결합하지 않고, 필요한 템플릿 구조는 이 문서의 AGENTS 정본 + CLAUDE bridge 계약을 따른다.
 
 ---
 
@@ -32,7 +32,7 @@ allowed-tools: Read, Glob, Grep, Bash, Write
 1. **코드에서 추출 가능한 건 모두 자동 추출**. 질문하지 않는다.
 2. **코드에서 알 수 없는 것만 인터뷰**. 도메인 목적·사용자·상위 비즈니스 맥락.
 3. **인터뷰는 최대 2회**. 그 이상은 `미정 — [이유]` 로 남긴다.
-4. **템플릿은 재사용한다**. `design-doc`의 `OUTPUT_V2.md`와 `context-doc`의 템플릿을 그대로 참조하며, 이 스킬 안에 중복 생성하지 않는다.
+4. **공개 산출물 계약을 재사용한다**. `design-doc` OUTPUT_V2 형식과 `context-doc`의 AGENTS 정본 + CLAUDE bridge 구조를 따른다.
 5. **프레임워크 중립**. 매니페스트 파일 기반으로 자동 감지한다.
 
 ## 질문 예산
@@ -60,7 +60,7 @@ allowed-tools: Read, Glob, Grep, Bash, Write
         │            └── 저장: {project}/.docs/context-base/DESIGN.md (또는 사용자 지정)
         │
         └─ Step 6~7: context-doc 파이프라인 실행
-                     └── 저장: CLAUDE.md + AGENTS.md + .docs/instruction/*-instruction.md
+                     └── 저장: AGENTS.md + CLAUDE.md bridge + .docs/instruction/*-instruction.md
 ```
 
 이후 작업은 정규 플로우를 따른다.
@@ -216,9 +216,9 @@ allowed-tools: Read, Glob, Grep, Bash, Write
 
 Step 5 OUTPUT을 입력으로 삼아 `context-doc` 스킬의 워크플로우를 그대로 실행한다.
 
-- `../context-doc/prompts/analysis-claude.md` 기준으로 CLAUDE.md / AGENTS.md 공통 본문 초안 작성
+- AGENTS.md 정본에 들어갈 프로젝트 팩트 + 지침 인덱스 초안 작성
 - `../context-doc/prompts/analysis-instruction.md` 기준으로 주제별 instruction 파일 분류
-- `../context-doc/templates/CLAUDE.md.template` + 각 `*-instruction.md.template` 활용
+- AGENTS 정본 + CLAUDE bridge + 각 `*-instruction.md` 구조 활용
 - 모노레포 감지 시 `.docs/instruction/` 배치 질문 (context-doc의 Step 2와 동일)
 
 이 단계에서는 **새로운 인터뷰를 추가하지 않는다**. Step 3 답변 + Step 5 OUTPUT으로 충분하다.
@@ -238,15 +238,15 @@ Step 5 OUTPUT을 입력으로 삼아 `context-doc` 스킬의 워크플로우를 
 
 **단일 애플리케이션:**
 1. `.docs/context-base/DESIGN.md` (또는 사용자 지정 경로)
-2. `CLAUDE.md`
-3. `AGENTS.md` (`CLAUDE.md`와 동일 내용)
+2. `AGENTS.md`
+3. `CLAUDE.md` (`@AGENTS.md` bridge)
 4. `.docs/instruction/*-instruction.md` (해당 주제만)
 
 **복수 애플리케이션:**
 1. `.docs/{앱}/context-base/DESIGN.md`
 2. `.docs/{앱}-context.md` (단일앱의 CLAUDE.md/AGENTS.md에 해당하는 내용)
 3. `.docs/{앱}/instruction/*-instruction.md` (해당 주제만)
-4. `.docs/root-context/CLAUDE.md`, `.docs/root-context/AGENTS.md` (루트 통합 인덱스 복사본)
+4. `.docs/root-context/AGENTS.md`, `.docs/root-context/CLAUDE.md` (루트 통합 인덱스 복사본)
 
 (단, 설계 문서에 해당 주제가 없으면 instruction 파일은 생성하지 않는다 — context-doc 원칙 그대로)
 
@@ -259,8 +259,8 @@ Step 5 OUTPUT을 입력으로 삼아 `context-doc` 스킬의 워크플로우를 
 - `.docs/instruction/` 디렉토리가 없으면 생성
 - 설계 문서 저장 폴더(`.docs/context-base/`)가 없으면 생성
 - 모든 파일 일괄 저장
-- `CLAUDE.md` / `AGENTS.md`의 `@.docs/instruction/*` 참조가 실제 파일과 1:1 일치하는지 검증
-- `AGENTS.md` 본문이 `CLAUDE.md`와 동일한지 검증
+- `AGENTS.md`의 `@.docs/instruction/*` 참조가 실제 파일과 1:1 일치하는지 검증
+- `CLAUDE.md`가 `@AGENTS.md` bridge인지 검증
 
 **복수 애플리케이션:**
 - `.docs/{앱}/instruction/` 디렉토리가 없으면 생성
@@ -271,7 +271,7 @@ Step 5 OUTPUT을 입력으로 삼아 `context-doc` 스킬의 워크플로우를 
 - instruction: `.docs/{앱}/instruction/*-instruction.md` 저장
 - 루트 통합: `.docs/root-context/CLAUDE.md`, `.docs/root-context/AGENTS.md` 저장
 - `.docs/{앱}-context.md`의 instruction 참조가 `.docs/{앱}/instruction/` 내 실제 파일과 1:1 일치하는지 검증
-- `.docs/root-context/AGENTS.md` 본문이 `.docs/root-context/CLAUDE.md`와 동일한지 검증
+- `.docs/root-context/CLAUDE.md`가 `@AGENTS.md` bridge인지 검증
 
 **공통:**
 - 이미 존재하는 파일이 있으면 덮어쓰기 전에 사용자에게 알림

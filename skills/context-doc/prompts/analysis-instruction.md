@@ -93,7 +93,7 @@
 - 에러 처리 규약 (HTTPException, 에러 응답 포맷)
 - 인증/인가 규칙
 - 버전 관리 방식
-- (선택) 엔드포인트 카탈로그 — CLAUDE.md / AGENTS.md에 없다면 여기에
+- (선택) 엔드포인트 카탈로그 — AGENTS.md에 없다면 여기에
 
 ### 5. `comm-instruction.md` — 통신 프로토콜 규약
 
