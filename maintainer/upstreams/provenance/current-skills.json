@@ -34,8 +34,8 @@
     {"name": "multi-review", "area": "user", "mode": "reference", "sources": ["superpowers", "gstack"], "direct_import": false, "evidence": "Multi-perspective review concepts are reference-only."},
     {"name": "pre-commit", "area": "user", "mode": "reference", "sources": ["superpowers"], "direct_import": false, "evidence": "Pre-completion verification/checking workflow is reference-only; local scan.sh is not marked imported."},
     {"name": "custom-skill-design", "area": "maintainer", "mode": "reference", "sources": ["skill-creator-guides", "superpowers"], "direct_import": false, "evidence": "Skill authoring workflow references official skill creator concepts and Superpowers writing-skills ideas; no direct import asserted."},
-    {"name": "harness-plugin-maintainer", "area": "maintainer", "mode": "native", "sources": ["internal-harness-native"], "direct_import": false, "evidence": "Phase 1 skeleton, local plugin packaging responsibility."},
-    {"name": "skill-portfolio-maintainer", "area": "maintainer", "mode": "native", "sources": ["internal-harness-native"], "direct_import": false, "evidence": "Phase 1 skeleton, local provenance governance responsibility."}
+    {"name": "harness-plugin-maintainer", "area": "maintainer", "mode": "native", "sources": ["internal-harness-native"], "direct_import": false, "evidence": "Phase 6 implementation. Local deterministic plugin build, validation, manager projection, and release-candidate metadata tooling."},
+    {"name": "skill-portfolio-maintainer", "area": "maintainer", "mode": "native", "sources": ["internal-harness-native"], "direct_import": false, "evidence": "Phase 5 implementation. Local upstream check, discovery, staging, approval-gated promote, rollback, and eval tooling."}
   ],
   "candidates": [],
   "open_questions": [

@@ -1,0 +1,1721 @@
+<!-- ═══ 파일 구조 인덱스 (에이전트 부분 읽기용) ═══
+  줄 1-8:       head (CDN, 폰트)
+  줄 9-35:      :root CSS 변수
+  줄 36-130:    공통 CSS — .page-nav, .tab-btn, .screen, .screen-label, .app-shell, .sidebar
+  줄 131-270:   공통 CSS — .main, .topbar, .btn, .input-field, .card, .tag, .data-table, .search-bar, .grid-container, .list-card, 스크롤바, 애니메이션
+  줄 271-410:   화면별 전용 CSS — chat, version-panel, analysis-panel, action-bar 등
+  줄 411-575:   화면별 전용 CSS — 진입화면 카드, 목록 카드, 처리 목록, 서면민원 레이아웃
+  줄 576-590:   </style> + <body> + <nav class="page-nav"> (탭 버튼 5개)
+  줄 591-633:   화면1 — 진입화면 (중앙 카드 그리드, onclick으로 화면 전환)
+  줄 634-756:   화면2 — 전자민원 목록 (검색바 + 카드 그리드 + 모달 호출)
+  줄 757-868:   화면3 — 처리한 민원 목록 (테이블 레이아웃)
+  줄 869-1197:  화면4 — 전자민원 답변 생성 (사이드바 + 채팅 UI + 분석 패널 + 버전 패널)
+  줄 1198-1580: 화면5 — 서면민원 답변 생성 (입력 스텝 → 결과 스텝 전환)
+  줄 1583-1663: JavaScript — showScreen, togglePanel, submitWrittenComplaint, openComplaintModal, closeComplaintModal
+  줄 1665-1705: 공통 모달 HTML (민원 조회 모달)
+═══ -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SFR-018 — 전기안전공사 AI 플랫폼 화면 예시</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --bg:             #F4F6F9;
+    --surface:        #FFFFFF;
+    --surface2:       #EEF1F6;
+    --border:         #D8DDE8;
+    --primary:        #2563EB;
+    --primary-light:  #EFF6FF;
+    --primary-mid:    #BFDBFE;
+    --nav-bg:         #1E3A5F;
+    --sky:            #0EA5E9;
+    --sky-light:      #E0F2FE;
+    --green:          #16A34A;
+    --green-light:    #DCFCE7;
+    --orange:         #EA580C;
+    --orange-light:   #FFF7ED;
+    --purple:         #7C3AED;
+    --purple-light:   #F3E8FF;
+    --red:            #EF4444;
+    --red-light:      #FEE2E2;
+    --amber:          #F59E0B;
+    --text-primary:   #111827;
+    --text-secondary: #4B5563;
+    --text-muted:     #9CA3AF;
+    --sidebar-w: 260px;
+    --header-h:  52px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* ── NAV TABS ─────────────────────────────── */
+  .page-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--nav-bg);
+    display: flex; align-items: center; gap: 4px;
+    padding: 0 20px;
+    height: 36px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.18);
+  }
+  .page-nav .logo {
+    font-size: 13px; font-weight: 700; color: #fff;
+    margin-right: 24px; white-space: nowrap;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .page-nav .logo span {
+    background: var(--sky); color: #fff;
+    border-radius: 4px; padding: 2px 7px; font-size: 11px;
+  }
+  .tab-btn {
+    border: none; background: transparent; cursor: pointer;
+    color: rgba(255,255,255,.6); font-family: inherit;
+    font-size: 12.5px; font-weight: 500;
+    padding: 6px 14px; border-radius: 6px;
+    transition: all .2s;
+  }
+  .tab-btn:hover { background: rgba(255,255,255,.1); color: #fff; }
+  .tab-btn.active { background: var(--primary); color: #fff; }
+
+  /* ── SCREENS ──────────────────────────────── */
+  .screen { display: none; }
+  .screen.active { display: flex; flex-direction: column; height: calc(100vh - 36px); overflow: hidden; }
+
+  /* ── SCREEN LABEL ─────────────────────────── */
+  .screen-label {
+    background: var(--nav-bg); color: #fff;
+    padding: 4px 24px;
+    font-size: 11px; font-weight: 600;
+    display: flex; align-items: center; gap: 12px;
+    flex-shrink: 0;
+  }
+  .screen-label .badge {
+    background: var(--sky); color: #fff;
+    border-radius: 4px; padding: 2px 8px; font-size: 10.5px;
+  }
+  .screen-label .sub { color: rgba(255,255,255,.6); font-weight: 400; }
+
+  /* ── APP SHELL ────────────────────────────── */
+  .app-shell {
+    display: flex; flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── SIDEBAR ─────────────────────────────── */
+  .sidebar {
+    width: var(--sidebar-w); min-width: var(--sidebar-w);
+    background: var(--surface); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    overflow-y: auto;
+  }
+  .sidebar-section {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-section:last-child { border-bottom: none; flex: 1; }
+  .sidebar-heading {
+    font-size: 10.5px; font-weight: 700; letter-spacing: .05em;
+    color: var(--text-muted); text-transform: uppercase;
+    padding: 6px 14px 4px;
+  }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 14px;
+    font-size: 12px; color: var(--text-secondary);
+    cursor: pointer; transition: background .15s;
+    border-radius: 0;
+  }
+  .sidebar-item:hover { background: var(--primary-light); color: var(--primary); }
+  .sidebar-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+  .sidebar-item .dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .dot-green { background: var(--green); }
+  .dot-blue  { background: var(--primary); }
+  .dot-amber { background: var(--amber); }
+  .dot-gray  { background: var(--border); }
+
+  /* status chips */
+  .chip {
+    font-size: 10px; font-weight: 600; padding: 1px 6px;
+    border-radius: 10px; margin-left: auto; flex-shrink: 0;
+  }
+  .chip-green  { background: var(--green-light);  color: var(--green); }
+  .chip-blue   { background: var(--primary-light);   color: var(--primary); }
+  .chip-amber  { background: var(--orange-light); color: var(--orange); }
+  .chip-red    { background: var(--red-light);    color: var(--red); }
+  .chip-purple { background: var(--purple-light); color: var(--purple); }
+
+  /* ── MAIN AREA ───────────────────────────── */
+  .main {
+    flex: 1; display: flex; flex-direction: column; overflow: hidden;
+  }
+
+  /* topbar */
+  .topbar {
+    height: 32px; min-height: 32px;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 16px; gap: 12px;
+    font-size: 11.5px;
+  }
+  .topbar .meta-badge {
+    background: var(--primary-light); color: var(--primary);
+    border-radius: 5px; padding: 3px 8px; font-weight: 600; font-size: 11.5px;
+  }
+  .topbar .sep { color: var(--border); }
+  .topbar .urgency {
+    background: var(--red-light); color: var(--red);
+    border-radius: 4px; padding: 2px 7px; font-size: 11px; font-weight: 700;
+    margin-left: 6px;
+  }
+
+  /* ── CHAT LAYOUT ─────────────────────────── */
+  .chat-layout {
+    flex: 1; display: flex; overflow: hidden;
+  }
+  .chat-panel {
+    flex: 1; display: flex; flex-direction: column; overflow: hidden;
+    background: var(--bg);
+  }
+  .chat-messages {
+    flex: 1; overflow-y: auto; padding: 4px 10px; display: flex; flex-direction: column; gap: 8px;
+  }
+
+  /* message bubbles */
+  .msg { display: flex; flex-direction: column; gap: 2px; }
+  .msg-ai { align-items: flex-start; }
+  .msg-ai .bubble {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 0 10px 10px 10px;
+    padding: 10px 14px; max-width: 94%;
+    box-shadow: 0 1px 3px rgba(0,0,0,.05);
+  }
+  .msg-user { align-items: flex-end; }
+  .msg-user .bubble {
+    background: var(--primary); color: #fff;
+    border-radius: 10px 10px 0 10px;
+    padding: 9px 13px; max-width: 100%;
+  }
+  .msg-label {
+    font-size: 10.5px; color: var(--text-muted); padding: 0 4px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .msg-label .ai-dot {
+    width: 16px; height: 16px; background: var(--sky); border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 8px; font-weight: 700;
+  }
+
+  .msg-system { align-items: flex-start; }
+  .msg-system .bubble {
+    background: var(--purple-light); border: 1px solid #C4B5FD;
+    border-radius: 8px; padding: 8px 13px;
+    color: var(--purple); font-size: 12px;
+    display: flex; align-items: center; gap: 8px;
+    max-width: 94%;
+  }
+
+  /* details based message */
+  .msg-details {
+    display: flex; flex-direction: column; gap: 2px; margin-bottom: 2px;
+    max-width: 94%; width: 100%;
+  }
+  .msg-details summary {
+    display: flex; align-items: center; cursor: pointer; list-style: none; user-select: none;
+    width: fit-content;
+  }
+  .msg-details summary::-webkit-details-marker { display: none; }
+  .msg-details summary .arrow {
+    margin-left: 6px; font-size: 9px; transition: transform 0.2s; color: var(--text-muted);
+  }
+  .msg-details[open] summary .arrow { transform: rotate(180deg); }
+  .msg-details .detail-box {
+    background: var(--surface); border: 1px solid var(--border);
+    width: 100%; box-sizing: border-box;
+    border-radius: 8px; padding: 4px 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    animation: fadeIn 0.2s ease;
+  }
+
+  /* ── LIST VIEW ─────────────────────────── */
+  .list-container {
+    padding: 30px 40px; max-width: 1000px; margin: 0 auto; width: 100%;
+  }
+  .search-bar {
+    width: 100%; padding: 14px 20px; font-size: 15px; border: 1px solid var(--border);
+    border-radius: 8px; font-family: inherit; margin-bottom: 20px;
+    background: var(--surface) url('data:image/svg+xml;utf8,<svg fill="none" stroke="%239CA3AF" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>') no-repeat 16px center;
+    background-size: 20px; padding-left: 48px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02); outline: none; transition: border-color 0.2s;
+  }
+  .search-bar:focus { border-color: var(--primary); }
+  .list-controls {
+    display: flex; justify-content: flex-end; align-items: center; margin-bottom: 20px; gap: 10px;
+  }
+  .sort-select {
+    padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;
+    background: var(--surface); color: var(--text-primary); cursor: pointer; outline: none;
+  }
+  .grid-container {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  }
+  .list-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 24px; display: flex; flex-direction: column; cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+  }
+  .list-card:hover {
+    transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); border-color: var(--primary-mid);
+  }
+  .list-card .c-title {
+    font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 12px;
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .list-card .c-desc {
+    font-size: 14.5px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 25px;
+    display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .list-card .c-footer {
+    margin-top: auto; font-size: 12.5px; color: var(--text-muted);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  /* draft card */
+  .draft-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-left: 3px solid var(--sky); border-radius: 8px;
+    padding: 4px 8px;
+    max-width: 94%;
+  }
+  .draft-card .draft-header {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11.5px; font-weight: 700; color: var(--sky);
+    margin-bottom: 2px;
+  }
+  .draft-card .draft-body { font-size: 11.5px; line-height: 1.3; color: var(--text-secondary); }
+
+  /* ref card */
+  .ref-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-left: 3px solid var(--purple); border-radius: 8px;
+    padding: 4px 8px;
+    max-width: 94%; width: 100%; box-sizing: border-box;
+  }
+  .ref-card .ref-header {
+    font-size: 11px; font-weight: 700; color: var(--purple);
+    margin-bottom: 0px; display: flex; align-items: center; gap: 6px;
+  }
+  .ref-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1px 0; border-bottom: 1px solid var(--surface2);
+    font-size: 10.5px; color: var(--text-secondary);
+  }
+  .ref-item:last-child { border-bottom: none; }
+  .ref-item a {
+    color: var(--primary); text-decoration: none; font-size: 11px;
+    padding: 1px 6px; border: 1px solid var(--primary-mid); border-radius: 4px;
+  }
+  .ref-item a:hover { background: var(--primary-light); }
+
+  /* chat input */
+  .chat-input-bar {
+    background: var(--surface); border-top: 1px solid var(--border);
+    padding: 8px 12px; display: flex; gap: 8px; align-items: center;
+  }
+  .chat-input-bar input {
+    flex: 1; border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 12px; font-family: inherit; font-size: 12.5px;
+    background: var(--bg); color: var(--text-primary);
+    outline: none; transition: border .2s;
+  }
+  .chat-input-bar input:focus { border-color: var(--primary); }
+  .btn {
+    border: none; border-radius: 7px; cursor: pointer;
+    font-family: inherit; font-size: 12px; font-weight: 600;
+    padding: 7px 14px; transition: all .15s;
+  }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { filter: brightness(0.9); }
+  .btn-secondary { background: var(--surface2); color: var(--text-secondary); }
+  .btn-secondary:hover { background: var(--border); }
+  .btn-green { background: var(--green); color: #fff; }
+  .btn-green:hover { filter: brightness(0.9); }
+  .btn-icon { background: var(--surface2); color: var(--text-secondary); padding: 7px 10px; }
+
+  /* version panel */
+  .version-panel {
+    width: 320px; min-width: 320px; background: var(--surface);
+    border-left: 1px solid var(--border);
+    display: none; flex-direction: column; overflow-y: auto;
+  }
+  .version-panel.active { display: flex; }
+  .version-panel .vp-header {
+    padding: 12px 14px 8px;
+    font-size: 12px; font-weight: 700; color: var(--text-primary);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .version-item {
+    padding: 10px 14px; border-bottom: 1px solid var(--surface2);
+    cursor: pointer; transition: background .15s;
+  }
+  .version-item:hover { background: var(--primary-light); }
+  .version-item.current { background: var(--primary-light); border-left: 3px solid var(--primary); }
+  .version-item .v-tag {
+    font-size: 11.5px; font-weight: 700; color: var(--primary);
+    display: flex; align-items: center; gap: 5px; margin-bottom: 2px;
+  }
+  .version-item.current .v-tag .v-badge {
+    background: var(--primary); color: #fff;
+    border-radius: 3px; padding: 0px 5px; font-size: 9.5px;
+  }
+  .version-item .v-meta { font-size: 11px; color: var(--text-muted); }
+  .version-actions { padding: 10px 14px; display: flex; gap: 6px; }
+  .version-actions .btn { flex: 1; font-size: 11px; padding: 5px 8px; }
+
+  /* action bar */
+  .action-bar {
+    background: var(--surface); border-top: 1px solid var(--border);
+    padding: 10px 16px; display: flex; gap: 8px; align-items: center; justify-content: flex-end;
+  }
+
+  /* ── ANALYSIS PANEL ──────────────────────── */
+  .analysis-panel {
+    width: 220px; min-width: 220px; background: var(--surface);
+    border-left: 1px solid var(--border);
+    display: flex; flex-direction: column; overflow-y: auto;
+    padding: 14px;
+    gap: 12px;
+  }
+  .analysis-detail-panel {
+    width: 320px; min-width: 320px; background: var(--surface);
+    border-left: 1px solid var(--border);
+    display: none; flex-direction: column; overflow-y: auto;
+    padding: 14px;
+    gap: 12px;
+  }
+  .analysis-detail-panel.active { display: flex; }
+  .panel-section { display: flex; flex-direction: column; gap: 6px; }
+  .panel-section-title {
+    font-size: 11px; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: .04em;
+  }
+  .info-row {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    font-size: 11.5px; gap: 6px;
+  }
+  .info-row .label { color: var(--text-muted); flex-shrink: 0; }
+  .info-row .value { color: var(--text-primary); font-weight: 500; text-align: right; }
+  .confidence-bar {
+    background: var(--surface2); border-radius: 4px; height: 6px; overflow: hidden;
+  }
+  .confidence-fill {
+    height: 100%; background: var(--green); border-radius: 4px;
+    transition: width .6s ease;
+  }
+
+  /* ═══════════════════════════════════════════
+     SFR-019  SCREENS
+  ══════════════════════════════════════════════ */
+
+  /* chatbot widget */
+  .chatbot-container {
+    display: flex; gap: 20px; padding: 20px;
+    flex: 1; overflow: auto; justify-content: center; align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .chatbot-widget {
+    width: 360px; min-width: 320px;
+    background: var(--surface); border-radius: 14px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 20px rgba(0,0,0,.08);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .cw-header {
+    background: #10B981; color: #fff;
+    padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .cw-header .title { font-size: 13px; font-weight: 700; }
+  .cw-header .close-btn {
+    border: 1px solid rgba(255,255,255,.4); background: transparent;
+    color: #fff; font-size: 11px; border-radius: 5px; padding: 3px 8px;
+    cursor: pointer; font-family: inherit;
+  }
+  .cw-body { flex: 1; padding: 14px; display: flex; flex-direction: column; gap: 10px; min-height: 340px; }
+  .cw-greeting {
+    background: var(--sky-light); border-radius: 10px; padding: 12px;
+    font-size: 12.5px; color: var(--text-secondary); text-align: center;
+    border: 1px solid #BAE6FD;
+  }
+  .cw-greeting strong { display: block; color: var(--text-primary); font-size: 13px; margin-bottom: 4px; }
+  .btn-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  }
+  .btn-menu {
+    border: 1px solid var(--border); background: var(--surface);
+    border-radius: 8px; padding: 10px 8px;
+    font-family: inherit; font-size: 12px; color: var(--text-primary);
+    cursor: pointer; transition: all .15s; text-align: left;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .btn-menu:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+  .btn-menu.call { border-color: var(--green); color: var(--green); }
+  .btn-menu.call:hover { background: var(--green-light); }
+  .btn-menu.direct { border-color: var(--sky); color: var(--sky); }
+  .btn-menu.direct:hover { background: var(--sky-light); }
+  .btn-menu.danger { border-color: var(--red); color: var(--red); }
+  .btn-menu.danger:hover { background: var(--red-light); }
+  .cw-notice {
+    font-size: 10.5px; color: var(--text-muted); text-align: center;
+    padding-top: 6px; border-top: 1px solid var(--surface2);
+  }
+  .cw-footer { padding: 10px 14px; border-top: 1px solid var(--border); display: flex; gap: 6px; }
+  .cw-footer input {
+    flex: 1; border: 1px solid var(--border); border-radius: 7px;
+    padding: 7px 10px; font-family: inherit; font-size: 12px;
+    background: var(--bg); outline: none;
+  }
+  .cw-footer input:focus { border-color: var(--primary); }
+
+  /* monitoring screen */
+  .monitor-shell {
+    flex: 1; display: flex; overflow: hidden;
+  }
+  .monitor-list {
+    width: 280px; min-width: 280px; background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; overflow-y: auto;
+  }
+  .monitor-list .list-header {
+    padding: 12px 14px; font-size: 12.5px; font-weight: 700;
+    border-bottom: 1px solid var(--border); background: var(--bg);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .monitor-card {
+    padding: 10px 14px; border-bottom: 1px solid var(--surface2);
+    cursor: pointer; transition: background .15s;
+  }
+  .monitor-card:hover { background: var(--primary-light); }
+  .monitor-card.active { background: var(--primary-light); border-left: 3px solid var(--primary); }
+  .monitor-card .mc-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .monitor-card .mc-id { font-size: 12px; font-weight: 700; color: var(--primary); }
+  .monitor-card .mc-body { font-size: 11.5px; color: var(--text-secondary); line-height: 1.5; }
+  .monitor-card .mc-body .name { font-weight: 600; color: var(--text-primary); }
+
+  /* detail pane */
+  .detail-pane {
+    flex: 1; display: flex; overflow: hidden;
+  }
+  .detail-chat { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .detail-topbar {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 8px 16px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    font-size: 12px;
+  }
+  .detail-topbar .dt-id { font-weight: 700; color: var(--primary); }
+  .detail-topbar .sep { color: var(--border); }
+  .detail-topbar .actions { margin-left: auto; display: flex; gap: 6px; }
+  .detail-side {
+    width: 240px; min-width: 240px; background: var(--surface);
+    border-left: 1px solid var(--border);
+    padding: 14px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto;
+  }
+  .detail-side .ds-section { display: flex; flex-direction: column; gap: 6px; }
+  .detail-side .ds-title {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .04em; color: var(--text-muted);
+  }
+  .summary-box {
+    background: var(--sky-light); border: 1px solid #BAE6FD;
+    border-radius: 7px; padding: 8px 10px;
+    font-size: 12px; color: var(--text-secondary); line-height: 1.6;
+  }
+  .summary-box blockquote { font-style: italic; color: var(--text-primary); }
+
+  /* ── TOOLTIP  ────────────────────────────── */
+  .tooltip {
+    position: relative; cursor: help;
+  }
+  .tooltip::after {
+    content: attr(data-tip);
+    position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
+    background: #111; color: #fff; font-size: 10px; white-space: nowrap;
+    border-radius: 5px; padding: 4px 8px; pointer-events: none;
+    opacity: 0; transition: opacity .2s;
+  }
+  .tooltip:hover::after { opacity: 1; }
+
+  /* ── SCROLLBAR ──────────────────────────── */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* ── ANIMATIONS ─────────────────────────── */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .msg, .monitor-card, .version-item { animation: fadeIn .25s ease both; }
+
+  /* ── FADE IN STAGGER ─────────────────────── */
+  .chat-messages .msg:nth-child(1) { animation-delay: .05s; }
+  .chat-messages .msg:nth-child(2) { animation-delay: .10s; }
+  .chat-messages .msg:nth-child(3) { animation-delay: .15s; }
+  .chat-messages .msg:nth-child(4) { animation-delay: .20s; }
+  .chat-messages .msg:nth-child(5) { animation-delay: .25s; }
+
+  /* ── RESPONSIVE ──────────────────────────── */
+  @media (max-width: 900px) {
+    .version-panel, .analysis-detail-panel, .detail-side { display: none !important; }
+    .sidebar { width: 160px; min-width: 160px; }
+  }
+
+  .divider { width: 1px; background: var(--border); align-self: stretch; margin: 0 2px; }
+
+  .keyword-tag {
+    display: inline-block; background: var(--primary-light); color: var(--primary);
+    border-radius: 4px; padding: 1px 7px; font-size: 11px; font-weight: 600;
+    margin: 2px;
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="page-nav">
+  <div class="logo">
+    ⚡ 전기안전공사 AI 플랫폼 <span>DEMO</span>
+  </div>
+  <button class="tab-btn active" onclick="showScreen('s018-entry', this)">SFR-018 진입화면</button>
+  <button class="tab-btn" onclick="showScreen('s018-list', this)">SFR-018 전자민원 목록</button>
+  <button class="tab-btn" onclick="showScreen('s018', this)">SFR-018 전자민원 답변 생성</button>
+  <button class="tab-btn" onclick="showScreen('s018-written', this)">SFR-018 서면민원 답변 생성</button>
+  <button class="tab-btn" onclick="showScreen('s018-processed-list', this)">SFR-018 처리한 민원 목록</button>
+</nav>
+
+<!-- ══════════════ SFR-018 진입화면 ══════════════ -->
+<div id="s018-entry" class="screen active" style="background: var(--bg);">
+  <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%;">
+    <!-- 인사말 -->
+    <div style="text-align: center; margin-bottom: 60px;">
+      <h2 style="font-size: 28px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; justify-content: center; gap: 12px; letter-spacing: -0.5px;">
+        <span style="font-size: 32px; filter: drop-shadow(0 2px 4px rgba(234,88,12,0.3));">☀️</span> 좋은 아침이에요, 홍길동님
+      </h2>
+      <p style="margin-top: 10px; color: var(--text-secondary); font-size: 14px;">오늘 처리하실 업무를 선택해 주세요.</p>
+    </div>
+
+    <!-- 액션 버튼 -->
+    <div style="display: flex; gap: 30px; justify-content: center;">
+      <!-- 전자민원 버튼 -->
+      <button onclick="showScreen('s018-list', this)" style="position: relative; overflow: hidden; width: 300px; height: 180px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 16px 32px rgba(37,99,235,0.1)'; this.style.borderColor='var(--primary)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.03)'; this.style.borderColor='var(--border)';">
+        <div style="width: 60px; height: 60px; background: var(--primary-light); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; color: var(--primary);">💻</div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+          <div style="font-size: 22px; font-weight: 700; color: var(--text-primary); font-family: inherit; letter-spacing: -0.5px;">전자민원 처리하기</div>
+          <div style="font-size: 13px; color: var(--text-muted); font-weight: 400;">온라인 접수 및 실시간 채팅 대응</div>
+        </div>
+      </button>
+
+      <!-- 서면민원 버튼 -->
+      <button onclick="showScreen('s018-written', this)" style="position: relative; overflow: hidden; width: 300px; height: 180px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 16px 32px rgba(124,58,237,0.1)'; this.style.borderColor='var(--purple)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.03)'; this.style.borderColor='var(--border)';">
+        <div style="width: 60px; height: 60px; background: var(--purple-light); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; color: var(--purple);">📄</div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+          <div style="font-size: 22px; font-weight: 700; color: var(--text-primary); font-family: inherit; letter-spacing: -0.5px;">서면민원 처리하기</div>
+          <div style="font-size: 13px; color: var(--text-muted); font-weight: 400;">방문 접수 및 오프라인 문서 처리</div>
+        </div>
+      </button>
+
+      <!-- 처리 내역 버튼 -->
+      <button onclick="showScreen('s018-processed-list', this)" style="position: relative; overflow: hidden; width: 300px; height: 180px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 16px 32px rgba(22,163,74,0.1)'; this.style.borderColor='var(--green)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.03)'; this.style.borderColor='var(--border)';">
+        <div style="width: 60px; height: 60px; background: var(--green-light); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; color: var(--green);">✅</div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+          <div style="font-size: 22px; font-weight: 700; color: var(--text-primary); font-family: inherit; letter-spacing: -0.5px;">처리한 민원 조회</div>
+          <div style="font-size: 13px; color: var(--text-muted); font-weight: 400;">완료된 민원 내역 확인</div>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ SFR-018 전자민원 목록 ══════════════ -->
+<div id="s018-list" class="screen" style="background: var(--bg); overflow-y: auto;">
+  <div class="list-container">
+    <input type="text" class="search-bar" placeholder="민원 검색 (제목, 작성자, 내용 등)">
+
+    <div class="list-controls">
+      <span style="font-size: 13px; color: var(--text-secondary);">정렬 기준</span>
+      <select class="sort-select">
+        <option>우선순위 높음</option>
+        <option>최신 등록순</option>
+        <option>기한 임박순</option>
+      </select>
+    </div>
+
+    <div class="grid-container">
+      <!-- Card 1 -->
+      <div class="list-card">
+        <div class="c-title">
+          <span style="display:flex; align-items:center; gap:8px;">[긴급] 상가 누수 및 배전반 스파크 발생 <span style="font-size:11px; font-weight:500; background:var(--red-light); color:var(--red); padding: 2px 6px; border-radius:4px;">화재위험</span></span>
+        </div>
+        <div class="c-desc" style="-webkit-line-clamp: 2; line-clamp: 2;">
+          어제 비가 많이 온 후 건물 1층 배전박스에서 스파크가 튀고 타는 냄새가 지속적으로 납니다. 주변 상인들이 전부 대피할 정도로 불안한데 누전 징후가 있는 것 같아 신속한 안전점검을 부탁드립니다.
+        </div>
+        <div class="c-footer">
+          <div><span style="font-weight:600; color:var(--text-primary);">김철수</span> 님 &nbsp;|&nbsp; 연락처: 010-1234-****</div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            10분 전
+            <span style="border: 1px solid var(--red); color: var(--red); padding: 1px 6px; border-radius: 4px; font-weight:700;">D-0</span>
+          </div>
+        </div>
+        <div class="c-actions" style="margin-top: 16px; display: flex; gap: 8px; border-top: 1px solid var(--surface2); padding-top: 16px;">
+          <button class="btn btn-primary" style="flex: 1; padding: 8px 0;" onclick="showScreen('s018', this)">처리</button>
+          <button class="btn btn-secondary" style="flex: 1; padding: 8px 0;" onclick="openComplaintModal(this)">조회</button>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="list-card">
+        <div class="c-title">
+          <span>전기설비 정기검사 일정 변경 문의</span>
+        </div>
+        <div class="c-desc" style="-webkit-line-clamp: 2; line-clamp: 2;">
+          기존에 저희 아파트 단지 정기검사 일정이 지난 주 금요일로 예정되어 있었으나, 내부 사정상 연기를 신청한 바 있습니다. 다시 일정을 잡고 싶은데 다음 주 방문 가능한 날짜를 모두 알려주실 수 있나요?
+        </div>
+        <div class="c-footer">
+          <div><span style="font-weight:600; color:var(--text-primary);">박영희</span> 관리소장 &nbsp;|&nbsp; 단지 관리사무소</div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            1시간 전
+            <span style="border: 1px solid #C2410C; color: #C2410C; padding: 1px 6px; border-radius: 4px; font-weight:700;">D-1</span>
+          </div>
+        </div>
+        <div class="c-actions" style="margin-top: 16px; display: flex; gap: 8px; border-top: 1px solid var(--surface2); padding-top: 16px;">
+          <button class="btn btn-primary" style="flex: 1; padding: 8px 0;" onclick="showScreen('s018', this)">처리</button>
+          <button class="btn btn-secondary" style="flex: 1; padding: 8px 0;" onclick="openComplaintModal(this)">조회</button>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="list-card">
+        <div class="c-title">
+          <span>신축 건물 전기 사용 전 점검 신청 안내 요청</span>
+        </div>
+        <div class="c-desc" style="-webkit-line-clamp: 2; line-clamp: 2;">
+          안녕하세요, 이번 달에 준공 허가가 떨어진 3층 규모의 상가 건물 전기담당자입니다. 본격적인 입주 전에 규정에 따른 전기 안전점검을 신청하고자 합니다. 필요한 서류 및 수수료 절차 관련해서 정확한 메일 회신 부탁드립니다.
+        </div>
+        <div class="c-footer">
+          <div><span style="font-weight:600; color:var(--text-primary);">이현동</span> 건축주 &nbsp;|&nbsp; 연락처: 010-5321-****</div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            3시간 전
+            <span style="border: 1px solid var(--sky); color: var(--sky); padding: 1px 6px; border-radius: 4px; font-weight:700;">D-2</span>
+          </div>
+        </div>
+        <div class="c-actions" style="margin-top: 16px; display: flex; gap: 8px; border-top: 1px solid var(--surface2); padding-top: 16px;">
+          <button class="btn btn-primary" style="flex: 1; padding: 8px 0;" onclick="showScreen('s018', this)">처리</button>
+          <button class="btn btn-secondary" style="flex: 1; padding: 8px 0;" onclick="openComplaintModal(this)">조회</button>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="list-card">
+        <div class="c-title">
+          <span>신청 건 수수료 중복 결제 환불 요청</span>
+        </div>
+        <div class="c-desc" style="-webkit-line-clamp: 2; line-clamp: 2;">
+          저번 주에 안내받은 계좌 번호로 무통장 입금을 진행했는데, 은행 앱 오류로 2번 송금되었습니다. 중복 결제된 건에 대한 환불 조치를 요청하며, 통장 사본 파일은 민원 접수 페이지에 함께 첨부해 놓았습니다.
+        </div>
+        <div class="c-footer">
+          <div><span style="font-weight:600; color:var(--text-primary);">최지연</span> 님 &nbsp;|&nbsp; 다이닝 레스토랑</div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            1일 전
+            <span style="border: 1px solid var(--border); color: var(--text-muted); padding: 1px 6px; border-radius: 4px; font-weight:600;">여유</span>
+          </div>
+        </div>
+        <div class="c-actions" style="margin-top: 16px; display: flex; gap: 8px; border-top: 1px solid var(--surface2); padding-top: 16px;">
+          <button class="btn btn-primary" style="flex: 1; padding: 8px 0;" onclick="showScreen('s018', this)">처리</button>
+          <button class="btn btn-secondary" style="flex: 1; padding: 8px 0;" onclick="openComplaintModal(this)">조회</button>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="list-card">
+        <div class="c-title">
+          <span style="display:flex; align-items:center; gap:8px;">심야전기 보일러 차단기 떨어짐 현상 <span style="font-size:11px; font-weight:500; background:var(--orange-light); color:#C2410C; padding: 2px 6px; border-radius:4px;">불편민원</span></span>
+        </div>
+        <div class="c-desc" style="-webkit-line-clamp: 2; line-clamp: 2;">
+          최근 야간에 심야전기 보일러만 가동되면 메인 누전차단기가 자꾸 떨어져서 무척 춥습니다. 사설 보일러 기사님은 기계 문제가 아니라 전기선 쪽 누전 같다고 하시는데, 한전이나 안전공사 중 어느 단위에서 출동해 주실 수 있는지 궁금합니다.
+        </div>
+        <div class="c-footer">
+          <div><span style="font-weight:600; color:var(--text-primary);">강태호</span> 님 &nbsp;|&nbsp; 다세대 주택 거주자</div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            1일 전
+            <span style="border: 1px solid #C2410C; color: #C2410C; padding: 1px 6px; border-radius: 4px; font-weight:700;">D-1</span>
+          </div>
+        </div>
+        <div class="c-actions" style="margin-top: 16px; display: flex; gap: 8px; border-top: 1px solid var(--surface2); padding-top: 16px;">
+          <button class="btn btn-primary" style="flex: 1; padding: 8px 0;" onclick="showScreen('s018', this)">처리</button>
+          <button class="btn btn-secondary" style="flex: 1; padding: 8px 0;" onclick="openComplaintModal(this)">조회</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ SFR-018 처리한 민원 목록 ══════════════ -->
+<div id="s018-processed-list" class="screen" style="background: var(--bg); overflow-y: auto;">
+  <div class="list-container" style="max-width: 1400px;">
+    <input type="text" class="search-bar" placeholder="민원 검색 (제목, 작성자, 내용 등)">
+
+    <div class="list-controls">
+      <span style="font-size: 13px; color: var(--text-secondary);">정렬 기준</span>
+      <select class="sort-select">
+        <option>우선순위 높음</option>
+        <option>최신 등록순</option>
+        <option>기한 임박순</option>
+      </select>
+    </div>
+
+    <div style="display: flex; gap: 32px; align-items: flex-start;">
+      <!-- Left Column: Electronic Processing History -->
+      <div style="flex: 1;">
+        <div class="list-controls" style="margin-bottom: 20px;">
+          <h3 style="font-size: 16px; font-weight: 700; color: var(--text-primary); border-left: 4px solid var(--primary); padding-left: 12px; margin: 0;">전자민원 처리 내역</h3>
+        </div>
+        <div class="grid-container" style="grid-template-columns: 1fr; gap: 16px;">
+          <div class="list-card">
+            <div class="c-title">
+              <span style="display:flex; align-items:center; gap:8px;">[긴급] 상가 누수 및 배전반 스파크 발생 <span style="font-size:11px; font-weight:500; background:var(--red-light); color:var(--red); padding: 2px 6px; border-radius:4px;">화재위험</span></span>
+            </div>
+            <div class="c-desc" style="-webkit-line-clamp: 2; line-clamp: 2;">
+              건물 1층 배전박스 스파크 점검 건. 신속한 안전점검을 통해 누전 원인 파악 및 조치 완료.
+            </div>
+            <div class="c-footer">
+              <div><span style="font-weight:600; color:var(--text-primary);">김철수</span> 님</div>
+              <div style="display:flex; align-items:center; gap:8px;">10분 전</div>
+            </div>
+            <div class="c-actions" style="margin-top: 16px; display: flex; gap: 8px; border-top: 1px solid var(--surface2); padding-top: 16px;">
+              <button class="btn btn-secondary" style="width: 100%; padding: 8px 0;" onclick="alert('처리 내역 조회 화면은 준비중입니다.')">처리 내역 조회</button>
+            </div>
+          </div>
+          <div class="list-card">
+            <div class="c-title">
+              <span>전기설비 정기검사 일정 변경 문의</span>
+            </div>
+            <div class="c-desc" style="-webkit-line-clamp: 2; line-clamp: 2;">
+              아파트 단지 정기검사 일정 조정 완료. 내주 화요일 오후 2시 방문으로 재확정됨.
+            </div>
+            <div class="c-footer">
+              <div><span style="font-weight:600; color:var(--text-primary);">박영희</span> 관리소장</div>
+              <div style="display:flex; align-items:center; gap:8px;">1시간 전</div>
+            </div>
+            <div class="c-actions" style="margin-top: 16px; display: flex; gap: 8px; border-top: 1px solid var(--surface2); padding-top: 16px;">
+              <button class="btn btn-secondary" style="width: 100%; padding: 8px 0;" onclick="alert('처리 내역 조회 화면은 준비중입니다.')">처리 내역 조회</button>
+            </div>
+          </div>
+          <div class="list-card">
+            <div class="c-title">
+              <span>신축 건물 전기 사용 전 점검 신청</span>
+            </div>
+            <div class="c-desc" style="-webkit-line-clamp: 2; line-clamp: 2;">
+              3층 규모 상가 준공 전 안전점검 서류 접수 완료 및 수수료 안내 발송.
+            </div>
+            <div class="c-footer">
+              <div><span style="font-weight:600; color:var(--text-primary);">이현동</span> 건축주</div>
+              <div style="display:flex; align-items:center; gap:8px;">3시간 전</div>
+            </div>
+            <div class="c-actions" style="margin-top: 16px; display: flex; gap: 8px; border-top: 1px solid var(--surface2); padding-top: 16px;">
+              <button class="btn btn-secondary" style="width: 100%; padding: 8px 0;" onclick="alert('처리 내역 조회 화면은 준비중입니다.')">처리 내역 조회</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Written Processing History -->
+      <div style="flex: 1;">
+        <div class="list-controls" style="margin-bottom: 20px;">
+          <h3 style="font-size: 16px; font-weight: 700; color: var(--text-primary); border-left: 4px solid var(--purple); padding-left: 12px; margin: 0;">서면민원 처리 내역</h3>
+        </div>
+        <div class="grid-container" style="grid-template-columns: 1fr; gap: 16px;">
+          <div class="list-card">
+            <div class="c-title">
+              <span>태양광 발전설비 점검 기한 연장</span>
+            </div>
+            <div class="c-desc" style="-webkit-line-clamp: 2; line-clamp: 2;">
+              공장 지붕 공사로 인한 정기검사 1개월 연장 승인 완료. 증빙 서류 확인됨.
+            </div>
+            <div class="c-footer">
+              <div><span style="font-weight:600; color:var(--text-primary);">정민수</span> 공장장</div>
+              <div style="display:flex; align-items:center; gap:8px;">2일 전</div>
+            </div>
+            <div class="c-actions" style="margin-top: 16px; display: flex; gap: 8px; border-top: 1px solid var(--surface2); padding-top: 16px;">
+              <button class="btn btn-secondary" style="width: 100%; padding: 8px 0;" onclick="alert('처리 내역 조회 화면은 준비중입니다.')">처리 내역 조회</button>
+            </div>
+          </div>
+          <div class="list-card">
+            <div class="c-title">
+              <span>취약계층 누전차단기 무상 교체</span>
+            </div>
+            <div class="c-desc" style="-webkit-line-clamp: 2; line-clamp: 2;">
+              기초생활수급자 대상 무상 부품 교체 지원 적격 확인 및 작업 배정 완료.
+            </div>
+            <div class="c-footer">
+              <div><span style="font-weight:600; color:var(--text-primary);">한지민</span> 님</div>
+              <div style="display:flex; align-items:center; gap:8px;">2일 전</div>
+            </div>
+            <div class="c-actions" style="margin-top: 16px; display: flex; gap: 8px; border-top: 1px solid var(--surface2); padding-top: 16px;">
+              <button class="btn btn-secondary" style="width: 100%; padding: 8px 0;" onclick="alert('처리 내역 조회 화면은 준비중입니다.')">처리 내역 조회</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════ SFR-018 전자민원 답변 생성 ══════════════ -->
+<div id="s018" class="screen">
+  <div class="screen-label">
+    <span class="badge">SFR-018</span>
+    지능형 민원 답변 서비스 — 전자민원 답변 생성
+    <span class="sub">핵심화면 · Git 방식 버전 관리</span>
+  </div>
+
+  <div class="app-shell">
+    <!-- sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-heading">처리 중 민원</div>
+        <div class="sidebar-item active" style="padding-left: 20px;">
+          <div class="dot dot-amber" style="width:12px; height:12px;"></div>
+          아파트 정기검사 수수료 산정 기준...
+        </div>
+        <div style="padding: 12px 14px 0 14px;">
+          <button style="width:100%; font-size:12px; font-weight:600; color:var(--text-secondary); border:1px dashed var(--border); border-radius:6px; padding:8px 0; background-color:transparent; display:flex; justify-content:center; align-items:center; cursor:pointer;" onclick="showScreen('s018-written', this)" onmouseover="this.style.borderColor='var(--primary)'; this.style.color='var(--primary)';" onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-secondary)';">
+            <span style="font-size:14px; margin-right:6px; line-height:1;">+</span> 새 서면 민원 추가
+          </button>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-heading">대기중인 전자민원</div>
+        <div style="padding: 6px 14px; font-size: 12px; font-weight: 600; color: var(--text-primary);">전자 민원</div>
+        <div style="max-height: 160px; overflow-y: scroll; padding-right: 2px;">
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:10px; height:10px; background:var(--primary); border-radius:2px; flex-shrink:0; transform:rotate(45deg); margin:0 2px;"></div>
+            전기설비 정기검사 일정 변경...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:10px; height:10px; background:var(--primary); border-radius:2px; flex-shrink:0; transform:rotate(45deg); margin:0 2px;"></div>
+            신축 건물 전기 사용 전 점검...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:10px; height:10px; background:var(--primary); border-radius:2px; flex-shrink:0; transform:rotate(45deg); margin:0 2px;"></div>
+            심야전기 보일러 차단기 떨어짐 현상...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:10px; height:10px; background:var(--primary); border-radius:2px; flex-shrink:0; transform:rotate(45deg); margin:0 2px;"></div>
+            전기안전관리자 선임 온라인 신고...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:10px; height:10px; background:var(--primary); border-radius:2px; flex-shrink:0; transform:rotate(45deg); margin:0 2px;"></div>
+            태양광 발전설비 점검 기한 연장...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:10px; height:10px; background:var(--primary); border-radius:2px; flex-shrink:0; transform:rotate(45deg); margin:0 2px;"></div>
+            가로등 불량 접수 및 수리 요청...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:10px; height:10px; background:var(--primary); border-radius:2px; flex-shrink:0; transform:rotate(45deg); margin:0 2px;"></div>
+            공사장 주변 전선 늘어짐 신고...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:10px; height:10px; background:var(--primary); border-radius:2px; flex-shrink:0; transform:rotate(45deg); margin:0 2px;"></div>
+            정전 발생 및 복구 시간 문의...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:10px; height:10px; background:var(--primary); border-radius:2px; flex-shrink:0; transform:rotate(45deg); margin:0 2px;"></div>
+            전신주 스파크 및 화재 위험...
+          </div>
+        </div>
+        <div style="padding: 8px 14px;">
+          <button class="btn btn-secondary" style="width:100%; font-size:11px; padding:6px 0;">목록으로</button>
+        </div>
+      </div>
+      <div class="sidebar-section" style="flex: 1; display: flex; flex-direction: column;">
+        <div class="sidebar-heading">처리 완료 민원</div>
+        <div style="padding: 6px 14px; font-size: 12px; font-weight: 600; color: var(--text-primary);">전자 민원</div>
+        <div style="max-height: 140px; overflow-y: scroll; padding-right: 2px;">
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            수수료 중복 결제 환불 요청
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            취약계층 누전차단기 불량 교체...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            전기차 충전기 사전 기술검토
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            에너지바우처 이체 계좌 변경
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            검사 수수료 세금계산서 발행...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            태양광 발전설비 설치 기준...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            심야전기 요금제 변경 문의...
+          </div>
+        </div>
+        <div style="padding: 8px 14px;">
+          <button class="btn btn-secondary" style="width:100%; font-size:11px; padding:6px 0;">목록으로</button>
+        </div>
+
+        <div style="padding: 6px 14px; font-size: 12px; font-weight: 600; color: var(--text-primary); margin-top: 4px;">서면 민원</div>
+        <div style="max-height: 140px; overflow-y: scroll; padding-right: 2px;">
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            다중이용시설 안전점검 필증 분실...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            전기안전관리자 해임신고
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            사용전점검 신청서(방문접수)
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            사업자등록증 변경 신고서 제출
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            안전관리자 선임계 원본 제출...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            전기안전관리 대행계약서 제출...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            안전점검 결과보고서 방문 제출...
+          </div>
+        </div>
+        <div style="padding: 8px 14px;">
+          <button class="btn btn-secondary" style="width:100%; font-size:11px; padding:6px 0;">목록으로</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- main chat -->
+    <main class="main">
+      <div class="topbar">
+        <span class="meta-badge">민원번호: 260319-E02</span>
+        <span class="sep">|</span>
+        <span>유형: <strong>일반 (문의/안내)</strong></span>
+        <span class="sep">|</span>
+        <span>접수: 2026.03.19 14:30</span>
+        <span class="sep">|</span>
+        <span style="display:flex; align-items:center;">기한: <strong>2026.03.22까지</strong> <span style="background:var(--primary-light);color:var(--primary);border-radius:4px;padding:2px 7px;font-size:11px;font-weight:700;margin-left:6px;">D-3</span></span>
+        <button class="btn btn-secondary" style="margin-left: auto; font-size: 11px;" onclick="togglePanel('version')">답변이력조회</button>
+      </div>
+
+      <div class="chat-layout">
+        <div class="chat-panel">
+          <div class="chat-messages">
+
+            <!-- User complain details -->
+            <details class="msg-details" open>
+              <summary>
+                <div class="msg-label" style="padding:0">
+                  <span class="ai-dot" style="background:var(--text-secondary);">민</span> 민원 원문 (접수 정보)
+                </div>
+                <div class="arrow">▼</div>
+              </summary>
+              <div class="detail-box">
+                <div style="margin-bottom: 2px; font-size: 11.5px;"><strong>아파트 전기설비 정기검사 수수료 산정 기준 문의</strong></div>
+                <div style="margin-bottom: 2px; font-size: 11px; color: var(--text-secondary); display:flex; gap:12px;">
+                  <span><strong>작성자:</strong> 박영희 (관리소장)</span>
+                  <span><strong>연락처:</strong> 010-5678-****</span>
+                  <span><strong>접수일:</strong> 2시간 전</span>
+                </div>
+                <div style="padding: 4px 6px; background: var(--bg); border-radius: 6px; font-size: 11.5px; line-height: 1.3; border-left: 3px solid var(--primary);">
+                  안녕하세요. 저희 아파트 단지(580세대)의 전기설비 정기검사가 다음 달 초에 예정되어 있습니다.
+                  예산 편성을 위해 수수료 산정 기준을 미리 알고 싶은데, 세대수나 설비 규모에 따라 달라지는지 정확히 안내해 주시면 감사하겠습니다.
+                </div>
+              </div>
+            </details>
+
+            <!-- AI analysis message -->
+            <details class="msg-details" open>
+              <summary>
+                <div class="msg-label" style="padding:0">
+                  <span class="ai-dot">AI</span> AI 분석 완료
+                </div>
+                <div class="arrow">▼</div>
+              </summary>
+              <div class="detail-box">
+                <div style="margin-bottom:2px; font-size:11.5px; color:var(--text-primary);">
+                  민원을 분석했습니다. 아래 정보를 확인하세요.
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom: 2px; font-size: 11.5px;">
+                  <span>유형: <strong>일반 (문의/안내)</strong></span>
+                  <span style="color:var(--text-muted)">·</span>
+                  <span>신뢰도: <strong style="color:var(--green)">95%</strong></span>
+                </div>
+                <div style="margin-bottom: 2px; font-size:11px; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
+                  키워드:
+                  <span class="keyword-tag" style="margin:0;">정기검사</span>
+                  <span class="keyword-tag" style="margin:0;">수수료</span>
+                  <span class="keyword-tag" style="margin:0;">아파트단지</span>
+                </div>
+                <div style="font-size:10.5px; color:var(--text-muted);">유사 민원 자동 연계 완료 (32건)</div>
+              </div>
+            </details>
+
+            <!-- AI draft -->
+            <div class="msg msg-ai">
+              <div class="msg-label"><span class="ai-dot">AI</span> AI 답변 초안 생성</div>
+              <div class="draft-card">
+                <div class="draft-header" style="justify-content: space-between;">
+                  <div>
+                    ✏️ AI 답변 초안 &nbsp;<span style="background:var(--primary);color:#fff;border-radius:4px;padding:1px 7px;font-size:11px;">v1.0</span>
+                  </div>
+                  <button class="btn btn-secondary" style="font-size: 11px; padding: 4px 8px;" onclick="togglePanel('analysis')">열어보기</button>
+                </div>
+                <div class="draft-body" style="border-left: 2px solid var(--primary); padding-left: 6px;">
+                  안녕하세요. 한국전기안전공사입니다. 전기설비 정기검사 수수료 관련 문의 주셔서 감사합니다.
+                  수수료는 「전기안전관리법 시행규칙」 별표에 따라 산정되며, <strong>계약전력(kW) 및 설비 규모에 따라 달라집니다.</strong> 아파트 단지의 경우 공용설비와 각 세대 인입설비를 기준으로 산정되며, 계약전력 100kW 초과 시 별도 기준이 적용됩니다.
+                  정확한 수수료 산정을 위해 단지 내 계약전력 및 설비 현황을 관할 지사로 알려주시면 상세 안내 드리겠습니다. 추가 문의 사항은 고객센터(1588-7500)로 연락 주시기 바랍니다.
+                </div>
+              </div>
+            </div>
+
+            <!-- reference docs -->
+            <div class="msg msg-ai">
+              <div class="msg-label"><span class="ai-dot">AI</span> 관련 자료 (출처 명시)</div>
+              <div class="ref-card">
+                <div class="ref-header">📁 참고 자료</div>
+                <div class="ref-item">📄 전기안전관리법 시행규칙 별표 (수수료) <a href="#">보기</a></div>
+                <div class="ref-item">📋 유사 상담 이력 32건 <a href="#">보기</a></div>
+                <div class="ref-item">📘 수수료 산정 기준표 <a href="#">보기</a></div>
+                <div class="ref-item">📗 정기검사 신청 안내 FAQ <a href="#">보기</a></div>
+              </div>
+            </div>
+
+            <!-- 수정 요청 (Admin -> AI) -->
+            <div class="msg msg-user">
+              <div class="msg-label" style="justify-content:flex-end">담당자</div>
+              <div class="bubble">580세대 기준 예상 수수료 범위를 구체적으로 안내해줘. 관할 지사 연락처(서울동부지사, 02-456-7890)도 포함해줘.</div>
+            </div>
+
+            <!-- AI 답변 초안 (v1.1) -->
+            <div class="msg msg-ai">
+              <div class="msg-label"><span class="ai-dot">AI</span> AI 답변 초안 수정</div>
+              <div class="draft-card">
+                <div class="draft-header" style="justify-content: space-between;">
+                  <div>
+                    ✏️ AI 답변 초안 &nbsp;<span style="background:var(--primary);color:#fff;border-radius:4px;padding:1px 7px;font-size:11px;">v1.1</span>
+                  </div>
+                  <button class="btn btn-secondary" style="font-size: 11px; padding: 4px 8px;" onclick="togglePanel('analysis')">열어보기</button>
+                </div>
+                <div class="draft-body" style="font-size: 11.5px; line-height: 1.3; color: var(--text-primary); border-left: 2px solid var(--primary); padding-left: 6px;">
+                  안녕하세요. 한국전기안전공사입니다. 전기설비 정기검사 수수료 관련 문의 주셔서 감사합니다.
+                  580세대 규모 아파트 단지의 경우, 「전기안전관리법 시행규칙」 별표 기준 예상 수수료는 <strong>계약전력 및 설비 규모에 따라 약 35만~55만 원 내외</strong>가 될 것으로 안내드립니다. (최종 금액은 현장 실측 후 확정됩니다.)
+                  정밀 산정을 원하시면 관할 지사인 <strong>한국전기안전공사 서울동부지사(☎ 02-456-7890)</strong>에 단지 설비 현황을 공유해 주시면 신속히 안내해 드리겠습니다. 예산 편성에 도움이 되셨으면 합니다.
+                </div>
+                <!-- 액션 버튼 -->
+                <div style="display: flex; gap: 4px; margin-top: 4px;">
+                  <button class="btn btn-secondary" style="background:var(--surface2); color:var(--text-secondary); font-size:10.5px; font-weight:600; padding:4px 8px; display:flex; align-items:center; gap:4px;" onclick="alert('재생성 기능은 준비중입니다.')">🔄 재생성</button>
+                  <button class="btn btn-secondary" style="background:var(--surface2); color:var(--text-secondary); font-size:10.5px; font-weight:600; padding:4px 8px; display:flex; align-items:center; gap:4px;" onclick="alert('직접 편집 기능은 준비중입니다.')">✏️ 직접 편집</button>
+                  <button class="btn btn-green" style="margin-left:auto; font-size:10.5px; font-weight:600; padding:4px 10px; display:flex; align-items:center; gap:4px;" onclick="alert('확정 및 발송이 완료되었습니다.')">✔ 확정·발송</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="chat-input-bar">
+            <input type="text" placeholder="답변 수정 요청이나 질문을 입력하세요..." />
+            <button class="btn btn-icon">📎</button>
+            <button class="btn btn-primary">전송</button>
+          </div>
+        </div>
+
+        <!-- version panel -->
+        <div id="version-panel" class="version-panel">
+          <div class="vp-header">📁 답변 버전 이력</div>
+
+          <div class="version-item current">
+            <div class="v-tag">
+              v1.2
+              <span class="v-badge">현재</span>
+            </div>
+            <div class="v-meta">홍길동 최종확정<br>03.03 &nbsp;11:00</div>
+          </div>
+          <div class="version-item">
+            <div class="v-tag">v1.1</div>
+            <div class="v-meta">홍길동 수정<br>03.03 &nbsp;10:45</div>
+          </div>
+          <div class="version-item">
+            <div class="v-tag">v1.0</div>
+            <div class="v-meta">AI 초안<br>03.03 &nbsp;09:12</div>
+          </div>
+
+          <div class="version-actions">
+            <button class="btn btn-secondary" style="font-size:10.5px;">이전 보기</button>
+            <button class="btn btn-secondary" style="font-size:10.5px;">버전 비교</button>
+          </div>
+        </div>
+
+        <!-- analysis detail panel (hidden by default) -->
+        <div id="analysis-detail-panel" class="analysis-detail-panel">
+          <div class="panel-section">
+            <div style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">
+              ✏️ AI 답변 초안 &nbsp;<span style="background:var(--primary);color:#fff;border-radius:4px;padding:1px 7px;font-size:11px;">v1.1</span>
+            </div>
+            <div style="font-size: 12.5px; line-height: 1.6; color: var(--text-secondary); border-left: 2px solid var(--primary); padding-left: 8px;">
+              안녕하세요. 한국전기안전공사입니다. 전기설비 정기검사 수수료 관련 문의 주셔서 감사합니다.<br><br>
+              580세대 기준 예상 수수료는 <strong>약 35만~55만 원 내외</strong>입니다. 최종 금액은 현장 실측 후 확정됩니다.<br><br>
+              정밀 산정은 <strong>한국전기안전공사 서울동부지사(☎ 02-456-7890)</strong>로 설비 현황 공유 시 신속 안내 가능합니다.
+            </div>
+          </div>
+          <div style="border-top:1px solid var(--border); padding-top:10px; margin-top:auto;" class="panel-section">
+            <div class="panel-section-title">액션</div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <button class="btn btn-secondary" style="width:100%; font-size:11px;">🔄 재생성</button>
+              <button class="btn btn-secondary" style="width:100%; font-size:11px;">✏️ 직접 편집</button>
+              <button class="btn btn-green" style="width:100%; font-size:11px;">✔ 확정·발송</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ══════════════ SFR-018 서면민원 답변 생성 ══════════════ -->
+<div id="s018-written" class="screen">
+  <div class="screen-label">
+    <span class="badge">SFR-018</span>
+    지능형 민원 답변 서비스 — 서면민원 답변 생성
+    <span class="sub">핵심화면 · 서면 내용 사전 입력 흐름</span>
+  </div>
+
+  <div class="app-shell">
+    <!-- sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-heading">처리 중 민원</div>
+        <div class="sidebar-item active" style="padding-left: 20px;">
+          <div class="dot dot-amber" style="width:12px; height:12px;"></div>
+          어린이집 정기검사 기한 연기 신청...
+        </div>
+        <div style="padding: 12px 14px 0 14px;">
+          <button style="width:100%; font-size:12px; font-weight:600; color:var(--text-secondary); border:1px dashed var(--border); border-radius:6px; padding:8px 0; background-color:transparent; display:flex; justify-content:center; align-items:center; cursor:pointer;" onclick="showScreen('s018-written', this)" onmouseover="this.style.borderColor='var(--primary)'; this.style.color='var(--primary)';" onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-secondary)';">
+            <span style="font-size:14px; margin-right:6px; line-height:1;">+</span> 새 서면 민원 추가
+          </button>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-heading">대기중인 전자민원</div>
+        <div style="padding: 6px 14px; font-size: 12px; font-weight: 600; color: var(--text-primary);">전자 민원</div>
+        <div style="max-height: 160px; overflow-y: scroll; padding-right: 2px;">
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:10px; height:10px; background:var(--primary); border-radius:2px; flex-shrink:0; transform:rotate(45deg); margin:0 2px;"></div>
+            전기설비 정기검사 일정 변경...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:10px; height:10px; background:var(--primary); border-radius:2px; flex-shrink:0; transform:rotate(45deg); margin:0 2px;"></div>
+            신축 건물 전기 사용 전 점검...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:10px; height:10px; background:var(--primary); border-radius:2px; flex-shrink:0; transform:rotate(45deg); margin:0 2px;"></div>
+            심야전기 보일러 차단기 떨어짐 현상...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:10px; height:10px; background:var(--primary); border-radius:2px; flex-shrink:0; transform:rotate(45deg); margin:0 2px;"></div>
+            전기안전관리자 선임 온라인 신고...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:10px; height:10px; background:var(--primary); border-radius:2px; flex-shrink:0; transform:rotate(45deg); margin:0 2px;"></div>
+            태양광 발전설비 점검 기한 연장...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:10px; height:10px; background:var(--primary); border-radius:2px; flex-shrink:0; transform:rotate(45deg); margin:0 2px;"></div>
+            가로등 불량 접수 및 수리 요청...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:10px; height:10px; background:var(--primary); border-radius:2px; flex-shrink:0; transform:rotate(45deg); margin:0 2px;"></div>
+            공사장 주변 전선 늘어짐 신고...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:10px; height:10px; background:var(--primary); border-radius:2px; flex-shrink:0; transform:rotate(45deg); margin:0 2px;"></div>
+            정전 발생 및 복구 시간 문의...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:10px; height:10px; background:var(--primary); border-radius:2px; flex-shrink:0; transform:rotate(45deg); margin:0 2px;"></div>
+            전신주 스파크 및 화재 위험...
+          </div>
+        </div>
+        <div style="padding: 8px 14px;">
+          <button class="btn btn-secondary" style="width:100%; font-size:11px; padding:6px 0;">목록으로</button>
+        </div>
+      </div>
+      <div class="sidebar-section" style="flex: 1; display: flex; flex-direction: column;">
+        <div class="sidebar-heading">처리 완료 민원</div>
+        <div style="padding: 6px 14px; font-size: 12px; font-weight: 600; color: var(--text-primary);">전자 민원</div>
+        <div style="max-height: 140px; overflow-y: scroll; padding-right: 2px;">
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            수수료 중복 결제 환불 요청
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            취약계층 누전차단기 불량 교체...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            전기차 충전기 사전 기술검토
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            에너지바우처 이체 계좌 변경
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            검사 수수료 세금계산서 발행...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            태양광 발전설비 설치 기준...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            심야전기 요금제 변경 문의...
+          </div>
+        </div>
+        <div style="padding: 8px 14px;">
+          <button class="btn btn-secondary" style="width:100%; font-size:11px; padding:6px 0;">목록으로</button>
+        </div>
+
+        <div style="padding: 6px 14px; font-size: 12px; font-weight: 600; color: var(--text-primary); margin-top: 4px;">서면 민원</div>
+        <div style="max-height: 140px; overflow-y: scroll; padding-right: 2px;">
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            다중이용시설 안전점검 필증 분실...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            전기안전관리자 해임신고
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            사용전점검 신청서(방문접수)
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            사업자등록증 변경 신고서 제출
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            안전관리자 선임계 원본 제출...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            전기안전관리 대행계약서 제출...
+          </div>
+          <div class="sidebar-item" style="padding-left: 24px;">
+            <div style="width:12px; height:12px; background:var(--green); border-radius:2px; flex-shrink:0;"></div>
+            안전점검 결과보고서 방문 제출...
+          </div>
+        </div>
+        <div style="padding: 8px 14px;">
+          <button class="btn btn-secondary" style="width:100%; font-size:11px; padding:6px 0;">목록으로</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- main chat -->
+    <main class="main">
+      <div class="topbar">
+        <span class="meta-badge">민원번호: 260319-W01</span>
+        <span class="sep">|</span>
+        <span>접수방식: <strong>방문/서면</strong></span>
+        <span class="sep">|</span>
+        <span>접수일: 2026.03.19</span>
+        <span class="sep">|</span>
+        <span style="display:flex; align-items:center;">상태: <strong style="color:var(--primary);">입력 대기중</strong></span>
+        <button class="btn btn-secondary" style="margin-left: auto; font-size: 11px;" onclick="togglePanel('version')">답변이력조회</button>
+      </div>
+
+      <div class="chat-layout">
+        <div class="chat-panel">
+          <div class="chat-messages">
+
+            <!-- STEP 0: Select Input Method -->
+            <div id="written-method-step">
+              <div class="msg">
+                <div class="msg-label" style="display:flex; align-items:center; gap:6px;">
+                  <span class="ai-dot" style="background:var(--primary); color:#fff; font-size:10px;">안내</span> 시스템
+                </div>
+                <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px; box-shadow:0 4px 12px rgba(0,0,0,0.02); width: 100%;">
+
+                  <div style="background: var(--sky-light); border-radius: 10px; padding: 16px; font-size: 13px; color: var(--text-secondary); text-align: center; border: 1px solid #BAE6FD; margin-bottom: 24px;">
+                    <strong style="display: block; color: var(--text-primary); font-size: 15px; margin-bottom: 6px;">어떤 방식으로 서면민원을 입력하시겠습니까?</strong>
+                    접수된 민원 형태에 맞는 입력 방식을 선택해 주세요.
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+                    <button class="btn-menu direct" style="flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 24px 16px; text-align: center; height: 100%; border-color: var(--sky); color: var(--sky);" onmouseover="this.style.background='var(--sky-light)'" onmouseout="this.style.background='var(--surface)'" onclick="alert('파일 업로드 기능은 준비중입니다.')">
+                      <div style="font-size: 28px;">📁</div>
+                      <div style="font-size: 14px; font-weight: 700;">민원 파일 업로드</div>
+                      <div style="font-size: 12px; color: var(--text-muted); font-weight: 400; margin-top: -4px;">(문서, 음성 등)</div>
+                    </button>
+                    <button class="btn-menu call" style="flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 24px 16px; text-align: center; height: 100%; border-color: var(--green); color: var(--green);" onmouseover="this.style.background='var(--green-light)'" onmouseout="this.style.background='var(--surface)'" onclick="document.getElementById('written-method-step').style.display='none'; document.getElementById('written-input-step').style.display='block';">
+                      <div style="font-size: 28px;">✏️</div>
+                      <div style="font-size: 14px; font-weight: 700;">민원 내용 수동입력</div>
+                      <div style="font-size: 12px; color: var(--text-muted); font-weight: 400; margin-top: -4px;">직접 텍스트로 입력</div>
+                    </button>
+                    <button class="btn-menu" style="flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 24px 16px; text-align: center; height: 100%; border-color: var(--purple); color: var(--purple);" onmouseover="this.style.background='var(--purple-light)'" onmouseout="this.style.background='var(--surface)'" onclick="alert('질의응답 기능은 준비중입니다.')">
+                      <div style="font-size: 28px;">💬</div>
+                      <div style="font-size: 14px; font-weight: 700;">질의응답 후 민원내용 입력</div>
+                      <div style="font-size: 12px; color: var(--text-muted); font-weight: 400; margin-top: -4px;">AI와 대화하며 작성</div>
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <!-- STEP 1: Input Area -->
+            <div id="written-input-step" style="display: none;">
+              <div class="msg">
+                <div class="msg-label" style="display:flex; align-items:center; gap:6px;">
+                  <span class="ai-dot" style="background:var(--primary); color:#fff; font-size:10px;">안내</span> 시스템
+                </div>
+                <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px; box-shadow:0 4px 12px rgba(0,0,0,0.02); width: 100%;">
+                  <div style="font-size:14px; font-weight:700; color:var(--text-primary); margin-bottom:8px;">서면 민원 내용 수동 입력</div>
+                  <p style="font-size:13px; color:var(--text-secondary); margin-bottom:16px; line-height:1.5;">방문, 우편, 팩스 등으로 접수된 오프라인 서면 민원의 내용을 입력해주세요.<br>작성된 내용을 바탕으로 AI가 핵심을 분석하고 답변 초안을 자동 생성합니다.</p>
+
+                  <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+                    <div style="flex: 1;">
+                      <label style="display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">민원인 이름</label>
+                      <input type="text" placeholder="예: 김철수" style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:6px; font-size:13px; outline:none;" value="이영희 (원장)">
+                    </div>
+                    <div style="flex: 1;">
+                      <label style="display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">전화번호</label>
+                      <input type="text" placeholder="예: 010-1234-5678" style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:6px; font-size:13px; outline:none;" value="010-9876-5432">
+                    </div>
+                  </div>
+
+                  <div style="margin-bottom:16px;">
+                    <label style="display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">민원 내용</label>
+                    <textarea style="width:100%; height:120px; padding:12px 14px; border:1px solid var(--border); border-radius:6px; font-size:13px; font-family:inherit; resize:none; outline:none;">우리 어린이집 내진 보강 공사로 인해 4월 15일로 예정된 전기설비 정기검사를 받기 어려운 상황입니다.
+공사가 끝나는 5월 말경으로 검사 기한을 연기하고자 하오니 승인 부탁드립니다. 관련 공사 계약서 사본을 팩스로 송부하였습니다.</textarea>
+                  </div>
+
+                  <div style="margin-bottom:16px;">
+                    <label style="display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">첨부파일</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <button class="btn btn-secondary" style="padding: 8px 14px; font-size: 12px; font-weight: 500;">파일 첨부하기</button>
+                      <span style="font-size: 11.5px; color: var(--text-muted);">선택된 파일 없음</span>
+                    </div>
+                  </div>
+
+                  <div style="margin-bottom:24px;">
+                    <label style="display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">AI에 알릴 사항 (선택)</label>
+                    <textarea style="width:100%; height:80px; padding:12px 14px; border:1px solid var(--border); border-radius:6px; font-size:13px; font-family:inherit; resize:none; outline:none;" placeholder="답변 생성 시 AI가 참고해야 할 지시사항, 특이사항, 관할 지사 정보 등을 자유롭게 입력하세요.">팩스로 받은 공사 계약서 참작해서 2026년 5월 31일로 검사 기한 연기 승인 처리되었다고 답변해줘. 어린이집이므로 친절하고 안심시키는 톤으로 작성해줘.</textarea>
+                  </div>
+
+                  <div style="display:flex; justify-content:flex-end;">
+                    <button class="btn btn-primary" onclick="submitWrittenComplaint()" style="padding:10px 20px; font-size:13px;">AI 분석 및 초안 생성 시작 ✨</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- STEP 2: Result Area (Hidden initially) -->
+            <div id="written-result-step" style="display: none; flex-direction: column; gap: 20px;">
+              <!-- User complain details -->
+              <details class="msg-details" open>
+                <summary>
+                  <div class="msg-label" style="padding:0">
+                    <span class="ai-dot" style="background:var(--text-secondary);">민</span> 서면 민원 수동 입력 내역 <span style="font-size:11px; font-weight:normal; margin-left:6px; color:var(--text-muted);">(시스템 연동)</span>
+                  </div>
+                  <div class="arrow">▼</div>
+                </summary>
+                <div class="detail-box">
+                  <div style="margin-bottom: 12px; font-size: 13px;"><strong>[방문/수기접수] 어린이집 정기검사 기한 연기 신청 건</strong></div>
+                  <div style="margin-bottom: 12px; font-size: 12px; color: var(--text-secondary); display:flex; gap:12px;">
+                    <span><strong>작성자:</strong> 이영희 (원장)</span>
+                    <span><strong>연락처:</strong> 010-9876-5432</span>
+                    <span><strong>첨부파일:</strong> 공사계약서_사본.pdf 외 1건</span>
+                  </div>
+                  <div style="padding: 12px; background: var(--bg); border-radius: 6px; font-size: 12.5px; line-height: 1.6; border-left: 3px solid var(--text-muted); margin-bottom: 12px;">
+                    우리 어린이집 내진 보강 공사로 인해 4월 15일로 예정된 전기설비 정기검사를 받기 어려운 상황입니다.<br>
+                    공사가 끝나는 5월 말경으로 검사 기한을 연기하고자 하오니 승인 부탁드립니다. 관련 공사 계약서 사본을 팩스로 송부하였습니다.
+                  </div>
+                  <div style="padding: 10px 12px; background: var(--sky-light); border-radius: 6px; font-size: 12px; line-height: 1.5; color: var(--text-primary); border: 1px solid var(--sky);">
+                    <strong>💡 AI 지시사항:</strong> 팩스로 받은 공사 계약서 참작해서 2026년 5월 31일로 검사 기한 연기 승인 처리되었다고 답변해줘. 어린이집이므로 친절하고 안심시키는 톤으로 작성해줘.
+                  </div>
+                </div>
+              </details>
+
+              <!-- AI analysis message -->
+              <details class="msg-details" open>
+                <summary>
+                  <div class="msg-label" style="padding:0">
+                    <span class="ai-dot">AI</span> AI 분석 완료
+                  </div>
+                  <div class="arrow">▼</div>
+                </summary>
+                <div class="detail-box">
+                  <div style="margin-bottom:12px; font-size:12.5px; color:var(--text-primary);">
+                    민원을 분석했습니다. 아래 정보를 확인하세요.
+                  </div>
+                  <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom: 12px; font-size: 12.5px;">
+                    <span>유형: <strong>민원 (기한연장)</strong></span>
+                    <span style="color:var(--text-muted)">·</span>
+                    <span>신뢰도: <strong style="color:var(--green)">97%</strong></span>
+                  </div>
+                  <div style="margin-bottom: 12px; font-size:12px; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
+                    키워드:
+                    <span class="keyword-tag" style="margin:0;">정기검사</span>
+                    <span class="keyword-tag" style="margin:0;">기한연기</span>
+                    <span class="keyword-tag" style="margin:0;">보강공사</span>
+                  </div>
+                  <div style="font-size:11.5px; color:var(--text-muted);">관할 사업소 팩스 수신 내역 확인됨 (계약서 관련 2건)</div>
+                </div>
+              </details>
+
+              <!-- AI draft -->
+              <div class="msg msg-ai">
+                <div class="msg-label"><span class="ai-dot">AI</span> AI 답변 초안 생성</div>
+                <div class="draft-card">
+                  <div class="draft-header" style="justify-content: space-between;">
+                    <div>
+                      ✏️ AI 답변 초안 &nbsp;<span style="background:var(--primary);color:#fff;border-radius:4px;padding:1px 7px;font-size:11px;">v1.0</span>
+                    </div>
+                    <button class="btn btn-secondary" style="font-size: 11px; padding: 4px 8px;" onclick="togglePanel('analysis')">열어보기</button>
+                  </div>
+                  <div class="draft-body" style="font-size: 12.5px; line-height: 1.7; color: var(--text-primary); border-left: 2px solid var(--primary); padding-left: 10px;">
+                    안녕하십니까. 한국전기안전공사입니다. 이영희 원장님께서 신청하신 어린이집 정기검사 기한 연기 건에 대해 안내해 드립니다.<br><br>
+                    전송해주신 내진 보강 공사 계약서 사본이 정상 접수되어 지사 검토가 완료되었습니다. 이에 따라 <strong>해당 정기검사 기한이 2026년 5월 31일까지로 연기 승인 처리되었음</strong>을 알려드립니다.<br><br>
+                    추후 공사가 마무리되는 시점에 관할 지사로 다시 연락 주시면 원활하게 검사 일정을 조율해 드리겠습니다. 언제나 어린이들의 안전을 위해 힘써주셔서 감사합니다. 추가 문의 사항이 있으시면 고객센터로 연락 바랍니다.
+                  </div>
+                  <!-- 액션 버튼 -->
+                  <div style="display: flex; gap: 8px; margin-top: 16px;">
+                    <button class="btn btn-secondary" style="background:var(--surface2); color:var(--text-secondary); font-size:13px; font-weight:600; padding:6px 12px; display:flex; align-items:center; gap:6px;" onclick="alert('재생성 기능은 준비중입니다.')">🔄 재생성</button>
+                    <button class="btn btn-secondary" style="background:var(--surface2); color:var(--text-secondary); font-size:13px; font-weight:600; padding:6px 12px; display:flex; align-items:center; gap:6px;" onclick="alert('직접 편집 기능은 준비중입니다.')">✏️ 직접 편집</button>
+                    <button class="btn btn-green" style="margin-left:auto; font-size:13px; font-weight:600; padding:6px 16px; display:flex; align-items:center; gap:6px;" onclick="alert('확정 및 발송이 완료되었습니다.')">✔ 확정·발송</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- reference docs -->
+              <div class="msg msg-ai">
+                <div class="msg-label"><span class="ai-dot">AI</span> 관련 자료 (출처 명시)</div>
+                <div class="ref-card">
+                  <div class="ref-header">📁 참고 자료</div>
+                  <div class="ref-item">📄 전기안전관리법 시행규칙 제13조 <a href="#">보기</a></div>
+                  <div class="ref-item">📘 다중이용시설 검사 지침 <a href="#">보기</a></div>
+                  <div class="ref-item">📋 원내 공사 관련 연기 승인 사례 5건 <a href="#">보기</a></div>
+                  <div class="ref-item">📗 정기검사 관련 FAQ <a href="#">보기</a></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Chat input -->
+          <div class="chat-input-bar">
+            <input type="text" placeholder="답변 수정 요청이나 질문을 입력하세요..." disabled id="written-chat-input" />
+            <button class="btn btn-icon">📎</button>
+            <button class="btn btn-primary" disabled id="written-chat-btn">전송</button>
+          </div>
+        </div>
+
+        <!-- version panel (hidden by default) -->
+        <div class="version-panel">
+          <div class="vp-header">📁 답변 버전 이력</div>
+          <div class="version-item current">
+            <div class="v-tag">
+              v1.0
+              <span class="v-badge">현재</span>
+            </div>
+            <div class="v-meta">AI 초안<br>방금 전</div>
+          </div>
+          <div class="version-actions">
+            <button class="btn btn-secondary" style="font-size:10.5px;" onclick="alert('이전 버전이 없습니다.')">이전 보기</button>
+            <button class="btn btn-secondary" style="font-size:10.5px;" onclick="alert('비교할 버전이 없습니다.')">버전 비교</button>
+          </div>
+        </div>
+
+        <!-- analysis detail panel (hidden by default) -->
+        <div class="analysis-detail-panel">
+          <div class="panel-section">
+            <div style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">
+              ✏️ AI 답변 초안 &nbsp;<span style="background:var(--primary);color:#fff;border-radius:4px;padding:1px 7px;font-size:11px;">v1.0</span>
+            </div>
+            <div style="font-size: 12.5px; line-height: 1.6; color: var(--text-secondary); border-left: 2px solid var(--primary); padding-left: 8px;">
+              안녕하십니까. 한국전기안전공사입니다. 이영희 원장님께서 신청하신 어린이집 정기검사 기한 연기 건에 대해 안내해 드립니다.<br><br>
+              전송해주신 내진 보강 공사 계약서 사본이 정상 접수되어 지사 검토가 완료되었습니다. 이에 따라 <strong>해당 정기검사 기한이 2026년 5월 31일까지로 연기 승인 처리되었음</strong>을 알려드립니다.<br><br>
+              추후 공사가 마무리되는 시점에 관할 지사로 다시 연락 주시면 원활하게 검사 일정을 조율해 드리겠습니다. 언제나 어린이들의 안전을 위해 힘써주셔서 감사합니다. 추가 문의 사항이 있으시면 고객센터로 연락 바랍니다.
+            </div>
+          </div>
+          <div style="border-top:1px solid var(--border); padding-top:10px; margin-top:auto;" class="panel-section">
+            <div class="panel-section-title">액션</div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <button class="btn btn-secondary" style="width:100%; font-size:11px;" onclick="alert('재생성 준비중')">🔄 재생성</button>
+              <button class="btn btn-secondary" style="width:100%; font-size:11px;" onclick="alert('직접 편집 준비중')">✏️ 직접 편집</button>
+              <button class="btn btn-green" style="width:100%; font-size:11px;" onclick="alert('확정·발송 완료')">✔ 확정·발송</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+
+<script>
+  function showScreen(id, btn) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if (btn && btn.classList.contains('tab-btn')) {
+      btn.classList.add('active');
+    } else {
+      const tabBtn = document.querySelector(`.tab-btn[onclick*="${id}"]`);
+      if (tabBtn) tabBtn.classList.add('active');
+    }
+  }
+
+  function togglePanel(panelName) {
+    const activeScreen = document.querySelector('.screen.active');
+    if (!activeScreen) return;
+
+    const versionPanel = activeScreen.querySelector('.version-panel, #version-panel');
+    const analysisPanel = activeScreen.querySelector('.analysis-detail-panel, #analysis-detail-panel');
+
+    if (panelName === 'version') {
+      if (versionPanel && versionPanel.classList.contains('active')) {
+        versionPanel.classList.remove('active');
+      } else if (versionPanel) {
+        versionPanel.classList.add('active');
+        if (analysisPanel) analysisPanel.classList.remove('active');
+      }
+    } else if (panelName === 'analysis') {
+      if (analysisPanel && analysisPanel.classList.contains('active')) {
+        analysisPanel.classList.remove('active');
+      } else if (analysisPanel) {
+        analysisPanel.classList.add('active');
+        if (versionPanel) versionPanel.classList.remove('active');
+      }
+    }
+  }
+
+  function submitWrittenComplaint() {
+    document.getElementById('written-input-step').style.display = 'none';
+    document.getElementById('written-result-step').style.display = 'flex';
+    document.getElementById('written-chat-input').disabled = false;
+    document.getElementById('written-chat-btn').disabled = false;
+    document.getElementById('written-chat-input').focus();
+  }
+
+  // Modal Script
+  function openComplaintModal(btnElement) {
+    const card = btnElement.closest('.list-card');
+
+    // Extract info from card
+    let titleEl = card.querySelector('.c-title');
+    let title = titleEl ? titleEl.innerHTML : '';
+    let descEl = card.querySelector('.c-desc');
+    let desc = descEl ? descEl.innerText : '';
+
+    let footerEl = card.querySelector('.c-footer');
+    let authorHtml = '';
+    let dateHtml = '';
+
+    if (footerEl) {
+      let divs = footerEl.querySelectorAll('div');
+      if (divs.length >= 2) {
+        authorHtml = divs[0].innerHTML;
+        dateHtml = divs[1].innerHTML;
+      }
+    }
+
+    // Set to modal
+    document.getElementById('modal-title').innerHTML = title;
+    document.getElementById('modal-author').innerHTML = authorHtml;
+    document.getElementById('modal-date').innerHTML = dateHtml;
+    document.getElementById('modal-content').innerText = desc;
+
+    // Show modal
+    document.getElementById('complaintModal').style.display = 'flex';
+  }
+
+  function closeComplaintModal() {
+    document.getElementById('complaintModal').style.display = 'none';
+  }
+</script>
+
+<!-- ══════════════ 공통 모달 (민원 조회) ══════════════ -->
+<div id="complaintModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+  <div style="background: var(--surface); width: 600px; max-width: 90%; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+    <div style="padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg);">
+      <h3 style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin: 0;">민원 조회</h3>
+      <button onclick="closeComplaintModal()" style="background: transparent; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted);">&times;</button>
+    </div>
+    <div style="padding: 24px 20px; flex: 1; overflow-y: auto;">
+      <div style="margin-bottom: 16px;">
+        <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">제목</div>
+        <div id="modal-title" style="font-size: 15px; font-weight: 700; color: var(--text-primary); padding: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px;"></div>
+      </div>
+      <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+        <div style="flex: 1;">
+          <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">작성자</div>
+          <div id="modal-author" style="font-size: 13.5px; color: var(--text-primary); padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px;"></div>
+        </div>
+        <div style="flex: 1;">
+          <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">작성일 / 경과시간</div>
+          <div id="modal-date" style="font-size: 13.5px; color: var(--text-primary); padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; display: flex; align-items: center; gap: 8px;"></div>
+        </div>
+      </div>
+      <div style="margin-bottom: 16px;">
+        <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">내용</div>
+        <div id="modal-content" style="font-size: 13.5px; color: var(--text-primary); padding: 12px; border: 1px solid var(--border); border-radius: 6px; min-height: 120px; line-height: 1.6;"></div>
+      </div>
+      <div style="margin-bottom: 8px;">
+        <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">첨부파일</div>
+        <div style="padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--primary); cursor: pointer; width: fit-content; background: var(--primary-light);">
+          📎 첨부파일_목록.zip (1.2MB)
+        </div>
+      </div>
+    </div>
+    <div style="padding: 16px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; background: var(--bg);">
+      <button class="btn btn-primary" style="padding: 8px 24px;" onclick="closeComplaintModal()">확인</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

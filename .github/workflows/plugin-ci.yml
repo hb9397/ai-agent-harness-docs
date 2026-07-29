@@ -1,0 +1,26 @@
+name: Plugin CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  plugin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate upstream registry
+        run: python maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py
+      - name: Build plugin
+        run: python maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py
+      - name: Validate plugin
+        run: python maintainer/skills/harness-plugin-maintainer/scripts/validate_plugin.py
+      - name: Check deterministic build
+        run: python maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py --check
+      - name: Check manager projections
+        run: python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projections.py --check

@@ -20,6 +20,87 @@ allowed-tools: Read, Write, Glob, Grep, Bash
 - 사용자 프로젝트에 `.docs` 또는 루트 컨텍스트를 직접 생성
 - 관리자 스킬을 사용자 플러그인 payload에 포함
 
-## Phase 1 상태
+## 운영 원칙
 
-이 파일은 Phase 1의 골격이다. plugin packaging 상세 구현은 Phase 6에서 수행한다.
+- `skills/` 사용자 정본 18종만 payload에 포함한다.
+- `maintainer/skills/**`, `.agents/skills/**`, `.claude/skills/**` 관리자 projection은 payload에 포함하지 않는다.
+- build는 결정적이어야 한다. 같은 source에서 두 번 생성한 파일 목록·내용·archive hash가 같아야 한다.
+- release manifest 두 개(`.codex-plugin/plugin.json`, `.claude-plugin/plugin.json`)는 같은 plugin ID와 같은 semantic version을 사용한다.
+- `im-not-ai` 등 runtime direct import는 plugin NOTICE와 `licenses/{upstream-id}-LICENSE`에 닫혀야 한다.
+- `UPSTREAMS.lock.json`의 `packaged`는 artifact 검증 후에만 갱신한다. `released`는 이 스킬에서 갱신하지 않는다.
+- push, tag, GitHub release 생성은 별도 명시 승인 전 수행하지 않는다.
+
+## 실행 절차
+
+### 1. inventory
+
+다음을 읽는다.
+
+- `skills/**`
+- `maintainer/plugin/CAPABILITIES.json`
+- `maintainer/plugin/runtime-allowlist.json`
+- `maintainer/inventory/markdown-artifact-flow.json`
+- `maintainer/upstreams/lock.json`
+- `maintainer/upstreams/registry.json`
+- `maintainer/upstreams/provenance/**`
+
+### 2. build
+
+`scripts/build_plugin.py`를 실행한다.
+
+```bash
+python maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py
+```
+
+생성 대상:
+
+```text
+plugins/ai-agent-harness/
+  .codex-plugin/plugin.json
+  .claude-plugin/plugin.json
+  .agents/plugins/marketplace.json
+  .claude-plugin/marketplace.json
+  runtime/codex/skills/**
+  runtime/claude/skills/**
+  runtime/claude/agents/**
+  runtime/claude/im-not-ai-root/**
+  LICENSE
+  licenses/{upstream-id}-LICENSE
+  THIRD_PARTY_NOTICES.md
+  CAPABILITIES.json
+  UPSTREAMS.lock.json
+```
+
+### 3. validate
+
+`scripts/validate_plugin.py`를 실행한다.
+
+검사:
+
+- logical user skill 18
+- 관리자 스킬 0
+- Codex physical skill 18, agent 0
+- Claude physical skill 20, agent 3
+- `humanize`·`humanize-redo` alias가 `humanize-korean`으로 매핑
+- Markdown producer 7종과 public handoff
+- `model:`과 `agent: fork` 금지
+- plugin root 밖 상대경로 금지
+- NOTICE·license·lock closure
+- generated marker 존재
+
+### 4. check
+
+`build_plugin.py --check`와 `validate_plugin.py`를 함께 실행한다. drift가 있으면 source나 builder를 고친 뒤 다시 build한다.
+
+### 5. handoff
+
+검증된 release candidate 정보를 `maintainer/plugin/release.json`에 기록한다. release-ready 판단과 실제 설치 검증은 Phase 7에서 수행한다.
+
+## 검증
+
+```bash
+python maintainer/skills/harness-plugin-maintainer/evals/run_evals.py
+python maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py --check
+python maintainer/skills/harness-plugin-maintainer/scripts/validate_plugin.py
+python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projections.py --check
+```

@@ -1,0 +1,8 @@
+{
+  "id": "ai-agent-harness",
+  "name": "AI Agent Harness",
+  "version": "0.1.0",
+  "description": "Project harness plugin for Codex and Claude Code.",
+  "generated_by": "harness-plugin-maintainer",
+  "skills": "./runtime/codex/skills"
+}

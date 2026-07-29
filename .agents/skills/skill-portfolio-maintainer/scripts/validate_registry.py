@@ -141,6 +141,20 @@ def validate_docs(root: Path, errors: list[str]) -> None:
 def validate_phase5_skill_files(root: Path, errors: list[str]) -> None:
     base = root / "maintainer" / "skills" / "skill-portfolio-maintainer"
     required = [
+        "scripts/build_plugin.py",
+        "scripts/validate_plugin.py",
+        "scripts/freeze_manager_inventory.py",
+        "scripts/plugin_common.py",
+        "references/plugin-structure.md",
+        "templates/plugin-license.md",
+        "evals/run_evals.py",
+    ]
+    plugin_base = root / "maintainer" / "skills" / "harness-plugin-maintainer"
+    for item in required:
+        if not (plugin_base / item).exists():
+            error(errors, f"harness-plugin-maintainer missing Phase 6 file: {item}")
+
+    required = [
         "scripts/check_upstreams.py",
         "scripts/discover_upstreams.py",
         "scripts/stage_upstream.py",

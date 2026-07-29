@@ -1,0 +1,153 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-07-29",
+  "states": [
+    {
+      "id": "anthropic-frontend-design",
+      "observed": {
+        "source_url": "https://github.com/anthropics/claude-code/blob/main/plugins/frontend-design/skills/frontend-design/SKILL.md",
+        "checked_at": "2026-07-29",
+        "ref": "main",
+        "sha": null,
+        "note": "Official Claude plugin page and GitHub source observed; exact commit pin deferred to maintainer acceptance."
+      },
+      "accepted": null,
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "openai-product-design",
+      "observed": {
+        "source_url": "https://github.com/openai/role-specific-plugins/tree/main/plugins/product-design",
+        "checked_at": "2026-07-29",
+        "ref": "main",
+        "sha": null,
+        "note": "Official OpenAI role-specific plugin repository and product page observed."
+      },
+      "accepted": null,
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "superpowers",
+      "observed": {
+        "source_url": "https://github.com/obra/superpowers/releases",
+        "checked_at": "2026-07-29",
+        "ref": "v5.1.0",
+        "sha": null,
+        "note": "GitHub release page observed latest v5.1.0 in current browse result; local installed cache may differ and must not be assumed accepted."
+      },
+      "accepted": null,
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "gstack",
+      "observed": {
+        "source_url": "https://github.com/garrytan/gstack",
+        "checked_at": "2026-07-29",
+        "ref": "main",
+        "sha": null,
+        "note": "Repository observed as MIT-licensed role workflow reference; no file import."
+      },
+      "accepted": null,
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "conventional-commits",
+      "observed": {
+        "source_url": "https://www.conventionalcommits.org/en/v1.0.0/",
+        "checked_at": "2026-07-29",
+        "ref": "1.0.0",
+        "sha": null,
+        "note": "Specification reference only."
+      },
+      "accepted": null,
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "openai-agents-md",
+      "observed": {
+        "source_url": "https://learn.chatgpt.com/docs/agent-configuration/agents-md",
+        "checked_at": "2026-07-29",
+        "ref": "documentation",
+        "sha": null,
+        "note": "Documentation reference only."
+      },
+      "accepted": null,
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "claude-memory",
+      "observed": {
+        "source_url": "https://code.claude.com/docs/en/memory",
+        "checked_at": "2026-07-29",
+        "ref": "documentation",
+        "sha": null,
+        "note": "Documentation reference only; supports @AGENTS.md bridge pattern."
+      },
+      "accepted": null,
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "skill-creator-guides",
+      "observed": {
+        "source_url": "https://claude.com/skills",
+        "checked_at": "2026-07-29",
+        "ref": "documentation",
+        "sha": null,
+        "note": "Skill authoring reference only."
+      },
+      "accepted": null,
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "im-not-ai",
+      "observed": {
+        "source_url": "https://github.com/epoko77-ai/im-not-ai/releases/tag/v2.3.0",
+        "checked_at": "2026-07-29",
+        "ref": "v2.3.0",
+        "sha": "82137e858763dadb99561f194c5c00465735017b",
+        "note": "GitHub tag list re-checked on 2026-07-29; v2.3.0 is the latest observed stable tag."
+      },
+      "accepted": {
+        "ref": "v2.3.0",
+        "sha": "82137e858763dadb99561f194c5c00465735017b",
+        "accepted_at": "2026-07-29",
+        "mode": "adapted",
+        "evidence": "maintainer/upstreams/promotions/humanize-korean-im-not-ai-v2.3.0.json"
+      },
+      "embedded": {
+        "ref": "v2.3.0",
+        "sha": "82137e858763dadb99561f194c5c00465735017b",
+        "embedded_at": "2026-07-29",
+        "targets": [
+          "skills/humanize-korean",
+          "maintainer/plugin/runtime-allowlist.json"
+        ]
+      },
+      "packaged": {
+        "plugin_id": "ai-agent-harness",
+        "version": "0.1.0",
+        "packaged_at": "2026-07-29",
+        "artifact_manifest_sha256": "317c06dca7f9840b702cce99926f4a9ee25eb9d8681985f0b43082a416d346a0"
+      },
+      "released": null
+    }
+  ],
+  "generated_by": "harness-plugin-maintainer",
+  "released_state_preserved": true
+}

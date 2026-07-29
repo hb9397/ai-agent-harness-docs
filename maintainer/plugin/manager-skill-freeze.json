@@ -1,0 +1,219 @@
+{
+  "schema_version": "1.0.0",
+  "generated_by": "harness-plugin-maintainer",
+  "generated_at": "2026-07-29",
+  "scope": "Phase 6 manager skill freeze after skill-portfolio-maintainer and harness-plugin-maintainer implementation",
+  "manager_skill_count": 3,
+  "skills": [
+    {
+      "skill": "custom-skill-design",
+      "file_count": 8,
+      "files": [
+        {
+          "path": "maintainer/skills/custom-skill-design/prompts/checklist.md",
+          "sha256": "37be803fd3e88a3aaac8d87fe89b20315ccb07a9a38fe915e74c0bcd716f3226"
+        },
+        {
+          "path": "maintainer/skills/custom-skill-design/prompts/description-optimizer.md",
+          "sha256": "8d9169051fe323aa3c8a09712df15bd5b9900917add593db1c9340b48792e4c7"
+        },
+        {
+          "path": "maintainer/skills/custom-skill-design/prompts/design-principles.md",
+          "sha256": "47ae04074ffda4bd893acabbb588f5dfb34b4e9f0b1cd826e771743081df1b54"
+        },
+        {
+          "path": "maintainer/skills/custom-skill-design/prompts/eval-loop.md",
+          "sha256": "d708ace7a5e41056273115962b4c33d80e87c17a35b9213b44ad57f4ad228278"
+        },
+        {
+          "path": "maintainer/skills/custom-skill-design/prompts/interview.md",
+          "sha256": "584f445154119e59a619bb80471543441435f3a1253d94a5743729a29cf68647"
+        },
+        {
+          "path": "maintainer/skills/custom-skill-design/SKILL.md",
+          "sha256": "9627412ea22da7ac35c2d0cec0f3b3648abdc5b96a78b9fd3982330512b6137d"
+        },
+        {
+          "path": "maintainer/skills/custom-skill-design/templates/skill-summary.md",
+          "sha256": "9b2d2ee22abb18354be4dae60421ecbe17dce230d6dfb7ca08a384e62d39e3dd"
+        },
+        {
+          "path": "maintainer/skills/custom-skill-design/templates/SKILL-template.md",
+          "sha256": "983dccc9e5b1dc226e8cc1727cc9127e430ffe715a13a9e891109445d516688b"
+        }
+      ]
+    },
+    {
+      "skill": "harness-plugin-maintainer",
+      "file_count": 15,
+      "files": [
+        {
+          "path": "maintainer/skills/harness-plugin-maintainer/evals/.gitkeep",
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "path": "maintainer/skills/harness-plugin-maintainer/evals/fixtures/README.md",
+          "sha256": "b3411b5784fd6ef2e17b65fbdd01ff88c75b940dc05cd9e9e8a7a3424808e57d"
+        },
+        {
+          "path": "maintainer/skills/harness-plugin-maintainer/evals/run_evals.py",
+          "sha256": "af6f127617e5a98d5cd4b193b2dabd5d08b93a76ef91d2857828102942f132e7"
+        },
+        {
+          "path": "maintainer/skills/harness-plugin-maintainer/references/.gitkeep",
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "path": "maintainer/skills/harness-plugin-maintainer/references/plugin-structure.md",
+          "sha256": "55651879a749535018e9b2682cf6a0e07b8ec1bb74de720183b293aa6f6aa09a"
+        },
+        {
+          "path": "maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py",
+          "sha256": "7ce4a5f0548bc72ff1fdd7110ca3a9d20cf1c290ecaf0abd27202c2c2d8cce06"
+        },
+        {
+          "path": "maintainer/skills/harness-plugin-maintainer/scripts/freeze_manager_inventory.py",
+          "sha256": "37e25c6862c8e9c1ca7946078afd7fc54469f0ddcf9ad3f69a90fc9ecbb0dda2"
+        },
+        {
+          "path": "maintainer/skills/harness-plugin-maintainer/scripts/plugin_common.py",
+          "sha256": "ef88c703e2b6fb034b3e2b0b59744ae7ce433e46e93f012651e496e7579aad17"
+        },
+        {
+          "path": "maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projections.py",
+          "sha256": "fe09a37b48578111e3e06a9cee1d51fffdd2d056d06ed0592955d8580c8e162b"
+        },
+        {
+          "path": "maintainer/skills/harness-plugin-maintainer/scripts/validate_plugin.py",
+          "sha256": "9ee5918735ab8f32ac432774dd4305570a7014abcf355553ea1db5992ad07b9f"
+        },
+        {
+          "path": "maintainer/skills/harness-plugin-maintainer/SKILL.md",
+          "sha256": "a136817f1c7ecffa3a0a376d38b993c33b204ee15f587dbace003236387b8c31"
+        },
+        {
+          "path": "maintainer/skills/harness-plugin-maintainer/templates/.gitkeep",
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "path": "maintainer/skills/harness-plugin-maintainer/templates/claude-agent.md",
+          "sha256": "ef4ab24194d6717cf6a2087c935dc103f86abdfc09a49a6069012e002eec964e"
+        },
+        {
+          "path": "maintainer/skills/harness-plugin-maintainer/templates/claude-alias-skill.md",
+          "sha256": "566a888d3a68121157419a57bdf63647a9e7ad9a96cc9fc8feb936392591bb0d"
+        },
+        {
+          "path": "maintainer/skills/harness-plugin-maintainer/templates/plugin-license.md",
+          "sha256": "9bdedc575a3dffdba9784f0d4ef478c802a1ea55935e3689bd24480ce03a9e12"
+        }
+      ]
+    },
+    {
+      "skill": "skill-portfolio-maintainer",
+      "file_count": 25,
+      "files": [
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/evals/.gitkeep",
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/evals/fixtures/check_upstreams.json",
+          "sha256": "5ed85d0e94acedd3f9d219f06edb184b55bd186630eb467c5dbaf0b68f20aff4"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/evals/fixtures/destructive-candidate.json",
+          "sha256": "08a3c31421bd90c2ed1b39c80e1da0f51bfbe193283a90af561f3b45bba0852c"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/evals/fixtures/discover_upstreams.json",
+          "sha256": "a38af64ae696b298763a9766643066442e1216749cafd3d36b6154a47797a2da"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/evals/fixtures/im-not-ai-same-pinned-candidate.json",
+          "sha256": "5771982e11d0acd089951a85f1853e7f399b1f42af4b2be9917d7ff7b8781c56"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/evals/fixtures/malicious-path-candidate.json",
+          "sha256": "17e586ce336df1d22d632fe5512e98da57834b455fceccd7fbf11ca39a180dd8"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/evals/fixtures/protected-asset-candidate.json",
+          "sha256": "df398a6300952f44874d91c18232f9e817fa3a45dfe31237afa0b93d9d228330"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/evals/fixtures/self-update-candidate.json",
+          "sha256": "b29bf8bdcef1321b1ea4e4d81058ff00844337d7f11f6aef339a8681ef4b357e"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/evals/run_evals.py",
+          "sha256": "9ac669bbbabbae560e55f6f2e1cadf83e73e33171cfdd1ea48ee4d549f8e222c"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/references/.gitkeep",
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/references/adapted-mode.md",
+          "sha256": "7ec6e07cdb7d343cffc61d8e69ad427cd285a1d14b833544a046bb637db8fb7d"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/references/reference-mode.md",
+          "sha256": "a732b42a33701164e65863fbe193c871f2594ee6004eaa4ea4dbf19c6ce5bb74"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/references/vendored-mode.md",
+          "sha256": "a72cddbc4897ef47d99893e09894c6f87a772998dd814e14fea4284a3440b999"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/scripts/.gitkeep",
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/scripts/check_upstreams.py",
+          "sha256": "a19bc14577273c3752ae496390861f76330c6a5bbaf00539762aee2a97f5fdc8"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/scripts/discover_upstreams.py",
+          "sha256": "d07f17cfeee9812eb5b2d1fdfa9818b210dab186089e3c59498b8dd5489aff5f"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/scripts/portfolio_common.py",
+          "sha256": "c753880aad4f504925439bc6ef6757ff65cd35cea1a6c949c695a74ce6bd778f"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/scripts/promote_upstream.py",
+          "sha256": "627341534860c212c433bbb48ae4b89a6d5a37672940bffd5da41dfd30e1dcab"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/scripts/rollback_upstream.py",
+          "sha256": "a907e052f5ce97f5ee8e3898cbff862e01bc9a15c99d4ca48cdf5dcb0f75f4e4"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/scripts/stage_upstream.py",
+          "sha256": "e619f4fa5901e6281f1ce13ed8fc0299d37b7030675f081f63dbaa4bfdcb52e4"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py",
+          "sha256": "23ed7c572cf9e87aebc93b233e0bd0c091311ca98af56a662d443f79c85cadfa"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/SKILL.md",
+          "sha256": "87ac2ea087c2c5012749d813b9c44e1c58ea389ea07414d23fe63466d3ca767f"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/templates/.gitkeep",
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/templates/asset-impact-report.md",
+          "sha256": "0851b862b4b5eb98057e26a944f1b4182c0bf0c599c07a70a7102c25f5272b66"
+        },
+        {
+          "path": "maintainer/skills/skill-portfolio-maintainer/templates/upstream-review-report.md",
+          "sha256": "373c5f14d6463da35516cbab83e3232b1100d9ab3130b43642d68089b7328a47"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "skill_name": "harness-bootstrap",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "/harness-bootstrap\n루트에 package.json, pyproject.toml, go.mod가 함께 있는 저장소를 분석해서 하네스를 부팅해줘.",
+      "expected_output": "저장소를 단일 프로젝트로 단정하지 않고 멀티 런타임 루트로 분류한다. deployable unit 후보를 요약하고, 필요한 경우 1회만 사용자에게 저장 단위를 확인한다.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "/harness-bootstrap\n매니페스트는 있지만 엔트리포인트 파일명이 관례를 따르지 않는 프로젝트를 문서화해줘.",
+      "expected_output": "실행 스크립트와 Docker CMD를 기반으로 엔트리포인트 후보를 수집한다. 동작 흐름은 최대 3 hop까지만 추적하고, 정적 추적 한계는 미정으로 명시한다.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "/harness-bootstrap\n질문 1에 사용자가 '모르겠음'이라고 답한 상황에서 계속 진행해줘.",
+      "expected_output": "도메인 목적은 `미정 — 사용자 미제공`으로 남기고 추가 인터뷰를 무한정 이어가지 않는다. context 단계에서도 새 질문 없이 bootstrap 한계를 표시한 문서를 생성한다.",
+      "files": []
+    }
+  ]
+}

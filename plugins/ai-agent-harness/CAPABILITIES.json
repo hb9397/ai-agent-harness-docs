@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-07-29",
+  "logical_user_skills": [
+    "code-comment",
+    "commit",
+    "context-doc",
+    "create-prototype",
+    "design-doc",
+    "design-prototype-docs",
+    "doc-audit",
+    "frontend-design",
+    "git-scoped-account",
+    "harness-bootstrap",
+    "harness-setup",
+    "humanize-korean",
+    "impl-doc",
+    "impl-fe-be-doc",
+    "impl-reuse-scan",
+    "impl-verify",
+    "multi-review",
+    "pre-commit"
+  ],
+  "aliases": {
+    "humanize": "humanize-korean",
+    "humanize-redo": "humanize-korean"
+  },
+  "maintainer_skills_excluded_from_user_plugin": [
+    "custom-skill-design",
+    "harness-plugin-maintainer",
+    "skill-portfolio-maintainer"
+  ],
+  "generated_by": "harness-plugin-maintainer",
+  "version": "0.1.0",
+  "plugin_id": "ai-agent-harness",
+  "codex": {
+    "physical_skills": 18,
+    "physical_agents": 0,
+    "skills_path": "./runtime/codex/skills"
+  },
+  "claude": {
+    "physical_skills": 20,
+    "physical_agents": 3,
+    "skills_path": "./runtime/claude/skills",
+    "agents_path": "./runtime/claude/agents",
+    "runtime_agents": [
+      "humanize-monolith",
+      "humanize-diagnostician",
+      "humanize-finalizer"
+    ],
+    "aliases": {
+      "humanize-korean": "humanize-korean",
+      "humanize": "humanize-korean",
+      "humanize-redo": "humanize-korean"
+    }
+  },
+  "markdown_artifact_flow": {
+    "producer_count": 7,
+    "producers": [
+      "harness-setup",
+      "harness-bootstrap",
+      "context-doc",
+      "design-doc",
+      "design-prototype-docs",
+      "impl-doc",
+      "impl-fe-be-doc"
+    ],
+    "handoff_target": "humanize-korean",
+    "proposal_only": true
+  }
+}

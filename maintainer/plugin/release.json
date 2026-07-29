@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0.0",
+  "generated_by": "harness-plugin-maintainer",
+  "plugin_id": "ai-agent-harness",
+  "version": "0.1.0",
+  "plugin_root": "plugins/ai-agent-harness",
+  "archive": "plugins/ai-agent-harness-0.1.0.zip",
+  "archive_sha256": "10233c461833265a4d061d218e7d1800102569c27c2a927222a2dd5151f8dd7a",
+  "logical_user_skills": 18,
+  "codex_physical_skills": 18,
+  "codex_physical_agents": 0,
+  "claude_physical_skills": 20,
+  "claude_physical_agents": 3,
+  "markdown_producers": [
+    "harness-setup",
+    "harness-bootstrap",
+    "context-doc",
+    "design-doc",
+    "design-prototype-docs",
+    "impl-doc",
+    "impl-fe-be-doc"
+  ],
+  "released_state_preserved": true,
+  "push_tag_release_created": false
+}
