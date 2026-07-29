@@ -213,18 +213,23 @@ assertions 초안 작성 (실행 중 병행)
 
 ---
 
-## Step 7 — 원본 하네스 레포 동기화 확인 (CS-4)
+## Step 7 — 관리자 정본 저장·projection 확인 (CS-4)
 
-현재 작업 위치가 원본 하네스 레포(`ai-agent-harness-docs` 등) **밖**인 경우, 생성/수정한 스킬을 원본 하네스 레포에도 반영할지 사용자에게 확인한다.
+현재 작업 위치가 원본 하네스 관리 레포(`ai-agent-harness-docs` 등) **밖**인 경우, 생성/수정한 관리자 스킬을 관리 레포에도 반영할지 사용자에게 확인한다.
 
-> "스킬이 원본 하네스 레포 밖에서 생성/수정되었습니다.
-> 원본 하네스 레포(`{정본경로}/skills/{skill-name}/`)에도 반영할까요? (승인 / 나중에 / 취소)"
+> "스킬이 원본 하네스 관리 레포 밖에서 생성/수정되었습니다.
+> 관리 레포의 관리자 정본(`{정본경로}/maintainer/skills/{skill-name}/`)에도 반영할까요? (승인 / 나중에 / 취소)"
 
-- 승인 시: 원본 하네스 레포의 `skills/{skill-name}/` 디렉토리에 복사·갱신한다.
+- 승인 시: 관리 레포의 `maintainer/skills/{skill-name}/` 디렉토리에 복사·갱신한다.
 - 나중에 / 취소 시: 현재 위치에만 저장하고 안내한다.
-- 원본 하네스 레포 경로를 모르면 사용자에게 묻는다.
+- 원본 하네스 관리 레포 경로를 모르면 사용자에게 묻는다.
 
-현재 위치가 원본 하네스 레포 내부이면 이 Step을 건너뛴다.
+현재 위치가 원본 하네스 관리 레포 내부이면 `maintainer/skills/{skill-name}/`가 정본인지 확인하고, 필요한 경우 관리자 projection 생성기를 실행한다.
+
+```bash
+python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projections.py
+python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projections.py --check
+```
 
 ---
 
@@ -243,9 +248,10 @@ assertions 초안 작성 (실행 중 병행)
 └── evals/evals.json
 
 배포 방법:
-  1. (권장) 원본 하네스 레포의 skills/{skill-name}/ 에 저장한 뒤
-     harness-setup 스킬로 대상 프로젝트에 일괄 배포
-  2. (수동) 대상 프로젝트의 .claude/skills/ 및 .agents/skills/ 에 직접 복사
+  1. 관리자용 스킬이면 원본 하네스 관리 레포의 maintainer/skills/{skill-name}/ 에 저장한 뒤
+     sync_manager_projections.py로 .agents/.claude repo-local projection을 갱신
+  2. 사용자용 스킬이면 사용자 플러그인 원본 skills/{skill-name}/ 에 저장한 뒤
+     harness-plugin-maintainer의 플러그인 생성 흐름으로 배포
 
 트리거 예시 문장:
   - "{trigger-1}"

@@ -1,70 +1,86 @@
 # AI Agent Harness — Agent 운영 가이드
 
-> AI 에이전트 스킬·운영 문서 원본 하네스 저장소<br>
-> 단일/복수 애플리케이션 프로젝트를 모두 지원하는 공통 하네스
+> AI 에이전트 스킬·운영 문서와 사용자 플러그인 원본을 관리하는 하네스 저장소
 
----
+이 저장소는 실제 프로젝트에 직접 복사해서 쓰는 저장소가 아니다. 실제 프로젝트 수행자는 생성된 사용자 플러그인 `ai-agent-harness`를 설치해서 사용한다. 이 저장소는 관리자가 사용자 스킬, 관리자 스킬, 외부 upstream, 플러그인 packaging 산출물을 관리하는 원본 저장소다.
 
-## 프로젝트 개요
+## 현재 전환 상태
 
-이 저장소는 AI 에이전트(Claude Code, Gemini CLI 등)가 팀 공통 품질 기준으로 작업하기 위한 **스킬·프롬프트·템플릿·운영 문서의 원본 하네스 저장소**다.
+- 기준 계획서: `improvement_plan/20260729/플러그인 전환 및 스킬 거버넌스 리팩토링 작업 계획서.md`
+- 현재 단계: Phase 1, 사용자·관리자 원본 분리
+- Phase 0의 inventory·license·platform 기준선은 아직 별도 산출물로 고정되지 않았다. 해당 산출물이 없는 상태에서는 배포 가능 artifact를 만들지 않는다.
 
-- 대상 저장소: `ai-agent-harness-docs` (GitHub private)
-- 공유 시 저장소명: `{프로젝트명}-ai-harness-docs` (GitLab·Gitea 등 사내 저장소)
-- 총 20종 스킬이 `skills/` 디렉토리에 있다
-- 프로젝트에는 `harness-setup` 스킬로 설치·업데이트한다
-- 이 레포 자체의 `.claude/skills`와 `.agents/skills`에는 `harness-setup`과 `custom-skill-design`만 배치한다
+## 정본 경로
 
-## 디렉토리 구조
+| 영역 | 정본 | 생성물 또는 대상 |
+|---|---|---|
+| 사용자 스킬 원본 | `skills/` | 향후 `plugins/ai-agent-harness/**` 사용자 payload |
+| 관리자 스킬 원본 | `maintainer/skills/` | `.agents/skills/`, `.claude/skills/` repo-local projection |
+| 관리자 upstream·provenance | `maintainer/upstreams/` | 외부 공식·유명 스킬 조사 및 반영 증적 |
+| 관리자 inventory·plugin metadata | `maintainer/inventory/`, `maintainer/plugin/` | Phase 0 이후 machine-readable 기준선 |
+| 운영 문서 | `README.md`, `Docs/` | 사용자 설치·하네스 흐름 설명 |
 
+## 사용자 스킬과 관리자 스킬
+
+- `skills/`는 사용자 플러그인에 들어갈 스킬의 정본이다.
+- `maintainer/skills/`는 이 저장소 관리자만 사용하는 repo-local 스킬의 정본이다.
+- 관리자 스킬은 사용자 플러그인 payload에 포함하지 않는다.
+- 사용자 스킬은 `.agents/skills/` 또는 `.claude/skills/` repo-local projection에 포함하지 않는다.
+- `custom-skill-design`은 관리자 스킬이며 `maintainer/skills/custom-skill-design/`에서만 편집한다.
+- `skill-portfolio-maintainer`는 사용자 스킬 포트폴리오, 외부 upstream, provenance, protected asset 영향 관리를 담당한다.
+- `harness-plugin-maintainer`는 Codex·Claude 사용자 플러그인 생성, 검증, 릴리스를 담당한다.
+
+## Projection 규칙
+
+`.agents/skills/`와 `.claude/skills/`는 직접 편집하지 않는다. 다음 생성기로만 갱신한다.
+
+```bash
+python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projections.py
+python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projections.py --check
 ```
-ai-agent-harness-docs/
-├── skills/                        ← 모든 스킬의 원본 (20종)
-│   ├── harness-setup/             ← 프로젝트에 하네스 설치·갱신
-│   ├── custom-skill-design/       ← 새 스킬 설계·생성·검증
-│   ├── design-doc/                ← 설계 문서 생성
-│   ├── context-doc/               ← 컨텍스트 문서 생성
-│   └── ... (16종 더)
-├── Docs/                          ← 운영·소개·분석 문서
-│   ├── Harness_Engineering.md     ← 운영 가이드 (스킬 맵·흐름·입출력 약속)
-│   ├── Harness_Engineering_Intro.md ← 도입 배경 문서
-│   └── Agent_Skills_Repo_Structure_Analysis.md ← 외부 하네스 비교 분석
-├── improvement_plan/              ← 리팩토링 의사결정·점검 이력
-│   └── 20260627/리팩토링 작업 계획서.md
-├── example/                       ← 산출물 예시
-├── .claude/skills/                ← 이 레포용 시드 (harness-setup + custom-skill-design)
-└── .agents/skills/                ← 이 레포용 시드 (동일)
-```
 
-## 핵심 규칙
+projection에는 관리자 3종만 있어야 한다.
 
-### 스킬 편집 시 준수 사항
+- `custom-skill-design`
+- `skill-portfolio-maintainer`
+- `harness-plugin-maintainer`
 
-1. **`skills/`가 원본** — 스킬 수정은 반드시 `skills/{스킬명}/` 에서만 한다. `.claude/skills`나 `.agents/skills`는 배포 사본이다.
-2. **C-1 확인 단계** — 산출물·적용범위 스킬의 STEP 0에는 프로젝트 유형(단일/복수) 감지 + 사용자 확인이 있어야 한다.
-3. **C-2 경로 표준** — `.docs/` 경로는 단일/복수에 따라 분기한다 (상세: `improvement_plan/20260627/리팩토링 작업 계획서.md` §3-2).
-4. **C-3 포맷** — SKILL.md frontmatter는 Claude 양식(`name`, `description`, `allowed-tools`)을 유지하되, 본문은 Codex 등 타 플랫폼에서도 해석 가능한 중립 서술이어야 한다.
-5. **금지 항목** — `model:` 필드 금지, `agent: fork` 하드코딩 금지 (서브에이전트 사용 여부는 STEP 0에서 질문으로 확인).
-6. **규칙 인라인** — 스킬 간 참조 금지. 규칙은 각 스킬에 인라인 복제한다.
+`harness-setup`을 포함한 사용자 스킬은 projection에서 제거한다.
 
-### harness-setup ↔ agent-sync 경계
+## 스킬 편집 규칙
 
-| 영역 | 담당 |
-|------|------|
-| 원본 하네스 저장소 → 프로젝트 최신화 | harness-setup |
-| 복수앱 루트 미관리 파일 | harness-setup 전담 (agent-sync 접근 금지) |
-| `.claude/skills` ↔ `.agents/skills` 양쪽 스킬 맞춤 | agent-sync |
-| 단일앱 `CLAUDE.md` ↔ `AGENTS.md` 양쪽 문서 맞춤 | agent-sync |
+1. 사용자 스킬은 `skills/{skill-name}/`에서만 편집한다.
+2. 관리자 스킬은 `maintainer/skills/{skill-name}/`에서만 편집한다.
+3. projection 경로의 파일은 생성물로 취급하고 직접 수정하지 않는다.
+4. `SKILL.md` frontmatter는 플랫폼 중립적으로 유지한다. `model:` 필드와 특정 agent fork 하드코딩은 금지한다.
+5. 산출물·적용범위 스킬의 초기 단계에는 프로젝트 유형과 적용 범위를 확인하는 절차를 둔다.
+6. 다른 스킬의 내부 파일, 상대경로, 구현 세부사항에 결합하지 않는다.
+7. 같은 사용자 플러그인 안에서 공개 skill 이름으로 수행하는 승인형 workflow handoff는 허용한다.
 
-### 이 레포에서 작업할 때
+## 문서 동반 갱신
 
-- 스킬을 수정한 뒤 `.claude/skills` / `.agents/skills` 시드도 함께 갱신해야 한다 (해당 2종에 한해).
-- `Docs/Harness_Engineering.md`와 `Docs/Harness_Engineering_Intro.md`는 스킬 변경 시 함께 업데이트한다.
+스킬 구조, 사용자 플러그인 설치 방식, 하네스 흐름이 바뀌면 다음 문서를 함께 갱신한다.
+
+- `README.md`
+- `Docs/Harness_Engineering.md`
+- `Docs/Harness_Engineering_Intro.md`
+- 관련 `Docs/**`와 `example/**`
+
+역사 문서인 `improvement_plan/20260627/**`는 byte-preserve 대상이다. 수정하지 않고 현행 문서에서 새 기준을 설명한다.
+
+## 보호 자산 규칙
+
+`templates/`, `scripts/`, `assets/`, `examples/`, `evals/`에 있는 산출물은 보호 자산으로 취급한다. 내용 보완은 영향 범위를 분리해 기록하고, 삭제·이동·교체는 별도 파괴적 변경 승인 항목으로 분리한다.
+
+## 커밋 규칙
+
 - 커밋 메시지는 Conventional Commits 규격을 따른다.
+- Phase 단위 작업은 구현, 검증, 커밋을 한 묶음으로 완료한다.
+- 사용자가 명시한 Phase 범위를 넘어서는 구현은 다음 Phase로 넘긴다.
 
 ## 참조 문서
 
-- [Harness_Engineering.md](./Docs/Harness_Engineering.md) — 스킬 맵, 단일 통합 흐름, 입출력 약속
-- [Harness_Engineering_Intro.md](./Docs/Harness_Engineering_Intro.md) — 도입 배경, 철학, 사용 예시
-- [리팩토링 작업 계획서.md](./improvement_plan/20260627/리팩토링%20작업%20계획서.md) — D-1~D-7 의사결정, C-1/C-2/C-3 공통 규약
-- [Agent_Skills_Repo_Structure_Analysis.md](./Docs/Agent_Skills_Repo_Structure_Analysis.md) — 타 AI 하네스 비교 분석
+- `improvement_plan/20260729/플러그인 전환 및 스킬 거버넌스 리팩토링 작업 계획서.md`
+- `Docs/Harness_Engineering.md`
+- `Docs/Harness_Engineering_Intro.md`
+- `Docs/Agent_Skills_Repo_Structure_Analysis.md`
