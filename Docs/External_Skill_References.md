@@ -15,17 +15,11 @@ This document records external official or reputable sources used as references 
 | Claude Code memory documentation | official | `context-doc`, `harness-setup`, `doc-audit` | `CLAUDE.md` importing `AGENTS.md` with `@AGENTS.md` | 2026-07-29 |
 | Claude Skills / skill creator guidance | official | `custom-skill-design` | Skill folder and SKILL.md authoring model | 2026-07-29 |
 
-## Adapted Source Promoted After Reference Review
-
-| Source | Class | Internal skill | Treatment | Checked |
-|---|---|---|---|---|
-| `epoko77-ai/im-not-ai` v2.3.0 | reputable-third-party | `humanize-korean` | Adapted into local platform-neutral skill with MIT notice and runtime allowlist; full upstream runtime is not vendored. | 2026-07-29 |
-
 ## Rules
 
 - Reference entries may influence workflow, terminology, or validation ideas.
 - Reference entries must not include upstream files, translated text, assets, scripts, tests, or templates.
 - If an update requires copying or translating upstream content, reclassify the source as `adapted` and run the imported provenance gates.
-- `humanize-korean` is tracked as an adapted source, not reference-only. See `Docs/Imported_Skill_Provenance.md`.
+- Adapted direct-import relationships are excluded from this reference-only document. See `Docs/Imported_Skill_Provenance.md`.
 
 Machine-readable source records live in `maintainer/upstreams/registry.json`, `maintainer/upstreams/lock.json`, and `maintainer/upstreams/provenance/current-skills.json`.

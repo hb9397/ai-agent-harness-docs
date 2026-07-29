@@ -1,5 +1,17 @@
 # 외부 Agent Skills 레포지토리 구성 분석
 
+> **현행 addendum — 2026-07-29**
+>
+> 이 문서의 본문은 2026-05-27 당시 외부 생태계 조사 기록이다. 현행 운영 기준은 플러그인 전환 이후 문서인 [README.md](../README.md), [Plugin Installation Guide](./Plugin_Installation_Guide.md), [Harness Engineering Guide](./Harness_Engineering.md)를 따른다.
+>
+> 현재 하네스 구성은 사용자 스킬 18종과 관리자 스킬 3종으로 분리되어 있다. 사용자 스킬은 `skills/`에서 관리되어 `ai-agent-harness` 플러그인 payload에 포함되고, 관리자 스킬은 `maintainer/skills/`와 repo-local `.agents/skills`, `.claude/skills` projection에서만 사용한다.
+>
+> `agent-sync`와 `rfp-ingest`는 제거됐다. `custom-skill-design`은 사용자 스킬에서 관리자 스킬로 이동했다. 실제 프로젝트 사용자는 이 저장소를 clone하거나 `.agents/.claude` 스킬을 직접 복사하지 않고, Codex/Claude 플러그인을 설치한 뒤 `harness-setup`을 실행한다.
+>
+> 외부 소스 관계는 참고형과 직접 반입형을 분리한다. 참고형은 [External Skill References](./External_Skill_References.md), 직접 반입형은 [Imported Skill Provenance](./Imported_Skill_Provenance.md), 최신화 정책은 [Skill Upstream Update Policy](./Skill_Upstream_Update_Policy.md)를 따른다.
+>
+> 아래 본문에 등장하는 별 수, 릴리스 버전, 설치 명령, 직접 폴더 설치 방식은 2026-05-27 기준 조사 기록이다. 변동 수치와 현행 설치 방식은 최신 문서와 릴리스 체크리스트를 우선한다.
+
 > **⚠ 과거 스냅샷 문서** — 2026-05-27 시점 분석이며, 이후 리팩토링(D-7 파일 생성 폐지, `.instruction` → `.docs/root-context` 전환 등)으로 일부 내용이 현행과 다릅니다.
 >
 > 특히 이 문서의 `18개`, `skill-designer`, `skill-design`, `model:` 예시는 당시 조사 기록입니다. 현재 운영 기준은 `README.md`, `Docs/Harness_Engineering.md`, `CLAUDE.md`, `AGENTS.md`를 따릅니다.
@@ -371,7 +383,7 @@ flowchart LR
 
 여러 레포를 동시에 켜면 §2-5에서 보인 의도 겹치는 칸에서 **어느 쪽 룰을 따를지를 한 번은 정리해 둬야** 모델이 그때그때 다르게 판단하지 않는다. 우선순위를 강제로 박을지(예: "내부 skills/ 우선" 한 줄을 CLAUDE.md에 명시), 아니면 모델 판단에 맡길지도 결국 선택이다.
 
-참고로 본 저장소의 다른 운영 문서(`Harness_Engineering_v2.md`)는 내부 `skills/`를 SoT로 두는 흐름을 기본 전제로 한다. 이 문서의 조합 선택지는 그 전제와 별도로 "외부에 무엇이 있는지" 자체를 펼쳐 보이기 위한 것이다.
+참고로 현행 운영 문서는 [Harness_Engineering.md](./Harness_Engineering.md)다. 이 본문의 조합 선택지는 당시 기준에서 "외부에 무엇이 있는지" 자체를 펼쳐 보이기 위한 역사 기록이다.
 
 ## 3. 비공식 스킬 레포 상세
 
