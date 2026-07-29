@@ -45,7 +45,7 @@
     },
     {
       "skill": "harness-plugin-maintainer",
-      "file_count": 15,
+      "file_count": 16,
       "files": [
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/.gitkeep",
@@ -57,7 +57,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/run_evals.py",
-          "sha256": "af6f127617e5a98d5cd4b193b2dabd5d08b93a76ef91d2857828102942f132e7"
+          "sha256": "0e539cdb3ce2025299df1a82f090c44066d6d9079fe34df9db67723389aead2a"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/references/.gitkeep",
@@ -88,8 +88,12 @@
           "sha256": "9ee5918735ab8f32ac432774dd4305570a7014abcf355553ea1db5992ad07b9f"
         },
         {
+          "path": "maintainer/skills/harness-plugin-maintainer/scripts/verify_install_surfaces.py",
+          "sha256": "86fec14675430314eb00aef39b25409b497530b1c7b627852254e6573f26bf2a"
+        },
+        {
           "path": "maintainer/skills/harness-plugin-maintainer/SKILL.md",
-          "sha256": "a136817f1c7ecffa3a0a376d38b993c33b204ee15f587dbace003236387b8c31"
+          "sha256": "0a120add81df641dc8df793cf3614a903fede6e4e0b973b86d3bd44654b7137e"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/templates/.gitkeep",
@@ -195,7 +199,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py",
-          "sha256": "23ed7c572cf9e87aebc93b233e0bd0c091311ca98af56a662d443f79c85cadfa"
+          "sha256": "6f6af5a3f41c996e770b3f4d89a6092dfdf58801421e42bcccd039289926fcc5"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/SKILL.md",

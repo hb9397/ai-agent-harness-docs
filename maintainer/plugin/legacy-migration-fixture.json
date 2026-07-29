@@ -1,0 +1,28 @@
+{
+  "mode": "read-only-inventory",
+  "fixture_cases": [
+    {
+      "case": "known-old-harness-copy",
+      "active_path": ".agents/skills/harness-setup",
+      "classification": "known legacy local skill copy",
+      "default_action": "report-only",
+      "destructive_action_requires": "explicit backup/remove approval"
+    },
+    {
+      "case": "user-modified-old-copy",
+      "active_path": ".claude/skills/harness-setup",
+      "classification": "modified legacy copy",
+      "default_action": "preserve and report hash",
+      "destructive_action_requires": "explicit backup/remove approval"
+    },
+    {
+      "case": "unknown-custom-skill",
+      "active_path": ".agents/skills/custom-domain-skill",
+      "classification": "custom skill",
+      "default_action": "preserve",
+      "destructive_action_requires": "not eligible for automatic removal"
+    }
+  ],
+  "backup_target": ".docs/archive/legacy-agent-skills/{timestamp}/",
+  "rollback": "restore archived active root after user approval"
+}

@@ -1,0 +1,123 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-07-29T00:00:00+00:00",
+  "plugin": {
+    "plugin_root": "plugins/ai-agent-harness",
+    "plugin_id": "ai-agent-harness",
+    "version": "0.1.0",
+    "codex_manifest_matches_claude": true,
+    "archive": "plugins/ai-agent-harness-0.1.0.zip",
+    "archive_sha256": "10233c461833265a4d061d218e7d1800102569c27c2a927222a2dd5151f8dd7a",
+    "archive_sha256_matches_release": true,
+    "logical_user_skills": 18,
+    "codex_physical_skills": 18,
+    "claude_physical_skills": 20,
+    "claude_physical_agents": 3,
+    "markdown_producer_count": 7,
+    "humanize_aliases": {
+      "humanize-korean": "humanize-korean",
+      "humanize": "humanize-korean",
+      "humanize-redo": "humanize-korean"
+    },
+    "im_not_ai_packaged": true,
+    "released_state_preserved": true
+  },
+  "humanize_korean": {
+    "proposal_only": true,
+    "file_unchanged": true,
+    "protected_tokens_preserved": true,
+    "change_rate": 0.1017
+  },
+  "legacy_migration": {
+    "mode": "read-only-inventory",
+    "fixture_cases": [
+      {
+        "case": "known-old-harness-copy",
+        "active_path": ".agents/skills/harness-setup",
+        "classification": "known legacy local skill copy",
+        "default_action": "report-only",
+        "destructive_action_requires": "explicit backup/remove approval"
+      },
+      {
+        "case": "user-modified-old-copy",
+        "active_path": ".claude/skills/harness-setup",
+        "classification": "modified legacy copy",
+        "default_action": "preserve and report hash",
+        "destructive_action_requires": "explicit backup/remove approval"
+      },
+      {
+        "case": "unknown-custom-skill",
+        "active_path": ".agents/skills/custom-domain-skill",
+        "classification": "custom skill",
+        "default_action": "preserve",
+        "destructive_action_requires": "not eligible for automatic removal"
+      }
+    ],
+    "backup_target": ".docs/archive/legacy-agent-skills/{timestamp}/",
+    "rollback": "restore archived active root after user approval"
+  },
+  "cli_probes": {
+    "codex_help": {
+      "command": [
+        "codex",
+        "--help"
+      ],
+      "available": true,
+      "status": "failed-to-start",
+      "exit_code": null,
+      "stdout_excerpt": "",
+      "stderr_excerpt": "[WinError 5] 액세스가 거부되었습니다"
+    },
+    "codex_plugin_help": {
+      "command": [
+        "codex",
+        "plugin",
+        "--help"
+      ],
+      "available": true,
+      "status": "failed-to-start",
+      "exit_code": null,
+      "stdout_excerpt": "",
+      "stderr_excerpt": "[WinError 5] 액세스가 거부되었습니다"
+    },
+    "claude_help": {
+      "command": [
+        "claude",
+        "--help"
+      ],
+      "available": false,
+      "status": "missing",
+      "exit_code": null,
+      "stdout_excerpt": "",
+      "stderr_excerpt": ""
+    }
+  },
+  "surfaces": {
+    "codex-cli": {
+      "status": "blocked",
+      "summary": "[WinError 5] 액세스가 거부되었습니다"
+    },
+    "codex-desktop-app": {
+      "status": "manual-required",
+      "summary": "Interactive Plugins UI install/update requires app surface and cannot be completed from this shell."
+    },
+    "claude-code-cli": {
+      "status": "blocked",
+      "summary": "missing"
+    },
+    "claude-desktop-code": {
+      "status": "manual-required",
+      "summary": "Desktop Code local/SSH cache verification requires Claude Desktop app surface."
+    }
+  },
+  "release_gate": {
+    "status": "not-release-ready",
+    "missing_required_surfaces": [
+      "codex-cli",
+      "codex-desktop-app",
+      "claude-code-cli",
+      "claude-desktop-code"
+    ],
+    "push_tag_release_created": false
+  }
+}

@@ -96,11 +96,21 @@ plugins/ai-agent-harness/
 
 검증된 release candidate 정보를 `maintainer/plugin/release.json`에 기록한다. release-ready 판단과 실제 설치 검증은 Phase 7에서 수행한다.
 
+### 6. install surface verification
+
+Phase 7에서는 `scripts/verify_install_surfaces.py`를 실행한다.
+
+- 현재 host의 Codex CLI와 Claude CLI 명령 표면을 probe한다.
+- desktop/app/SSH 등 interactive surface는 release checklist에 수동 검증 항목으로 남긴다.
+- local에서 가능한 release candidate metadata, archive checksum, `humanize-korean` proposal-only, legacy local skill copy migration fixture를 검증한다.
+- 네 가지 핵심 surface(Codex CLI·Codex App·Claude Code CLI·Claude Desktop Code) 증적이 모두 없으면 `release-ready`로 표시하지 않는다.
+
 ## 검증
 
 ```bash
 python maintainer/skills/harness-plugin-maintainer/evals/run_evals.py
 python maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py --check
 python maintainer/skills/harness-plugin-maintainer/scripts/validate_plugin.py
+python maintainer/skills/harness-plugin-maintainer/scripts/verify_install_surfaces.py
 python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projections.py --check
 ```

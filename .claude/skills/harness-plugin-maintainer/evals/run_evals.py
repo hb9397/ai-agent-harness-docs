@@ -42,6 +42,7 @@ def main() -> int:
     run([str(SCRIPTS / "build_plugin.py"), "--check"])
     run([str(SCRIPTS / "validate_plugin.py")])
     run([str(SCRIPTS / "freeze_manager_inventory.py")])
+    run([str(SCRIPTS / "verify_install_surfaces.py")])
     print("harness-plugin-maintainer evals passed")
     return 0
 

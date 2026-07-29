@@ -144,6 +144,7 @@ def validate_phase5_skill_files(root: Path, errors: list[str]) -> None:
         "scripts/build_plugin.py",
         "scripts/validate_plugin.py",
         "scripts/freeze_manager_inventory.py",
+        "scripts/verify_install_surfaces.py",
         "scripts/plugin_common.py",
         "references/plugin-structure.md",
         "templates/plugin-license.md",
