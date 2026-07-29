@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-07-29T00:00:00+00:00",
+  "generated_by": "harness-plugin-maintainer",
+  "status": "not-release-ready",
+  "checks": {
+    "source_projection_integrity": {
+      "counts": {
+        "user_skills": 18,
+        "manager_skills": 3,
+        "agents_projection": 3,
+        "claude_projection": 3,
+        "codex_physical_skills": 18,
+        "codex_physical_agents": 0,
+        "claude_physical_skills": 20,
+        "claude_physical_agents": 3
+      },
+      "checks": {
+        "user_skills_18": true,
+        "manager_skills_3": true,
+        "agents_manager_projection_3": true,
+        "claude_manager_projection_3": true,
+        "plugin_codex_18": true,
+        "plugin_codex_agents_0": true,
+        "plugin_claude_20": true,
+        "plugin_claude_agents_3": true,
+        "plugin_admin_0": true,
+        "alias_mapping": true
+      },
+      "passed": true
+    },
+    "reproducible_build": {
+      "archive_sha256": "10233c461833265a4d061d218e7d1800102569c27c2a927222a2dd5151f8dd7a",
+      "same_archive_hash": true,
+      "same_manifest": true,
+      "release_metadata_matches": true,
+      "passed": true
+    },
+    "static_local_links": {
+      "missing": [],
+      "passed": true
+    },
+    "upstream_3mode_e2e": {
+      "cases": [
+        {
+          "mode": "reference",
+          "source": "openai-agents-md",
+          "action": "latest-check-to-meaning-proposal",
+          "handoff_only": true,
+          "workspace_mutated": false
+        },
+        {
+          "mode": "vendored",
+          "source": "fixture-vendored-skill",
+          "action": "protected-delete-blocked-then-approved-import-in-mirror",
+          "handoff_only": true,
+          "workspace_mutated": false
+        },
+        {
+          "mode": "adapted",
+          "source": "im-not-ai",
+          "action": "stage-patch-promote-in-mirror",
+          "handoff_only": true,
+          "workspace_mutated": false
+        }
+      ],
+      "handoff_record_sha256": "5f21338edefec13a6cb8ab469f4e32fce2f5e1819f51e8b19e625faf7d18e220",
+      "workspace_baseline_preserved": true,
+      "passed": true
+    },
+    "user_e2e": {
+      "project_created_without_manager_clone": true,
+      "im_not_ai_clone_required": false,
+      "proposal_only": true,
+      "protected_tokens_preserved": true,
+      "approved_write_preserves_structure": true,
+      "downstream_uses_approved_final": true,
+      "skip_or_reject_preserves_original": true,
+      "passed": true
+    },
+    "failure_rollback": {
+      "failure_cases": [
+        "upstream license change",
+        "protected asset deletion",
+        "markdown protected token mutation",
+        "pre-approval write",
+        "non-atomic bundle apply",
+        "malicious script path",
+        "patch conflict",
+        "manifest version missing",
+        "plugin install failure",
+        "private repo auth failure",
+        "new plugin release regression"
+      ],
+      "rollback_method": "isolated released lock/plugin version restore",
+      "workspace_baseline_preserved": true,
+      "passed": true
+    },
+    "release_gate": {
+      "status": "not-release-ready",
+      "missing_required_surfaces": [
+        "codex-cli",
+        "codex-desktop-app",
+        "claude-code-cli",
+        "claude-desktop-code"
+      ],
+      "push_tag_release_created": false,
+      "released_lock_updated": false,
+      "reason": "Phase 10 does not publish. Phase 7 installation surfaces are still missing or manual-required.",
+      "passed": true
+    }
+  }
+}

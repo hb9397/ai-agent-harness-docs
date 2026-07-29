@@ -45,7 +45,7 @@
     },
     {
       "skill": "harness-plugin-maintainer",
-      "file_count": 16,
+      "file_count": 17,
       "files": [
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/.gitkeep",
@@ -57,7 +57,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/run_evals.py",
-          "sha256": "0e539cdb3ce2025299df1a82f090c44066d6d9079fe34df9db67723389aead2a"
+          "sha256": "88740199400da042d55436e363aac2ec80ac08df975a80233bcb0405b9561210"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/references/.gitkeep",
@@ -80,6 +80,10 @@
           "sha256": "ef88c703e2b6fb034b3e2b0b59744ae7ce433e46e93f012651e496e7579aad17"
         },
         {
+          "path": "maintainer/skills/harness-plugin-maintainer/scripts/run_release_regression.py",
+          "sha256": "8062b95f2db5896b813beacf50ec828f53a2b7976b8edf7283bad298adedf0f3"
+        },
+        {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projections.py",
           "sha256": "fe09a37b48578111e3e06a9cee1d51fffdd2d056d06ed0592955d8580c8e162b"
         },
@@ -93,7 +97,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/SKILL.md",
-          "sha256": "0a120add81df641dc8df793cf3614a903fede6e4e0b973b86d3bd44654b7137e"
+          "sha256": "28d7814a909c7c696665d4d0bf92e88795d1d2980d0c8672c6ccacfcad18ecd8"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/templates/.gitkeep",
@@ -199,7 +203,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py",
-          "sha256": "6f6af5a3f41c996e770b3f4d89a6092dfdf58801421e42bcccd039289926fcc5"
+          "sha256": "64ee6a731ae0e6cff03aab191cd94da14ff3d9cdacc37798a3af2ffd504ee2ad"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/SKILL.md",
