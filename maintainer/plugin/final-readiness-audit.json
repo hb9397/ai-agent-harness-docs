@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-07-29T00:00:00+09:00",
+  "generated_by": "harness-plugin-maintainer",
+  "scope": "post-phase-10-final-readiness-audit",
+  "plan": {
+    "path": "improvement_plan/20260729/플러그인 전환 및 스킬 거버넌스 리팩토링 작업 계획서.md",
+    "implemented_phases": [
+      "Phase 0",
+      "Phase 1",
+      "Phase 2",
+      "Phase 3",
+      "Phase 4",
+      "Phase 5",
+      "Phase 6",
+      "Phase 7",
+      "Phase 8",
+      "Phase 9",
+      "Phase 10"
+    ],
+    "next_phase_exists": false
+  },
+  "release_candidate": {
+    "plugin_id": "ai-agent-harness",
+    "version": "0.1.0",
+    "archive": "plugins/ai-agent-harness-0.1.0.zip",
+    "archive_sha256": "10233c461833265a4d061d218e7d1800102569c27c2a927222a2dd5151f8dd7a",
+    "logical_user_skills": 18,
+    "manager_skills": 3,
+    "codex_physical_skills": 18,
+    "codex_physical_agents": 0,
+    "claude_physical_skills": 20,
+    "claude_physical_agents": 3,
+    "markdown_producer_handoff_count": 7
+  },
+  "automated_evidence": {
+    "release_regression_status": "not-release-ready",
+    "release_regression_checks_passed": true,
+    "source_projection_integrity": true,
+    "reproducible_build": true,
+    "static_local_links": true,
+    "upstream_3mode_e2e": true,
+    "user_e2e": true,
+    "failure_rollback": true,
+    "release_gate": true
+  },
+  "blocked_surfaces": [
+    {
+      "surface": "codex-cli",
+      "status": "blocked",
+      "reason": "WindowsApps denied Codex CLI process start on this host."
+    },
+    {
+      "surface": "codex-desktop-app",
+      "status": "manual-required",
+      "reason": "Interactive app plugin install/update evidence cannot be completed from this shell."
+    },
+    {
+      "surface": "claude-code-cli",
+      "status": "blocked",
+      "reason": "Claude CLI is missing on this host."
+    },
+    {
+      "surface": "claude-desktop-code",
+      "status": "manual-required",
+      "reason": "Desktop Code local/SSH cache verification requires the Claude Desktop app surface."
+    }
+  ],
+  "release_controls": {
+    "release_ready": false,
+    "push_created": false,
+    "tag_created": false,
+    "github_release_created": false,
+    "released_lock_updated": false,
+    "requires_explicit_manager_approval_before_publish": true
+  },
+  "remaining_work": [
+    "Collect Codex CLI marketplace/plugin install, update, and remove evidence.",
+    "Collect Codex Desktop/App install, restart/new task, marker/version, and update evidence.",
+    "Collect Claude Code CLI install, list, update, uninstall, reload, and skill invocation evidence.",
+    "Collect Claude Desktop Code local/SSH cache, restart/new session, and unsupported cloud/WSL path evidence.",
+    "After all evidence passes, request explicit manager approval for push, tag, release, and released lock update."
+  ]
+}
