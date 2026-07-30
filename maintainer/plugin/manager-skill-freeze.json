@@ -15,35 +15,35 @@
         },
         {
           "path": "maintainer/skills/custom-skill-design/prompts/checklist.md",
-          "sha256": "2617b67e3858a4e2d2be54cbc37d5974f143393949b4de40eacdc8ec5b446f70"
+          "sha256": "267750dd7fa7a1c3e89bf1812c479908f0ae8d6d83b93a12d923f333a073c4ec"
         },
         {
           "path": "maintainer/skills/custom-skill-design/prompts/description-optimizer.md",
-          "sha256": "3351245849540ffeaa7adf972cd9e765600a74f64f0f3f253a2e0c7cf6020de8"
+          "sha256": "cf4591c52d8e6ead38360d041854a54f4983c63db0894ea9383b1a9c2969db7d"
         },
         {
           "path": "maintainer/skills/custom-skill-design/prompts/design-principles.md",
-          "sha256": "04f115d3efecf3f5e7b9ba32da0295c8a187b2b96ab43f013433265c56d5ceba"
+          "sha256": "37e178d70e787c4dfa106d411979f947035107012fbd532e42a0ce1c018f77e7"
         },
         {
           "path": "maintainer/skills/custom-skill-design/prompts/eval-loop.md",
-          "sha256": "f4699342bcebd6d3361ef980242f3d69cf7a900e08c28f87a9b67a89f7234310"
+          "sha256": "eff005dce945b8a6e9c27c713d57e10a497b2a5e63898ee535db27c787c83adb"
         },
         {
           "path": "maintainer/skills/custom-skill-design/prompts/interview.md",
-          "sha256": "584f445154119e59a619bb80471543441435f3a1253d94a5743729a29cf68647"
+          "sha256": "5a320e0b6b3bd244ab1a121676e25439a08df472927c696588cc61663a6039fc"
         },
         {
           "path": "maintainer/skills/custom-skill-design/SKILL.md",
-          "sha256": "182c4b6cc49880607e6d678e69ba58f7f03bfd296bb5252f4319fb20eebdada5"
+          "sha256": "2fd378d986bfeb79e794487f76fd360f7c4bc72076e1770c50767d14a5ee3e29"
         },
         {
           "path": "maintainer/skills/custom-skill-design/templates/skill-summary.md",
-          "sha256": "656ad2949595589973b67bbbd1bda5343f1788b28037cd5994ba772bb272ca07"
+          "sha256": "8e5e6f2807c5412ecad5a722cc980bebf51699de70ebee52759c81ec5e6f5e7d"
         },
         {
           "path": "maintainer/skills/custom-skill-design/templates/SKILL-template.md",
-          "sha256": "0fb23dfdc7f795226c08f20b29cbc89b43e2c3a272e1a1862452c592431316e9"
+          "sha256": "a5d9e297442093dfe7a7caa06d6c6af23a487f7365cb7863ea4be2a5e2667f93"
         }
       ]
     },
@@ -57,11 +57,11 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/fixtures/README.md",
-          "sha256": "343b2a2ded71583ff33d227c5200893c181631196128aa86b3283da4853649c0"
+          "sha256": "cd6107efe786d87250d17ea8d99a3a25d16b8b6867993a45e05db5ecfbcaacce"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/run_evals.py",
-          "sha256": "57a90eef41adf620db3ea9c1cfe4b2ed84e1dd07e538b652b3b0c637553ad362"
+          "sha256": "6314e49c239b59cb3b64d087564aacc43ea28fa7251c6c810c7508c2e43eaacd"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/references/.gitkeep",
@@ -69,7 +69,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/references/plugin-structure.md",
-          "sha256": "bc4101489db490c89a90d61395b5ff9835288da9c674c6f658e7d6d47043d3b6"
+          "sha256": "3ac58e7ca3c7bd0e2f80b35eed1998bbbf052a925fc8f155126c12ff610fca32"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py",
@@ -77,7 +77,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/freeze_manager_inventory.py",
-          "sha256": "37e25c6862c8e9c1ca7946078afd7fc54469f0ddcf9ad3f69a90fc9ecbb0dda2"
+          "sha256": "c36a3e8061666ba7288459b53d46459f59570673652e6606ff94963fff4ed505"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/plugin_common.py",
@@ -89,7 +89,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/run_release_regression.py",
-          "sha256": "f19271917955a638acfef33689730aa5b4ef1b3fca0b3f2affaa10f833a625d6"
+          "sha256": "1654afd9dcb9a729c877d6e790472a54ac22682cc0759013afb4ad97819aa6c8"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/smoke_cli_install.py",
@@ -105,11 +105,11 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/verify_install_surfaces.py",
-          "sha256": "84212cf1cee535ee7c875a03b668a78ebd8f6c089d4a18f8b452e9b0256cda4c"
+          "sha256": "61437cd6e170e61ff52d5a9064a60f93ed4cc9d74ef0cb48dc3456e445efaac6"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/SKILL.md",
-          "sha256": "4ccc93ba680ae8757e58ba022586ea35e147088900b6f59a0c56892ba0f1c110"
+          "sha256": "f9c448537fe468f99e3e7b3e3ee419c0d3e5ff3226ef3c9a12fef0c843555a75"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/templates/.gitkeep",
@@ -171,7 +171,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/evals/run_evals.py",
-          "sha256": "bb5e46193d87fb412862344fcbfa1a5e75969282af9b6fec3d15061acfeb1e6e"
+          "sha256": "f575c998740b06007070ca6444dbd1ad9ba73401c0bbd3879bac1dbb44e1ea81"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/references/.gitkeep",
@@ -219,7 +219,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py",
-          "sha256": "e2c311daf9d254f5e57bce11477fa53934b287b2f5f30c781a48a1c2e5688874"
+          "sha256": "3d4342e45517c447eb9d3a5cb0a07040eaefa51a6d7f8bb493dae97a14754050"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/SKILL.md",
@@ -231,11 +231,11 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/templates/asset-impact-report.md",
-          "sha256": "0851b862b4b5eb98057e26a944f1b4182c0bf0c599c07a70a7102c25f5272b66"
+          "sha256": "1b855308d91a957f325a295f9f062342ed26d9cc726b2326191db0cde7061d96"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/templates/upstream-review-report.md",
-          "sha256": "373c5f14d6463da35516cbab83e3232b1100d9ab3130b43642d68089b7328a47"
+          "sha256": "f633b88c13f099890092c2791625318598604a32f8277d170bd44d56ac521395"
         }
       ]
     }

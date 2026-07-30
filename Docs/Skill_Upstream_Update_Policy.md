@@ -1,48 +1,48 @@
-# Skill Upstream Update Policy
+# 스킬 업스트림 업데이트 정책
 
-This repository separates reference-only learning from direct upstream import.
+이 저장소는 참조 전용 학습과 업스트림 직접 반입을 분리한다.
 
-## Source Classes And Modes
+## 출처 분류 및 모드
 
-| Mode | Meaning | Required handling |
+| 모드 | 의미 | 필수 처리 |
 |---|---|---|
-| `native` | Locally authored, no active external source relationship | Normal repository review |
-| `reference` | External source influenced concepts only | Record source URL and internal reflection point |
-| `vendored` | Upstream file copied verbatim | License, NOTICE, hash, file map, approvals |
-| `adapted` | Upstream content translated, modified, or restructured | Same as vendored plus local patch/treatment record |
-| `unknown` | Evidence is insufficient | Do not import or release until resolved |
+| `native` | 로컬에서 작성했으며 활성 외부 출처 관계가 없음 | 일반 저장소 리뷰 |
+| `reference` | 외부 출처가 개념에만 영향을 줌 | 출처 URL과 내부 반영 지점 기록 |
+| `vendored` | 업스트림 파일을 원문 그대로 복사함 | 라이선스, NOTICE, 해시, 파일 매핑, 승인 |
+| `adapted` | 업스트림 콘텐츠를 번역·수정·재구성함 | `vendored`와 동일한 항목에 로컬 패치·처리 기록 추가 |
+| `unknown` | 증거가 불충분함 | 해결될 때까지 반입 또는 릴리스 금지 |
 
-## State Model
+## 상태 모델
 
-| State | Meaning |
+| 상태 | 의미 |
 |---|---|
-| `observed` | Latest release, tag, branch, or documentation state found during read-only review |
-| `accepted` | Maintainer-approved upstream ref for possible integration |
-| `embedded` | Source is present in canonical `skills/` |
-| `packaged` | Source is present in a verified plugin artifact |
-| `released` | Source is available to users through a released plugin version |
+| `observed` | 읽기 전용 검토에서 확인한 최신 릴리스, 태그, 브랜치 또는 문서 상태 |
+| `accepted` | 통합 후보로 관리자가 승인한 업스트림 ref |
+| `embedded` | 출처가 정본 `skills/`에 포함된 상태 |
+| `packaged` | 출처가 검증된 플러그인 산출물에 포함된 상태 |
+| `released` | 출처가 릴리스된 플러그인 버전을 통해 사용자에게 제공되는 상태 |
 
-Reference sources use review dates and optional refs. Direct imports require immutable SHAs and file hashes before `accepted`.
+참조 출처는 검토일과 선택적 ref를 사용한다. 직접 반입은 `accepted` 전에 변경 불가능한 SHA와 파일 해시가 필요하다.
 
-## Approval Gates
+## 승인 게이트
 
-| Gate | Requirement |
+| 게이트 | 요구 사항 |
 |---|---|
-| G0 | Source registration and intended mode approval |
-| G1 | Maintainer identity, release, tag, and full SHA verification |
-| G2 | License and third-party content review |
-| G3 | Scripts, hooks, MCP, network, binary, symlink, submodule, and permission review |
-| G4 | Concept or file scope approval, including protected asset impact |
-| G5 | Separate destructive approval for deletion, move, or replacement |
-| G6 | Apply only in temporary staging before promotion |
-| G7 | Codex, Claude, regression, and license validation |
-| G8 | Promote to canonical source and hand off to plugin release flow |
+| G0 | 출처 등록과 의도한 모드 승인 |
+| G1 | 관리자 신원, 릴리스, 태그 및 전체 SHA 검증 |
+| G2 | 라이선스 및 서드파티 콘텐츠 검토 |
+| G3 | 스크립트, 훅, MCP, 네트워크, 바이너리, 심볼릭 링크, 서브모듈 및 권한 검토 |
+| G4 | 보호 자산 영향을 포함한 개념 또는 파일 범위 승인 |
+| G5 | 삭제·이동·교체에 대한 별도의 파괴적 변경 승인 |
+| G6 | 승격 전 임시 스테이징에만 적용 |
+| G7 | Codex, Claude, 회귀 및 라이선스 검증 |
+| G8 | 정본 출처로 승격하고 플러그인 릴리스 흐름에 인계 |
 
-The phrase “update to latest” is not approval for G4 or G5.
+“최신 버전으로 업데이트”라는 표현만으로는 G4 또는 G5 승인이 되지 않는다.
 
-## Protected Assets
+## 보호 자산
 
-Protected paths include:
+보호 대상 경로는 다음과 같다.
 
 - `scripts/`
 - `templates/`
@@ -55,19 +55,19 @@ Protected paths include:
 - `bin/`
 - `example/`, `examples/`
 - `evals/`, `tests/`
-- plugin manifests and MCP/LSP config
+- 플러그인 manifest 및 MCP/LSP 설정
 - `LICENSE*`, `NOTICE*`
 
-Adding or modifying protected assets requires an asset-impact record. Deleting, moving, or replacing protected assets requires a separate destructive approval.
+보호 자산을 추가하거나 수정하려면 자산 영향 기록이 필요하다. 보호 자산을 삭제·이동·교체하려면 별도의 파괴적 변경 승인이 필요하다.
 
-## Maintainer Skill Boundary
+## 관리자 스킬 책임 경계
 
-`skill-portfolio-maintainer` owns upstream discovery, source classification, registry updates, and protected asset impact analysis.
+`skill-portfolio-maintainer`는 업스트림 탐색, 출처 분류, 레지스트리 업데이트 및 보호 자산 영향 분석을 담당한다.
 
-`harness-plugin-maintainer` owns Codex and Claude plugin runtime generation, manifest generation, packaging, smoke tests, and release artifacts.
+`harness-plugin-maintainer`는 Codex 및 Claude 플러그인 런타임 생성, manifest 생성, 패키징, 스모크 테스트 및 릴리스 산출물을 담당한다.
 
-The two responsibilities must stay separate. A source can be classified without being packaged, and a plugin package must not include unaccepted or blocked upstream files.
+두 책임은 분리되어야 한다. 출처는 패키징하지 않고도 분류할 수 있으며, 플러그인 패키지에는 승인되지 않았거나 차단된 업스트림 파일을 포함해서는 안 된다.
 
-## Rollback
+## 롤백
 
-Every direct import promotion must include the previous lock state, accepted ref, file map, generated hashes, and validation result. Rollback means restoring the previous lock and promoted files, then rerunning registry and plugin checks.
+모든 직접 반입 승격에는 이전 잠금 상태, 승인된 ref, 파일 매핑, 생성된 해시 및 검증 결과가 포함되어야 한다. 롤백은 이전 잠금 상태와 승격된 파일을 복원한 다음 레지스트리 및 플러그인 검사를 다시 실행하는 것을 의미한다.

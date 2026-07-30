@@ -21,6 +21,7 @@ sys.dont_write_bytecode = True
 sys.path.insert(0, str(SCRIPTS))
 
 import check_upstreams  # noqa: E402
+import validate_registry  # noqa: E402
 from portfolio_common import (  # noqa: E402
     hash_tree,
     is_protected_asset_path,
@@ -281,6 +282,12 @@ def test_public_scripts_have_real_help() -> None:
         assert "usage:" in completed.stdout.lower()
 
 
+def test_imported_status_check_is_prose_language_neutral() -> None:
+    assert validate_registry.has_accepted_adapted_status("accepted adapted")
+    assert validate_registry.has_accepted_adapted_status("`accepted` `adapted`")
+    assert not validate_registry.has_accepted_adapted_status("승인된 변형 출처")
+
+
 def test_self_update_blocks_same_session() -> None:
     run([
         str(SCRIPTS / "stage_upstream.py"),
@@ -399,6 +406,7 @@ def main() -> int:
         test_check_date_override_is_deterministic,
         test_actual_tree_hashes_and_post_stage_mutation_block,
         test_public_scripts_have_real_help,
+        test_imported_status_check_is_prose_language_neutral,
         test_self_update_blocks_same_session,
         test_protected_asset_requires_asset_approval,
         test_protected_asset_path_variants_are_classified,

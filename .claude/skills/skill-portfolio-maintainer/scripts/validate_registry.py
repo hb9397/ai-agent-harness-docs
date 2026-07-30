@@ -124,6 +124,16 @@ def validate_registry(root: Path, errors: list[str]) -> None:
                 error(errors, f"{item.get('name')}: unknown source id {sid}")
 
 
+def has_accepted_adapted_status(text: str) -> bool:
+    return bool(
+        re.search(
+            r"(?:`accepted`|accepted)\s+(?:`adapted`|adapted)",
+            text,
+            flags=re.IGNORECASE,
+        )
+    )
+
+
 def validate_docs(root: Path, errors: list[str]) -> None:
     refs = root / "Docs" / "External_Skill_References.md"
     imports = root / "Docs" / "Imported_Skill_Provenance.md"
@@ -151,8 +161,11 @@ def validate_docs(root: Path, errors: list[str]) -> None:
                     errors,
                     f"Imported_Skill_Provenance.md must document {sid} target {skill_name}",
                 )
-    if "accepted adapted" not in imported_text:
-        error(errors, "Imported_Skill_Provenance.md must describe accepted adapted status")
+    if not has_accepted_adapted_status(imported_text):
+        error(
+            errors,
+            "Imported_Skill_Provenance.md must describe accepted/adapted status identifiers",
+        )
 
 
 def validate_phase5_skill_files(root: Path, errors: list[str]) -> None:

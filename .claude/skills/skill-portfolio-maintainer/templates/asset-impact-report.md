@@ -1,32 +1,32 @@
-# Protected Asset Impact Report
+# 보호 자산 영향 보고서
 
-| Field | Value |
+| 항목 | 값 |
 |---|---|
-| Candidate ID |  |
-| Source ID |  |
-| Protected asset globs |  |
-| Reviewer |  |
+| 후보 ID |  |
+| 소스 ID |  |
+| 보호 자산 glob 패턴 |  |
+| 검토자 |  |
 
-## Added Assets
+## 추가된 자산
 
-## Modified / Supplemented Assets
+## 수정 / 보완된 자산
 
-## Deleted / Moved / Replaced Assets
+## 삭제 / 이동 / 교체된 자산
 
-## Risk Review
+## 위험 검토
 
-- [ ] scripts/hooks permission reviewed
-- [ ] templates/prompts behavior reviewed
-- [ ] references provenance reviewed
-- [ ] examples/evals reviewed
-- [ ] license/notice reviewed
+- [ ] `scripts`/`hooks` 권한 검토 완료
+- [ ] `templates`/`prompts` 동작 검토 완료
+- [ ] `references` 출처 추적 검토 완료
+- [ ] `examples`/`evals` 검토 완료
+- [ ] `license`/`notice` 검토 완료
 
-## Approval Separation
+## 승인 분리
 
-- Added/modified/supplemented assets require asset-impact approval.
-- Deleted/moved/replaced assets require destructive approval.
+- 추가·수정·보완된 자산에는 자산 영향 승인이 필요하다.
+- 삭제·이동·교체된 자산에는 파괴적 변경 승인이 필요하다.
 
-## Approval IDs
+## 승인 ID
 
-- Asset-impact approval ID:
-- Destructive approval ID:
+- 자산 영향 승인 ID:
+- 파괴적 변경 승인 ID:

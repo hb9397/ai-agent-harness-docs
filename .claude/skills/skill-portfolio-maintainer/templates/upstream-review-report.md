@@ -1,46 +1,46 @@
-# Upstream Review Report
+# 업스트림 검토 보고서
 
-| Field | Value |
+| 항목 | 값 |
 |---|---|
-| Source ID |  |
-| Local skills |  |
-| Relationship mode | reference / vendored / adapted / native |
-| Current accepted ref/SHA |  |
-| Latest observed ref/SHA |  |
-| Checked at |  |
-| Reviewer |  |
+| 소스 ID |  |
+| 로컬 스킬 |  |
+| 관계 모드 | reference / vendored / adapted / native |
+| 현재 승인(`accepted`) ref/SHA |  |
+| 최신 관찰(`observed`) ref/SHA |  |
+| 확인 일시 |  |
+| 검토자 |  |
 
-## Summary
+## 요약
 
-## Version / SHA Change
+## 버전 / SHA 변경
 
-## License / Copyright Change
+## 라이선스 / 저작권 변경
 
-## Files Added or Modified
+## 추가 또는 수정된 파일
 
-## Files Deleted, Moved, or Replaced
+## 삭제·이동·교체된 파일
 
-## Scripts / Hooks / MCP / Network / Permission Surface
+## `scripts` / `hooks` / MCP / 네트워크 / 권한 표면
 
-## Protected Asset Impact
+## 보호 자산 영향
 
-## Expected Local Skill Behavior Change
+## 예상되는 로컬 스킬 동작 변경
 
-## Codex vs Claude Runtime Difference
+## Codex와 Claude 런타임 차이
 
-## Recommendation
+## 권고
 
-- [ ] adopt
-- [ ] partially adopt
-- [ ] defer
-- [ ] reject
+- [ ] 채택(`adopt`)
+- [ ] 부분 채택(`partially adopt`)
+- [ ] 보류(`defer`)
+- [ ] 거부(`reject`)
 
-## Required Approvals
+## 필요한 승인
 
-- General approval ID:
-- Asset-impact approval ID:
-- Destructive approval ID:
+- 일반 승인 ID:
+- 자산 영향 승인 ID:
+- 파괴적 변경 승인 ID:
 
-## Validation Plan
+## 검증 계획
 
-## Handoff
+## 인계

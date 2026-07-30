@@ -1,73 +1,65 @@
-# Final Readiness Audit
+# 최종 준비 상태 감사
 
-Generated at: 2026-07-29T00:00:00+09:00
+생성 시각: 2026-07-29T00:00:00+09:00
 
-## Summary
+## 요약
 
-The planned implementation phases in `improvement_plan/20260729/플러그인 전환 및 스킬 거버넌스 리팩토링 작업 계획서.md` run from Phase 0 through Phase 10. There is no Phase 11 in the current plan.
+`improvement_plan/20260729/플러그인 전환 및 스킬 거버넌스 리팩토링 작업 계획서.md`의 구현 계획은 Phase 0부터 Phase 10까지다. 현재 계획에 Phase 11은 없다.
 
-Phase 0 through Phase 10 implementation work is complete in this repository. Isolated
-Codex and Claude Code CLI installation/cache smokes pass. These smokes do not invoke a
-model. The current release candidate remains **not release-ready** because all four
-CLI/App surfaces still require direct skill invocation, output, restart, and new-session
-evidence.
+이 저장소에서 Phase 0부터 Phase 10까지의 구현 작업은 완료했다. 격리된 Codex 및 Claude Code CLI 설치·캐시 스모크 검사는 통과했다. 이 스모크 검사는 모델을 호출하지 않는다. 네 가지 CLI/App 표면 모두에서 직접 스킬 호출, 출력, 재시작, 새 세션 증적이 아직 필요하므로 현재 릴리스 후보는 **`not-release-ready`** 상태다.
 
-No push, tag, GitHub release, or `released` lock update was performed.
+push, tag, GitHub release 생성 또는 `released` lock 갱신은 수행하지 않았다.
 
-## Release candidate
+## 릴리스 후보
 
-| Item | Value |
+| 항목 | 값 |
 |---|---|
-| Plugin ID | `ai-agent-harness` |
-| Version | `0.1.0` |
-| Archive | `plugins/ai-agent-harness-0.1.0.zip` |
-| Archive SHA-256 | `8c576a8ed68bf0a3ea035f04afc6890fd3079b1ab5915e4aa8ff8b07e145623e` |
-| Logical user skills | 18 |
-| Manager skills | 3 |
-| Codex physical skills / agents | 18 / 0 |
-| Claude physical skills / agents | 18 / 0 |
-| Markdown producer handoff count | 7 |
+| 플러그인 ID | `ai-agent-harness` |
+| 버전 | `0.1.0` |
+| 아카이브 | `plugins/ai-agent-harness-0.1.0.zip` |
+| 아카이브 SHA-256 | `8c576a8ed68bf0a3ea035f04afc6890fd3079b1ab5915e4aa8ff8b07e145623e` |
+| 논리 사용자 스킬 수 | 18 |
+| 관리자 스킬 수 | 3 |
+| Codex 물리 스킬 / agent 수 | 18 / 0 |
+| Claude 물리 스킬 / agent 수 | 18 / 0 |
+| Markdown 생성 스킬 handoff 수 | 7 |
 
-## Automated evidence
+## 자동화 증적
 
-| Evidence | Result |
+| 증적 | 결과 |
 |---|---|
-| Source/projection integrity | Pass |
-| Reproducible build | Pass |
-| Static local links | Pass |
-| Upstream 3-mode isolated contract fixture | Pass; live stage/promote 미수행 |
-| User filesystem/script contract fixture | Pass; live agent skill invocation 미수행 |
-| Failure rollback fixture | Pass; live surface cancellation/rollback 미수행 |
-| Canonical skill eval runners | Pass (10 auto-discovered runners) |
-| Codex CLI isolated install/cache smoke | Pass (`0.146.0`, 18 skills / 0 agents); model invocation 미수행 |
-| Claude Code isolated install/cache smoke | Pass (`2.1.220`, 18 skills / 0 agents); model invocation 미수행 |
-| Release regression gate | Pass as `not-release-ready` |
+| 소스/projection 무결성 | 통과 |
+| 재현 가능한 빌드 | 통과 |
+| 정적 로컬 링크 | 통과 |
+| upstream 3-mode 격리 계약 fixture | 통과, 실제 stage/promote는 미수행 |
+| 사용자 파일시스템/스크립트 계약 fixture | 통과, 실제 agent 스킬 호출은 미수행 |
+| 실패 rollback fixture | 통과, 실제 표면 취소/rollback은 미수행 |
+| 정본 스킬 eval runner | 통과(자동 탐색된 runner 10개) |
+| Codex CLI 격리 설치/캐시 스모크 | 통과(`0.146.0`, 스킬 18개 / agent 0개), 모델 호출은 미수행 |
+| Claude Code 격리 설치/캐시 스모크 | 통과(`2.1.220`, 스킬 18개 / agent 0개), 모델 호출은 미수행 |
+| 릴리스 회귀 gate | `not-release-ready` 상태로 통과 |
 
-## Release surface evidence
+## 릴리스 표면 증적
 
-| Surface | Status | Reason |
+| 표면 | 상태 | 근거 |
 |---|---|---|
-| Codex CLI | install-smoke-verified | Marketplace add, plugin add/list, cache inspection, remove, and cleanup passed; direct model invocation is pending. |
-| Codex Desktop/App | manual-required | Interactive app plugin install/update evidence cannot be completed from this shell. |
-| Claude Code CLI | install-smoke-verified | Strict validation, marketplace add, plugin install/list, cache inspection, uninstall, and cleanup passed; direct model invocation is pending. |
-| Claude Desktop Code | manual-required | Desktop Code local/SSH cache verification requires the Claude Desktop app surface. |
+| Codex CLI | `install-smoke-verified` | marketplace 등록, plugin 등록/목록 확인, 캐시 검사, 제거 및 정리를 통과했으며 직접 모델 호출은 대기 중이다. |
+| Codex Desktop/App | `manual-required` | 대화형 앱의 plugin 설치/업데이트 증적은 이 shell에서 완료할 수 없다. |
+| Claude Code CLI | `install-smoke-verified` | strict 검증, marketplace 등록, plugin 설치/목록 확인, 캐시 검사, 제거 및 정리를 통과했으며 직접 모델 호출은 대기 중이다. |
+| Claude Desktop Code | `manual-required` | Desktop Code 로컬/SSH 캐시 검증에는 Claude Desktop 앱 표면이 필요하다. |
 
-## Remaining work before release
+## 릴리스 전 남은 작업
 
-1. Collect Codex CLI and Claude Code CLI direct `harness-setup`/`humanize-korean`
-   invocation, scenarios A-D, and reviewer-approved records.
-2. Collect Codex Desktop/App direct invocation, restart/new task, marker/version, and
-   scenarios A-D evidence.
-3. Collect Claude Desktop Code local-host direct invocation, restart/new session, and
-   scenarios A-D evidence. Repeat on SSH only when SSH is a declared support surface.
-4. Link the four reviewed records from the release checklist before changing a surface
-   to `verified`.
+1. Codex CLI와 Claude Code CLI에서 `harness-setup` 및 `humanize-korean`을 직접 호출하고 시나리오 A-D를 수행한 뒤, 검토자가 승인한 기록을 수집한다.
+2. Codex Desktop/App에서 직접 호출, 재시작/새 작업, marker/version 및 시나리오 A-D 증적을 수집한다.
+3. Claude Desktop Code 로컬 호스트에서 직접 호출, 재시작/새 세션 및 시나리오 A-D 증적을 수집한다. SSH를 지원 표면으로 선언한 경우에만 SSH에서도 반복한다.
+4. 각 표면의 상태를 `verified`로 바꾸기 전에 검토를 마친 네 개 기록을 릴리스 체크리스트에 연결한다.
 
-## Release controls
+## 릴리스 통제
 
-- Release ready: no
-- Push created: no
-- Tag created: no
-- GitHub release created: no
-- `released` lock updated: no
-- Explicit manager approval required before publish: yes
+- 릴리스 준비 완료: 아니요
+- push 생성: 아니요
+- tag 생성: 아니요
+- GitHub release 생성: 아니요
+- `released` lock 갱신: 아니요
+- 배포 전 명시적인 관리자 승인 필요: 예

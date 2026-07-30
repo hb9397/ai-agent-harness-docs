@@ -8,6 +8,7 @@ behavior that can be checked without external marketplace state.
 
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import shutil
@@ -206,99 +207,163 @@ def load_cli_smoke(root: Path) -> dict:
     }
 
 
-def write_release_checklist(root: Path, evidence: dict) -> None:
+def render_release_checklist(evidence: dict) -> str:
     cli_smoke_verified = all(
         evidence["surfaces"][surface]["status"] == "install-smoke-verified"
         for surface in ("codex-cli", "claude-code-cli")
     )
     if cli_smoke_verified:
         gate_reason = (
-            "isolated Codex and Claude Code CLI installation smokes passed, but an "
-            "installation/cache smoke is not a model invocation. Codex and Claude CLI/App "
-            "all still require direct invocation, output, restart, and new-session "
-            "manual evidence."
+            "격리된 Codex 및 Claude Code CLI 설치 스모크 검사는 통과했지만 설치/캐시 "
+            "스모크 검사는 모델 호출이 아니다. Codex와 Claude의 모든 CLI/App 표면에는 "
+            "직접 호출, 출력, 재시작 및 새 세션 수동 증적이 여전히 필요하다."
         )
         completed_cli = (
-            "- Codex CLI install smoke: marketplace add/list/remove, plugin add/list/remove, installed "
-            "cache 18 skills / 0 agents, including `harness-setup` and `humanize-korean` "
-            "skill directories (not model invocation).\n"
-            "- Claude Code CLI install smoke: strict plugin/marketplace validation, marketplace "
-            "add/list/remove, plugin install/list/uninstall, installed cache 18 skills / "
-            "0 agents (not model invocation)."
+            "- Codex CLI 설치 스모크: 마켓플레이스 등록/목록 확인/제거, 플러그인 등록/목록 확인/제거, "
+            "`harness-setup`과 `humanize-korean` 디렉터리를 포함한 설치 캐시의 스킬 18개 / "
+            "에이전트 0개를 확인했다(모델 호출 아님).\n"
+            "- Claude Code CLI 설치 스모크: 엄격한 플러그인/마켓플레이스 검증, 마켓플레이스 "
+            "등록/목록 확인/제거, 플러그인 설치/목록 확인/제거, 설치 캐시의 스킬 18개 / "
+            "에이전트 0개를 확인했다(모델 호출 아님)."
         )
         pending_cli = ""
     else:
         gate_reason = (
-            "isolated CLI installation evidence is incomplete, and all four CLI/App "
-            "surfaces still require direct model-invocation evidence."
+            "격리된 CLI 설치 증적이 불완전하며, 네 가지 CLI/App 표면 모두 직접 모델 호출 "
+            "증적이 필요하다."
         )
-        completed_cli = "- CLI install smoke: incomplete."
+        completed_cli = "- CLI 설치 스모크: 불완전."
         pending_cli = (
-            "- Codex and Claude Code CLI: run `scripts/smoke_cli_install.py` with the "
-            "official CLIs and retain passing evidence.\n"
+            "- Codex 및 Claude Code CLI: 공식 CLI로 `scripts/smoke_cli_install.py`를 "
+            "실행하고 통과 증적을 보존한다.\n"
         )
-    checklist = f"""# Plugin Release Checklist
+    def check_result(value: bool) -> str:
+        return "통과" if value else "실패"
 
-Generated at: {evidence["generated_at"]}
+    cli_summary = (
+        "격리된 마켓플레이스 등록/설치/목록 확인/제거 및 캐시 검사를 통과했으며, 모델 호출은 테스트하지 않음"
+        if cli_smoke_verified
+        else "CLI 스모크 증적이 불완전하거나 실패함"
+    )
+    return f"""# 플러그인 릴리스 체크리스트
 
-## Release candidate
+생성 시각: {evidence["generated_at"]}
 
-- Plugin ID: `{evidence["plugin"]["plugin_id"]}`
-- Version: `{evidence["plugin"]["version"]}`
-- Archive: `{evidence["plugin"]["archive"]}`
-- Archive SHA-256: `{evidence["plugin"]["archive_sha256"]}`
-- Codex physical skills: {evidence["plugin"]["codex_physical_skills"]}
-- Codex physical agents: {evidence["plugin"]["codex_physical_agents"]}
-- Claude physical skills: {evidence["plugin"]["claude_physical_skills"]}
-- Claude physical agents: {evidence["plugin"]["claude_physical_agents"]}
-- Markdown producer handoff count: {evidence["plugin"]["markdown_producer_count"]}
+## 릴리스 후보
 
-## Automated local checks
+- 플러그인 ID: `{evidence["plugin"]["plugin_id"]}`
+- 버전: `{evidence["plugin"]["version"]}`
+- 아카이브: `{evidence["plugin"]["archive"]}`
+- 아카이브 SHA-256: `{evidence["plugin"]["archive_sha256"]}`
+- Codex 물리 스킬 수: {evidence["plugin"]["codex_physical_skills"]}
+- Codex 물리 에이전트 수: {evidence["plugin"]["codex_physical_agents"]}
+- Claude 물리 스킬 수: {evidence["plugin"]["claude_physical_skills"]}
+- Claude 물리 에이전트 수: {evidence["plugin"]["claude_physical_agents"]}
+- Markdown 생성 스킬 handoff 수: {evidence["plugin"]["markdown_producer_count"]}
 
-| Check | Result |
+## 자동화된 로컬 검사
+
+| 검사 | 결과 |
 |---|---|
-| Manifest name/version match | {evidence["plugin"]["codex_manifest_matches_claude"]} |
-| Archive checksum matches release metadata | {evidence["plugin"]["archive_sha256_matches_release"]} |
-| Packaged adapted/vendored NOTICE-license-lock closure | {evidence["plugin"]["packaged_upstream_closure"]} |
-| Released state preserved | {evidence["plugin"]["released_state_preserved"]} |
-| `humanize-korean` proposal-only | {evidence["humanize_korean"]["proposal_only"]} |
-| `humanize-korean` leaves original file unchanged | {evidence["humanize_korean"]["file_unchanged"]} |
-| Protected tokens preserved | {evidence["humanize_korean"]["protected_tokens_preserved"]} |
+| manifest 이름/버전 일치 | {check_result(evidence["plugin"]["codex_manifest_matches_claude"])} |
+| 아카이브 체크섬과 릴리스 메타데이터 일치 | {check_result(evidence["plugin"]["archive_sha256_matches_release"])} |
+| 패키징된 adapted/vendored NOTICE-license-lock 완결성 | {check_result(evidence["plugin"]["packaged_upstream_closure"])} |
+| `released` 상태 보존 | {check_result(evidence["plugin"]["released_state_preserved"])} |
+| `humanize-korean`이 제안만 수행 | {check_result(evidence["humanize_korean"]["proposal_only"])} |
+| `humanize-korean`이 원본 파일을 변경하지 않음 | {check_result(evidence["humanize_korean"]["file_unchanged"])} |
+| 보호 토큰 보존 | {check_result(evidence["humanize_korean"]["protected_tokens_preserved"])} |
 
-## Surface evidence
+## 표면별 증적
 
-| Surface | Status | Evidence |
+| 표면 | 상태 | 증적 |
 |---|---|---|
-| Codex CLI | {evidence["surfaces"]["codex-cli"]["status"]} | `{evidence["surfaces"]["codex-cli"]["summary"]}` |
-| Codex Desktop/App | {evidence["surfaces"]["codex-desktop-app"]["status"]} | `{evidence["surfaces"]["codex-desktop-app"]["summary"]}` |
-| Claude Code CLI | {evidence["surfaces"]["claude-code-cli"]["status"]} | `{evidence["surfaces"]["claude-code-cli"]["summary"]}` |
-| Claude Desktop Code | {evidence["surfaces"]["claude-desktop-code"]["status"]} | `{evidence["surfaces"]["claude-desktop-code"]["summary"]}` |
+| Codex CLI | `{evidence["surfaces"]["codex-cli"]["status"]}` | {cli_summary} |
+| Codex Desktop/App | `{evidence["surfaces"]["codex-desktop-app"]["status"]}` | 대화형 Plugins UI 설치/업데이트에는 앱 표면이 필요하므로 이 셸에서 완료할 수 없음 |
+| Claude Code CLI | `{evidence["surfaces"]["claude-code-cli"]["status"]}` | {cli_summary} |
+| Claude Desktop Code | `{evidence["surfaces"]["claude-desktop-code"]["status"]}` | Desktop Code 로컬/SSH 캐시 검증에는 Claude Desktop 앱 표면이 필요함 |
 
-## Release gate
+## 릴리스 게이트
 
-Status: **not release-ready**
+상태: **`not-release-ready`**
 
-Reason: {gate_reason}
+사유: {gate_reason}
 
-## Completed automated install checks
+## 완료한 자동 설치 검사
 
 {completed_cli}
 
-## Required before release-ready
+## `release-ready` 전 필수 작업
 
-{pending_cli}- Direct test record: copy `{MANUAL_SURFACE_TEMPLATE_REL.as_posix()}` to `maintainer/plugin/manual-evidence/YYYYMMDD/{{surface}}.md` and retain one fresh fixture per surface.
-- All four surfaces: invoke both `harness-setup` and `humanize-korean`, verify proposal-only behavior, verify generated allowlist, verify no `.agents/skills`, `.claude/skills`, or `skills`, and preserve managed-block extensions.
-- All four surfaces: reopen a new task/session and verify the same artifact fingerprint is not proposed again; retain the `.docs/.harness/humanize-handoffs.json` event.
-- All four surfaces: cancel before a proposed write and verify original hashes and user sentinels are preserved.
-- Codex app: install the candidate marketplace, restart/new task, verify marker/version, update to vN+1.
-- Claude Desktop Code: local host cache/version verification and app restart/new session; repeat on SSH only when SSH is a declared support surface. Document unsupported cloud/WSL paths.
-- Link reviewer-approved direct records from this checklist before changing any surface to `verified`.
-- Legacy migration: run read-only inventory, backup/remove only with explicit approval, verify plugin single discovery.
+{pending_cli}- 직접 테스트 기록: `{MANUAL_SURFACE_TEMPLATE_REL.as_posix()}`를 `maintainer/plugin/manual-evidence/YYYYMMDD/{{surface}}.md`로 복사하고 표면마다 새로운 픽스처 하나를 보존한다.
+- 네 표면 모두: `harness-setup`과 `humanize-korean`을 호출하고, 제안 전용 동작과 생성된 허용 목록을 검증하며, `.agents/skills`, `.claude/skills`, `skills`가 생성되지 않았는지 확인하고 관리 블록 확장을 보존한다.
+- 네 표면 모두: 새 작업/세션을 다시 열어 같은 산출물 지문을 다시 제안하지 않는지 확인하고 `.docs/.harness/humanize-handoffs.json` 이벤트를 보존한다.
+- 네 표면 모두: 제안된 쓰기 전에 취소하고 원본 해시와 사용자 감시 토큰이 보존되는지 확인한다.
+- Codex 앱: 후보 마켓플레이스를 설치하고 재시작/새 작업에서 표식/버전을 확인한 뒤 vN+1로 업데이트한다.
+- Claude Desktop Code: 로컬 호스트의 캐시/버전을 확인하고 앱을 재시작해 새 세션을 연다. SSH를 지원 표면으로 선언한 경우에만 SSH에서도 반복한다. 지원하지 않는 클라우드/WSL 경로를 문서화한다.
+- 표면 상태를 `verified`로 변경하기 전에 검토자가 승인한 직접 테스트 기록을 이 체크리스트에 연결한다.
+- 레거시 이전: 읽기 전용 목록 조사를 수행하고, 명시적 승인이 있을 때만 백업/제거를 실행한 뒤 플러그인이 한 번만 탐색되는지 확인한다.
 """
-    write_text(root / "maintainer" / "plugin" / "release-checklist.md", checklist)
 
 
-def main() -> int:
+def write_release_checklist(root: Path, evidence: dict) -> None:
+    write_text(
+        root / "maintainer" / "plugin" / "release-checklist.md",
+        render_release_checklist(evidence),
+    )
+
+
+def deterministic_evidence(evidence: dict) -> dict:
+    """Exclude only host-specific CLI discovery diagnostics from tracked checks."""
+    return {
+        key: value
+        for key, value in evidence.items()
+        if key != "cli_probes"
+    }
+
+
+def check_tracked_evidence(root: Path, evidence: dict) -> list[str]:
+    errors: list[str] = []
+    plugin_root = root / "maintainer" / "plugin"
+    verification_path = plugin_root / "install-verification.json"
+    legacy_path = plugin_root / "legacy-migration-fixture.json"
+    checklist_path = plugin_root / "release-checklist.md"
+
+    if not verification_path.is_file():
+        errors.append(f"missing tracked evidence: {verification_path}")
+    else:
+        tracked = load_json(verification_path)
+        if deterministic_evidence(tracked) != deterministic_evidence(evidence):
+            errors.append("deterministic install-verification evidence is stale")
+
+    if not legacy_path.is_file():
+        errors.append(f"missing tracked evidence: {legacy_path}")
+    elif load_json(legacy_path) != evidence["legacy_migration"]:
+        errors.append("legacy migration fixture is stale")
+
+    expected_checklist = render_release_checklist(evidence).rstrip() + "\n"
+    if not checklist_path.is_file():
+        errors.append(f"missing tracked evidence: {checklist_path}")
+    elif checklist_path.read_text(encoding="utf-8") != expected_checklist:
+        errors.append("release checklist is stale")
+
+    return errors
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser()
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument(
+        "--check",
+        action="store_true",
+        help="compare deterministic evidence fields without writing tracked files",
+    )
+    mode.add_argument(
+        "--no-write",
+        action="store_true",
+        help="run probes and validation without updating tracked evidence files",
+    )
+    args = parser.parse_args(argv)
+
     root = repo_root()
     codex_help = run_probe(["codex", "--help"])
     codex_plugin = run_probe(["codex", "plugin", "--help"])
@@ -308,13 +373,7 @@ def main() -> int:
     surfaces = {
         "codex-cli": {
             "status": "install-smoke-verified" if cli_smoke_passed else "blocked",
-            "summary": (
-                cli_smoke["summary"]
-                if cli_smoke_passed
-                else codex_help["stderr_excerpt"]
-                or codex_help["stdout_excerpt"]
-                or cli_smoke["summary"]
-            ),
+            "summary": cli_smoke["summary"],
         },
         "codex-desktop-app": {
             "status": "manual-required",
@@ -322,13 +381,7 @@ def main() -> int:
         },
         "claude-code-cli": {
             "status": "install-smoke-verified" if cli_smoke_passed else "blocked",
-            "summary": (
-                cli_smoke["summary"]
-                if cli_smoke_passed
-                else claude_help["stderr_excerpt"]
-                or claude_help["stdout_excerpt"]
-                or cli_smoke["summary"]
-            ),
+            "summary": cli_smoke["summary"],
         },
         "claude-desktop-code": {
             "status": "manual-required",
@@ -370,12 +423,21 @@ def main() -> int:
             "push_tag_release_created": False,
         },
     }
-    write_json(root / "maintainer" / "plugin" / "install-verification.json", evidence)
-    write_json(root / "maintainer" / "plugin" / "legacy-migration-fixture.json", evidence["legacy_migration"])
-    write_release_checklist(root, evidence)
+    if args.check:
+        errors = check_tracked_evidence(root, evidence)
+        if errors:
+            for error in errors:
+                print(f"ERROR: {error}", file=sys.stderr)
+            return 1
+        print("install surface deterministic evidence check passed")
+        return 0
+    if not args.no_write:
+        write_json(root / "maintainer" / "plugin" / "install-verification.json", evidence)
+        write_json(root / "maintainer" / "plugin" / "legacy-migration-fixture.json", evidence["legacy_migration"])
+        write_release_checklist(root, evidence)
     print(json.dumps(evidence["release_gate"], ensure_ascii=False, indent=2))
     return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(main(sys.argv[1:]))

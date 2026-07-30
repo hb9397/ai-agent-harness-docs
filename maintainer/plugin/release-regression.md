@@ -1,31 +1,31 @@
-# Phase 10 Release Regression
+# Phase 10 릴리스 회귀검증
 
-Generated at: 2026-07-29T00:00:00+00:00
+생성 시각: 2026-07-29T00:00:00+00:00
 
-## Summary
+## 요약
 
-- Overall status: `not-release-ready`
-- Plugin: `ai-agent-harness` `0.1.0`
-- Archive SHA-256: `8c576a8ed68bf0a3ea035f04afc6890fd3079b1ab5915e4aa8ff8b07e145623e`
-- Release gate: `not-release-ready`
-- Push/tag/release created: `false`
+- 전체 상태: `not-release-ready`
+- 플러그인: `ai-agent-harness` `0.1.0`
+- 아카이브 SHA-256: `8c576a8ed68bf0a3ea035f04afc6890fd3079b1ab5915e4aa8ff8b07e145623e`
+- 릴리스 게이트: `not-release-ready`
+- push/tag/release 생성: `false`
 
-## Checks
+## 검사
 
-| Check | Result |
+| 검사 | 결과 |
 |---|---|
-| `source_projection_integrity` | True |
-| `reproducible_build` | True |
-| `static_local_links` | True |
-| `upstream_modes_fixture` | True |
-| `user_contract_fixture` | True |
-| `failure_rollback` | True |
-| `release_gate` | True |
+| `source_projection_integrity` | 통과 |
+| `reproducible_build` | 통과 |
+| `static_local_links` | 통과 |
+| `upstream_modes_fixture` | 통과 |
+| `user_contract_fixture` | 통과 |
+| `failure_rollback` | 통과 |
+| `release_gate` | 통과 |
 
-## Release decision
+## 릴리스 결정
 
-This candidate remains `not-release-ready` because interactive evidence is still required for `codex-cli, codex-desktop-app, claude-code-cli, claude-desktop-code`. The isolated Codex and Claude CLI install smokes passed. The script does not update `released` lock state and does not create tags or releases.
+`codex-cli, codex-desktop-app, claude-code-cli, claude-desktop-code`에 대한 대화형 증적이 아직 필요하므로 이 후보는 `not-release-ready` 상태를 유지한다. 격리된 Codex 및 Claude CLI 설치 스모크 검사는 통과했다. 이 스크립트는 `released` 잠금 상태를 갱신하지 않으며 태그 또는 릴리스를 생성하지 않는다.
 
-## Rollback
+## 롤백
 
-Rollback is validated in isolated fixtures by restoring the previous released lock and plugin version. The live workspace is read-only for destructive scenarios.
+격리 픽스처에서 이전 `released` 잠금과 플러그인 버전을 복원하는 방식으로 롤백을 검증했다. 실제 작업공간은 파괴적 시나리오에 대해 읽기 전용이다.

@@ -108,6 +108,10 @@ plugins/ai-agent-harness/
 
 - CLI smoke는 임시 `CODEX_HOME`, `CLAUDE_CONFIG_DIR`,
   `CLAUDE_CODE_PLUGIN_CACHE_DIR`만 사용한다.
+- CI·eval에서는 `verify_install_surfaces.py --check`로 실행한다. host별
+  `cli_probes` 차이는 제외하되 plugin version·archive hash·skill 수·migration
+  fixture·release checklist 같은 결정적 증적은 계속 비교한다. 증적 갱신은
+  관리자가 기본 모드로 명시 실행할 때만 수행한다.
 - 양쪽 모두 marketplace 등록 → plugin 설치 → 목록과 설치 cache의 18 skills /
   0 agents 확인 → uninstall/remove까지 수행한다.
 - desktop/app/SSH 등 interactive surface는 release checklist에 수동 검증 항목으로 남긴다.
@@ -126,6 +130,10 @@ Phase 10에서는 `scripts/run_release_regression.py`를 실행한다.
 - 실패 주입과 rollback은 임시 released lock/plugin version fixture에서만 수행한다.
 - push, tag, GitHub release, `released` lock 갱신은 별도 승인 전 수행하지 않는다.
 
+관리자 스킬 freeze는 UTF-8 텍스트의 줄바꿈을 LF로 정규화해 hash하고,
+대소문자 영향을 받지 않는 POSIX 상대경로 순서로 고정한다.
+CI·eval은 `freeze_manager_inventory.py --check`로 비교만 하며 정본을 쓰지 않는다.
+
 ## 검증
 
 ```bash
@@ -134,7 +142,8 @@ python maintainer/skills/harness-plugin-maintainer/scripts/run_all_skill_evals.p
 python maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py --check
 python maintainer/skills/harness-plugin-maintainer/scripts/validate_plugin.py
 python maintainer/skills/harness-plugin-maintainer/scripts/smoke_cli_install.py
-python maintainer/skills/harness-plugin-maintainer/scripts/verify_install_surfaces.py
+python maintainer/skills/harness-plugin-maintainer/scripts/verify_install_surfaces.py --check
+python maintainer/skills/harness-plugin-maintainer/scripts/freeze_manager_inventory.py --check
 python maintainer/skills/harness-plugin-maintainer/scripts/run_release_regression.py
 python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projections.py --check
 ```

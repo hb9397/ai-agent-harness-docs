@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import contextlib
+import copy
 import io
 import json
 import os
@@ -18,6 +19,8 @@ SKILL = ROOT / "maintainer" / "skills" / "harness-plugin-maintainer"
 SCRIPTS = SKILL / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 import build_plugin  # noqa: E402
+import freeze_manager_inventory  # noqa: E402
+import verify_install_surfaces  # noqa: E402
 
 
 def run(args: list[str]) -> subprocess.CompletedProcess[str]:
@@ -70,9 +73,69 @@ def main() -> int:
         if drifted.read_bytes() != before:
             raise AssertionError("--check mutated the canonical plugin tree")
 
-    run([str(SCRIPTS / "freeze_manager_inventory.py")])
+    with tempfile.TemporaryDirectory(prefix="harness-manager-freeze-eval-") as tmp:
+        fixture_root = Path(tmp)
+        for skill in freeze_manager_inventory.MANAGER_SKILLS:
+            (fixture_root / "maintainer" / "skills" / skill).mkdir(parents=True)
+        crlf_file = (
+            fixture_root
+            / "maintainer"
+            / "skills"
+            / "custom-skill-design"
+            / "SKILL.md"
+        )
+        crlf_file.write_bytes(b"first line\r\nsecond line\r\n")
+        nested = crlf_file.parent / "evals" / "run.py"
+        nested.parent.mkdir()
+        nested.write_bytes(b"print('ok')\r\n")
+        crlf_inventory = freeze_manager_inventory.build_inventory(fixture_root)
+        crlf_file.write_bytes(b"first line\nsecond line\n")
+        nested.write_bytes(b"print('ok')\n")
+        lf_inventory = freeze_manager_inventory.build_inventory(fixture_root)
+        if crlf_inventory != lf_inventory:
+            raise AssertionError("manager freeze differs between CRLF and LF text")
+        paths = [
+            item["path"]
+            for item in crlf_inventory["skills"][0]["files"]
+        ]
+        expected_paths = sorted(paths, key=lambda path: (path.casefold(), path))
+        if paths != expected_paths:
+            raise AssertionError("manager freeze path order is platform-dependent")
+
+    run([str(SCRIPTS / "freeze_manager_inventory.py"), "--check"])
     run([str(SCRIPTS / "smoke_cli_install.py"), "--self-test"])
-    run([str(SCRIPTS / "verify_install_surfaces.py")])
+    evidence_paths = [
+        ROOT / "maintainer" / "plugin" / "install-verification.json",
+        ROOT / "maintainer" / "plugin" / "legacy-migration-fixture.json",
+        ROOT / "maintainer" / "plugin" / "release-checklist.md",
+    ]
+    evidence_before = {
+        path: path.read_bytes()
+        for path in evidence_paths
+    }
+    run([str(SCRIPTS / "verify_install_surfaces.py"), "--check"])
+    if any(path.read_bytes() != evidence_before[path] for path in evidence_paths):
+        raise AssertionError("install surface check mutated tracked evidence")
+
+    with tempfile.TemporaryDirectory(prefix="harness-install-evidence-eval-") as tmp:
+        fixture_root = Path(tmp)
+        fixture_plugin = fixture_root / "maintainer" / "plugin"
+        fixture_plugin.mkdir(parents=True)
+        for source in evidence_paths:
+            (fixture_plugin / source.name).write_bytes(source.read_bytes())
+        baseline = json.loads(evidence_paths[0].read_text(encoding="utf-8"))
+        probe_only_change = copy.deepcopy(baseline)
+        probe_only_change["cli_probes"]["codex_help"]["status"] = "fixture-host-difference"
+        if verify_install_surfaces.check_tracked_evidence(
+            fixture_root, probe_only_change
+        ):
+            raise AssertionError("host-specific CLI probe drift failed deterministic check")
+        core_drift = copy.deepcopy(baseline)
+        core_drift["plugin"]["version"] = "9.9.9"
+        if not verify_install_surfaces.check_tracked_evidence(
+            fixture_root, core_drift
+        ):
+            raise AssertionError("deterministic install evidence drift was not detected")
     run([str(SCRIPTS / "run_release_regression.py")])
     print("harness-plugin-maintainer evals passed")
     return 0

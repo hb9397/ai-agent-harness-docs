@@ -356,21 +356,21 @@ def release_gate(root: Path) -> dict[str, Any]:
 def write_report(root: Path, evidence: dict[str, Any]) -> None:
     checks = evidence["checks"]
     lines = [
-        "# Phase 10 Release Regression",
+        "# Phase 10 릴리스 회귀검증",
         "",
-        f"Generated at: {evidence['generated_at']}",
+        f"생성 시각: {evidence['generated_at']}",
         "",
-        "## Summary",
+        "## 요약",
         "",
-        f"- Overall status: `{evidence['status']}`",
-        f"- Plugin: `{PLUGIN_ID}` `{PLUGIN_VERSION}`",
-        f"- Archive SHA-256: `{checks['reproducible_build']['archive_sha256']}`",
-        f"- Release gate: `{checks['release_gate']['status']}`",
-        "- Push/tag/release created: `false`",
+        f"- 전체 상태: `{evidence['status']}`",
+        f"- 플러그인: `{PLUGIN_ID}` `{PLUGIN_VERSION}`",
+        f"- 아카이브 SHA-256: `{checks['reproducible_build']['archive_sha256']}`",
+        f"- 릴리스 게이트: `{checks['release_gate']['status']}`",
+        "- push/tag/release 생성: `false`",
         "",
-        "## Checks",
+        "## 검사",
         "",
-        "| Check | Result |",
+        "| 검사 | 결과 |",
         "|---|---|",
     ]
     for key in [
@@ -382,22 +382,23 @@ def write_report(root: Path, evidence: dict[str, Any]) -> None:
         "failure_rollback",
         "release_gate",
     ]:
-        lines.append(f"| `{key}` | {checks[key]['passed']} |")
+        result = "통과" if checks[key]["passed"] else "실패"
+        lines.append(f"| `{key}` | {result} |")
     lines.extend(
         [
             "",
-            "## Release decision",
+            "## 릴리스 결정",
             "",
             (
-                "This candidate remains `not-release-ready` because interactive evidence is "
-                f"still required for `{', '.join(checks['release_gate']['missing_required_surfaces'])}`. "
-                "The isolated Codex and Claude CLI install smokes passed. The script does not "
-                "update `released` lock state and does not create tags or releases."
+                f"`{', '.join(checks['release_gate']['missing_required_surfaces'])}`에 대한 대화형 "
+                "증적이 아직 필요하므로 이 후보는 `not-release-ready` 상태를 유지한다. 격리된 "
+                "Codex 및 Claude CLI 설치 스모크 검사는 통과했다. 이 스크립트는 `released` "
+                "잠금 상태를 갱신하지 않으며 태그 또는 릴리스를 생성하지 않는다."
             ),
             "",
-            "## Rollback",
+            "## 롤백",
             "",
-            "Rollback is validated in isolated fixtures by restoring the previous released lock and plugin version. The live workspace is read-only for destructive scenarios.",
+            "격리 픽스처에서 이전 `released` 잠금과 플러그인 버전을 복원하는 방식으로 롤백을 검증했다. 실제 작업공간은 파괴적 시나리오에 대해 읽기 전용이다.",
         ]
     )
     write_json(root / REGRESSION_JSON, evidence)
