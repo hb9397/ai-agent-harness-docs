@@ -1,27 +1,37 @@
 {
   "id": "planning-and-review-reference-candidate",
-  "checked_at": "2026-07-29",
+  "checked_at": "2026-07-30",
   "status": "candidate-reference",
-  "internal_skill_group": ["design-doc", "impl-doc", "impl-fe-be-doc", "impl-verify", "multi-review", "pre-commit"],
+  "internal_skill_group": ["create-prototype", "design-doc", "design-prototype-docs", "impl-doc", "impl-fe-be-doc", "impl-reuse-scan", "impl-verify", "multi-review", "pre-commit", "custom-skill-design"],
   "candidate_sources": [
     {
       "source_id": "superpowers",
       "source_url": "https://github.com/obra/superpowers",
       "officiality": "Reputable third-party skill framework",
-      "observed_activity": "Registry check resolved the latest accepted observation to v6.2.0 at commit 3dcbd5c4b48e02263fbf4a3c01e3fe4f81d584d9 on 2026-07-29.",
+      "observed_activity": "Registry check resolved the latest observed stable release to v6.2.0 at commit 3dcbd5c4b48e02263fbf4a3c01e3fe4f81d584d9 on 2026-07-30. No accepted or embedded state is implied for this reference source.",
       "license": "MIT per GitHub repository page; verify hash before import.",
       "security_surface": "Contains skills, hooks, tests, scripts, plugin manifests, and optional telemetry references. Reference-only avoids importing runtime surface.",
-      "fit": "Strong fit for brainstorming, planning, execution, verification, code review, and skill writing workflows.",
+      "fit": "Strong reference for design-doc, impl-doc, impl-fe-be-doc, impl-verify, multi-review, and custom-skill-design; limited reference for impl-reuse-scan and pre-commit.",
+      "local_mapping": {
+        "strong": ["design-doc", "impl-doc", "impl-fe-be-doc", "impl-verify", "multi-review", "custom-skill-design"],
+        "limited": ["impl-reuse-scan", "pre-commit"],
+        "excluded": ["create-prototype", "design-prototype-docs", "frontend-design"]
+      },
       "decision": "reference-only now; direct import blocked until G2-G7."
     },
     {
       "source_id": "gstack",
       "source_url": "https://github.com/garrytan/gstack",
       "officiality": "Reputable third-party role workflow repository by Garry Tan",
-      "observed_activity": "GitHub repository page observed 2026-07-29 with active public project indicators.",
+      "observed_activity": "Default branch observed at a3259400a366593e0c909dd9ac3e59752efd2488 with internal VERSION 1.60.1.0 on 2026-07-30. The repository has no stable GitHub release or tag, so branch tracking is intentional.",
       "license": "MIT per GitHub repository page; verify exact license file before import.",
       "security_surface": "Includes setup scripts and role command files; import requires script/security review.",
-      "fit": "Useful comparison for role-based design, review, QA, security, release, and product workflow gates.",
+      "fit": "Strong reference for design-prototype-docs, design-doc, impl-doc, impl-fe-be-doc, impl-verify qa-only semantics, and multi-review; limited preview/refinement reference for create-prototype and limited search-before-building reference for impl-reuse-scan.",
+      "local_mapping": {
+        "strong": ["design-doc", "design-prototype-docs", "impl-doc", "impl-fe-be-doc", "impl-verify", "multi-review"],
+        "limited": ["create-prototype", "impl-reuse-scan"],
+        "excluded": ["frontend-design", "pre-commit", "custom-skill-design"]
+      },
       "decision": "reference-only now."
     }
   ]

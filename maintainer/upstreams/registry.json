@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "generated_at": "2026-07-29",
+  "generated_at": "2026-07-30",
   "sources": [
     {
       "id": "internal-harness-native",
@@ -177,10 +177,23 @@
         "tracking": "release",
         "tag_pattern": "v*",
         "allow_prerelease": false,
-        "watched_paths": ["skills/**", ".codex-plugin/plugin.json", ".claude-plugin/**"]
+        "watched_paths": [
+          "skills/**",
+          "skills/brainstorming/SKILL.md",
+          "skills/writing-plans/SKILL.md",
+          "skills/test-driven-development/SKILL.md",
+          "skills/subagent-driven-development/SKILL.md",
+          "skills/systematic-debugging/SKILL.md",
+          "skills/verification-before-completion/SKILL.md",
+          "skills/requesting-code-review/SKILL.md",
+          "skills/dispatching-parallel-agents/SKILL.md",
+          "skills/writing-skills/SKILL.md",
+          ".codex-plugin/plugin.json",
+          ".claude-plugin/**"
+        ]
       },
       "target": {
-        "local_skills": ["design-doc", "impl-doc", "impl-fe-be-doc", "impl-verify", "multi-review", "pre-commit", "custom-skill-design"],
+        "local_skills": ["design-doc", "impl-doc", "impl-fe-be-doc", "impl-reuse-scan", "impl-verify", "multi-review", "pre-commit", "custom-skill-design"],
         "platform_targets": ["codex", "claude-code"]
       },
       "policy": {
@@ -196,17 +209,29 @@
         "license_sha256": null,
         "notice_path": null,
         "classification_evidence_url": "https://github.com/obra/superpowers",
-        "classification_checked_at": "2026-07-29",
+        "classification_checked_at": "2026-07-30",
         "file_map": [{"upstream_path": "skills/**", "local_path": "skills/**", "treatment": "reference-only"}]
       },
       "protection": {
         "protected_globs": ["**/skills/**", "**/scripts/**", "**/hooks/**", "**/assets/**", "**/tests/**", "LICENSE*"]
       },
       "validation": {
-        "structure_checks": ["registered release does not imply file import"],
-        "behavior_fixtures": [],
-        "codex_smoke_prompts": [],
-        "claude_smoke_prompts": []
+        "structure_checks": [
+          "registered release does not imply file import",
+          "reference targets map only selected workflow concepts and never claim runtime parity"
+        ],
+        "behavior_fixtures": [
+          "impl planning preserves exact scope, constraints, validation, and approval gates",
+          "reuse scan reports existing assets before implementation without modifying them",
+          "verification uses fresh evidence and remains report-only",
+          "multi-review keeps independent evidence, deduplication, and severity gates"
+        ],
+        "codex_smoke_prompts": [
+          "Use the installed local impl skills on a fixture project and report the selected Superpowers-derived invariants without importing or invoking Superpowers runtime."
+        ],
+        "claude_smoke_prompts": [
+          "Use the installed local impl skills on a fixture project and report the selected Superpowers-derived invariants without importing or invoking Superpowers runtime."
+        ]
       }
     },
     {
@@ -221,10 +246,27 @@
         "tracking": "branch",
         "tag_pattern": null,
         "allow_prerelease": false,
-        "watched_paths": ["**/*.md", "setup", "scripts/**"]
+        "watched_paths": [
+          "**/*.md",
+          "VERSION",
+          "docs/skills.md",
+          "setup",
+          "office-hours/SKILL.md",
+          "design-consultation/SKILL.md",
+          "design-shotgun/SKILL.md",
+          "design-html/SKILL.md",
+          "spec/SKILL.md",
+          "plan-eng-review/SKILL.md",
+          "plan-eng-review/sections/review-sections.md",
+          "plan-design-review/SKILL.md",
+          "plan-design-review/sections/review-sections.md",
+          "qa-only/SKILL.md",
+          "review/SKILL.md",
+          "scripts/**"
+        ]
       },
       "target": {
-        "local_skills": ["design-doc", "impl-fe-be-doc", "multi-review", "frontend-design"],
+        "local_skills": ["create-prototype", "design-doc", "design-prototype-docs", "impl-doc", "impl-fe-be-doc", "impl-reuse-scan", "impl-verify", "multi-review"],
         "platform_targets": ["claude-code", "codex"]
       },
       "policy": {
@@ -240,17 +282,29 @@
         "license_sha256": null,
         "notice_path": null,
         "classification_evidence_url": "https://github.com/garrytan/gstack",
-        "classification_checked_at": "2026-07-29",
+        "classification_checked_at": "2026-07-30",
         "file_map": [{"upstream_path": "**/*.md", "local_path": "skills/**", "treatment": "reference-only"}]
       },
       "protection": {
         "protected_globs": ["**/scripts/**", "**/templates/**", "**/commands/**", "**/agents/**", "LICENSE*"]
       },
       "validation": {
-        "structure_checks": ["role workflow concepts only"],
-        "behavior_fixtures": [],
-        "codex_smoke_prompts": [],
-        "claude_smoke_prompts": []
+        "structure_checks": [
+          "role workflow concepts only",
+          "frontend-design is not classified as a direct gstack reference"
+        ],
+        "behavior_fixtures": [
+          "implementation plans preserve specification and engineering review gates",
+          "reuse scan borrows only search-before-building concepts",
+          "verification follows qa-only report semantics and never gstack auto-fix behavior",
+          "prototype and review workflows preserve local approval and output contracts"
+        ],
+        "codex_smoke_prompts": [
+          "Run the local planning, reuse, verification, and review skills on a fixture and check gstack-derived semantic invariants while preserving report-only and approval gates."
+        ],
+        "claude_smoke_prompts": [
+          "Run the local planning, reuse, verification, and review skills on a fixture and check gstack-derived semantic invariants while preserving report-only and approval gates."
+        ]
       }
     },
     {
@@ -312,7 +366,7 @@
         "watched_paths": ["docs/agents_md.md"]
       },
       "target": {
-        "local_skills": ["context-doc", "harness-setup", "doc-audit"],
+        "local_skills": ["context-doc", "harness-bootstrap", "harness-setup", "doc-audit"],
         "platform_targets": ["codex", "docs"]
       },
       "policy": {
@@ -328,7 +382,7 @@
         "license_sha256": null,
         "notice_path": null,
         "classification_evidence_url": "https://github.com/openai/codex/blob/main/docs/agents_md.md",
-        "classification_checked_at": "2026-07-29",
+        "classification_checked_at": "2026-07-30",
         "file_map": [{"upstream_path": "docs/agents_md.md", "local_path": "skills/context-doc/**", "treatment": "reference-only"}]
       },
       "protection": {
@@ -356,7 +410,7 @@
         "watched_paths": []
       },
       "target": {
-        "local_skills": ["context-doc", "harness-setup", "doc-audit"],
+        "local_skills": ["context-doc", "harness-bootstrap", "harness-setup", "doc-audit"],
         "platform_targets": ["claude-code", "docs"]
       },
       "policy": {
@@ -372,7 +426,7 @@
         "license_sha256": null,
         "notice_path": null,
         "classification_evidence_url": "https://code.claude.com/docs/en/memory",
-        "classification_checked_at": "2026-07-29",
+        "classification_checked_at": "2026-07-30",
         "file_map": [{"upstream_path": null, "local_path": "skills/harness-setup/templates/claude-bridge.template", "treatment": "reference-only"}]
       },
       "protection": {
@@ -383,6 +437,85 @@
         "behavior_fixtures": [],
         "codex_smoke_prompts": [],
         "claude_smoke_prompts": []
+      }
+    },
+    {
+      "id": "openai-codex-skill-creator",
+      "source_class": "official",
+      "integration_mode": "reference",
+      "lifecycle": "active",
+      "upstream": {
+        "kind": "repository",
+        "source_url": "https://github.com/openai/codex/blob/main/codex-rs/skills/src/assets/samples/skill-creator/SKILL.md",
+        "repository": "https://github.com/openai/codex",
+        "tracking": "branch",
+        "tag_pattern": null,
+        "allow_prerelease": false,
+        "watched_paths": [
+          "codex-rs/skills/src/assets/samples/skill-creator/SKILL.md",
+          "codex-rs/skills/src/assets/samples/skill-creator/references/openai_yaml.md"
+        ]
+      },
+      "target": {
+        "local_skills": ["custom-skill-design"],
+        "platform_targets": ["codex", "claude-code", "docs"]
+      },
+      "policy": {
+        "channel": "stable",
+        "pin": "commit-sha",
+        "apply": "explicit-approval",
+        "deletion": "separate-explicit-approval",
+        "license_change": "block"
+      },
+      "provenance": {
+        "license_spdx": "Apache-2.0",
+        "license_url": "https://github.com/openai/codex/blob/main/LICENSE",
+        "license_sha256": null,
+        "notice_path": null,
+        "classification_evidence_url": "https://github.com/openai/codex/blob/main/codex-rs/skills/src/assets/samples/skill-creator/SKILL.md",
+        "classification_checked_at": "2026-07-30",
+        "file_map": [
+          {
+            "upstream_path": "codex-rs/skills/src/assets/samples/skill-creator/SKILL.md",
+            "local_path": "maintainer/skills/custom-skill-design/**",
+            "treatment": "reference-only"
+          },
+          {
+            "upstream_path": "codex-rs/skills/src/assets/samples/skill-creator/references/openai_yaml.md",
+            "local_path": "maintainer/skills/custom-skill-design/prompts/design-principles.md",
+            "treatment": "reference-only"
+          }
+        ]
+      },
+      "protection": {
+        "protected_globs": [
+          "**/scripts/**",
+          "**/templates/**",
+          "**/prompts/**",
+          "**/references/**",
+          "**/assets/**",
+          "**/evals/**",
+          "LICENSE*",
+          "NOTICE*"
+        ]
+      },
+      "validation": {
+        "structure_checks": [
+          "OpenAI source files and internal helper scripts are not imported",
+          "custom-skill-design remains usable in Claude without Codex-only metadata or tooling"
+        ],
+        "behavior_fixtures": [
+          "skill design selects instruction freedom by task risk and variability",
+          "progressive disclosure loads only required resources",
+          "forward tests hide expected answers and preserve raw evidence",
+          "agents/openai.yaml is optional and synchronized when used"
+        ],
+        "codex_smoke_prompts": [
+          "Design a deterministic deployment skill, choose low instruction freedom, plan scripts and representative execution tests, and explain whether agents/openai.yaml is needed."
+        ],
+        "claude_smoke_prompts": [
+          "Design the same deterministic deployment skill without relying on Codex internal paths or agents/openai.yaml and preserve the same core workflow."
+        ]
       }
     },
     {
@@ -401,7 +534,7 @@
       },
       "target": {
         "local_skills": ["custom-skill-design"],
-        "platform_targets": ["maintainer"]
+        "platform_targets": ["codex", "claude-code", "docs"]
       },
       "policy": {
         "channel": "stable",
@@ -416,7 +549,7 @@
         "license_sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
         "notice_path": "maintainer/upstreams/provenance/anthropic-skills/NOTICE.md",
         "classification_evidence_url": "maintainer/upstreams/provenance/anthropic-skills/file-map.json",
-        "classification_checked_at": "2026-07-29",
+        "classification_checked_at": "2026-07-30",
         "file_map": [
           {
             "upstream_path": "skills/skill-creator/SKILL.md",
@@ -445,9 +578,15 @@
           "manager-only skill is excluded from the user plugin",
           "adapted source notice and Apache-2.0 license remain present"
         ],
-        "behavior_fixtures": [],
-        "codex_smoke_prompts": [],
-        "claude_smoke_prompts": []
+        "behavior_fixtures": [
+          "interview, design, authoring, evaluation, and trigger optimization remain an end-to-end manager workflow"
+        ],
+        "codex_smoke_prompts": [
+          "Design a new skill from a concrete workflow and preserve canonical-area, protected-asset, evaluation, and trigger gates."
+        ],
+        "claude_smoke_prompts": [
+          "Design a new skill from the same workflow and preserve canonical-area, protected-asset, evaluation, and trigger gates."
+        ]
       }
     },
     {

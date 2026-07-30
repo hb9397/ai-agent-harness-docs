@@ -147,7 +147,7 @@ my-project/
 
 | 스킬 | 위치 | 역할 |
 |------|------|------|
-| `custom-skill-design` | `maintainer/skills/custom-skill-design` | 새 스킬 설계·생성·검증 |
+| `custom-skill-design` | `maintainer/skills/custom-skill-design` | Anthropic adapted 기반에 OpenAI Codex 공식 `skill-creator`·Superpowers 원칙을 reference로 더한 스킬 설계·생성·검증 |
 | `skill-portfolio-maintainer` | `maintainer/skills/skill-portfolio-maintainer` | 외부 공식·유명 스킬 참고/반입 후보 탐색, provenance, 안전한 최신화 |
 | `harness-plugin-maintainer` | `maintainer/skills/harness-plugin-maintainer` | 사용자 플러그인 build, validate, release gate 관리 |
 

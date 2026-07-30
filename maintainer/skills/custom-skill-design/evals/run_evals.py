@@ -85,6 +85,40 @@ def main() -> None:
         "제공하지 않는 표면에서는 `null`" in eval_loop,
         "missing telemetry must not be fabricated",
     )
+    require(
+        "openai/codex" in skill
+        and "참조 전용" in skill
+        and "agents/openai.yaml" in principles,
+        "OpenAI Codex skill-creator reference and optional UI metadata are missing",
+    )
+    require(
+        "지침 자유도" in principles
+        and "500줄 이하" in principles
+        and "깊은 reference chain" in checklist,
+        "progressive disclosure and degree-of-freedom checks are missing",
+    )
+    require(
+        "기대 답" in eval_loop
+        and "원시 prompt" in eval_loop
+        and "공유 행동 불변 조건" in eval_loop,
+        "forward-test integrity and semantic behavior checks are missing",
+    )
+    require(
+        "README.md" in principles
+        and "대표 정상·실패·경계 입력" in checklist,
+        "resource hygiene and script execution checks are missing",
+    )
+    require(
+        "short_description" in principles
+        and "$skill-name" in principles
+        and "allow_implicit_invocation" in principles
+        and "수동 schema 점검" in checklist,
+        "agents/openai.yaml minimum schema and validation fallback are missing",
+    )
+    require(
+        "`assets/`는 결과물에 복사·사용" in principles,
+        "assets must not be treated as ordinary context references",
+    )
 
     print("custom-skill-design contract evals passed")
 

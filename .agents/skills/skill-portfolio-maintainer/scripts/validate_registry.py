@@ -123,6 +123,52 @@ def validate_registry(root: Path, errors: list[str]) -> None:
             if sid not in source_ids:
                 error(errors, f"{item.get('name')}: unknown source id {sid}")
 
+    # External relationships are declared twice for different consumers:
+    # registry.json routes an upstream to local targets, while current-skills.json
+    # explains each local skill's provenance. Keep both views exact. The local
+    # internal-harness-native authorship record is intentionally excluded because
+    # current-skills records the strongest external relationship for a skill.
+    current_by_name = {
+        item.get("name"): item
+        for item in skills
+        if isinstance(item, dict) and item.get("name")
+    }
+    targets_by_source: dict[str, set[str]] = {}
+    for source in registry["sources"]:
+        sid = source.get("id")
+        if not sid or sid == "internal-harness-native":
+            continue
+        targets = set(source.get("target", {}).get("local_skills", []))
+        targets_by_source[sid] = targets
+        for skill_name in targets:
+            item = current_by_name.get(skill_name)
+            if item is None:
+                error(errors, f"{sid}: target skill missing from current-skills.json: {skill_name}")
+            elif sid not in item.get("sources", []):
+                error(
+                    errors,
+                    f"{sid}: target {skill_name} does not declare the source in current-skills.json",
+                )
+
+    for skill_name, item in current_by_name.items():
+        for sid in item.get("sources", []):
+            if sid == "internal-harness-native":
+                continue
+            if skill_name not in targets_by_source.get(sid, set()):
+                error(
+                    errors,
+                    f"{skill_name}: source {sid} does not target the skill in registry.json",
+                )
+
+    for sid in ("superpowers", "gstack", "openai-codex-skill-creator"):
+        source = next((item for item in registry["sources"] if item.get("id") == sid), None)
+        if source is None:
+            continue
+        validation = source.get("validation", {})
+        for field in ("behavior_fixtures", "codex_smoke_prompts", "claude_smoke_prompts"):
+            if not validation.get(field):
+                error(errors, f"{sid}: validation.{field} must declare semantic behavior coverage")
+
 
 def has_accepted_adapted_status(text: str) -> bool:
     return bool(

@@ -6,7 +6,7 @@
 
 - 전체 상태: `not-release-ready`
 - 플러그인: `ai-agent-harness` `0.1.0`
-- 아카이브 SHA-256: `8c576a8ed68bf0a3ea035f04afc6890fd3079b1ab5915e4aa8ff8b07e145623e`
+- 아카이브 SHA-256: `f15060671deaedcd195760e738ba491be29a4e25c19e5e0d32336409311efd47`
 - 릴리스 게이트: `not-release-ready`
 - push/tag/release 생성: `false`
 

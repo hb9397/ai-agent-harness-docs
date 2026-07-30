@@ -33,7 +33,48 @@ def github_repo_api(repository: str) -> str:
     return f"https://api.github.com/repos/{quote(owner, safe='')}/{quote(repository_name, safe='')}"
 
 
-def resolve_github_source(source: dict[str, Any], fixture: dict[str, Any] | None = None) -> dict[str, Any]:
+def exact_watched_paths(source: dict[str, Any]) -> list[str]:
+    paths = source.get("upstream", {}).get("watched_paths", [])
+    wildcard_chars = {"*", "?", "[", "]"}
+    return [
+        path
+        for path in paths
+        if isinstance(path, str)
+        and path
+        and not any(char in path for char in wildcard_chars)
+    ]
+
+
+def resolve_watched_paths(base: str, ref: str, source: dict[str, Any]) -> list[dict[str, Any]]:
+    observations: list[dict[str, Any]] = []
+    for path in exact_watched_paths(source):
+        url = (
+            f"{base}/commits?sha={quote(ref, safe='')}"
+            f"&path={quote(path, safe='')}&per_page=1"
+        )
+        try:
+            commits = http_json(url)
+            if isinstance(commits, list) and commits:
+                commit = commits[0]
+                observations.append({
+                    "path": path,
+                    "status": "ok",
+                    "latest_commit_sha": commit.get("sha"),
+                    "latest_commit_url": commit.get("html_url"),
+                })
+            else:
+                observations.append({"path": path, "status": "not-found"})
+        except Exception as exc:  # noqa: BLE001 - preserve the source-level observation
+            observations.append({"path": path, "status": "error", "error": str(exc)})
+    return observations
+
+
+def resolve_github_source(
+    source: dict[str, Any],
+    fixture: dict[str, Any] | None = None,
+    *,
+    verify_watched_paths: bool = False,
+) -> dict[str, Any]:
     sid = source["id"]
     if fixture is not None:
         if sid in fixture:
@@ -64,7 +105,10 @@ def resolve_github_source(source: dict[str, Any], fixture: dict[str, Any] | None
             if obj.get("type") == "tag":
                 tag_obj = http_json(obj["url"])
                 sha = tag_obj.get("object", {}).get("sha")
-            return {"status": "ok", "ref": tag, "sha": sha, "source_url": release.get("html_url")}
+            result = {"status": "ok", "ref": tag, "sha": sha, "source_url": release.get("html_url")}
+            if verify_watched_paths:
+                result["watched_paths"] = resolve_watched_paths(base, tag, source)
+            return result
         release_fallback = True
 
     if tracking in {"release", "branch"}:
@@ -83,6 +127,8 @@ def resolve_github_source(source: dict[str, Any], fixture: dict[str, Any] | None
         }
         if release_fallback:
             result["note"] = "No matching stable release; exact repository default branch observed."
+        if verify_watched_paths:
+            result["watched_paths"] = resolve_watched_paths(base, branch, source)
         return result
 
     return {"status": "skipped", "reason": f"unsupported-tracking:{tracking}"}
@@ -104,13 +150,36 @@ def update_observed(lock: dict[str, Any], source_id: str, observed: dict[str, An
         state = {"id": source_id, "accepted": None, "embedded": None, "packaged": None, "released": None}
         states.append(state)
     previous = state.get("observed") or {}
+    watched_paths = observed.get("watched_paths")
+    watched_paths_complete = (
+        isinstance(watched_paths, list)
+        and bool(watched_paths)
+        and all(item.get("status") != "error" for item in watched_paths)
+    )
+    incomplete_note = (
+        "Watched path verification incomplete; previous path observations preserved."
+        if isinstance(watched_paths, list) and bool(watched_paths) and not watched_paths_complete
+        else None
+    )
+    note_parts = [
+        note
+        for note in (observed.get("note"), incomplete_note)
+        if note
+    ]
+    note = " ".join(note_parts) or (
+        f"Observed by check_upstreams.py with status={observed.get('status')}"
+    )
     state["observed"] = {
         "source_url": observed.get("source_url") or previous.get("source_url"),
         "checked_at": checked_at(),
         "ref": observed.get("ref") or previous.get("ref"),
         "sha": observed.get("sha") or previous.get("sha"),
-        "note": observed.get("note") or f"Observed by check_upstreams.py with status={observed.get('status')}",
+        "note": note,
     }
+    if watched_paths_complete:
+        state["observed"]["watched_paths"] = watched_paths
+    elif "watched_paths" in previous:
+        state["observed"]["watched_paths"] = previous["watched_paths"]
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -124,11 +193,23 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="write only lock.states[].observed after successful checks",
     )
+    parser.add_argument(
+        "--source",
+        action="append",
+        default=[],
+        help="check only this registered source id; repeat for multiple sources",
+    )
+    parser.add_argument(
+        "--verify-watched-paths",
+        action="store_true",
+        help="also query the latest commit for each exact watched path; glob paths remain source-level only",
+    )
     return parser
 
 
 def main(argv: list[str]) -> int:
-    args = build_parser().parse_args(argv)
+    parser = build_parser()
+    args = parser.parse_args(argv)
     root = args.root.resolve()
 
     registry_path = safe_join(root, "maintainer/upstreams/registry.json", reject_symlinks=True)
@@ -137,12 +218,34 @@ def main(argv: list[str]) -> int:
     lock = load_json(lock_path)
     fixture = load_json(args.fixture) if args.fixture else None
 
-    report = {"schema_version": "1.0.0", "mode": "check", "write_observed": args.write_observed, "results": []}
-    for source in registry.get("sources", []):
-        if source.get("id") == "internal-harness-native":
-            continue
+    sources = [
+        source
+        for source in registry.get("sources", [])
+        if source.get("id") != "internal-harness-native"
+    ]
+    requested = set(args.source)
+    known = {source.get("id") for source in sources}
+    unknown = sorted(requested - known)
+    if unknown:
+        parser.error(f"unknown source id(s): {', '.join(unknown)}")
+    if requested:
+        sources = [source for source in sources if source.get("id") in requested]
+
+    report = {
+        "schema_version": "1.0.0",
+        "mode": "check",
+        "write_observed": args.write_observed,
+        "verify_watched_paths": args.verify_watched_paths,
+        "requested_sources": sorted(requested),
+        "results": [],
+    }
+    for source in sources:
         try:
-            observed = resolve_github_source(source, fixture)
+            observed = resolve_github_source(
+                source,
+                fixture,
+                verify_watched_paths=args.verify_watched_paths,
+            )
         except Exception as exc:  # noqa: BLE001 - report and preserve lock
             observed = {"status": "error", "error": str(exc), "note": "current pinned state preserved"}
         report["results"].append({"id": source.get("id"), "observed": observed})

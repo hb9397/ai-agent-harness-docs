@@ -1,7 +1,8 @@
 {
   "id": "context-and-commit-reference-candidate",
-  "checked_at": "2026-07-29",
-  "status": "candidate-reference",
+  "checked_at": "2026-07-30",
+  "status": "mixed-relationship-audit",
+  "relationship_summary": "This audit groups active reference sources with the already accepted Anthropic adapted relationship; each candidate_sources entry is authoritative for its own decision.",
   "internal_skill_group": ["context-doc", "harness-setup", "doc-audit", "commit", "custom-skill-design"],
   "candidate_sources": [
     {
@@ -37,12 +38,22 @@
     },
     {
       "source_id": "skill-creator-guides",
-      "source_url": "https://claude.com/skills",
-      "officiality": "Anthropic skill platform documentation",
-      "observed_activity": "Official Claude skills page observed 2026-07-29.",
-      "license": "Documentation reference only.",
-      "security_surface": "None for reference-only documentation.",
-      "fit": "Skill authoring model and structure reference for custom-skill-design.",
+      "source_url": "https://github.com/anthropics/skills/tree/main/skills/skill-creator",
+      "officiality": "Anthropic official skill source",
+      "observed_activity": "Latest main observed at b29e7cf65e5cb78a5ac33d582270551bc74a14eb on 2026-07-30.",
+      "license": "Apache-2.0; adapted provenance and NOTICE preserved.",
+      "security_surface": "Manager-only instructions and protected prompts/templates/evals; no upstream runtime is executed.",
+      "fit": "Translated and substantially restructured foundation for custom-skill-design.",
+      "decision": "accepted adapted relationship; explicit review required for future observed changes."
+    },
+    {
+      "source_id": "openai-codex-skill-creator",
+      "source_url": "https://github.com/openai/codex/blob/main/codex-rs/skills/src/assets/samples/skill-creator/SKILL.md",
+      "officiality": "OpenAI Codex official system skill source",
+      "observed_activity": "Codex main observed at b1ccaa0e080f59cfd71a136f6fcc60a4f2d60fba; watched SKILL.md last changed at 59533a2c26e349c59417e4773b930c26211d7bdd. The official references/openai_yaml.md raw content matched the locally installed Codex system reference after line-ending normalization on 2026-07-30; path-level last-commit lookup was rate-limited.",
+      "license": "Apache-2.0; reference-only with no file import.",
+      "security_surface": "No imported init or validator scripts; platform-native tools may be invoked only through public skill contracts when available.",
+      "fit": "Conciseness, degrees of freedom, progressive disclosure, resource roles, validation integrity, and optional agents/openai.yaml guidance.",
       "decision": "reference-only."
     }
   ]

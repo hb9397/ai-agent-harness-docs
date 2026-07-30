@@ -249,13 +249,29 @@ def parse_args() -> argparse.ArgumentParser:
 
 def stable_release(releases: list[dict[str, Any]], tag_pattern: str | None) -> dict[str, Any] | None:
     pattern = re.compile("^" + (tag_pattern or ".*").replace("*", ".*") + "$")
-    for release in releases:
-        if release.get("draft") or release.get("prerelease"):
-            continue
-        tag = release.get("tag_name") or ""
-        if pattern.match(tag):
-            return release
-    return None
+    candidates = [
+        release
+        for release in releases
+        if not release.get("draft")
+        and not release.get("prerelease")
+        and pattern.match(release.get("tag_name") or "")
+    ]
+    if not candidates:
+        return None
+
+    # GitHub currently returns releases newest-first, but selecting explicitly by
+    # publication/creation time keeps "latest stable" deterministic for fixtures,
+    # proxies, or future API ordering changes. Preserve input order only when no
+    # usable timestamp exists.
+    if any(release.get("published_at") or release.get("created_at") for release in candidates):
+        return max(
+            candidates,
+            key=lambda release: (
+                release.get("published_at") or release.get("created_at") or "",
+                release.get("tag_name") or "",
+            ),
+        )
+    return candidates[0]
 
 
 def error(message: str) -> int:

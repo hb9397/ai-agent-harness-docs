@@ -11,11 +11,11 @@ allowed-tools: Read, Write, Glob, Grep
     ↓
 custom-skill-design  ← 지금 여기
     ↓
-생성된 스킬 디렉토리 (SKILL.md + prompts/ + templates/)
+생성된 스킬 디렉토리 (SKILL.md + 필요한 보조 자산만)
     ↓  ← eval 루프로 품질 검증
     ↓  ← description 최적화로 트리거 정확도 향상
     ↓
-IDE / Claude Code 에서 즉시 사용 가능한 완성 스킬
+Codex CLI/App / Claude Code/Desktop Code에서 사용 가능한 완성 스킬
 ```
 
 ---
@@ -82,6 +82,10 @@ shell 구문으로 존재 여부를 추측하지 않는다.
 - 트리거 상황 (3가지 이상):
 - 입력 / 출력:
 - 필요 도구:
+- 지침 자유도: 높음 / 중간 / 낮음
+  (창의적·가변 작업은 높게, 실패 비용이 큰 취약 절차는 낮게)
+- 보조 자산 계획: 없음 / scripts / references / assets / prompts / templates
+- 대상 플랫폼 메타데이터: 공통만 / Codex `agents/openai.yaml` 추가
 - 테스트 케이스 필요 여부: Yes / No
   (출력이 객관적으로 검증 가능하면 Yes 권장)
 - 병렬 처리 여부:
@@ -107,9 +111,18 @@ shell 구문으로 존재 여부를 추측하지 않는다.
 | 인터뷰·분석 로직이 복잡 | + prompts/interview.md |
 | 출력 양식 고정 | + templates/output.md |
 | 독립 관점 3개 이상 | + prompts/[관점별].md |
-| 복합 구조 | SKILL.md + prompts/ + templates/ |
+| 반복되는 결정론적 작업 | + scripts/[도구].py 또는 플랫폼 중립 스크립트 |
+| 필요할 때만 읽을 상세 지식 | + references/[주제].md |
+| 결과물에 복사·사용할 파일 | + assets/[파일] |
+| Codex UI 메타데이터가 실제로 필요 | + agents/openai.yaml |
+| 복합 구조 | SKILL.md + 승인된 보조 자산만 |
 
 파일 구성·작성 규칙은 `prompts/design-principles.md` 참조.
+
+Codex의 공개 `$skill-creator` 또는 플랫폼 기본 validator가 현재 환경에 제공되면 그
+공개 계약을 **보조 검사**로 사용할 수 있다. 로컬 설치 절대경로나 해당 스킬 내부
+스크립트 경로를 하드코딩하지 않는다. Claude에서도 같은 핵심 스킬이 작동하도록
+공통 자체 체크리스트와 eval을 항상 기준으로 유지한다.
 
 ### 3-2. 저장 경로 결정
 
@@ -257,8 +270,10 @@ assertions 초안 작성 (실행 중 병행)
 파일 구조:
 {skill-name}/
 ├── SKILL.md
-├── prompts/
-├── templates/
+├── prompts/ 또는 references/     # 필요한 경우만
+├── templates/ 또는 assets/       # 필요한 경우만
+├── scripts/                      # 결정론적 반복 작업이 있는 경우만
+├── agents/openai.yaml            # Codex UI 메타데이터가 필요한 경우만
 └── evals/evals.json
 
 배포 방법:
@@ -287,6 +302,12 @@ assertions 초안 작성 (실행 중 병행)
 경계에 맞게 크게 재구성한 수정 파생물이다. 원본은 Apache License 2.0으로 배포된다.
 적용한 커밋과 파일 대응표는
 `maintainer/upstreams/provenance/anthropic-skills/`에서 관리한다.
+
+또한
+[`openai/codex`의 공식 `skill-creator`](https://github.com/openai/codex/blob/main/codex-rs/skills/src/assets/samples/skill-creator/SKILL.md)
+에서 간결성, 작업별 지침 자유도, 점진적 공개, 보조 자산 역할, 검증 무결성,
+Codex용 `agents/openai.yaml` 관리 원칙을 **참조 전용**으로 사용한다. OpenAI 원본
+파일·스크립트는 이 스킬에 복사하지 않으며, 해당 관계는 `reference`로 추적한다.
 
 ## 검증
 

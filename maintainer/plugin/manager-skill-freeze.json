@@ -11,11 +11,11 @@
       "files": [
         {
           "path": "maintainer/skills/custom-skill-design/evals/run_evals.py",
-          "sha256": "4842d62821177debcc8ccf58fc399488a30e05db325c45a25442e6b9d4a77b4b"
+          "sha256": "43b0390fe078a03cfac0f3531b705e7453d2b92146ad00a84d7d2c3ebbc67cc6"
         },
         {
           "path": "maintainer/skills/custom-skill-design/prompts/checklist.md",
-          "sha256": "267750dd7fa7a1c3e89bf1812c479908f0ae8d6d83b93a12d923f333a073c4ec"
+          "sha256": "84e0a1d41ac0e7293603c0161904ea6228dd0b03b44f679108f80de8c24205cc"
         },
         {
           "path": "maintainer/skills/custom-skill-design/prompts/description-optimizer.md",
@@ -23,11 +23,11 @@
         },
         {
           "path": "maintainer/skills/custom-skill-design/prompts/design-principles.md",
-          "sha256": "37e178d70e787c4dfa106d411979f947035107012fbd532e42a0ce1c018f77e7"
+          "sha256": "89986ce1167dec6c9beea66115972feef68f48c912522b055da71c035a04422e"
         },
         {
           "path": "maintainer/skills/custom-skill-design/prompts/eval-loop.md",
-          "sha256": "eff005dce945b8a6e9c27c713d57e10a497b2a5e63898ee535db27c787c83adb"
+          "sha256": "d91bac083ba2c05b2d40a21b97a35328aaeb679b66a418bfb680b5339b236e33"
         },
         {
           "path": "maintainer/skills/custom-skill-design/prompts/interview.md",
@@ -35,7 +35,7 @@
         },
         {
           "path": "maintainer/skills/custom-skill-design/SKILL.md",
-          "sha256": "2fd378d986bfeb79e794487f76fd360f7c4bc72076e1770c50767d14a5ee3e29"
+          "sha256": "9370de8a7df9bb2795abd7ad64c0fa3f83afa02caa1a62f4c1cc4054c269dd27"
         },
         {
           "path": "maintainer/skills/custom-skill-design/templates/skill-summary.md",
@@ -171,7 +171,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/evals/run_evals.py",
-          "sha256": "f575c998740b06007070ca6444dbd1ad9ba73401c0bbd3879bac1dbb44e1ea81"
+          "sha256": "be85d5983008ba06af17123ece1a9423d05c56edd88a9baf5508a25f73dd3836"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/references/.gitkeep",
@@ -195,7 +195,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/check_upstreams.py",
-          "sha256": "6889914fac0b8ee5c3a54e48a84bd5564362eb8a61ae38037224fa65186b42ec"
+          "sha256": "05d1d903fc94e5f8b6fa9d8919ca58af59a090b9502f4487b21ebaa8bfeb1e18"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/discover_upstreams.py",
@@ -203,7 +203,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/portfolio_common.py",
-          "sha256": "c8b77b79eb16b2c3de41c8775177e93d97bb116094a57e8a9c601413b2f49cce"
+          "sha256": "63679ccda61e7c126de292a01f0561dda17629d9ce9b12f9949e56dc2a775bb4"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/promote_upstream.py",
@@ -219,11 +219,11 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py",
-          "sha256": "3d4342e45517c447eb9d3a5cb0a07040eaefa51a6d7f8bb493dae97a14754050"
+          "sha256": "76df50f4d12331aa6dc85f29740b07a786470d5057940087abc4680ad08f2a12"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/SKILL.md",
-          "sha256": "d8b3b8b4355b4de90fb299b120d41e760527fe79bf0e627771e2b117c79f9828"
+          "sha256": "256efab35e0d9beeb7c8c773f870634319f0eb4ffa39d9f4fb3c0108ca85da4d"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/templates/.gitkeep",

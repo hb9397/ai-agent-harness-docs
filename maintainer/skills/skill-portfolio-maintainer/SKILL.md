@@ -71,6 +71,10 @@ inventory
 
 - 등록된 upstream의 latest stable release/tag/branch SHA를 확인한다.
 - prerelease는 제외한다.
+- 특정 출처만 확인할 때는 `--source {source-id}`를 반복해서 사용한다.
+- `--verify-watched-paths`를 사용하면 glob이 아닌 정확한 `watched_paths`마다 마지막
+  변경 커밋을 추가로 확인한다. 저장소 branch head 변경과 실제 대상 파일 변경을
+  같은 것으로 판정하지 않는다.
 - GitHub 장애·rate limit이 발생해도 현재 pinned 상태를 손상하지 않는다.
 - `--write-observed`를 명시한 경우에도 `observed`만 갱신한다.
 

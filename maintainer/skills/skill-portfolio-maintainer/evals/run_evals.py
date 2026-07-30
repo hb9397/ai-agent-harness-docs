@@ -27,6 +27,7 @@ from portfolio_common import (  # noqa: E402
     is_protected_asset_path,
     safe_join,
     sha256_path,
+    stable_release,
 )
 
 
@@ -181,6 +182,86 @@ def test_check_uses_exact_default_branch() -> None:
     assert f"{base}/branches" not in calls
 
 
+def test_check_observes_only_exact_watched_paths() -> None:
+    base = "https://api.github.com/repos/example/watched"
+    calls: list[str] = []
+    original_http_json = check_upstreams.http_json
+
+    def fake_http_json(url: str):
+        calls.append(url)
+        if url == base:
+            return {"default_branch": "main"}
+        if url == f"{base}/branches/main":
+            return {"commit": {"sha": "a" * 40}}
+        if url == f"{base}/commits?sha=main&path=skills%2Fdemo%2FSKILL.md&per_page=1":
+            return [{
+                "sha": "b" * 40,
+                "html_url": f"https://github.com/example/watched/commit/{'b' * 40}",
+            }]
+        raise AssertionError(f"unexpected GitHub API call: {url}")
+
+    check_upstreams.http_json = fake_http_json
+    try:
+        observed = check_upstreams.resolve_github_source(
+            {
+                "id": "watched-path-fixture",
+                "upstream": {
+                    "repository": "https://github.com/example/watched",
+                    "tracking": "branch",
+                    "watched_paths": ["skills/demo/SKILL.md", "scripts/**"],
+                },
+            },
+            verify_watched_paths=True,
+        )
+    finally:
+        check_upstreams.http_json = original_http_json
+
+    assert observed["watched_paths"] == [{
+        "path": "skills/demo/SKILL.md",
+        "status": "ok",
+        "latest_commit_sha": "b" * 40,
+        "latest_commit_url": f"https://github.com/example/watched/commit/{'b' * 40}",
+    }]
+    assert all("scripts" not in call for call in calls)
+
+
+def test_check_source_filter_is_exact() -> None:
+    completed = run([
+        str(SCRIPTS / "check_upstreams.py"),
+        "--fixture",
+        str(FIXTURES / "check_upstreams.json"),
+        "--source",
+        "im-not-ai",
+    ])
+    report = parse_json(completed.stdout)
+    assert report["requested_sources"] == ["im-not-ai"]
+    assert [item["id"] for item in report["results"]] == ["im-not-ai"]
+
+
+def test_latest_stable_release_does_not_depend_on_api_order() -> None:
+    releases = [
+        {
+            "tag_name": "v1.0.0",
+            "draft": False,
+            "prerelease": False,
+            "published_at": "2026-01-01T00:00:00Z",
+        },
+        {
+            "tag_name": "v3.0.0-rc.1",
+            "draft": False,
+            "prerelease": True,
+            "published_at": "2026-03-01T00:00:00Z",
+        },
+        {
+            "tag_name": "v2.0.0",
+            "draft": False,
+            "prerelease": False,
+            "published_at": "2026-02-01T00:00:00Z",
+        },
+    ]
+    assert stable_release(releases, "v*")["tag_name"] == "v2.0.0"
+
+
 def test_check_date_override_is_deterministic() -> None:
     original = os.environ.get("HARNESS_UPSTREAM_CHECKED_AT")
     try:
@@ -209,6 +290,51 @@ def test_check_date_override_is_deterministic() -> None:
             os.environ.pop("HARNESS_UPSTREAM_CHECKED_AT", None)
         else:
             os.environ["HARNESS_UPSTREAM_CHECKED_AT"] = original
+
+
+def test_partial_watched_path_errors_preserve_previous_observations() -> None:
+    lock = {
+        "states": [{
+            "id": "partial-path-fixture",
+            "observed": {
+                "source_url": "https://github.com/example/repo/tree/main",
+                "checked_at": "2026-07-29",
+                "ref": "main",
+                "sha": "a" * 40,
+                "note": "previous",
+                "watched_paths": [{
+                    "path": "SKILL.md",
+                    "status": "ok",
+                    "latest_commit_sha": "b" * 40,
+                }],
+            },
+            "accepted": None,
+            "embedded": None,
+            "packaged": None,
+            "released": None,
+        }]
+    }
+    check_upstreams.update_observed(
+        lock,
+        "partial-path-fixture",
+        {
+            "status": "ok",
+            "ref": "main",
+            "sha": "c" * 40,
+            "source_url": "https://github.com/example/repo/tree/main",
+            "note": "No matching stable release; default branch observed.",
+            "watched_paths": [{
+                "path": "SKILL.md",
+                "status": "error",
+                "error": "HTTP 403: rate limit exceeded",
+            }],
+        },
+    )
+    observed = lock["states"][0]["observed"]
+    assert observed["sha"] == "c" * 40
+    assert observed["watched_paths"][0]["latest_commit_sha"] == "b" * 40
+    assert "incomplete" in observed["note"].lower()
+    assert "No matching stable release" in observed["note"]
 
 
 def test_actual_tree_hashes_and_post_stage_mutation_block() -> None:
@@ -286,6 +412,12 @@ def test_imported_status_check_is_prose_language_neutral() -> None:
     assert validate_registry.has_accepted_adapted_status("accepted adapted")
     assert validate_registry.has_accepted_adapted_status("`accepted` `adapted`")
     assert not validate_registry.has_accepted_adapted_status("승인된 변형 출처")
+
+
+def test_external_relationships_and_behavior_contracts_are_consistent() -> None:
+    errors: list[str] = []
+    validate_registry.validate_registry(ROOT, errors)
+    assert errors == [], "\n".join(errors)
 
 
 def test_self_update_blocks_same_session() -> None:
@@ -403,10 +535,15 @@ def main() -> int:
         test_safe_join_rejects_sibling_prefix_and_absolute_paths,
         test_tree_hash_blocks_binary_content,
         test_check_uses_exact_default_branch,
+        test_check_observes_only_exact_watched_paths,
+        test_check_source_filter_is_exact,
+        test_latest_stable_release_does_not_depend_on_api_order,
         test_check_date_override_is_deterministic,
+        test_partial_watched_path_errors_preserve_previous_observations,
         test_actual_tree_hashes_and_post_stage_mutation_block,
         test_public_scripts_have_real_help,
         test_imported_status_check_is_prose_language_neutral,
+        test_external_relationships_and_behavior_contracts_are_consistent,
         test_self_update_blocks_same_session,
         test_protected_asset_requires_asset_approval,
         test_protected_asset_path_variants_are_classified,

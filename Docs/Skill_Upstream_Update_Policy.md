@@ -18,11 +18,28 @@
 |---|---|
 | `observed` | 읽기 전용 검토에서 확인한 최신 릴리스, 태그, 브랜치 또는 문서 상태 |
 | `accepted` | 통합 후보로 관리자가 승인한 업스트림 ref |
-| `embedded` | 출처가 정본 `skills/`에 포함된 상태 |
+| `embedded` | 출처가 사용자 정본 `skills/` 또는 관리자 정본 `maintainer/skills/`에 반영된 상태 |
 | `packaged` | 출처가 검증된 플러그인 산출물에 포함된 상태 |
 | `released` | 출처가 릴리스된 플러그인 버전을 통해 사용자에게 제공되는 상태 |
 
 참조 출처는 검토일과 선택적 ref를 사용한다. 직접 반입은 `accepted` 전에 변경 불가능한 SHA와 파일 해시가 필요하다.
+
+GitHub 저장소의 기본 브랜치 SHA가 바뀌었다고 해서 감시 대상 스킬 파일이 바뀐 것은
+아니다. 정확한 경로를 등록한 출처는 다음처럼 branch/release와 watched path의 마지막
+변경을 함께 확인한다. glob 경로는 GitHub API에서 경로 단위로 해석하지 않고
+source-level SHA와 후속 의미 diff로 판정한다.
+
+```bash
+python maintainer/skills/skill-portfolio-maintainer/scripts/check_upstreams.py --source openai-codex-skill-creator --verify-watched-paths
+```
+
+`--write-observed` 없이 실행하면 읽기 전용이다. 이 결과도 최신 파일의 자동 반입이나
+`accepted` 승격을 뜻하지 않는다.
+
+exact watched path 중 하나라도 rate limit·네트워크·API 오류가 발생하면 새 path 관측
+묶음 전체를 lock에 저장하지 않는다. 직전의 완전한 path 관측이 있으면 그대로 보존하고,
+없으면 source-level ref·SHA와 불완전 사유만 기록한다. 일부 성공 결과만 섞어서
+“경로 검증 완료”로 표시하지 않는다.
 
 ## 승인 게이트
 

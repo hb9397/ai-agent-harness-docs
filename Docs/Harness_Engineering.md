@@ -69,7 +69,7 @@ AI Agent Harness는 Codex, Claude Code 등 여러 에이전트가 같은 프로�
 
 | 스킬 | 위치 | 역할 |
 |------|------|------|
-| `custom-skill-design` | `maintainer/skills/custom-skill-design` | 반복 업무를 새 스킬로 설계·생성·검증 |
+| `custom-skill-design` | `maintainer/skills/custom-skill-design` | Anthropic adapted 기반과 OpenAI Codex 공식 `skill-creator` reference 원칙으로 반복 업무를 새 스킬로 설계·생성·검증 |
 | `skill-portfolio-maintainer` | `maintainer/skills/skill-portfolio-maintainer` | 외부 공식·유명 스킬 참고/반입 후보 탐색, provenance 관리 |
 | `harness-plugin-maintainer` | `maintainer/skills/harness-plugin-maintainer` | 플러그인 build, validate, release gate, 설치 표면 증적 관리 |
 

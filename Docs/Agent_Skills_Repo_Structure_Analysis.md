@@ -218,24 +218,22 @@ my-repo/
 
 | 스킬 | 한글 역할 요약 | 의도가 비슷한 외부 (참고용) |
 |------|----------------|-----------------------------|
-| `rfp-ingest` | RFP PDF에서 특정 SFR(성능요구사항)을 골라 추출·해석하고 화면 후보를 매핑한다 (결과는 대화 컨텍스트로 전달, 파일 생성 없음) | 직접 대응 없음 (도메인 특화) |
 | `design-doc` | 인터뷰형 대화로 요구사항·동작 흐름·집중 로직·인터페이스·데이터를 끌어내 `OUTPUT_V2` 설계 문서를 만든다 | superpowers `brainstorming`, gstack `/office-hours`, openai `define-goal` |
 | `context-doc` | 설계 문서를 얇은 `CLAUDE.md`/`AGENTS.md` + 주제별 `.docs/root-context/*-context.md` 7종으로 분할 생성해 에이전트 컨텍스트를 만든다 | 직접 대응 없음 (Karpathy 4원칙이 일부 가드 역할) |
-| `harness-bootstrap` | 문서 없는 기존/레거시 코드베이스를 스캔해 설계 문서·CLAUDE/AGENTS·instruction 문서를 역추출한다 | superpowers `brainstorming` + `writing-plans` 패턴 일부 유사 |
-| `design-prototype-docs` | 프로토타입을 만들기 전에 화면 목록·흐름·기능·레이아웃·더미 데이터를 정리한 목업 디자인 문서를 만든다 | anthropics `frontend-design`, gstack `/design-consultation`·`/design-shotgun` |
-| `create-prototype` | 목업 디자인 문서를 입력으로 받아 실제 HTML/CSS/JSON 프로토타입을 생성한다 | anthropics `web-artifacts-builder`, gstack `/design-html` |
-| `frontend-design` | 실제 UI 구현 시 디자인 품질 기준(레이아웃·반응형·접근성·디자인 시스템·일반 AI 클리셰 방지)을 적용한다 | anthropics `frontend-design`, gstack `/design-review` |
-| `impl-fe-be-doc` | FE/BE 페어 다중 기능 풀스택 또는 RFP/SFR 기반 다중 화면 명세에 특화된 작업 지침서(`INF/BE/FE-XX` 태스크)를 만든다 | superpowers `writing-plans` + `executing-plans`, gstack `/autoplan`·`/plan-eng-review` |
-| `impl-doc` | 단일·소규모 범용 작업 폴백이다. BE 단일 기능(엔드포인트 1~수개, 단일 도메인 로직), FE 단일 기능(컴포넌트/훅/화면 1개 신규·수정), CLI·자동화·라이브러리 작업지침서(`INIT/CORE/IO/TEST/PKG`)를 만든다 | superpowers `writing-plans` + `executing-plans` |
-| `impl-reuse-scan` | 작업지침서 산출 후 구현 직전, 공통 API/DTO/Entity/Component/Hook/Util 같은 기존 자산을 발견·보고하고 사용자 결정 게이트를 둔다. 코드/지침서는 자동 수정하지 않는다 | 외부 직접 대응 없음 — 선행 자산 검색 + 사용자 결정 게이트 |
-| `impl-verify` | 구현 후 또는 Phase 종료 시 작업지침서 검증 기준을 추출해 자동(CLI/curl/테스트) + 수동 체크리스트 기반 PASS/FAIL/SKIP 매트릭스를 만든다. 코드/지침서는 수정하지 않는다 | superpowers `verification-before-completion` / Claude Code `/code-review` 의 검증 layer |
+| `harness-bootstrap` | 문서 없는 기존/레거시 코드베이스를 스캔해 설계 문서·CLAUDE/AGENTS·instruction 문서를 역추출한다 | OpenAI `AGENTS.md`, Claude memory 공식 문서 |
+| `design-prototype-docs` | 프로토타입을 만들기 전에 화면 목록·흐름·기능·레이아웃·더미 데이터를 정리한 목업 디자인 문서를 만든다 | OpenAI Product Design, gstack `/design-consultation`·`/design-shotgun` |
+| `create-prototype` | 목업 디자인 문서를 입력으로 받아 실제 HTML/CSS/JSON 프로토타입을 생성한다 | OpenAI Product Design, gstack `/design-html` |
+| `frontend-design` | 실제 UI 구현 시 디자인 품질 기준(레이아웃·반응형·접근성·디자인 시스템·일반 AI 클리셰 방지)을 적용한다 | anthropics `frontend-design` adapted + OpenAI Product Design reference |
+| `impl-fe-be-doc` | FE/BE 페어 다중 기능 풀스택 또는 RFP/SFR 기반 다중 화면 명세에 특화된 작업 지침서(`INF/BE/FE-XX` 태스크)를 만든다 | superpowers `writing-plans`·TDD·인계 정책, gstack `/spec`·`/plan-eng-review`·`/plan-design-review` |
+| `impl-doc` | 단일·소규모 범용 작업 폴백이다. BE 단일 기능(엔드포인트 1~수개, 단일 도메인 로직), FE 단일 기능(컴포넌트/훅/화면 1개 신규·수정), CLI·자동화·라이브러리 작업지침서(`INIT/CORE/IO/TEST/PKG`)를 만든다 | superpowers `writing-plans`·TDD, gstack `/spec`·`/plan-eng-review` |
+| `impl-reuse-scan` | 작업지침서 산출 후 구현 직전, 공통 API/DTO/Entity/Component/Hook/Util 같은 기존 자산을 발견·보고하고 사용자 결정 게이트를 둔다. 코드/지침서는 자동 수정하지 않는다 | superpowers 기존 패턴·working-example 우선, gstack Search Before Building (둘 다 제한적 참조) |
+| `impl-verify` | 구현 후 또는 Phase 종료 시 작업지침서 검증 기준을 추출해 자동(CLI/curl/테스트) + 수동 체크리스트 기반 PASS/FAIL/SKIP 매트릭스를 만든다. 코드/지침서는 수정하지 않는다 | superpowers `verification-before-completion`·`systematic-debugging`, gstack 수정 없는 `/qa-only` |
 | `multi-review` | Security/Performance/Maintainability/Testing 4관점을 병렬로 돌려 코드 리뷰 결과를 모은다 | superpowers `requesting-code-review`, Claude Code `/code-review`, gstack `/review`·`/devex-review` |
 | `pre-commit` | 커밋 직전에 빈 catch·타임아웃 누락·민감정보·TODO 형식·테스트 부재 같은 규칙 위반을 검사한다 | superpowers `verification-before-completion`, Claude Code `verify` |
 | `commit` | Conventional Commits + 한글 description(50자 이내) + why 중심 body 규칙으로 커밋 메시지를 생성한다 | Claude Code 내장 commit 흐름 |
 | `code-comment` | 변경된 파일에만 한글 주석을 추가/갱신한다. 사용자 승인 전에는 파일을 수정하지 않는다 | 직접 대응 없음 |
-| `doc-audit` | 코드와 Agent 문서(CLAUDE/AGENTS/instruction) 간 괴리를 분석하고 제안만 먼저 출력한다 | superpowers `verification` 원칙과 일부 유사 |
-| `agent-sync` | Agent 문서와 Skills를 환경별(Claude/Codex/Gemini)로 동기화한다 | 직접 대응 없음 |
-| `skill-designer` | 당시 새 스킬 설계·생성·테스트·트리거 description 최적화를 인터뷰형으로 진행하던 스킬 (현재 명칭은 `custom-skill-design`) | anthropics·openai `skill-creator`, superpowers `writing-skills` |
+| `doc-audit` | 코드와 Agent 문서(CLAUDE/AGENTS/instruction) 간 괴리를 분석하고 제안만 먼저 출력한다 | OpenAI `AGENTS.md`, Claude memory 공식 문서 |
+| `custom-skill-design` | 관리자 전용으로 새 스킬 설계·생성·테스트·트리거 description 최적화를 인터뷰형으로 진행한다 | Anthropic `skill-creator` adapted, OpenAI Codex 공식 `skill-creator`·Superpowers `writing-skills` reference |
 
 오른쪽 열의 "의도가 비슷한 외부"는 **같은 위치를 차지한다**가 아니라 **비슷한 의도의 다른 풀이**가 그곳에 있다는 뜻이다. 둘을 동시에 켤지, 한쪽만 쓸지, 둘 다 안 쓸지는 §2-7 선택지에서 다룬다.
 
@@ -269,7 +267,7 @@ my-repo/
 |-----------|---------------------|------------------|-----------------|------------------|--------------------|------------------------------------------|
 | 요구 발견·문제 정의 | `design-doc` 인터뷰, `harness-bootstrap` | `brainstorming` | `Think Before Coding` | `/office-hours`, `/plan-ceo-review` | product-manager, business-analyst | openai `define-goal` |
 | 실행 계획 작성 | `impl-fe-be-doc`, `impl-doc` | `writing-plans` | `Goal-Driven Execution` | `/autoplan`, `/plan-eng-review`, `/spec` | tech-lead, engineering-manager | – |
-| 구현 직전 중복 자산 확인 | `impl-reuse-scan` | – | – | – | – | – |
+| 구현 직전 중복 자산 확인 | `impl-reuse-scan` | 기존 패턴·working-example 우선(제한적) | – | Search Before Building(제한적) | – | – |
 | 화면/UI 설계·시각 품질 | `design-prototype-docs`, `create-prototype`, `frontend-design` | – | – | `/design-consultation`, `/design-shotgun`, `/design-html`, `/design-review` | ux-designer, design-system-architect | anthropics `frontend-design`, `web-artifacts-builder`, `theme-factory` |
 | 단순성·범위 가드 | (각 스킬 내 금지 패턴) | – | `Simplicity First`, `Surgical Changes` | `/careful`, `/freeze`, `/guard` | – | – |
 | 구현 실행 | `impl-fe-be-doc`/`impl-doc` 본문 | `executing-plans`, `test-driven-development`, `subagent-driven-development` | – | – | 언어/프레임워크 전문 subagent (python-pro 등) | – |
@@ -278,8 +276,8 @@ my-repo/
 | 단계·페이즈 종료 검증 | `impl-verify` | `verification-before-completion` | `Goal-Driven Execution`의 검증 부분 | `/qa`, `/qa-only`, `/benchmark` | qa-engineer, test-automator | Claude Code `/code-review`, `verify` |
 | 완료 전 검증 | `pre-commit` | `verification-before-completion` | `Goal-Driven Execution`의 검증 부분 | `/qa`, `/qa-only`, `/benchmark` | qa-engineer, test-automator | Claude Code `verify` |
 | 커밋·릴리스·배포 | `commit` | `finishing-a-development-branch` | – | `/ship`, `/land-and-deploy`, `/canary` | devops-engineer, release-manager | Claude Code 내장 commit |
-| 문서·지식 운영 | `code-comment`, `doc-audit`, `agent-sync`, `context-doc` | – | – | `/document-release`, `/document-generate`, `/learn`, `/retro` | technical-writer, documentation-engineer | anthropics `docx`·`pdf`·`pptx`·`xlsx`·`doc-coauthoring` |
-| 스킬·플러그인 메타 작업 | 당시 `skill-designer` (현재 `custom-skill-design`) | `writing-skills`, `using-superpowers` | – | – | – | anthropics·openai `skill-creator`, openai `plugin-creator` |
+| 문서·지식 운영 | `code-comment`, `doc-audit`, `context-doc`, `harness-setup` | – | – | `/document-release`, `/document-generate`, `/learn`, `/retro` | technical-writer, documentation-engineer | anthropics `docx`·`pdf`·`pptx`·`xlsx`·`doc-coauthoring` |
+| 스킬·플러그인 메타 작업 | `custom-skill-design` | `writing-skills`, `using-superpowers` | – | – | – | Anthropic `skill-creator`, OpenAI Codex 공식 `skill-creator`, OpenAI `plugin-creator` |
 | AI/ML 도메인 | – | – | – | – | data-scientist, ml-engineer, ai-researcher | `huggingface/skills` 전체 |
 
 같은 칸 안에서도 풀이 방식은 다르다. 예를 들어 "완료 전 검증"은 본 저장소가 `pre-commit` 체크리스트로, superpowers가 `verification-before-completion` 메타 강제로, gstack은 `/qa` 브라우저 클릭으로, 공식 도구는 `verify` 명령으로 푼다. 어느 쪽이 더 우선이라기보다 **작업 성격에 따라 어울리는 게 다르다**고 보는 편이 정확하다.
@@ -288,13 +286,13 @@ my-repo/
 
 레포별로 호출 순서가 다르므로 하나의 큰 그림 대신 **레포마다 독립된 다이어그램**으로 분리한다. 각 노드는 `스킬명 / 한글 역할` 형식으로 표기한다.
 
-#### 2-6-1. 당시 본 저장소 `skills/` 18개
+#### 2-6-1. 현재 사용자 하네스 흐름
 
 설계 → 컨텍스트 → (선택) 프로토타입 → 구현 → 리뷰/품질 게이트 → 커밋 → 문서 동기화로 이어지는 산출물 파이프라인이다.
 
 ```mermaid
 flowchart LR
-  I0["rfp-ingest<br/>RFP에서 SFR 추출·해석"] --> I1["design-doc<br/>설계 문서 도출"]
+  I0["사용자 요구·RFP 분석 결과"] --> I1["design-doc<br/>설계 문서 도출"]
   I9["harness-bootstrap<br/>레거시 코드 역추출"] --> I1
   I1 --> I2["context-doc<br/>CLAUDE/AGENTS·instruction 생성"]
   I2 --> I3{"산출물<br/>유형"}
@@ -302,8 +300,8 @@ flowchart LR
   I3 -->|다중 화면·페어 다중 기능| I7["impl-doc / impl-fe-be-doc<br/>계획"] --> R0
   I3 -->|단일·소규모| I7
   R0["impl-reuse-scan<br/>preflight"] --> X0["실제 구현"] --> V0["impl-verify<br/>검증·게이트"]
-  V0 --> I11["multi-review<br/>4관점 코드 리뷰"] --> I12["pre-commit<br/>커밋 전 규칙 검사"] --> I13["commit<br/>Conventional 한글 커밋"] --> I14["code-comment<br/>변경 파일 한글 주석"] --> I15["doc-audit<br/>코드↔문서 괴리 분석"] --> I16["agent-sync<br/>Agent 문서/스킬 동기화"]
-  I17["skill-designer<br/>신규 스킬 설계<br/>(현재 custom-skill-design)"] -. 새 스킬 필요 시 .-> I0
+  V0 --> I11["multi-review<br/>4관점 코드 리뷰"] --> I12["pre-commit<br/>커밋 전 규칙 검사"] --> I13["commit<br/>Conventional 한글 커밋"] --> I14["code-comment<br/>변경 파일 한글 주석"] --> I15["doc-audit<br/>코드↔문서 괴리 분석"]
+  I17["custom-skill-design<br/>관리자 신규 스킬 설계"] -. 사용자 스킬 갱신 시 .-> I1
 ```
 
 #### 2-6-2. obra/superpowers
@@ -518,7 +516,7 @@ Superpowers는 산출물보다 개발 프로세스 단계에 따라 스킬을 �
 
 
 
-> **본 저장소 skills/와의 관계:** `design-doc`은 `brainstorming`, `impl-doc`/`impl-fe-be-doc`는 `writing-plans`/`executing-plans`, `impl-verify`는 `verification-before-completion`, `pre-commit`은 `verification-before-completion`과 겹친다. 내부 산출물 포맷을 우선하고, superpowers는 task granularity, TDD, 완료 검증 discipline 보강에 사용한다.
+> **본 저장소 skills/와의 관계:** `design-doc`은 `brainstorming`, `impl-doc`/`impl-fe-be-doc`는 `writing-plans`와 TDD·인계 원칙, `impl-reuse-scan`은 기존 패턴·working-example 우선 원칙을 제한적으로, `impl-verify`는 `verification-before-completion`·`systematic-debugging`, `multi-review`는 병렬 review 원칙을 참조한다. `pre-commit`은 완료 전 기계 검사 일부만 겹친다. 내부 산출물·승인·보고 전용 계약을 우선하며 Superpowers runtime과 동일 동작을 주장하지 않는다.
 
 ### 3-2. multica-ai/andrej-karpathy-skills
 
@@ -967,7 +965,7 @@ GStack은 역할과 제품 개발 운영 단계로 나눈다.
 
 
 
-> **본 저장소 skills/와의 관계:** gstack은 내부 `multi-review`, `frontend-design`, `pre-commit` 이후 더 강한 역할 기반 검토가 필요할 때 보조 호출한다. `/review`, `/qa`, `/ship`, `/cso`는 내부 산출물 규칙을 대체하지 않고 외부 reviewer/QA/release persona로 사용한다.
+> **본 저장소 skills/와의 관계:** gstack은 `design-doc`, `impl-doc`, `impl-fe-be-doc`, `impl-verify`, `multi-review`, 프로토타입 계획·생성에 역할 기반 명세·검토 개념을 제공하고, `impl-reuse-scan`에는 Search Before Building만 제한적으로 참고한다. `impl-verify`는 자동 수정하는 `/qa`가 아니라 보고 전용 `/qa-only`에 대응한다. `frontend-design`의 직접 참조로 분류하지 않으며 gstack runtime·브라우저 daemon·telemetry를 로컬 스킬에 가져오지 않는다.
 
 ### 3-4. VoltAgent/awesome-claude-code-subagents
 
@@ -1382,7 +1380,7 @@ VoltAgent는 역할 기반 subagent를 큰 직무 카테고리로 나눈다.
 
 | 분류 | 이름 | 호스트 | 한 줄 용도 |
 |------|------|--------|------------|
-| 개발 워크플로우 | `skill-creator` | Claude Code 내장 / openai-skills | 새 Agent Skill의 `SKILL.md`, description, 보조 파일 구조 설계 |
+| 개발 워크플로우 | `skill-creator` | Anthropic Skills / OpenAI Codex system skill | 새 Agent Skill의 `SKILL.md`, description, 보조 파일 구조, 점진적 공개와 eval 설계 |
 | 개발 워크플로우 | `frontend-design` | anthropics-skills | 프론트엔드 UI 품질, 레이아웃, 반응형, 디자인 기준 제공 |
 | 개발 워크플로우 | `mcp-builder` | anthropics-skills | 외부 API나 서비스를 MCP tool/server로 감싸는 구현 지원 |
 | 문서 생성 | `docx` | anthropics-skills / Documents | Word 문서 생성·수정·검토 |
@@ -1402,7 +1400,7 @@ VoltAgent는 역할 기반 subagent를 큰 직무 카테고리로 나눈다.
 | 코드 품질 | `simplify` | Claude Code 내장 | 과도한 구현을 줄이고 단순화 방향 제안 |
 | 코드 품질 | `verify` | Claude Code 내장 | 테스트/빌드/검증 명령 실행과 결과 확인 |
 | 코드 품질 | `security-review` | Claude Code 내장 | 보안 위험과 민감 정보 노출 검토 |
-| 코드 품질 | `review` | openai-skills / Codex | Codex 코드 리뷰 workflow 보조 |
+| 코드 품질 | `review` | Codex plugin/curated 계열 | Codex 코드 리뷰 workflow 보조 |
 | 코드 품질 | `init` | Claude Code 내장 | 새 프로젝트/환경 초기 세팅 보조 |
 
 ## 5. 공식 Skill/Plugin 상세
@@ -1516,18 +1514,22 @@ Anthropic 레포는 스킬을 도구/산출물 중심으로 나눈다.
 | `pptx` | 발표자료 생성 | 설계/리뷰 결과를 deck으로 공유할 때 사용 |
 | `xlsx` | 표 데이터·스프레드시트 처리 | 요구사항 목록, 테스트 매트릭스, 비용표 정리에 사용 |
 
-### 5-2. openai/skills
+### 5-2. OpenAI Codex 스킬 출처
 
 #### 5-2-1. 접근 링크
 
-- GitHub: [https://github.com/openai/skills](https://github.com/openai/skills)
-- Skills 디렉토리: [https://github.com/openai/skills/tree/main/skills](https://github.com/openai/skills/tree/main/skills)
-- Curated skills: [https://github.com/openai/skills/tree/main/skills/.curated](https://github.com/openai/skills/tree/main/skills/.curated)
-- System skills: [https://github.com/openai/skills/tree/main/skills/.system](https://github.com/openai/skills/tree/main/skills/.system)
+- 현행 Codex 저장소: [https://github.com/openai/codex](https://github.com/openai/codex)
+- 공식 `skill-creator` 원본: [codex-rs/skills/src/assets/samples/skill-creator/SKILL.md](https://github.com/openai/codex/blob/main/codex-rs/skills/src/assets/samples/skill-creator/SKILL.md)
+- 과거 카탈로그: [https://github.com/openai/skills](https://github.com/openai/skills) — deprecated된 역사 자료로만 본다.
 
 #### 5-2-2. 레포 성격
 
-OpenAI Codex용 Agent Skills 카탈로그다. README는 Agent Skills를 "AI agents가 특정 작업을 반복 가능하게 수행하기 위해 발견하고 사용할 수 있는 instructions, scripts, resources 폴더"로 설명한다.
+과거 `openai/skills`는 Codex용 Agent Skills 카탈로그였으나 현재는 deprecated됐다.
+시스템 `skill-creator`의 현행 정본은 `openai/codex` 안의 bundled sample이다. 2026-07-30
+기준 로컬 Codex 설치본과 이 공식 파일은 줄바꿈 정규화 후 동일했다. 아래
+`.system`·`.curated` 구조와 목록은 과거 카탈로그를 이해하기 위한 역사적 스냅샷이며,
+현재 설치 가능 여부나 최신 목록 판단에는 Codex가 제공하는 plugin/skill UI와 현행
+공식 저장소를 다시 확인한다.
 
 Codex 기준으로는 세 계층이 중요하다.
 

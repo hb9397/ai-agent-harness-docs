@@ -23,7 +23,7 @@
     },
     {
       "path": "UPSTREAMS.lock.json",
-      "sha256": "bfbfc79f73b79e6a99b1199b37d1762c23380605d2a5ae7c650426290cec3132"
+      "sha256": "b7ac80af276e71c2081db7d6cce214c713e8a34d056754da478f32dd97298b84"
     },
     {
       "path": "licenses/anthropic-frontend-design-LICENSE",

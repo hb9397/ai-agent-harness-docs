@@ -21,8 +21,13 @@
     → 규칙 내용이 SKILL.md에 직접 서술되어 있으면 prompts로 이동
 [ ] prompts 파일이 단일 책임인가?
     → 두 역할이 한 파일에 있으면 분리
+[ ] SKILL.md가 가능하면 500줄 이하이고, metadata → SKILL.md → 필요한 자산의
+    점진적 공개 구조를 따르는가?
+[ ] references는 SKILL.md에서 한 단계로 직접 연결되며 깊은 reference chain이 없는가?
+[ ] 실행에 필요하지 않은 README/INSTALL/CHANGELOG를 스킬 폴더에 만들지 않았는가?
 [ ] 연계 스킬이 있으면 SKILL.md 상단에 연계 흐름 표시가 있는가?
 [ ] 헤더에 name, description, allowed-tools가 모두 있는가?
+[ ] name이 64자 이하 kebab-case이며 동작을 구분할 수 있는가?
 [ ] allowed-tools가 실제 사용 도구만 선언했는가?
 [ ] 헤더에 model: 필드가 없는가? (모델 선택은 사용자/환경에 위임)
 [ ] 헤더에 agent: fork가 없는가? (서브에이전트 사용은 STEP 0 질문 게이트로 처리)
@@ -35,6 +40,15 @@
     → 복수앱은 .docs/{앱}/context-base/DESIGN.md, .docs/{앱}-context.md, .docs/{앱}/, .docs/root-context/ 등으로 추가 분기
     → 리팩토링 작업 계획서.md §3-2 C-2 경로 표준 표를 참조할 것
 [ ] C-1 확인 단계 필요 스킬이면 STEP 0에 프로젝트 유형 감지 + 사용자 확인이 있는가?
+[ ] 작업의 변동성·실패 비용에 맞춰 지침 자유도(높음/중간/낮음)를 정했는가?
+[ ] Codex UI 메타데이터가 필요하면 agents/openai.yaml이 SKILL.md와 일치하며,
+    Claude에서는 그 파일 없이도 핵심 workflow가 완전한가?
+[ ] agents/openai.yaml의 문자열 값이 따옴표로 감싸졌고 short_description이
+    25~64자이며 default_prompt가 실제 `$skill-name`을 포함하는가?
+[ ] icon 경로는 존재하는 ./assets 상대경로이고, 외부 상태 변경 스킬의
+    allow_implicit_invocation이 false인가?
+[ ] 플랫폼 validator가 없으면 수동 schema 점검으로 표시하고 자동 검증 통과라고
+    과장하지 않았는가?
 ```
 
 **판정 기준**: 전체 통과 → [토큰] 진행 / 미통과 항목 → 즉시 수정 후 재점검
@@ -51,6 +65,7 @@
 [ ] 조건 분기가 있는 prompts 파일 상단에 라우팅 표가 있는가?
 [ ] 한 번에 묻는 질문이 3개 이하인가?
 [ ] 파일 생성 기본값이 "대화창 출력"이고 저장은 요청 시에만인가?
+[ ] 새 scripts가 있으면 대표 정상·실패·경계 입력으로 실제 실행했는가?
 ```
 
 ---
@@ -91,6 +106,8 @@
     disable-model-invocation이 선언되고 플랫폼별 직접 호출 예시가 있는가?
 [ ] 구조 점검·감사 요청에서는 파일을 자동 수정하지 않는가?
 [ ] 보호 자산 삭제·이동·교체를 별도 승인 없이 수행하지 않는가?
+[ ] forward-test에 기대 답·진단·수정안을 누출하지 않고 원시 prompt·출력·diff·log를
+    증거로 보존했는가?
 ```
 
 ---
