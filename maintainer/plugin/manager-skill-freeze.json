@@ -49,7 +49,7 @@
     },
     {
       "skill": "harness-plugin-maintainer",
-      "file_count": 18,
+      "file_count": 17,
       "files": [
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/design_workflow.py",
@@ -65,7 +65,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/run_evals.py",
-          "sha256": "5f852db0bda455baa48f08397d8c73229c77e7c45c9e03ac0589e572a110a116"
+          "sha256": "c80b21830f39722b93b406934a8075fe490e1f6dd1628ca756903d5f790804ae"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/references/plugin-structure.md",
@@ -73,7 +73,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py",
-          "sha256": "e668db7ed34962076990fc98c978241df0d4690d4166e482603adb486c647841"
+          "sha256": "e29676763289ea1f3b9f862106281a5989092efeb1c4741b8c33d399ff5985cb"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/freeze_manager_inventory.py",
@@ -81,7 +81,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/plugin_common.py",
-          "sha256": "f815bbced48f4bdb1ad2380440e983a2718b13429c27533862ca6c698e29d5f5"
+          "sha256": "d342d8ec3e97a0939fc070a02e702183b8fc1b26bfa7f687a2e2dc8de2a8a54e"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/run_all_skill_evals.py",
@@ -101,7 +101,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/validate_plugin.py",
-          "sha256": "a65960c493655dfabc9a5f34cece256d5f9e52460c723d8bb0aea1dd88b443a9"
+          "sha256": "4a34138601a50eaa4da5b7bdf1e8dc1ff3dc875cdf5bc8ec667900b0091b2f1b"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/verify_install_surfaces.py",
@@ -118,10 +118,6 @@
         {
           "path": "maintainer/skills/harness-plugin-maintainer/templates/claude-alias-skill.md",
           "sha256": "307832decf9e4608d349c2b7164d4a5e7c6107df3a0e25e6b1fc7fe8ea15b17e"
-        },
-        {
-          "path": "maintainer/skills/harness-plugin-maintainer/templates/plugin-license.md",
-          "sha256": "9bdedc575a3dffdba9784f0d4ef478c802a1ea55935e3689bd24480ce03a9e12"
         }
       ]
     },
@@ -203,7 +199,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py",
-          "sha256": "3f761007afa1fcd0cb1c839c58aede2e3c5c45b930070973a43b0be7aaa2a6ef"
+          "sha256": "15218d86831f9dc91f418264134b590980104ad55bf0dd8c5c2406d922988b92"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/SKILL.md",

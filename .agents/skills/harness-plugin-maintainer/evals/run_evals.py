@@ -73,6 +73,20 @@ def test_invalid_inventory_does_not_destroy_the_plugin_tree() -> None:
         after = sorted(p.relative_to(fixture_root).as_posix() for p in plugin_root.rglob("*"))
         assert after == before, "failed build deleted or altered the existing plugin tree"
 
+        staging = plugin_root.with_name(plugin_root.name + ".building")
+        assert not staging.exists(), "failed build left a staging tree behind"
+
+
+def test_build_writes_through_a_staging_tree() -> None:
+    """A mid-build I/O failure must not destroy the previous plugin.
+
+    Input validation alone is not enough: the archive, manifests and notices are
+    written after the reset, so any transient failure there would leave nothing.
+    """
+    source = (SCRIPTS / "build_plugin.py").read_text(encoding="utf-8")
+    assert '".building"' in source, "build must assemble into a staging directory"
+    assert "plugin_root.rename(final_root)" in source, "staging tree must be swapped into place"
+
 
 def test_pending_candidate_skill_is_canonical_but_not_packaged() -> None:
     """A skill may exist canonically while its upstream group is unpromoted."""
@@ -91,6 +105,7 @@ def test_pending_candidate_skill_is_canonical_but_not_packaged() -> None:
 def main() -> int:
     test_invalid_inventory_does_not_destroy_the_plugin_tree()
     test_pending_candidate_skill_is_canonical_but_not_packaged()
+    test_build_writes_through_a_staging_tree()
     # Cross-skill properties that no single skill runner can observe.
     run([str(Path(__file__).parent / "design_workflow.py")])
     run([str(Path(__file__).parent / "markdown_producers.py")])
@@ -105,9 +120,10 @@ def main() -> int:
 
     build = run([str(SCRIPTS / "build_plugin.py")])
     release = json.loads(build.stdout)
-    if release["logical_user_skills"] != 18:
+    expected_skills = len(json.loads((ROOT / "maintainer" / "plugin" / "CAPABILITIES.json").read_text(encoding="utf-8"))["logical_user_skills"])
+    if release["logical_user_skills"] != expected_skills:
         raise AssertionError("logical user skill count mismatch")
-    if release["codex_physical_skills"] != 18 or release["claude_physical_skills"] != 18:
+    if release["codex_physical_skills"] != expected_skills or release["claude_physical_skills"] != expected_skills:
         raise AssertionError("physical skill count mismatch")
     if release["codex_physical_agents"] != 0 or release["claude_physical_agents"] != 0:
         raise AssertionError("physical agent count mismatch")

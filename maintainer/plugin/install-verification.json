@@ -7,18 +7,20 @@
     "version": "0.2.0",
     "codex_manifest_matches_claude": true,
     "archive": "plugins/ai-agent-harness-0.2.0.zip",
-    "archive_sha256": "248e8b04ff5fc7b1d39fb151419e15959c3a3176e1e0885508f598aac79701ea",
+    "archive_sha256": "a0e64c04fd1f797851d6ed656ad1da14112124e263754e1d5410dece6316f4bd",
     "archive_sha256_matches_release": true,
-    "logical_user_skills": 18,
-    "codex_physical_skills": 18,
+    "logical_user_skills": 20,
+    "codex_physical_skills": 20,
     "codex_physical_agents": 0,
-    "claude_physical_skills": 18,
+    "claude_physical_skills": 20,
     "claude_physical_agents": 0,
     "markdown_producer_count": 9,
     "humanize_aliases": {},
     "packaged_upstreams": [
       "anthropic-frontend-design",
-      "im-not-ai"
+      "im-not-ai",
+      "lottiefiles-motion-design-runtime",
+      "ui-ux-pro-max-runtime"
     ],
     "packaged_upstream_closure": true,
     "released_state_preserved": true

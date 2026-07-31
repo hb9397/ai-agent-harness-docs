@@ -327,7 +327,6 @@ def validate_phase5_skill_files(root: Path, errors: list[str]) -> None:
         "scripts/run_release_regression.py",
         "scripts/plugin_common.py",
         "references/plugin-structure.md",
-        "templates/plugin-license.md",
         "evals/run_evals.py",
     ]
     plugin_base = root / "maintainer" / "skills" / "harness-plugin-maintainer"

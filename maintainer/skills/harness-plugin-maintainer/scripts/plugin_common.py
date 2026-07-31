@@ -7,6 +7,7 @@ import hashlib
 import json
 import os
 import shutil
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -26,16 +27,32 @@ def load_json(path: Path) -> Any:
         return json.load(fh)
 
 
-def write_json(path: Path, value: Any) -> None:
+def _write_atomic(path: Path, payload: str) -> None:
+    """Write through a temporary file and replace the target in one step.
+
+    Opening an existing file for truncating write is unreliable on Windows: a
+    scanner or indexer holding a brief handle surfaces as OSError(EINVAL) and
+    fails the build non-deterministically. os.replace is atomic and does not
+    reopen the destination, so a reader either sees the old file or the new one.
+    """
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8", newline="\n") as fh:
-        json.dump(value, fh, ensure_ascii=False, indent=2)
-        fh.write("\n")
+    fd, tmp_name = tempfile.mkstemp(dir=path.parent, prefix=f".{path.name}.", suffix=".tmp")
+    tmp = Path(tmp_name)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write(payload)
+        os.replace(tmp, path)
+    except BaseException:
+        tmp.unlink(missing_ok=True)
+        raise
+
+
+def write_json(path: Path, value: Any) -> None:
+    _write_atomic(path, json.dumps(value, ensure_ascii=False, indent=2) + "\n")
 
 
 def write_text(path: Path, value: str) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(value.rstrip() + "\n", encoding="utf-8", newline="\n")
+    _write_atomic(path, value.rstrip() + "\n")
 
 
 def sha256_file(path: Path) -> str:

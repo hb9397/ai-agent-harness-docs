@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-07-31",
+  "purpose": "Declare the execution surface every packaged user skill is allowed to have. runtime-allowlist.json governs Claude agent and alias entries only; this file governs executable assets shipped inside skills.",
+  "audit_method": "Python modules are parsed and their imports and call names are compared against the denied sets below. Declaring a capability here does not grant it at runtime; the platform permission mode still applies.",
+  "denied_everywhere": {
+    "network_modules": [
+      "socket", "urllib", "http", "ftplib", "telnetlib", "smtplib", "xmlrpc",
+      "requests", "httpx", "aiohttp", "urllib3"
+    ],
+    "dynamic_execution": ["eval", "exec", "compile"],
+    "process_calls": ["system", "popen", "spawn", "spawnl", "spawnv", "execv", "execl"],
+    "rationale": "A packaged skill must not reach the network, install packages, or execute code it assembled at runtime. Those capabilities cannot be reviewed once the plugin is installed."
+  },
+  "skills": [
+    {
+      "skill": "humanize-korean",
+      "executables": ["scripts/humanize_korean.py"],
+      "interpreter": "python3",
+      "third_party_dependencies": [],
+      "network": false,
+      "subprocess": false,
+      "writes": "Only files the user explicitly approves. Proposal-only by default.",
+      "note": "Deterministic guard for protected tokens and change rate."
+    },
+    {
+      "skill": "pre-commit",
+      "executables": ["scripts/scan.py", "scripts/scan.sh"],
+      "interpreter": "python3 or POSIX shell",
+      "third_party_dependencies": [],
+      "network": false,
+      "subprocess": true,
+      "subprocess_allowlist": ["git"],
+      "subprocess_justification": "Reads the staged diff through git. stdout is captured and stderr is discarded; no shell string is interpolated from user input.",
+      "writes": "none",
+      "note": "Read-only scan that reports findings."
+    },
+    {
+      "skill": "ui-ux-pro-max",
+      "executables": [
+        "scripts/core.py",
+        "scripts/design_system.py",
+        "scripts/search.py",
+        "scripts/validate_data.py",
+        "scripts/tests/test_core.py"
+      ],
+      "interpreter": "python3",
+      "third_party_dependencies": [],
+      "network": false,
+      "subprocess": false,
+      "writes": "Only under an explicitly provided output directory, and only when the user asks to persist. Existing files are not overwritten without --force.",
+      "asset_resolution": "Path(__file__) relative. No plugin-root environment variable and no platform-specific skill path.",
+      "note": "Local CSV search over the bundled design database. All data ships with the skill; nothing is fetched."
+    },
+    {
+      "skill": "motion-design",
+      "executables": [],
+      "interpreter": null,
+      "third_party_dependencies": [],
+      "network": false,
+      "subprocess": false,
+      "writes": "Only files the user explicitly approves.",
+      "note": "Instruction and reference material only."
+    }
+  ],
+  "interpreter_policy": {
+    "detection_order": ["python", "python3", "py -3"],
+    "on_missing": "Tell the user how to install Python and continue with a reduced, clearly-labelled result. Never install an interpreter or any package automatically.",
+    "package_manager_use": "forbidden"
+  },
+  "frontmatter_policy": {
+    "unrestricted_bash": "forbidden",
+    "rationale": "Shell execution is left to the platform permission mode rather than pre-approved in shared skill frontmatter."
+  }
+}

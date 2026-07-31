@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import ast
 import json
 import re
 import sys
@@ -108,10 +109,14 @@ def validate_counts(root: Path, errors: list[str]) -> None:
     caps = load_json(plugin_root / "CAPABILITIES.json")
     allowlist = load_json(root / "maintainer" / "plugin" / "runtime-allowlist.json")
 
-    if len(codex_skills) != 18:
-        error(errors, f"Codex physical skills must be 18, got {len(codex_skills)}")
-    if len(claude_skills) != 18:
-        error(errors, f"Claude physical skills must be 18, got {len(claude_skills)}")
+    # Counts come from the capability inventory so adding or removing a skill
+    # does not require editing the validator too.
+    source_caps = load_json(root / "maintainer" / "plugin" / "CAPABILITIES.json")
+    expected_skills = sorted(source_caps["logical_user_skills"])
+    if codex_skills != expected_skills:
+        error(errors, f"Codex runtime skills do not match the inventory: {codex_skills} != {expected_skills}")
+    if claude_skills != expected_skills:
+        error(errors, f"Claude runtime skills do not match the inventory: {claude_skills} != {expected_skills}")
     if claude_agents != sorted(allowlist["claude_runtime_agents"]):
         error(errors, "Claude agent allowlist mismatch")
     if claude_agents:
@@ -127,8 +132,11 @@ def validate_counts(root: Path, errors: list[str]) -> None:
         error(errors, "Claude compatibility aliases must be empty")
     if caps["claude"].get("canonical_humanize_skill") != "humanize-korean":
         error(errors, "canonical Claude humanize skill mismatch")
-    if caps["claude"].get("physical_skills") != 18 or caps["claude"].get("physical_agents") != 0:
-        error(errors, "Claude capability counts must be 18 skills and 0 agents")
+    for platform in ("codex", "claude"):
+        if caps[platform].get("physical_skills") != len(expected_skills):
+            error(errors, f"{platform} capability skill count must match the inventory ({len(expected_skills)})")
+        if caps[platform].get("physical_agents") != 0:
+            error(errors, f"{platform} capability agent count must be 0")
     # Compare against the inventory rather than a second copy of the list, and
     # require every declared producer to be a canonical skill that actually
     # carries the handoff contract.
@@ -255,6 +263,80 @@ def validate_source_permission_policy(root: Path, errors: list[str]) -> None:
     for invocation in ("$harness-plugin-maintainer", "/harness-plugin-maintainer"):
         if invocation not in manager_skill:
             error(errors, f"plugin build manager invocation example missing: {invocation}")
+
+
+def validate_runtime_execution_policy(root: Path, errors: list[str]) -> None:
+    """Check packaged executables against the declared execution policy.
+
+    A skill's shipped scripts are reviewed once, here. Without this an upstream
+    refresh could quietly add a network call or a shell escape to a file that
+    users already trust and run.
+    """
+    policy_path = root / "maintainer" / "plugin" / "runtime-execution-policy.json"
+    if not policy_path.is_file():
+        error(errors, "missing runtime execution policy")
+        return
+    policy = load_json(policy_path)
+    denied = policy["denied_everywhere"]
+    network = set(denied["network_modules"])
+    dynamic = set(denied["dynamic_execution"])
+    process_calls = set(denied["process_calls"])
+    declared = {item["skill"]: item for item in policy["skills"]}
+
+    plugin_root = root / PLUGIN_ROOT_REL
+    for platform in ("codex", "claude"):
+        skills_root = plugin_root / "runtime" / platform / "skills"
+        for skill_dir in sorted(p for p in skills_root.iterdir() if p.is_dir()) if skills_root.is_dir() else []:
+            name = skill_dir.name
+            shipped = sorted(
+                path.relative_to(skill_dir).as_posix()
+                for path in skill_dir.rglob("*")
+                if path.is_file() and path.suffix in {".py", ".sh"} and "evals" not in path.relative_to(skill_dir).parts
+            )
+            if not shipped:
+                continue
+            entry = declared.get(name)
+            if entry is None:
+                error(errors, f"{platform}/{name} ships executables with no execution policy entry: {shipped}")
+                continue
+            if shipped != sorted(entry["executables"]):
+                error(errors, f"{platform}/{name} executables differ from policy: {shipped} != {sorted(entry['executables'])}")
+
+            allow_subprocess = bool(entry.get("subprocess"))
+            for path in (skill_dir / rel for rel in shipped):
+                if path.suffix != ".py":
+                    continue
+                try:
+                    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+                except SyntaxError as exc:
+                    error(errors, f"{platform}/{name} unparsable script {path.name}: {exc}")
+                    continue
+                for node in ast.walk(tree):
+                    modules: list[str] = []
+                    if isinstance(node, ast.Import):
+                        modules = [alias.name.split(".")[0] for alias in node.names]
+                    elif isinstance(node, ast.ImportFrom):
+                        modules = [(node.module or "").split(".")[0]]
+                    for module in modules:
+                        if module in network:
+                            error(errors, f"{platform}/{name}/{path.name}: network module {module} is denied")
+                        if module == "subprocess" and not allow_subprocess:
+                            error(errors, f"{platform}/{name}/{path.name}: subprocess is not declared in policy")
+                    if not isinstance(node, ast.Call):
+                        continue
+                    func = node.func
+                    # Only the builtins are dangerous. re.compile is not eval.
+                    if isinstance(func, ast.Name) and func.id in dynamic:
+                        error(errors, f"{platform}/{name}/{path.name}: dynamic execution {func.id} is denied")
+                    # Likewise, only os.system/os.popen/os.exec* matter, not any
+                    # method that happens to share the name.
+                    if (
+                        isinstance(func, ast.Attribute)
+                        and isinstance(func.value, ast.Name)
+                        and func.value.id == "os"
+                        and func.attr in process_calls
+                    ):
+                        error(errors, f"{platform}/{name}/{path.name}: process call os.{func.attr} is denied")
 
 
 def validate_manual_surface_contract(root: Path, errors: list[str]) -> None:
@@ -446,6 +528,7 @@ def main() -> int:
     else:
         validate_manifest(root, errors)
         validate_counts(root, errors)
+        validate_runtime_execution_policy(root, errors)
         validate_skill_files(root, errors)
         validate_notices(root, errors)
         validate_marketplace(root, errors)

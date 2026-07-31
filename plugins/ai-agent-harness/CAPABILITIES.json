@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "generated_at": "2026-07-29",
+  "generated_at": "2026-07-31",
   "logical_user_skills": [
     "code-comment",
     "commit",
@@ -18,14 +18,13 @@
     "impl-fe-be-doc",
     "impl-reuse-scan",
     "impl-verify",
-    "multi-review",
-    "pre-commit"
-  ],
-  "pending_packaging": [
     "motion-design",
+    "multi-review",
+    "pre-commit",
     "ui-ux-pro-max"
   ],
-  "pending_packaging_note": "Canonical user skills that exist in skills/ but are intentionally not shipped yet. They stay out of logical_user_skills until the packaging phase moves them in. Listing them here keeps the inventory check strict instead of silently tolerating drift.",
+  "pending_packaging": [],
+  "pending_packaging_note": "Canonical user skills that exist in skills/ but are intentionally not shipped yet. Empty means every canonical user skill is packaged. Listing a skill here keeps the inventory check strict instead of silently tolerating drift.",
   "aliases": {},
   "maintainer_skills_excluded_from_user_plugin": [
     "custom-skill-design",
@@ -36,12 +35,12 @@
   "version": "0.2.0",
   "plugin_id": "ai-agent-harness",
   "codex": {
-    "physical_skills": 18,
+    "physical_skills": 20,
     "physical_agents": 0,
     "skills_path": "./runtime/codex/skills"
   },
   "claude": {
-    "physical_skills": 18,
+    "physical_skills": 20,
     "physical_agents": 0,
     "skills_path": "./runtime/claude/skills",
     "runtime_agents": [],

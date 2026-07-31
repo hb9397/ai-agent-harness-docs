@@ -3,27 +3,31 @@
   "files": [
     {
       "path": ".claude-plugin/plugin.json",
-      "sha256": "13626c9c45cb9351dcdc08c0cfd953efafc99b56e7bd781970a5b3b7bf56ba00"
+      "sha256": "10d46878b3bcac9ee1efe2348ca570870269266063b92963a48506c8395dbb50"
     },
     {
       "path": ".codex-plugin/plugin.json",
-      "sha256": "1d04f7e1d8862f12db6c29f3f16884380db002ce1b90a7ea8a04d5c50703642e"
+      "sha256": "b456c7776852ab0ba215a0b8c363190885f3773bbe32f3fccf5c256efbe8148c"
     },
     {
       "path": "CAPABILITIES.json",
-      "sha256": "e71f8aee19e5ca24a73b08b48ea62de74faa3a1e31434e66032542440363adee"
+      "sha256": "85dc750cd55fd495bfc43786705a16caa17ff3abf55a7b35043a040dbecfd9b5"
     },
     {
       "path": "LICENSE",
-      "sha256": "9bdedc575a3dffdba9784f0d4ef478c802a1ea55935e3689bd24480ce03a9e12"
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "NOTICE",
+      "sha256": "6d6712243704cde48c5f923fa5390f677d87882328ca52664f49d29f5805a066"
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
-      "sha256": "9f524b0ced5e1af5ac64066cf41dfdd645a6a9a377f8274eb83dd69f046fa332"
+      "sha256": "50526435539d4659ff9cbb26f19d7f3d1e2a890942b7234c105d12a4a703d5af"
     },
     {
       "path": "UPSTREAMS.lock.json",
-      "sha256": "2cc0879cb993d23fcdca5b8892d6523e6217bd75e359202085a3f6473211dde5"
+      "sha256": "9e54ff8f662317dafff30240037ff26041228384cd35797a43728eaf9d212d7f"
     },
     {
       "path": "licenses/anthropic-frontend-design-LICENSE",
@@ -32,6 +36,14 @@
     {
       "path": "licenses/im-not-ai-LICENSE",
       "sha256": "c3a7f056828e0fad11268c360b7e609eb5b6d7e2925d2d3e29a70beec63a35a1"
+    },
+    {
+      "path": "licenses/lottiefiles-motion-design-runtime-LICENSE",
+      "sha256": "9fc2e8685daa09e28d54b6afa8a38f168417c5735a3cd676c80c159785e93a80"
+    },
+    {
+      "path": "licenses/ui-ux-pro-max-runtime-LICENSE",
+      "sha256": "738f69dfa83db5c347c678fb9d90e560877059f0de93a327c39001bff92dc014"
     },
     {
       "path": "runtime/claude/skills/code-comment/SKILL.md",
@@ -494,6 +506,78 @@
       "sha256": "e45eb4cfdd04cc7ade50cdc9c7be05d51527b4cf0e1cb2a89fea9ea57f5b15dd"
     },
     {
+      "path": "runtime/claude/skills/motion-design/SKILL.md",
+      "sha256": "c9d3a53357eae9362e12fcb085bcb366ca3161193f94a314c899e8187136b5ad"
+    },
+    {
+      "path": "runtime/claude/skills/motion-design/director/choreography.md",
+      "sha256": "c81257b56160b9b2f3d99f78d4b8172b425c22d9ca73be06d3ffaa7305a34deb"
+    },
+    {
+      "path": "runtime/claude/skills/motion-design/director/context-adaptation.md",
+      "sha256": "550e96a1c8c369513304ee74c0e89b63168bc7287b83e9ed5685bb65609986b3"
+    },
+    {
+      "path": "runtime/claude/skills/motion-design/director/core-philosophy.md",
+      "sha256": "7aaa8a065d9940dad0198cf9cfe74979008495e6daf87f46f9022fff1b6a85e9"
+    },
+    {
+      "path": "runtime/claude/skills/motion-design/director/decision-framework.md",
+      "sha256": "4b6758da6742475c928b4f8be8c662f4b5ed0964468ba7760df8f7635c779358"
+    },
+    {
+      "path": "runtime/claude/skills/motion-design/director/disney-principles.md",
+      "sha256": "39024711890c2684a3434659a4d95a52ca8231facea74e87e79503054aaca671"
+    },
+    {
+      "path": "runtime/claude/skills/motion-design/director/emotion-mapping.md",
+      "sha256": "a279e55a3f52a9f5830d38dc54679c652d9a5c26f0dd360700c16e23766d468b"
+    },
+    {
+      "path": "runtime/claude/skills/motion-design/director/motion-personality.md",
+      "sha256": "66a3623b6654869482c02157ca791034a614ca6dcb02a8112049e28d292ee18a"
+    },
+    {
+      "path": "runtime/claude/skills/motion-design/director/narrative-structure.md",
+      "sha256": "d49db19db40425dec027c3012d553b50fd74ed79e27ace9dec1226796469061b"
+    },
+    {
+      "path": "runtime/claude/skills/motion-design/evals/run_evals.py",
+      "sha256": "789bfd0189fd11a0fff31dfb181d5448b4bb7905a37f9295752273f6fde69d72"
+    },
+    {
+      "path": "runtime/claude/skills/motion-design/patterns/ambient-continuous.md",
+      "sha256": "f9cfa00d3325dceadcb9ffd77dcb5dcbc51d34121f3b1f162979939006056773"
+    },
+    {
+      "path": "runtime/claude/skills/motion-design/patterns/entrance-exit.md",
+      "sha256": "70b3fc3a8d58ebe58e293e643b78fd13750d9c8ef1c8fc5fe85e52f7378cbd91"
+    },
+    {
+      "path": "runtime/claude/skills/motion-design/patterns/multi-element.md",
+      "sha256": "46c8da91843c593deb763a4a7fa32849bdaeb7a7ecd4d559e3b21bcc976f2c46"
+    },
+    {
+      "path": "runtime/claude/skills/motion-design/patterns/state-feedback.md",
+      "sha256": "dac86388c2d8fcdfc2f194b4f8877caedcdc010df9ce29d27dfc99d08cf8c60e"
+    },
+    {
+      "path": "runtime/claude/skills/motion-design/reference/property-selection.md",
+      "sha256": "053d830795fc824fed27618fbd18084207af6aeed55b73c0a6e1d5665de894ae"
+    },
+    {
+      "path": "runtime/claude/skills/motion-design/reference/quality-checklist.md",
+      "sha256": "c11bf193b700d9c9ebc5d871f1d5f193bccc441c4eccc0509b53a40d6e8dc558"
+    },
+    {
+      "path": "runtime/claude/skills/motion-design/reference/timing-easing-tables.md",
+      "sha256": "e478f3b99c4cac3f96eca008e20f8808d4cfae165f5799f260092baf9b6ebcff"
+    },
+    {
+      "path": "runtime/claude/skills/motion-design/reference/troubleshooting.md",
+      "sha256": "69e5aaeee108231d51187143ae3fce4db7a42936f10682908ca9462a008a047a"
+    },
+    {
       "path": "runtime/claude/skills/multi-review/SKILL.md",
       "sha256": "3096967625fc676ba45db48ee08138422c3e77c05743773fef0c1356c0f71202"
     },
@@ -544,6 +628,182 @@
     {
       "path": "runtime/claude/skills/pre-commit/template.md",
       "sha256": "d6cadd7a6263e5ec1aef63a943c42904dbcba810dbae4e0c1459fe6ccf2c36c1"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/SKILL.md",
+      "sha256": "2084c76c97e7730ca551d9f09925924b98df49fc3652e1402e209fe8cf20a412"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/app-interface.csv",
+      "sha256": "2a17ef810dab715ce1f339861817a8fbe3ccc38142b70517301e874803e838ac"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/charts.csv",
+      "sha256": "a70ef7460b0eaaea8614f86a0d09a4bc38b467804179762464b5ca45b491baac"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/colors.csv",
+      "sha256": "cb26759805217edaaa31b09836aec09eab0fe245c58f5884e9a16ef802c6e26a"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/google-fonts.csv",
+      "sha256": "3fd2898fb0fdd31ba758bf05cfcd2b58cd0f038a20cf08e417d09e5a8a4a509e"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/icons.csv",
+      "sha256": "f376c29fb4df37b4bdb366a5aa70cb211ba3dd8b435390aaa03152a64b07d2e8"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/landing.csv",
+      "sha256": "121a2cac7cf21050234b5f80e7b4e182f10123536032e0f9ad862ad3aec9677d"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/motion.csv",
+      "sha256": "6452fbd8028ab71d52993775340e1bc40a150d92be8d4b4cb8710620fd1a7512"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/products.csv",
+      "sha256": "e9749e4fd8f7d4c94919c25ebd347a4adaddb671e7b01d33fbc2c87d447e6667"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/react-performance.csv",
+      "sha256": "904c8afcda229629545912dde0e8ac37503757131f0169f80b016f1f58c4fd3f"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/angular.csv",
+      "sha256": "9de35bbda536ced9af7642d88b7675cefa3e18c370ab40c0875f75ab473f0fd6"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/astro.csv",
+      "sha256": "6b587e32df201b6e5e7b2ed187b65eee8e6d55dcd6cc16bde29fc25e0f911dae"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/avalonia.csv",
+      "sha256": "6bfa40ec6609fcb59e52a38281edcc3a3e5b5e56341304fe5628b32cb9b1f875"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/flutter.csv",
+      "sha256": "fe36d404c799781e8ba6e9a8179b45799ed5126a545528550cd2eb0f2346e8c5"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/html-tailwind.csv",
+      "sha256": "7aef38e75c53559470afcfa91580a9917ca8b7dbf8b92110389e23e93703ac52"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/javafx.csv",
+      "sha256": "5545e331b2479eb431ca45203799ce1b0ab1e369045ab7735d5a9f85ec78f956"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/jetpack-compose.csv",
+      "sha256": "6c8fd4b0391c342c12b0af15610cd5becbeccaef0bbe8dcfc01d928c3195d93e"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/laravel.csv",
+      "sha256": "3e9f551b5232136f7b5ce1304c5e1bf5a83bd63c0dc02afb37502b238772d145"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/nextjs.csv",
+      "sha256": "e828ccc04843742f52f545a068e8a9ab0d2b97c0e771f7e93bf0cef74da05554"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/nuxt-ui.csv",
+      "sha256": "b9972b31e721faabc667ee2b4e93ba2af29e1df86f186c2ff608b68370f0e3a5"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/nuxtjs.csv",
+      "sha256": "f7a3f2d9542856d00199f85c6c023b7c284cc698e2e6e12d61afce2edacb24d6"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/react-native.csv",
+      "sha256": "077aefc81d194895ecf7936b3ed298b978e36961f183e3a275f8acda19b5f621"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/react.csv",
+      "sha256": "e5624ab41d33427d88e41d07581ce4eca59b37b36ab72a6ad43a9c8e2d0a1c72"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/shadcn.csv",
+      "sha256": "395c2e415ef6f48a474acccdc8eb2c7258a6ed751a5037ba171a2d8823e02ded"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/svelte.csv",
+      "sha256": "71af52d64f266c88070b91dbbaa900c2f8074b6baae9f35eaea6ba9cec6fd803"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/swiftui.csv",
+      "sha256": "c9c2d2510f8e66281a2514e8dd0125a6b653b9ef53a71281b5e7dfe003d5b569"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/threejs.csv",
+      "sha256": "c74d6ba76021f8d72c0ed12c559caecfeb6961829242acf6bcb9e99926b1a396"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/uno.csv",
+      "sha256": "5d2e0f396bb9dc5a2661204264cc0eda7cc4fa3d78152dec89d668704a41b8fc"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/uwp.csv",
+      "sha256": "debf669928871261ced9333788d5afd5784377ea1fa1b4f53993dd8f1574c0fc"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/vue.csv",
+      "sha256": "c2724915d3c11cd67263f25896cff721f787a0fdd8326002d31e9f5806dfd8f8"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/winui.csv",
+      "sha256": "2d970b08e44509d7afa53ce7feb446930b2d5e0667fa637df9aeeed65c42bbbe"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/stacks/wpf.csv",
+      "sha256": "ca78b5f28dc50d66900548d602d74856400097284c73e076fcfbb5a38ae5083c"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/styles.csv",
+      "sha256": "1bf9c1d8484a0a7a54fb67555902380446865b604c8449e47a449cb3d9c1ef88"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/typography.csv",
+      "sha256": "7abead73de0e43e09544f164cb60cd431674e411f1e063e555a8b44d51273328"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/ui-reasoning.csv",
+      "sha256": "06e4369445388ba9b7a57347510b125b7a2145bbf8546a327ba50292503b204a"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/data/ux-guidelines.csv",
+      "sha256": "e01943c433b2cad3040f19389b3b0455673758a569b7a927b5bedf65c989cb96"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/evals/run_evals.py",
+      "sha256": "e1ef416a31948af39cf72d09d1e83e82c7db9feac250c8051abc49e3ea460a71"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/references/pro-rules.md",
+      "sha256": "bc56db7cb40c5f4d8d4f6229f5c7072865278488fe5b97c76d3a38eb596da4fc"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/references/quick-reference.md",
+      "sha256": "b01ad594cc069d18786d5e8865356cc511226ba6f48d328fd975d31aae8e5781"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/scripts/core.py",
+      "sha256": "64c149019196ee24647464a27278eb96d3b4638ded73ebfc35ccd2bc99c083a9"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/scripts/design_system.py",
+      "sha256": "fcdb279eb9691dffd6c80c333d29a4e5567368e38d724520c60013c8b1aaf242"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/scripts/search.py",
+      "sha256": "69a349d69543f35f45a12c0c82922c550d1b0a16a2b37f6b1406afb2ad2919c8"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/scripts/tests/test_core.py",
+      "sha256": "ce60ac571164cf35e8c866550ad989fa686706a56fa48df4fdf76444b94fdd8d"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/scripts/validate_data.py",
+      "sha256": "f1b5e0916f3c2f8271416f93f6ff9ebf3311a68a943a19c1b83f16823cbb05a7"
     },
     {
       "path": "runtime/codex/skills/code-comment/SKILL.md",
@@ -1006,6 +1266,78 @@
       "sha256": "e45eb4cfdd04cc7ade50cdc9c7be05d51527b4cf0e1cb2a89fea9ea57f5b15dd"
     },
     {
+      "path": "runtime/codex/skills/motion-design/SKILL.md",
+      "sha256": "c9d3a53357eae9362e12fcb085bcb366ca3161193f94a314c899e8187136b5ad"
+    },
+    {
+      "path": "runtime/codex/skills/motion-design/director/choreography.md",
+      "sha256": "c81257b56160b9b2f3d99f78d4b8172b425c22d9ca73be06d3ffaa7305a34deb"
+    },
+    {
+      "path": "runtime/codex/skills/motion-design/director/context-adaptation.md",
+      "sha256": "550e96a1c8c369513304ee74c0e89b63168bc7287b83e9ed5685bb65609986b3"
+    },
+    {
+      "path": "runtime/codex/skills/motion-design/director/core-philosophy.md",
+      "sha256": "7aaa8a065d9940dad0198cf9cfe74979008495e6daf87f46f9022fff1b6a85e9"
+    },
+    {
+      "path": "runtime/codex/skills/motion-design/director/decision-framework.md",
+      "sha256": "4b6758da6742475c928b4f8be8c662f4b5ed0964468ba7760df8f7635c779358"
+    },
+    {
+      "path": "runtime/codex/skills/motion-design/director/disney-principles.md",
+      "sha256": "39024711890c2684a3434659a4d95a52ca8231facea74e87e79503054aaca671"
+    },
+    {
+      "path": "runtime/codex/skills/motion-design/director/emotion-mapping.md",
+      "sha256": "a279e55a3f52a9f5830d38dc54679c652d9a5c26f0dd360700c16e23766d468b"
+    },
+    {
+      "path": "runtime/codex/skills/motion-design/director/motion-personality.md",
+      "sha256": "66a3623b6654869482c02157ca791034a614ca6dcb02a8112049e28d292ee18a"
+    },
+    {
+      "path": "runtime/codex/skills/motion-design/director/narrative-structure.md",
+      "sha256": "d49db19db40425dec027c3012d553b50fd74ed79e27ace9dec1226796469061b"
+    },
+    {
+      "path": "runtime/codex/skills/motion-design/evals/run_evals.py",
+      "sha256": "789bfd0189fd11a0fff31dfb181d5448b4bb7905a37f9295752273f6fde69d72"
+    },
+    {
+      "path": "runtime/codex/skills/motion-design/patterns/ambient-continuous.md",
+      "sha256": "f9cfa00d3325dceadcb9ffd77dcb5dcbc51d34121f3b1f162979939006056773"
+    },
+    {
+      "path": "runtime/codex/skills/motion-design/patterns/entrance-exit.md",
+      "sha256": "70b3fc3a8d58ebe58e293e643b78fd13750d9c8ef1c8fc5fe85e52f7378cbd91"
+    },
+    {
+      "path": "runtime/codex/skills/motion-design/patterns/multi-element.md",
+      "sha256": "46c8da91843c593deb763a4a7fa32849bdaeb7a7ecd4d559e3b21bcc976f2c46"
+    },
+    {
+      "path": "runtime/codex/skills/motion-design/patterns/state-feedback.md",
+      "sha256": "dac86388c2d8fcdfc2f194b4f8877caedcdc010df9ce29d27dfc99d08cf8c60e"
+    },
+    {
+      "path": "runtime/codex/skills/motion-design/reference/property-selection.md",
+      "sha256": "053d830795fc824fed27618fbd18084207af6aeed55b73c0a6e1d5665de894ae"
+    },
+    {
+      "path": "runtime/codex/skills/motion-design/reference/quality-checklist.md",
+      "sha256": "c11bf193b700d9c9ebc5d871f1d5f193bccc441c4eccc0509b53a40d6e8dc558"
+    },
+    {
+      "path": "runtime/codex/skills/motion-design/reference/timing-easing-tables.md",
+      "sha256": "e478f3b99c4cac3f96eca008e20f8808d4cfae165f5799f260092baf9b6ebcff"
+    },
+    {
+      "path": "runtime/codex/skills/motion-design/reference/troubleshooting.md",
+      "sha256": "69e5aaeee108231d51187143ae3fce4db7a42936f10682908ca9462a008a047a"
+    },
+    {
       "path": "runtime/codex/skills/multi-review/SKILL.md",
       "sha256": "3096967625fc676ba45db48ee08138422c3e77c05743773fef0c1356c0f71202"
     },
@@ -1056,6 +1388,182 @@
     {
       "path": "runtime/codex/skills/pre-commit/template.md",
       "sha256": "d6cadd7a6263e5ec1aef63a943c42904dbcba810dbae4e0c1459fe6ccf2c36c1"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/SKILL.md",
+      "sha256": "2084c76c97e7730ca551d9f09925924b98df49fc3652e1402e209fe8cf20a412"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/app-interface.csv",
+      "sha256": "2a17ef810dab715ce1f339861817a8fbe3ccc38142b70517301e874803e838ac"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/charts.csv",
+      "sha256": "a70ef7460b0eaaea8614f86a0d09a4bc38b467804179762464b5ca45b491baac"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/colors.csv",
+      "sha256": "cb26759805217edaaa31b09836aec09eab0fe245c58f5884e9a16ef802c6e26a"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/google-fonts.csv",
+      "sha256": "3fd2898fb0fdd31ba758bf05cfcd2b58cd0f038a20cf08e417d09e5a8a4a509e"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/icons.csv",
+      "sha256": "f376c29fb4df37b4bdb366a5aa70cb211ba3dd8b435390aaa03152a64b07d2e8"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/landing.csv",
+      "sha256": "121a2cac7cf21050234b5f80e7b4e182f10123536032e0f9ad862ad3aec9677d"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/motion.csv",
+      "sha256": "6452fbd8028ab71d52993775340e1bc40a150d92be8d4b4cb8710620fd1a7512"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/products.csv",
+      "sha256": "e9749e4fd8f7d4c94919c25ebd347a4adaddb671e7b01d33fbc2c87d447e6667"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/react-performance.csv",
+      "sha256": "904c8afcda229629545912dde0e8ac37503757131f0169f80b016f1f58c4fd3f"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/angular.csv",
+      "sha256": "9de35bbda536ced9af7642d88b7675cefa3e18c370ab40c0875f75ab473f0fd6"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/astro.csv",
+      "sha256": "6b587e32df201b6e5e7b2ed187b65eee8e6d55dcd6cc16bde29fc25e0f911dae"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/avalonia.csv",
+      "sha256": "6bfa40ec6609fcb59e52a38281edcc3a3e5b5e56341304fe5628b32cb9b1f875"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/flutter.csv",
+      "sha256": "fe36d404c799781e8ba6e9a8179b45799ed5126a545528550cd2eb0f2346e8c5"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/html-tailwind.csv",
+      "sha256": "7aef38e75c53559470afcfa91580a9917ca8b7dbf8b92110389e23e93703ac52"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/javafx.csv",
+      "sha256": "5545e331b2479eb431ca45203799ce1b0ab1e369045ab7735d5a9f85ec78f956"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/jetpack-compose.csv",
+      "sha256": "6c8fd4b0391c342c12b0af15610cd5becbeccaef0bbe8dcfc01d928c3195d93e"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/laravel.csv",
+      "sha256": "3e9f551b5232136f7b5ce1304c5e1bf5a83bd63c0dc02afb37502b238772d145"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/nextjs.csv",
+      "sha256": "e828ccc04843742f52f545a068e8a9ab0d2b97c0e771f7e93bf0cef74da05554"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/nuxt-ui.csv",
+      "sha256": "b9972b31e721faabc667ee2b4e93ba2af29e1df86f186c2ff608b68370f0e3a5"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/nuxtjs.csv",
+      "sha256": "f7a3f2d9542856d00199f85c6c023b7c284cc698e2e6e12d61afce2edacb24d6"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/react-native.csv",
+      "sha256": "077aefc81d194895ecf7936b3ed298b978e36961f183e3a275f8acda19b5f621"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/react.csv",
+      "sha256": "e5624ab41d33427d88e41d07581ce4eca59b37b36ab72a6ad43a9c8e2d0a1c72"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/shadcn.csv",
+      "sha256": "395c2e415ef6f48a474acccdc8eb2c7258a6ed751a5037ba171a2d8823e02ded"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/svelte.csv",
+      "sha256": "71af52d64f266c88070b91dbbaa900c2f8074b6baae9f35eaea6ba9cec6fd803"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/swiftui.csv",
+      "sha256": "c9c2d2510f8e66281a2514e8dd0125a6b653b9ef53a71281b5e7dfe003d5b569"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/threejs.csv",
+      "sha256": "c74d6ba76021f8d72c0ed12c559caecfeb6961829242acf6bcb9e99926b1a396"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/uno.csv",
+      "sha256": "5d2e0f396bb9dc5a2661204264cc0eda7cc4fa3d78152dec89d668704a41b8fc"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/uwp.csv",
+      "sha256": "debf669928871261ced9333788d5afd5784377ea1fa1b4f53993dd8f1574c0fc"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/vue.csv",
+      "sha256": "c2724915d3c11cd67263f25896cff721f787a0fdd8326002d31e9f5806dfd8f8"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/winui.csv",
+      "sha256": "2d970b08e44509d7afa53ce7feb446930b2d5e0667fa637df9aeeed65c42bbbe"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/stacks/wpf.csv",
+      "sha256": "ca78b5f28dc50d66900548d602d74856400097284c73e076fcfbb5a38ae5083c"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/styles.csv",
+      "sha256": "1bf9c1d8484a0a7a54fb67555902380446865b604c8449e47a449cb3d9c1ef88"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/typography.csv",
+      "sha256": "7abead73de0e43e09544f164cb60cd431674e411f1e063e555a8b44d51273328"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/ui-reasoning.csv",
+      "sha256": "06e4369445388ba9b7a57347510b125b7a2145bbf8546a327ba50292503b204a"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/data/ux-guidelines.csv",
+      "sha256": "e01943c433b2cad3040f19389b3b0455673758a569b7a927b5bedf65c989cb96"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/evals/run_evals.py",
+      "sha256": "e1ef416a31948af39cf72d09d1e83e82c7db9feac250c8051abc49e3ea460a71"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/references/pro-rules.md",
+      "sha256": "bc56db7cb40c5f4d8d4f6229f5c7072865278488fe5b97c76d3a38eb596da4fc"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/references/quick-reference.md",
+      "sha256": "b01ad594cc069d18786d5e8865356cc511226ba6f48d328fd975d31aae8e5781"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/scripts/core.py",
+      "sha256": "64c149019196ee24647464a27278eb96d3b4638ded73ebfc35ccd2bc99c083a9"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/scripts/design_system.py",
+      "sha256": "fcdb279eb9691dffd6c80c333d29a4e5567368e38d724520c60013c8b1aaf242"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/scripts/search.py",
+      "sha256": "69a349d69543f35f45a12c0c82922c550d1b0a16a2b37f6b1406afb2ad2919c8"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/scripts/tests/test_core.py",
+      "sha256": "ce60ac571164cf35e8c866550ad989fa686706a56fa48df4fdf76444b94fdd8d"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/scripts/validate_data.py",
+      "sha256": "f1b5e0916f3c2f8271416f93f6ff9ebf3311a68a943a19c1b83f16823cbb05a7"
     }
   ]
 }

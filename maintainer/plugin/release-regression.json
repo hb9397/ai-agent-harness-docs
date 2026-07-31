@@ -7,17 +7,14 @@
     "source_projection_integrity": {
       "counts": {
         "user_skills": 20,
-        "packageable_user_skills": 18,
-        "pending_user_skills": [
-          "motion-design",
-          "ui-ux-pro-max"
-        ],
+        "packageable_user_skills": 20,
+        "pending_user_skills": [],
         "manager_skills": 3,
         "agents_projection": 3,
         "claude_projection": 3,
-        "codex_physical_skills": 18,
+        "codex_physical_skills": 20,
         "codex_physical_agents": 0,
-        "claude_physical_skills": 18,
+        "claude_physical_skills": 20,
         "claude_physical_agents": 0
       },
       "checks": {
@@ -37,7 +34,7 @@
       "passed": true
     },
     "reproducible_build": {
-      "archive_sha256": "248e8b04ff5fc7b1d39fb151419e15959c3a3176e1e0885508f598aac79701ea",
+      "archive_sha256": "a0e64c04fd1f797851d6ed656ad1da14112124e263754e1d5410dece6316f4bd",
       "same_archive_hash": true,
       "same_manifest": true,
       "release_metadata_matches": true,

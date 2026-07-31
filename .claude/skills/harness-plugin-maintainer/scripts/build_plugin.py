@@ -38,6 +38,8 @@ def markdown_producers(root: Path) -> list[str]:
     """
     flow = load_json(root / "maintainer" / "inventory" / "markdown-artifact-flow.json")
     return [item["skill"] for item in flow["producer_skills"]]
+
+
 TEXT_SUFFIXES = {
     ".md",
     ".json",
@@ -53,8 +55,8 @@ TEXT_SUFFIXES = {
 PLUGIN_DISPLAY_NAME = "AI Agent Harness"
 PLUGIN_DESCRIPTION = "Project harness plugin for Codex and Claude Code."
 MARKETPLACE_NAME = "ai-agent-harness"
-MAINTAINER_NAME = "AI Agent Harness Maintainers"
-REPOSITORY_URL = "https://github.com/epoko77-ai/ai-agent-harness-docs"
+MAINTAINER_NAME = "hb9397"
+REPOSITORY_URL = "https://github.com/hb9397/AI_Agent_docs"
 ROOT_CODEX_MARKETPLACE = Path(".agents") / "plugins" / "marketplace.json"
 ROOT_CLAUDE_MARKETPLACE = Path(".claude-plugin") / "marketplace.json"
 EXECUTABLE_SUFFIXES = {".sh"}
@@ -180,12 +182,12 @@ def build_capabilities(root: Path, runtime_allowlist: dict, markdown_flow: dict)
         "version": PLUGIN_VERSION,
         "plugin_id": PLUGIN_ID,
         "codex": {
-            "physical_skills": 18,
+            "physical_skills": len(base["logical_user_skills"]),
             "physical_agents": 0,
             "skills_path": "./runtime/codex/skills",
         },
         "claude": {
-            "physical_skills": 18,
+            "physical_skills": len(base["logical_user_skills"]),
             "physical_agents": 0,
             "skills_path": "./runtime/claude/skills",
             "runtime_agents": runtime_allowlist["claude_runtime_agents"],
@@ -217,8 +219,17 @@ def packaged_sources(root: Path) -> list[dict]:
 
 
 def notices(root: Path, plugin_root: Path, sources: list[dict]) -> None:
-    license_template = (root / "maintainer" / "skills" / "harness-plugin-maintainer" / "templates" / "plugin-license.md").read_text(encoding="utf-8")
-    write_text(plugin_root / "LICENSE", license_template)
+    # The archive is an independent distribution unit, so it carries the full
+    # license text rather than a pointer back to the repository. Copying the
+    # root LICENSE keeps one authoritative copy instead of two that can drift.
+    root_license = root / "LICENSE"
+    if not root_license.is_file():
+        raise RuntimeError("repository LICENSE is required before packaging")
+    write_text(plugin_root / "LICENSE", root_license.read_text(encoding="utf-8"))
+
+    root_notice = root / "NOTICE"
+    if root_notice.is_file():
+        write_text(plugin_root / "NOTICE", root_notice.read_text(encoding="utf-8"))
     (plugin_root / "licenses").mkdir(parents=True, exist_ok=True)
     for source in sources:
         source_id = source["id"]
@@ -340,7 +351,7 @@ def reset_plugin_output(plugin_root: Path, output_root: Path) -> None:
 
 def build(root: Path, output_root: Path | None = None) -> dict:
     target_root = output_root if output_root is not None else root
-    plugin_root = target_root / PLUGIN_ROOT_REL
+    final_root = target_root / PLUGIN_ROOT_REL
 
     # Read and validate inputs before deleting anything. Resetting first would
     # leave the repository without a plugin tree whenever an input is invalid.
@@ -350,9 +361,30 @@ def build(root: Path, output_root: Path | None = None) -> dict:
     sources = packaged_sources(root)
     check_user_skill_inventory(root, capabilities)
 
-    reset_plugin_output(plugin_root, target_root)
-    plugin_root.mkdir(parents=True, exist_ok=True)
+    # Assemble in a staging directory and swap it in only once everything wrote
+    # successfully. Writing in place means any mid-build I/O failure — a transient
+    # file lock is enough on Windows — leaves the repository with no plugin at all.
+    staging_root = final_root.with_name(final_root.name + ".building")
+    reset_plugin_output(staging_root, target_root)
+    staging_root.mkdir(parents=True, exist_ok=True)
+    try:
+        return _assemble(root, target_root, final_root, staging_root, capabilities,
+                         runtime_allowlist, markdown_flow, sources)
+    except BaseException:
+        shutil.rmtree(staging_root, ignore_errors=True)
+        raise
 
+
+def _assemble(
+    root: Path,
+    target_root: Path,
+    final_root: Path,
+    plugin_root: Path,
+    capabilities: dict,
+    runtime_allowlist: dict,
+    markdown_flow: dict,
+    sources: list[dict],
+) -> dict:
     copy_user_skills(root, plugin_root, capabilities)
     notices(root, plugin_root, sources)
 
@@ -382,17 +414,24 @@ def build(root: Path, output_root: Path | None = None) -> dict:
             "claude": str(ROOT_CLAUDE_MARKETPLACE).replace("\\", "/"),
         },
         "packaged_upstreams": [source["id"] for source in sources],
-        "logical_user_skills": 18,
-        "codex_physical_skills": 18,
+        "logical_user_skills": len(capabilities["logical_user_skills"]),
+        "codex_physical_skills": len(capabilities["logical_user_skills"]),
         "codex_physical_agents": 0,
-        "claude_physical_skills": 18,
+        "claude_physical_skills": len(capabilities["logical_user_skills"]),
         "claude_physical_agents": 0,
         "markdown_producers": markdown_producers(root),
         "released_state_preserved": True,
         "push_tag_release_created": False,
     }
-    write_json(target_root / "maintainer" / "plugin" / "release.json", release)
     ensure_no_symlink(plugin_root)
+
+    # Everything assembled. Swap the staging tree into place; the previous tree
+    # survives until this point.
+    if plugin_root != final_root:
+        reset_plugin_output(final_root, target_root)
+        plugin_root.rename(final_root)
+
+    write_json(target_root / "maintainer" / "plugin" / "release.json", release)
     return release
 
 
