@@ -21,6 +21,11 @@
     "multi-review",
     "pre-commit"
   ],
+  "pending_packaging": [
+    "motion-design",
+    "ui-ux-pro-max"
+  ],
+  "pending_packaging_note": "Canonical user skills that exist in skills/ but are intentionally not shipped yet. They stay out of logical_user_skills until the packaging phase moves them in. Listing them here keeps the inventory check strict instead of silently tolerating drift.",
   "aliases": {},
   "maintainer_skills_excluded_from_user_plugin": [
     "custom-skill-design",

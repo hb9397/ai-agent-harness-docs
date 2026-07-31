@@ -2,14 +2,17 @@
 
 이 문서는 하네스 플러그인에 포함·변형·패키징되는 업스트림 콘텐츠를 기록한다. 참조 전용 출처는 `Docs/External_Skill_References.md`에서 별도로 추적한다.
 
-현재 감사 결과, 업스트림 저장소 2개와의 `adapted` 관계 3건이 확인되었다.
+현재 감사 결과, 업스트림 저장소 4개와의 `adapted` 관계 5건이 확인되었다.
 활성 `vendored` 관계는 없다.
 
 ## 현재 상태
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| 현재 사용자 스킬 18개 | `adapted` 스킬 2개 | `humanize-korean`은 `im-not-ai`에서 변형되었으며, `frontend-design`은 Anthropic Skills를 번역하고 재구성한 파생물이다. |
+| 현재 사용자 스킬 20개 | `adapted` 스킬 4개 | `humanize-korean`은 `im-not-ai`에서, `frontend-design`은 Anthropic Skills에서 변형되었다. `ui-ux-pro-max`와 `motion-design`은 각 업스트림의 실행·지식 자산을 보존한 채 `SKILL.md`만 재작성한 파생물이다. |
+| `ui-ux-pro-max` | `accepted` `adapted` | 업스트림: `nextlevelbuilder/ui-ux-pro-max-skill` `v2.11.3`, 커밋 `4857a2c5ef989794751a0f66b8545a4a49566286`, MIT. |
+| `motion-design` | `accepted` `adapted` | 업스트림: `LottieFiles/motion-design-skill`, 커밋 `f9a8a041b85185ee4881b3471d3415e939aac772`, MIT. 릴리스·태그가 없어 브랜치 head를 고정했다. |
+| 신규 2종 패키징 | 대기 | 두 스킬은 정본에 있으나 아직 사용자 플러그인 payload에 넣지 않는다. `maintainer/plugin/CAPABILITIES.json`의 `pending_packaging`에서 추적한다. |
 | 현재 관리자 스킬 3개 | `adapted` 스킬 1개 | `custom-skill-design`은 Anthropic `skill-creator`를 번역하고 재구성한 파생물이다. |
 | `humanize-korean` | `accepted` `adapted` | 업스트림: `epoko77-ai/im-not-ai` v2.3.0, 커밋 `82137e858763dadb99561f194c5c00465735017b`, MIT. |
 | `frontend-design` | `accepted` `adapted` | 업스트림: `anthropics/skills`, 커밋 `b29e7cf65e5cb78a5ac33d582270551bc74a14eb`, Apache-2.0. |
@@ -25,6 +28,30 @@
 | `skills/humanize-korean` | `https://github.com/epoko77-ai/im-not-ai` | `v2.3.0` / `82137e858763dadb99561f194c5c00465735017b` | 변형된 지침과 로컬 보호 스크립트. 전체 업스트림 런타임을 `vendored`로 반입하지 않는다. |
 | `skills/frontend-design` | `https://github.com/anthropics/skills/tree/main/skills/frontend-design` | `main` / `b29e7cf65e5cb78a5ac33d582270551bc74a14eb` | 한국어 번역, 축약한 디자인 규칙, 프로젝트 라우팅 및 검증을 추가했다. 사용자 플러그인에 패키징한다. |
 | `maintainer/skills/custom-skill-design` | `https://github.com/anthropics/skills/tree/main/skills/skill-creator` | `main` / `b29e7cf65e5cb78a5ac33d582270551bc74a14eb` | 한국어 번역과 저장소 전용 관리자 워크플로. 관리자 전용이며 사용자 플러그인에서 제외한다. |
+| `skills/ui-ux-pro-max` | `https://github.com/nextlevelbuilder/ui-ux-pro-max-skill` | `v2.11.3` / `4857a2c5ef989794751a0f66b8545a4a49566286` | 생성된 스킬 트리 43개 파일을 반입했다. `data/`, `references/`, `scripts/`는 원본 그대로 보존하고 `SKILL.md`만 플랫폼 중립 경로·승인형 저장 계약으로 재작성했다. 생성기(`src/`)와 CLI(`cli/`), 형제 스킬 6종은 제외한다. |
+| `skills/motion-design` | `https://github.com/LottieFiles/motion-design-skill` | `main` / `f9a8a041b85185ee4881b3471d3415e939aac772` | `director/`, `patterns/`, `reference/` 16개 파일을 원본 그대로 보존하고 `SKILL.md`만 목적 우선 분류·저밀도 기본값·접근성 필수 검토로 재작성했다. |
+
+### 신규 2종의 이중 관계
+
+두 업스트림은 각각 **직접 반입**과 **참고**의 두 관계로 추적한다. 같은
+`relationship_group`에 묶여 있어 저장소 URL, 라이선스 판정, 고정 SHA, lifecycle이
+일치해야 하며 한쪽만 승격할 수 없다.
+
+| 관계 ID | 모드 | 대상 | 패키징 |
+|---|---|---|---|
+| `ui-ux-pro-max-runtime` | `adapted` | `skills/ui-ux-pro-max` | 예정 |
+| `ui-ux-pro-max-principles` | `reference` | 기존 디자인·검증 스킬 4종 | 아니오 |
+| `lottiefiles-motion-design-runtime` | `adapted` | `skills/motion-design` | 예정 |
+| `lottiefiles-motion-design-principles` | `reference` | 기존 디자인·검증 스킬 4종 | 아니오 |
+
+참고 관계는 파일을 복사하지 않으므로 라이선스 패키징 대상이 아니다. 자세한 내용은
+`Docs/External_Skill_References.md`에 있다.
+
+Motion Design의 참조 자료에는 Material Design 3, Apple Human Interface Guidelines,
+Disney 애니메이션 원칙이 인용되어 있다. 업스트림 최상위 MIT는 업스트림 저작자가
+보유하지 않은 제3자 권리까지 허가하지 못하므로, 해당 인용은
+`maintainer/upstreams/provenance/lottiefiles-motion-design/NOTICE.md`에서 파일
+단위로 판정해 기록한다.
 
 `custom-skill-design`은 이 직접 반입 관계와 별도로
 [`openai/codex`의 공식 `skill-creator`](https://github.com/openai/codex/blob/main/codex-rs/skills/src/assets/samples/skill-creator/SKILL.md)를

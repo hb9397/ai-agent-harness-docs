@@ -4,10 +4,10 @@
   "plugin": {
     "plugin_root": "plugins/ai-agent-harness",
     "plugin_id": "ai-agent-harness",
-    "version": "0.1.1",
+    "version": "0.2.0",
     "codex_manifest_matches_claude": true,
-    "archive": "plugins/ai-agent-harness-0.1.1.zip",
-    "archive_sha256": "3bf0618b91d38b9aab98cf3f63879979744d23d85caa400f6ffd7b2b9726261a",
+    "archive": "plugins/ai-agent-harness-0.2.0.zip",
+    "archive_sha256": "f27f78f43409261ce5820e8d9ed6d223665ab0a506ce80851dc8a53ab841aeb6",
     "archive_sha256_matches_release": true,
     "logical_user_skills": 18,
     "codex_physical_skills": 18,
@@ -160,12 +160,12 @@
     },
     "status": "failed",
     "evidence_applies_to_current_version": false,
-    "summary": "CLI smoke evidence covers plugin version(s) ['0.1.0'], not the current candidate 0.1.1; re-run smoke_cli_install.py"
+    "summary": "CLI smoke evidence covers plugin version(s) ['0.1.0'], not the current candidate 0.2.0; re-run smoke_cli_install.py"
   },
   "surfaces": {
     "codex-cli": {
       "status": "blocked",
-      "summary": "CLI smoke evidence covers plugin version(s) ['0.1.0'], not the current candidate 0.1.1; re-run smoke_cli_install.py"
+      "summary": "CLI smoke evidence covers plugin version(s) ['0.1.0'], not the current candidate 0.2.0; re-run smoke_cli_install.py"
     },
     "codex-desktop-app": {
       "status": "manual-required",
@@ -173,7 +173,7 @@
     },
     "claude-code-cli": {
       "status": "blocked",
-      "summary": "CLI smoke evidence covers plugin version(s) ['0.1.0'], not the current candidate 0.1.1; re-run smoke_cli_install.py"
+      "summary": "CLI smoke evidence covers plugin version(s) ['0.1.0'], not the current candidate 0.2.0; re-run smoke_cli_install.py"
     },
     "claude-desktop-code": {
       "status": "manual-required",

@@ -1,11 +1,11 @@
 {
   "schema_version": "1.0.0",
   "generated_at": "2026-07-31",
-  "scope": "Post-refactor audit: 20 user skills plus 3 maintainer skills (2 user skill(s) pending upstream promotion)",
+  "scope": "Post-refactor audit: 20 user skills plus 3 maintainer skills",
   "counts": {
     "user_skills": 20,
     "maintainer_skills": 3,
-    "candidate_skills": 2
+    "candidate_skills": 0
   },
   "classification_rules": {
     "native": "No identified external source relationship beyond local repository authorship.",
@@ -51,11 +51,13 @@
       "area": "user",
       "mode": "reference",
       "sources": [
+        "gstack",
+        "lottiefiles-motion-design-principles",
         "openai-product-design",
-        "gstack"
+        "ui-ux-pro-max-principles"
       ],
       "direct_import": false,
-      "evidence": "Prototype generation uses local workflow contracts while referencing OpenAI product-design and gstack design-html concepts; no upstream file import is recorded."
+      "evidence": "Prototype generation uses local workflow contracts while referencing OpenAI product-design and gstack design-html concepts; no upstream file import is recorded. Phase 4 added the prototype/real-screen boundary and a preceding-input contract that realises only approved motion. Concepts only."
     },
     {
       "name": "design-doc",
@@ -73,11 +75,13 @@
       "area": "user",
       "mode": "reference",
       "sources": [
+        "gstack",
+        "lottiefiles-motion-design-principles",
         "openai-product-design",
-        "gstack"
+        "ui-ux-pro-max-principles"
       ],
       "direct_import": false,
-      "evidence": "Screen/prototype planning concepts reference OpenAI product-design and gstack design planning only; no upstream file is imported."
+      "evidence": "Screen/prototype planning concepts reference OpenAI product-design and gstack design planning only; no upstream file is imported. Phase 4 added a design-system input step and a motion-candidate section. Concepts only; no upstream file, translation or summary is imported."
     },
     {
       "name": "doc-audit",
@@ -96,10 +100,12 @@
       "mode": "adapted",
       "sources": [
         "anthropic-frontend-design",
-        "openai-product-design"
+        "lottiefiles-motion-design-principles",
+        "openai-product-design",
+        "ui-ux-pro-max-principles"
       ],
       "direct_import": true,
-      "evidence": "The local production-UI workflow is a translated and substantially restructured derivative of Anthropic Skills frontend-design, with additional harness routing, validation, and platform-neutral rules. OpenAI product-design remains reference-only."
+      "evidence": "The local production-UI workflow is a translated and substantially restructured derivative of Anthropic Skills frontend-design, with additional harness routing, validation, and platform-neutral rules. OpenAI product-design remains reference-only. Phase 4 added a two-axis preceding-input contract and made motion conditional on an approved motion-design spec. Concepts only."
     },
     {
       "name": "git-scoped-account",
@@ -181,22 +187,23 @@
       "area": "user",
       "mode": "reference",
       "sources": [
+        "gstack",
+        "lottiefiles-motion-design-principles",
         "superpowers",
-        "gstack"
+        "ui-ux-pro-max-principles"
       ],
       "direct_import": false,
-      "evidence": "Fresh-evidence verification references Superpowers completion discipline and gstack qa-only report semantics without importing auto-fix runtime."
+      "evidence": "Fresh-evidence verification references Superpowers completion discipline and gstack qa-only report semantics without importing auto-fix runtime. Phase 4 added design-token, contrast, focus, touch-target, responsive, state, reduced-motion, motion-purpose, performance and prototype-boundary checks. Concepts only."
     },
     {
       "name": "motion-design",
       "area": "user",
       "mode": "adapted",
-      "lifecycle": "candidate",
       "sources": [
         "lottiefiles-motion-design-runtime"
       ],
       "direct_import": true,
-      "evidence": "Phase 3 imported the upstream skill tree at commit f9a8a041b85185ee4881b3471d3415e939aac772. director/, patterns/ and reference/ are preserved verbatim; SKILL.md is rewritten for purpose-first classification, optional motion, low-density defaults on public/medical/financial/enterprise screens, mandatory reduced-motion alternatives, evidence-backed layout-triggering properties, approval-gated persistence and public skill handoff. The relationship group stays candidate until the reference reflection lands and both relationships are promoted together."
+      "evidence": "Phase 3 imported the upstream skill tree at commit f9a8a041b85185ee4881b3471d3415e939aac772. director/, patterns/ and reference/ are preserved verbatim; SKILL.md is rewritten for purpose-first classification, optional motion, low-density defaults on public/medical/financial/enterprise screens, mandatory reduced-motion alternatives, evidence-backed layout-triggering properties, approval-gated persistence and public skill handoff. Phase 4 promoted the relationship group to active together with its reference relationship."
     },
     {
       "name": "multi-review",
@@ -223,12 +230,11 @@
       "name": "ui-ux-pro-max",
       "area": "user",
       "mode": "adapted",
-      "lifecycle": "candidate",
       "sources": [
         "ui-ux-pro-max-runtime"
       ],
       "direct_import": true,
-      "evidence": "Phase 2 imported the generated upstream skill tree at v2.11.3 (4857a2c5ef989794751a0f66b8545a4a49566286). data/, references/ and scripts/ are preserved verbatim; SKILL.md is rewritten for platform-neutral paths, scope confirmation, approval-gated persistence and public skill handoff. The relationship group stays candidate until the reference reflection lands and both relationships are promoted together."
+      "evidence": "Phase 2 imported the generated upstream skill tree at v2.11.3 (4857a2c5ef989794751a0f66b8545a4a49566286). data/, references/ and scripts/ are preserved verbatim; SKILL.md is rewritten for platform-neutral paths, scope confirmation, approval-gated persistence and public skill handoff. Phase 4 promoted the relationship group to active together with its reference relationship."
     },
     {
       "name": "custom-skill-design",

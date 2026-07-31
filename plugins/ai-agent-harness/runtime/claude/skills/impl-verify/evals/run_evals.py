@@ -35,6 +35,26 @@ def main() -> int:
     assert "기본 `./verify-output/`" not in run_auto
     assert "allowed-tools: Read, Glob, Grep, Agent" in skill
     assert "disable-model-invocation: true" in skill
+
+    # UI and motion checks are easy to drop during later edits because they only
+    # apply to screen work. Pin them so the matrix cannot quietly shrink.
+    for required in (
+        "### UI 검증 항목",
+        "해당 없으면\n항목을 생략하고 생략 사유를 리포트에 남긴다",
+        "raw hex·매직 넘버를 직접 쓰지 않음",
+        "대비 4.5:1 이상",
+        "focus 표시가 보임",
+        "44×44px",
+        "가로 스크롤 없음",
+        "loading·empty·error·success",
+        "prefers-reduced-motion: reduce",
+        "승인된 명세 범위 안에 있고",
+        "목적 없이 계속 돌지 않음",
+        "layout thrashing",
+        "`.docs/prototype/**` 코드가 제품 소스로 복사되지 않음",
+    ):
+        assert required in skill, f"UI verification item missing: {required!r}"
+
     print("impl-verify evals: PASS")
     return 0
 

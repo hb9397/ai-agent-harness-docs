@@ -5,9 +5,9 @@
 ## 릴리스 후보
 
 - 플러그인 ID: `ai-agent-harness`
-- 버전: `0.1.1`
-- 아카이브: `plugins/ai-agent-harness-0.1.1.zip`
-- 아카이브 SHA-256: `3bf0618b91d38b9aab98cf3f63879979744d23d85caa400f6ffd7b2b9726261a`
+- 버전: `0.2.0`
+- 아카이브: `plugins/ai-agent-harness-0.2.0.zip`
+- 아카이브 SHA-256: `f27f78f43409261ce5820e8d9ed6d223665ab0a506ce80851dc8a53ab841aeb6`
 - Codex 물리 스킬 수: 18
 - Codex 물리 에이전트 수: 0
 - Claude 물리 스킬 수: 18

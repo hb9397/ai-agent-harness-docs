@@ -14,7 +14,10 @@
         "tracking": "none",
         "tag_pattern": null,
         "allow_prerelease": false,
-        "watched_paths": ["skills/**", "maintainer/skills/**"]
+        "watched_paths": [
+          "skills/**",
+          "maintainer/skills/**"
+        ]
       },
       "target": {
         "local_skills": [
@@ -28,7 +31,10 @@
           "impl-reuse-scan",
           "impl-verify"
         ],
-        "platform_targets": ["codex", "claude-code"]
+        "platform_targets": [
+          "codex",
+          "claude-code"
+        ]
       },
       "policy": {
         "channel": "manual",
@@ -47,10 +53,22 @@
         "file_map": []
       },
       "protection": {
-        "protected_globs": ["**/scripts/**", "**/templates/**", "**/references/**", "**/prompts/**", "**/example/**", "**/examples/**", "**/evals/**", "LICENSE*", "NOTICE*"]
+        "protected_globs": [
+          "**/scripts/**",
+          "**/templates/**",
+          "**/references/**",
+          "**/prompts/**",
+          "**/example/**",
+          "**/examples/**",
+          "**/evals/**",
+          "LICENSE*",
+          "NOTICE*"
+        ]
       },
       "validation": {
-        "structure_checks": ["validate current skill inventory"],
+        "structure_checks": [
+          "validate current skill inventory"
+        ],
         "behavior_fixtures": [],
         "codex_smoke_prompts": [],
         "claude_smoke_prompts": []
@@ -68,11 +86,19 @@
         "tracking": "branch",
         "tag_pattern": null,
         "allow_prerelease": false,
-        "watched_paths": ["skills/frontend-design/SKILL.md", "skills/frontend-design/LICENSE.txt"]
+        "watched_paths": [
+          "skills/frontend-design/SKILL.md",
+          "skills/frontend-design/LICENSE.txt"
+        ]
       },
       "target": {
-        "local_skills": ["frontend-design"],
-        "platform_targets": ["codex", "claude-code"]
+        "local_skills": [
+          "frontend-design"
+        ],
+        "platform_targets": [
+          "codex",
+          "claude-code"
+        ]
       },
       "policy": {
         "channel": "stable",
@@ -116,7 +142,9 @@
           "adapted source notice and Apache-2.0 license remain present",
           "frontend-design carries a prominent modification notice"
         ],
-        "behavior_fixtures": ["frontend visual quality guidance remains platform-neutral and production-scoped"],
+        "behavior_fixtures": [
+          "frontend visual quality guidance remains platform-neutral and production-scoped"
+        ],
         "codex_smoke_prompts": [],
         "claude_smoke_prompts": []
       }
@@ -133,11 +161,20 @@
         "tracking": "branch",
         "tag_pattern": null,
         "allow_prerelease": false,
-        "watched_paths": ["plugins/product-design/**"]
+        "watched_paths": [
+          "plugins/product-design/**"
+        ]
       },
       "target": {
-        "local_skills": ["frontend-design", "design-prototype-docs", "create-prototype"],
-        "platform_targets": ["codex", "docs"]
+        "local_skills": [
+          "frontend-design",
+          "design-prototype-docs",
+          "create-prototype"
+        ],
+        "platform_targets": [
+          "codex",
+          "docs"
+        ]
       },
       "policy": {
         "channel": "stable",
@@ -153,13 +190,27 @@
         "notice_path": null,
         "classification_evidence_url": "https://openai.com/business/plugins/product-design/",
         "classification_checked_at": "2026-07-29",
-        "file_map": [{"upstream_path": "plugins/product-design/**", "local_path": "skills/frontend-design/SKILL.md", "treatment": "reference-only"}]
+        "file_map": [
+          {
+            "upstream_path": "plugins/product-design/**",
+            "local_path": "skills/frontend-design/SKILL.md",
+            "treatment": "reference-only"
+          }
+        ]
       },
       "protection": {
-        "protected_globs": ["**/skills/**", "**/assets/**", "**/templates/**", "**/.codex-plugin/plugin.json", "LICENSE*"]
+        "protected_globs": [
+          "**/skills/**",
+          "**/assets/**",
+          "**/templates/**",
+          "**/.codex-plugin/plugin.json",
+          "LICENSE*"
+        ]
       },
       "validation": {
-        "structure_checks": ["reference-only relationship stays file-free"],
+        "structure_checks": [
+          "reference-only relationship stays file-free"
+        ],
         "behavior_fixtures": [],
         "codex_smoke_prompts": [],
         "claude_smoke_prompts": []
@@ -193,8 +244,20 @@
         ]
       },
       "target": {
-        "local_skills": ["design-doc", "impl-doc", "impl-fe-be-doc", "impl-reuse-scan", "impl-verify", "multi-review", "pre-commit", "custom-skill-design"],
-        "platform_targets": ["codex", "claude-code"]
+        "local_skills": [
+          "design-doc",
+          "impl-doc",
+          "impl-fe-be-doc",
+          "impl-reuse-scan",
+          "impl-verify",
+          "multi-review",
+          "pre-commit",
+          "custom-skill-design"
+        ],
+        "platform_targets": [
+          "codex",
+          "claude-code"
+        ]
       },
       "policy": {
         "channel": "stable",
@@ -210,10 +273,23 @@
         "notice_path": null,
         "classification_evidence_url": "https://github.com/obra/superpowers",
         "classification_checked_at": "2026-07-30",
-        "file_map": [{"upstream_path": "skills/**", "local_path": "skills/**", "treatment": "reference-only"}]
+        "file_map": [
+          {
+            "upstream_path": "skills/**",
+            "local_path": "skills/**",
+            "treatment": "reference-only"
+          }
+        ]
       },
       "protection": {
-        "protected_globs": ["**/skills/**", "**/scripts/**", "**/hooks/**", "**/assets/**", "**/tests/**", "LICENSE*"]
+        "protected_globs": [
+          "**/skills/**",
+          "**/scripts/**",
+          "**/hooks/**",
+          "**/assets/**",
+          "**/tests/**",
+          "LICENSE*"
+        ]
       },
       "validation": {
         "structure_checks": [
@@ -266,8 +342,20 @@
         ]
       },
       "target": {
-        "local_skills": ["create-prototype", "design-doc", "design-prototype-docs", "impl-doc", "impl-fe-be-doc", "impl-reuse-scan", "impl-verify", "multi-review"],
-        "platform_targets": ["claude-code", "codex"]
+        "local_skills": [
+          "create-prototype",
+          "design-doc",
+          "design-prototype-docs",
+          "impl-doc",
+          "impl-fe-be-doc",
+          "impl-reuse-scan",
+          "impl-verify",
+          "multi-review"
+        ],
+        "platform_targets": [
+          "claude-code",
+          "codex"
+        ]
       },
       "policy": {
         "channel": "stable",
@@ -283,10 +371,22 @@
         "notice_path": null,
         "classification_evidence_url": "https://github.com/garrytan/gstack",
         "classification_checked_at": "2026-07-30",
-        "file_map": [{"upstream_path": "**/*.md", "local_path": "skills/**", "treatment": "reference-only"}]
+        "file_map": [
+          {
+            "upstream_path": "**/*.md",
+            "local_path": "skills/**",
+            "treatment": "reference-only"
+          }
+        ]
       },
       "protection": {
-        "protected_globs": ["**/scripts/**", "**/templates/**", "**/commands/**", "**/agents/**", "LICENSE*"]
+        "protected_globs": [
+          "**/scripts/**",
+          "**/templates/**",
+          "**/commands/**",
+          "**/agents/**",
+          "LICENSE*"
+        ]
       },
       "validation": {
         "structure_checks": [
@@ -322,8 +422,13 @@
         "watched_paths": []
       },
       "target": {
-        "local_skills": ["commit"],
-        "platform_targets": ["codex", "claude-code"]
+        "local_skills": [
+          "commit"
+        ],
+        "platform_targets": [
+          "codex",
+          "claude-code"
+        ]
       },
       "policy": {
         "channel": "stable",
@@ -339,13 +444,24 @@
         "notice_path": null,
         "classification_evidence_url": "https://www.conventionalcommits.org/en/v1.0.0/",
         "classification_checked_at": "2026-07-29",
-        "file_map": [{"upstream_path": null, "local_path": "skills/commit/SKILL.md", "treatment": "reference-only"}]
+        "file_map": [
+          {
+            "upstream_path": null,
+            "local_path": "skills/commit/SKILL.md",
+            "treatment": "reference-only"
+          }
+        ]
       },
       "protection": {
-        "protected_globs": ["**/examples/**", "**/templates/**"]
+        "protected_globs": [
+          "**/examples/**",
+          "**/templates/**"
+        ]
       },
       "validation": {
-        "structure_checks": ["commit message format remains compatible with Conventional Commits 1.0.0"],
+        "structure_checks": [
+          "commit message format remains compatible with Conventional Commits 1.0.0"
+        ],
         "behavior_fixtures": [],
         "codex_smoke_prompts": [],
         "claude_smoke_prompts": []
@@ -363,11 +479,21 @@
         "tracking": "documentation",
         "tag_pattern": null,
         "allow_prerelease": false,
-        "watched_paths": ["docs/agents_md.md"]
+        "watched_paths": [
+          "docs/agents_md.md"
+        ]
       },
       "target": {
-        "local_skills": ["context-doc", "harness-bootstrap", "harness-setup", "doc-audit"],
-        "platform_targets": ["codex", "docs"]
+        "local_skills": [
+          "context-doc",
+          "harness-bootstrap",
+          "harness-setup",
+          "doc-audit"
+        ],
+        "platform_targets": [
+          "codex",
+          "docs"
+        ]
       },
       "policy": {
         "channel": "latest-docs",
@@ -383,13 +509,24 @@
         "notice_path": null,
         "classification_evidence_url": "https://github.com/openai/codex/blob/main/docs/agents_md.md",
         "classification_checked_at": "2026-07-30",
-        "file_map": [{"upstream_path": "docs/agents_md.md", "local_path": "skills/context-doc/**", "treatment": "reference-only"}]
+        "file_map": [
+          {
+            "upstream_path": "docs/agents_md.md",
+            "local_path": "skills/context-doc/**",
+            "treatment": "reference-only"
+          }
+        ]
       },
       "protection": {
-        "protected_globs": ["**/templates/**", "**/prompts/**"]
+        "protected_globs": [
+          "**/templates/**",
+          "**/prompts/**"
+        ]
       },
       "validation": {
-        "structure_checks": ["AGENTS.md remains canonical for Codex"],
+        "structure_checks": [
+          "AGENTS.md remains canonical for Codex"
+        ],
         "behavior_fixtures": [],
         "codex_smoke_prompts": [],
         "claude_smoke_prompts": []
@@ -410,8 +547,16 @@
         "watched_paths": []
       },
       "target": {
-        "local_skills": ["context-doc", "harness-bootstrap", "harness-setup", "doc-audit"],
-        "platform_targets": ["claude-code", "docs"]
+        "local_skills": [
+          "context-doc",
+          "harness-bootstrap",
+          "harness-setup",
+          "doc-audit"
+        ],
+        "platform_targets": [
+          "claude-code",
+          "docs"
+        ]
       },
       "policy": {
         "channel": "latest-docs",
@@ -427,13 +572,24 @@
         "notice_path": null,
         "classification_evidence_url": "https://code.claude.com/docs/en/memory",
         "classification_checked_at": "2026-07-30",
-        "file_map": [{"upstream_path": null, "local_path": "skills/harness-setup/templates/claude-bridge.template", "treatment": "reference-only"}]
+        "file_map": [
+          {
+            "upstream_path": null,
+            "local_path": "skills/harness-setup/templates/claude-bridge.template",
+            "treatment": "reference-only"
+          }
+        ]
       },
       "protection": {
-        "protected_globs": ["**/templates/**", "**/prompts/**"]
+        "protected_globs": [
+          "**/templates/**",
+          "**/prompts/**"
+        ]
       },
       "validation": {
-        "structure_checks": ["CLAUDE.md bridge imports AGENTS.md with @AGENTS.md syntax"],
+        "structure_checks": [
+          "CLAUDE.md bridge imports AGENTS.md with @AGENTS.md syntax"
+        ],
         "behavior_fixtures": [],
         "codex_smoke_prompts": [],
         "claude_smoke_prompts": []
@@ -457,8 +613,14 @@
         ]
       },
       "target": {
-        "local_skills": ["custom-skill-design"],
-        "platform_targets": ["codex", "claude-code", "docs"]
+        "local_skills": [
+          "custom-skill-design"
+        ],
+        "platform_targets": [
+          "codex",
+          "claude-code",
+          "docs"
+        ]
       },
       "policy": {
         "channel": "stable",
@@ -530,11 +692,20 @@
         "tracking": "branch",
         "tag_pattern": null,
         "allow_prerelease": false,
-        "watched_paths": ["skills/skill-creator/SKILL.md", "skills/skill-creator/LICENSE.txt"]
+        "watched_paths": [
+          "skills/skill-creator/SKILL.md",
+          "skills/skill-creator/LICENSE.txt"
+        ]
       },
       "target": {
-        "local_skills": ["custom-skill-design"],
-        "platform_targets": ["codex", "claude-code", "docs"]
+        "local_skills": [
+          "custom-skill-design"
+        ],
+        "platform_targets": [
+          "codex",
+          "claude-code",
+          "docs"
+        ]
       },
       "policy": {
         "channel": "stable",
@@ -594,7 +765,7 @@
       "source_class": "reputable-third-party",
       "integration_mode": "adapted",
       "relationship_group": "ui-ux-pro-max",
-      "lifecycle": "candidate",
+      "lifecycle": "active",
       "upstream": {
         "kind": "repository",
         "source_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
@@ -609,8 +780,13 @@
         ]
       },
       "target": {
-        "local_skills": ["ui-ux-pro-max"],
-        "platform_targets": ["codex", "claude-code"]
+        "local_skills": [
+          "ui-ux-pro-max"
+        ],
+        "platform_targets": [
+          "codex",
+          "claude-code"
+        ]
       },
       "policy": {
         "channel": "stable",
@@ -690,7 +866,7 @@
       "source_class": "reputable-third-party",
       "integration_mode": "reference",
       "relationship_group": "ui-ux-pro-max",
-      "lifecycle": "candidate",
+      "lifecycle": "active",
       "upstream": {
         "kind": "repository",
         "source_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
@@ -704,8 +880,17 @@
         ]
       },
       "target": {
-        "local_skills": ["design-prototype-docs", "create-prototype", "frontend-design", "impl-verify"],
-        "platform_targets": ["codex", "claude-code", "docs"]
+        "local_skills": [
+          "design-prototype-docs",
+          "create-prototype",
+          "frontend-design",
+          "impl-verify"
+        ],
+        "platform_targets": [
+          "codex",
+          "claude-code",
+          "docs"
+        ]
       },
       "policy": {
         "channel": "stable",
@@ -759,7 +944,7 @@
       "source_class": "reputable-third-party",
       "integration_mode": "adapted",
       "relationship_group": "lottiefiles-motion-design",
-      "lifecycle": "candidate",
+      "lifecycle": "active",
       "upstream": {
         "kind": "repository",
         "source_url": "https://github.com/LottieFiles/motion-design-skill",
@@ -773,8 +958,13 @@
         ]
       },
       "target": {
-        "local_skills": ["motion-design"],
-        "platform_targets": ["codex", "claude-code"]
+        "local_skills": [
+          "motion-design"
+        ],
+        "platform_targets": [
+          "codex",
+          "claude-code"
+        ]
       },
       "policy": {
         "channel": "stable",
@@ -855,7 +1045,7 @@
       "source_class": "reputable-third-party",
       "integration_mode": "reference",
       "relationship_group": "lottiefiles-motion-design",
-      "lifecycle": "candidate",
+      "lifecycle": "active",
       "upstream": {
         "kind": "repository",
         "source_url": "https://github.com/LottieFiles/motion-design-skill",
@@ -869,8 +1059,17 @@
         ]
       },
       "target": {
-        "local_skills": ["design-prototype-docs", "create-prototype", "frontend-design", "impl-verify"],
-        "platform_targets": ["codex", "claude-code", "docs"]
+        "local_skills": [
+          "design-prototype-docs",
+          "create-prototype",
+          "frontend-design",
+          "impl-verify"
+        ],
+        "platform_targets": [
+          "codex",
+          "claude-code",
+          "docs"
+        ]
       },
       "policy": {
         "channel": "stable",
@@ -931,11 +1130,23 @@
         "tracking": "release",
         "tag_pattern": "v*",
         "allow_prerelease": false,
-        "watched_paths": ["agents/**", "commands/**", "scripts/**", "references/**", "LICENSE", "README.md"]
+        "watched_paths": [
+          "agents/**",
+          "commands/**",
+          "scripts/**",
+          "references/**",
+          "LICENSE",
+          "README.md"
+        ]
       },
       "target": {
-        "local_skills": ["humanize-korean"],
-        "platform_targets": ["codex", "claude-code"]
+        "local_skills": [
+          "humanize-korean"
+        ],
+        "platform_targets": [
+          "codex",
+          "claude-code"
+        ]
       },
       "policy": {
         "channel": "stable",
@@ -952,21 +1163,67 @@
         "classification_evidence_url": "https://github.com/epoko77-ai/im-not-ai/releases/tag/v2.3.0",
         "classification_checked_at": "2026-07-29",
         "file_map": [
-          {"upstream_path": "README.md", "local_path": "skills/humanize-korean/SKILL.md", "treatment": "adapted-summary"},
-          {"upstream_path": "LICENSE", "local_path": "maintainer/upstreams/provenance/im-not-ai/LICENSE", "treatment": "notice-preserved"},
-          {"upstream_path": "references/**", "local_path": "skills/humanize-korean/references/**", "treatment": "adapted-local"},
-          {"upstream_path": "scripts/**", "local_path": "skills/humanize-korean/scripts/humanize_korean.py", "treatment": "local-adapter"},
-          {"upstream_path": "agents/**", "local_path": "maintainer/plugin/runtime-allowlist.json", "treatment": "allowlist-only"}
+          {
+            "upstream_path": "README.md",
+            "local_path": "skills/humanize-korean/SKILL.md",
+            "treatment": "adapted-summary"
+          },
+          {
+            "upstream_path": "LICENSE",
+            "local_path": "maintainer/upstreams/provenance/im-not-ai/LICENSE",
+            "treatment": "notice-preserved"
+          },
+          {
+            "upstream_path": "references/**",
+            "local_path": "skills/humanize-korean/references/**",
+            "treatment": "adapted-local"
+          },
+          {
+            "upstream_path": "scripts/**",
+            "local_path": "skills/humanize-korean/scripts/humanize_korean.py",
+            "treatment": "local-adapter"
+          },
+          {
+            "upstream_path": "agents/**",
+            "local_path": "maintainer/plugin/runtime-allowlist.json",
+            "treatment": "allowlist-only"
+          }
         ]
       },
       "protection": {
-        "protected_globs": ["**/scripts/**", "**/templates/**", "**/assets/**", "**/references/**", "**/prompts/**", "**/agents/**", "**/commands/**", "**/hooks/**", "**/bin/**", "**/example/**", "**/examples/**", "**/evals/**", "**/tests/**", "LICENSE*", "NOTICE*"]
+        "protected_globs": [
+          "**/scripts/**",
+          "**/templates/**",
+          "**/assets/**",
+          "**/references/**",
+          "**/prompts/**",
+          "**/agents/**",
+          "**/commands/**",
+          "**/hooks/**",
+          "**/bin/**",
+          "**/example/**",
+          "**/examples/**",
+          "**/evals/**",
+          "**/tests/**",
+          "LICENSE*",
+          "NOTICE*"
+        ]
       },
       "validation": {
-        "structure_checks": ["skills/humanize-korean exists", "runtime allowlist contains only accepted Claude execution agents"],
-        "behavior_fixtures": ["meaning-preserving Korean humanization", "document-refinement proposal-only mode"],
-        "codex_smoke_prompts": ["Use $humanize-korean on a short .md draft and preserve IDs/dates."],
-        "claude_smoke_prompts": ["Use /ai-agent-harness:humanize-korean on a short .md draft and preserve IDs/dates."]
+        "structure_checks": [
+          "skills/humanize-korean exists",
+          "runtime allowlist contains only accepted Claude execution agents"
+        ],
+        "behavior_fixtures": [
+          "meaning-preserving Korean humanization",
+          "document-refinement proposal-only mode"
+        ],
+        "codex_smoke_prompts": [
+          "Use $humanize-korean on a short .md draft and preserve IDs/dates."
+        ],
+        "claude_smoke_prompts": [
+          "Use /ai-agent-harness:humanize-korean on a short .md draft and preserve IDs/dates."
+        ]
       }
     }
   ]

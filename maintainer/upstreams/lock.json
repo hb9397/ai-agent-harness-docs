@@ -275,7 +275,14 @@
         "mode": "adapted",
         "evidence": "maintainer/upstreams/candidates/ui-ux-pro-max/candidate.json"
       },
-      "embedded": null,
+      "embedded": {
+        "ref": "v2.11.3",
+        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
+        "embedded_at": "2026-07-31",
+        "targets": [
+          "skills/ui-ux-pro-max"
+        ]
+      },
       "packaged": null,
       "released": null
     },
@@ -295,7 +302,17 @@
         "mode": "reference",
         "evidence": "maintainer/upstreams/candidates/ui-ux-pro-max/candidate.json"
       },
-      "embedded": null,
+      "embedded": {
+        "ref": "v2.11.3",
+        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
+        "embedded_at": "2026-07-31",
+        "targets": [
+          "skills/design-prototype-docs",
+          "skills/create-prototype",
+          "skills/frontend-design",
+          "skills/impl-verify"
+        ]
+      },
       "packaged": null,
       "released": null
     },
@@ -315,7 +332,14 @@
         "mode": "adapted",
         "evidence": "maintainer/upstreams/candidates/motion-design/candidate.json"
       },
-      "embedded": null,
+      "embedded": {
+        "ref": "main",
+        "sha": "f9a8a041b85185ee4881b3471d3415e939aac772",
+        "embedded_at": "2026-07-31",
+        "targets": [
+          "skills/motion-design"
+        ]
+      },
       "packaged": null,
       "released": null
     },
@@ -335,7 +359,17 @@
         "mode": "reference",
         "evidence": "maintainer/upstreams/candidates/motion-design/candidate.json"
       },
-      "embedded": null,
+      "embedded": {
+        "ref": "main",
+        "sha": "f9a8a041b85185ee4881b3471d3415e939aac772",
+        "embedded_at": "2026-07-31",
+        "targets": [
+          "skills/design-prototype-docs",
+          "skills/create-prototype",
+          "skills/frontend-design",
+          "skills/impl-verify"
+        ]
+      },
       "packaged": null,
       "released": null
     }

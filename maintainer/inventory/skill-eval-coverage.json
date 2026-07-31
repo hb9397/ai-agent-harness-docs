@@ -7,6 +7,8 @@
   "required": {
     "skills": [
       "create-prototype",
+      "design-prototype-docs",
+      "frontend-design",
       "git-scoped-account",
       "harness-bootstrap",
       "harness-setup",
@@ -22,20 +24,7 @@
       "skill-portfolio-maintainer"
     ]
   },
-  "planned": [
-    {
-      "skill": "design-prototype-docs",
-      "canonical_root": "skills",
-      "required_from_phase": "20260730 Phase 4",
-      "note": "Gains a motion handoff contract and must not bind to new skill internal paths."
-    },
-    {
-      "skill": "frontend-design",
-      "canonical_root": "skills",
-      "required_from_phase": "20260730 Phase 4",
-      "note": "Gains a two-axis preceding-input contract and a conditional motion rule."
-    }
-  ],
+  "planned": [],
   "not_required": {
     "skills": [
       "code-comment",
@@ -55,5 +44,12 @@
     "missing_planned_runner": "report",
     "runner_present_but_unlisted": "report",
     "note": "Planned entries move into required in the phase named by required_from_phase."
-  }
+  },
+  "integration_fixtures": [
+    {
+      "path": "maintainer/skills/harness-plugin-maintainer/evals/design_workflow.py",
+      "scope": "design workflow across ui-ux-pro-max, motion-design, design-prototype-docs, create-prototype, frontend-design and impl-verify",
+      "rationale": "Cross-skill properties such as public-name handoff, prototype/product boundary and single humanize owner cannot be observed from inside any one skill runner."
+    }
+  ]
 }

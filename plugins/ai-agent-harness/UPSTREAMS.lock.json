@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "generated_at": "2026-07-30",
+  "generated_at": "2026-07-31",
   "states": [
     {
       "id": "anthropic-frontend-design",
@@ -28,9 +28,9 @@
       },
       "packaged": {
         "plugin_id": "ai-agent-harness",
-        "version": "0.1.1",
+        "version": "0.2.0",
         "packaged_at": "2026-07-29",
-        "artifact_manifest_sha256": "8269171b3b1f4e76b400edf73b18bbf2a23ef96dde8d43a15084a79ec0603e73"
+        "artifact_manifest_sha256": "710c230400911c8c429830f8886708b2757e1035d3a4c1f686262ac176f6bfb3"
       },
       "released": null
     },
@@ -263,10 +263,124 @@
       },
       "packaged": {
         "plugin_id": "ai-agent-harness",
-        "version": "0.1.1",
+        "version": "0.2.0",
         "packaged_at": "2026-07-29",
-        "artifact_manifest_sha256": "8269171b3b1f4e76b400edf73b18bbf2a23ef96dde8d43a15084a79ec0603e73"
+        "artifact_manifest_sha256": "710c230400911c8c429830f8886708b2757e1035d3a4c1f686262ac176f6bfb3"
       },
+      "released": null
+    },
+    {
+      "id": "ui-ux-pro-max-runtime",
+      "observed": {
+        "source_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/releases/tag/v2.11.3",
+        "checked_at": "2026-07-31",
+        "ref": "v2.11.3",
+        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
+        "note": "Pinned from the latest stable upstream release during Phase 0."
+      },
+      "accepted": {
+        "ref": "v2.11.3",
+        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
+        "accepted_at": "2026-07-31",
+        "mode": "adapted",
+        "evidence": "maintainer/upstreams/candidates/ui-ux-pro-max/candidate.json"
+      },
+      "embedded": {
+        "ref": "v2.11.3",
+        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
+        "embedded_at": "2026-07-31",
+        "targets": [
+          "skills/ui-ux-pro-max"
+        ]
+      },
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "ui-ux-pro-max-principles",
+      "observed": {
+        "source_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/releases/tag/v2.11.3",
+        "checked_at": "2026-07-31",
+        "ref": "v2.11.3",
+        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
+        "note": "Pinned from the latest stable upstream release during Phase 0."
+      },
+      "accepted": {
+        "ref": "v2.11.3",
+        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
+        "accepted_at": "2026-07-31",
+        "mode": "reference",
+        "evidence": "maintainer/upstreams/candidates/ui-ux-pro-max/candidate.json"
+      },
+      "embedded": {
+        "ref": "v2.11.3",
+        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
+        "embedded_at": "2026-07-31",
+        "targets": [
+          "skills/design-prototype-docs",
+          "skills/create-prototype",
+          "skills/frontend-design",
+          "skills/impl-verify"
+        ]
+      },
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "lottiefiles-motion-design-runtime",
+      "observed": {
+        "source_url": "https://github.com/LottieFiles/motion-design-skill/tree/main",
+        "checked_at": "2026-07-31",
+        "ref": "main",
+        "sha": "f9a8a041b85185ee4881b3471d3415e939aac772",
+        "note": "Upstream publishes no release or tag; branch head pinned during Phase 0."
+      },
+      "accepted": {
+        "ref": "main",
+        "sha": "f9a8a041b85185ee4881b3471d3415e939aac772",
+        "accepted_at": "2026-07-31",
+        "mode": "adapted",
+        "evidence": "maintainer/upstreams/candidates/motion-design/candidate.json"
+      },
+      "embedded": {
+        "ref": "main",
+        "sha": "f9a8a041b85185ee4881b3471d3415e939aac772",
+        "embedded_at": "2026-07-31",
+        "targets": [
+          "skills/motion-design"
+        ]
+      },
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "lottiefiles-motion-design-principles",
+      "observed": {
+        "source_url": "https://github.com/LottieFiles/motion-design-skill/tree/main",
+        "checked_at": "2026-07-31",
+        "ref": "main",
+        "sha": "f9a8a041b85185ee4881b3471d3415e939aac772",
+        "note": "Upstream publishes no release or tag; branch head pinned during Phase 0."
+      },
+      "accepted": {
+        "ref": "main",
+        "sha": "f9a8a041b85185ee4881b3471d3415e939aac772",
+        "accepted_at": "2026-07-31",
+        "mode": "reference",
+        "evidence": "maintainer/upstreams/candidates/motion-design/candidate.json"
+      },
+      "embedded": {
+        "ref": "main",
+        "sha": "f9a8a041b85185ee4881b3471d3415e939aac772",
+        "embedded_at": "2026-07-31",
+        "targets": [
+          "skills/design-prototype-docs",
+          "skills/create-prototype",
+          "skills/frontend-design",
+          "skills/impl-verify"
+        ]
+      },
+      "packaged": null,
       "released": null
     }
   ],

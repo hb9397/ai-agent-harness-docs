@@ -49,15 +49,19 @@
     },
     {
       "skill": "harness-plugin-maintainer",
-      "file_count": 16,
+      "file_count": 17,
       "files": [
+        {
+          "path": "maintainer/skills/harness-plugin-maintainer/evals/design_workflow.py",
+          "sha256": "54ffc3c389ba220ab7d96f88dd27890baca92cea4ee4033377e5c3f66559cfe4"
+        },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/fixtures/README.md",
           "sha256": "cd6107efe786d87250d17ea8d99a3a25d16b8b6867993a45e05db5ecfbcaacce"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/run_evals.py",
-          "sha256": "53215400c26b2b904830af4fc1e395a568b364f6d5bf85dac028e9ae55c4adfa"
+          "sha256": "6167b964bc0b147c485f0859f6d3b05928b53e53215d4d296c574298fd52abdf"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/references/plugin-structure.md",
@@ -65,7 +69,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py",
-          "sha256": "da47e20df0bc9d2a9b237142bd432b4d5414e91440aa137acc1e7115e51c0409"
+          "sha256": "bc944dd4df73bd74100206c4428f9e6c4af3d90add33745890e041f618942223"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/freeze_manager_inventory.py",
@@ -73,7 +77,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/plugin_common.py",
-          "sha256": "51970c518edecaed926100bc1dc03091b0416a80216b39032d64e2f00d755f10"
+          "sha256": "f815bbced48f4bdb1ad2380440e983a2718b13429c27533862ca6c698e29d5f5"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/run_all_skill_evals.py",
@@ -155,7 +159,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/evals/run_evals.py",
-          "sha256": "a6b064f66f968e92e45efce0a886fa612fb80b3a71277736050e8d22f0335276"
+          "sha256": "8a6edc826acac4b31c80f481d1af133a300b4c9198bd4ed9bab85d6bddae32ec"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/references/adapted-mode.md",

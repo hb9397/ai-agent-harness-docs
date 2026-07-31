@@ -3,15 +3,15 @@
   "files": [
     {
       "path": ".claude-plugin/plugin.json",
-      "sha256": "44daa30b6a4534f72e775fe7e80198fab6d5ce48994df61a13fc0d9ec3198313"
+      "sha256": "13626c9c45cb9351dcdc08c0cfd953efafc99b56e7bd781970a5b3b7bf56ba00"
     },
     {
       "path": ".codex-plugin/plugin.json",
-      "sha256": "4819df7293a6da4fc70c3c12fc9c0fa0fb67ad0e012c82181a39ca56f8f2925f"
+      "sha256": "1d04f7e1d8862f12db6c29f3f16884380db002ce1b90a7ea8a04d5c50703642e"
     },
     {
       "path": "CAPABILITIES.json",
-      "sha256": "8269171b3b1f4e76b400edf73b18bbf2a23ef96dde8d43a15084a79ec0603e73"
+      "sha256": "710c230400911c8c429830f8886708b2757e1035d3a4c1f686262ac176f6bfb3"
     },
     {
       "path": "LICENSE",
@@ -23,7 +23,7 @@
     },
     {
       "path": "UPSTREAMS.lock.json",
-      "sha256": "d890858c4d2be4c02cecca04783bcc6db101839c7a375678c48ac6f20ff0aaea"
+      "sha256": "afa43b003e228116a43b2dbeb4a6c4e8ea5b015ffe51f163538cec3b3caa2235"
     },
     {
       "path": "licenses/anthropic-frontend-design-LICENSE",
@@ -119,11 +119,11 @@
     },
     {
       "path": "runtime/claude/skills/create-prototype/SKILL.md",
-      "sha256": "4ed8833f17b70cf10d6dbc6f88102bcd7b7a54683d30aef27b9ddcd2528251ac"
+      "sha256": "37b33026321ebd6e3d6f78f251800c83a2e41eed9c3a2d2f24ddaedb8bca5d58"
     },
     {
       "path": "runtime/claude/skills/create-prototype/evals/run_evals.py",
-      "sha256": "2e2967e3537b105349a740a824d671c4b60ef886d17a28fd76d12c2d9270f36f"
+      "sha256": "9b5a175fdefafde5fa31e640fcba6feb47c75a62aaecdddf0cf5f30aa67445dc"
     },
     {
       "path": "runtime/claude/skills/create-prototype/examples/SFR-018.html",
@@ -183,7 +183,11 @@
     },
     {
       "path": "runtime/claude/skills/design-prototype-docs/SKILL.md",
-      "sha256": "7e619130dab29bd0ac6c940c30f447760f2ac46f3088b60a9da2d8bb9968e6c8"
+      "sha256": "6c7370b144a058a181b894af70bf8706201c009d58384f1195e51e8bd1ab9de5"
+    },
+    {
+      "path": "runtime/claude/skills/design-prototype-docs/evals/run_evals.py",
+      "sha256": "512800bf7726930535cd2171b0ab190edefc70181dc301fa583444f5e7ec480f"
     },
     {
       "path": "runtime/claude/skills/design-prototype-docs/example/mock_output.md",
@@ -219,7 +223,11 @@
     },
     {
       "path": "runtime/claude/skills/frontend-design/SKILL.md",
-      "sha256": "8132f82f51307563ad4867d1cc822fffbc99dd3b68fb8a95dac31d24ae5750bf"
+      "sha256": "bbe48e9a8fa2b825431603c11149c4cbb1e9baca1982006a4ef456fa38c7903e"
+    },
+    {
+      "path": "runtime/claude/skills/frontend-design/evals/run_evals.py",
+      "sha256": "ae6ba0cd208be3555e6bf39bd14cc8a435f6d30e063da42f108d62f22f5d35fc"
     },
     {
       "path": "runtime/claude/skills/git-scoped-account/SKILL.md",
@@ -451,11 +459,11 @@
     },
     {
       "path": "runtime/claude/skills/impl-verify/SKILL.md",
-      "sha256": "d1cc44c3a4e85c13ff7649e23e60342c98bcb2cb421dd03970dc4d6c36a72667"
+      "sha256": "70832835b20040a69df9beda0f6677208fddbff887cfc21693f075d6d0aa34cf"
     },
     {
       "path": "runtime/claude/skills/impl-verify/evals/run_evals.py",
-      "sha256": "26786f8a5aec591694a0f467a529acae52a6c2ad5a25175aceec9e1d8c1ebc56"
+      "sha256": "c9a2779f911583920c6be4f0068e31558ba4ede0b9263b7513e9268fb4252f26"
     },
     {
       "path": "runtime/claude/skills/impl-verify/prompts/classify-checks.md",
@@ -623,11 +631,11 @@
     },
     {
       "path": "runtime/codex/skills/create-prototype/SKILL.md",
-      "sha256": "4ed8833f17b70cf10d6dbc6f88102bcd7b7a54683d30aef27b9ddcd2528251ac"
+      "sha256": "37b33026321ebd6e3d6f78f251800c83a2e41eed9c3a2d2f24ddaedb8bca5d58"
     },
     {
       "path": "runtime/codex/skills/create-prototype/evals/run_evals.py",
-      "sha256": "2e2967e3537b105349a740a824d671c4b60ef886d17a28fd76d12c2d9270f36f"
+      "sha256": "9b5a175fdefafde5fa31e640fcba6feb47c75a62aaecdddf0cf5f30aa67445dc"
     },
     {
       "path": "runtime/codex/skills/create-prototype/examples/SFR-018.html",
@@ -687,7 +695,11 @@
     },
     {
       "path": "runtime/codex/skills/design-prototype-docs/SKILL.md",
-      "sha256": "7e619130dab29bd0ac6c940c30f447760f2ac46f3088b60a9da2d8bb9968e6c8"
+      "sha256": "6c7370b144a058a181b894af70bf8706201c009d58384f1195e51e8bd1ab9de5"
+    },
+    {
+      "path": "runtime/codex/skills/design-prototype-docs/evals/run_evals.py",
+      "sha256": "512800bf7726930535cd2171b0ab190edefc70181dc301fa583444f5e7ec480f"
     },
     {
       "path": "runtime/codex/skills/design-prototype-docs/example/mock_output.md",
@@ -723,7 +735,11 @@
     },
     {
       "path": "runtime/codex/skills/frontend-design/SKILL.md",
-      "sha256": "8132f82f51307563ad4867d1cc822fffbc99dd3b68fb8a95dac31d24ae5750bf"
+      "sha256": "bbe48e9a8fa2b825431603c11149c4cbb1e9baca1982006a4ef456fa38c7903e"
+    },
+    {
+      "path": "runtime/codex/skills/frontend-design/evals/run_evals.py",
+      "sha256": "ae6ba0cd208be3555e6bf39bd14cc8a435f6d30e063da42f108d62f22f5d35fc"
     },
     {
       "path": "runtime/codex/skills/git-scoped-account/SKILL.md",
@@ -955,11 +971,11 @@
     },
     {
       "path": "runtime/codex/skills/impl-verify/SKILL.md",
-      "sha256": "d1cc44c3a4e85c13ff7649e23e60342c98bcb2cb421dd03970dc4d6c36a72667"
+      "sha256": "70832835b20040a69df9beda0f6677208fddbff887cfc21693f075d6d0aa34cf"
     },
     {
       "path": "runtime/codex/skills/impl-verify/evals/run_evals.py",
-      "sha256": "26786f8a5aec591694a0f467a529acae52a6c2ad5a25175aceec9e1d8c1ebc56"
+      "sha256": "c9a2779f911583920c6be4f0068e31558ba4ede0b9263b7513e9268fb4252f26"
     },
     {
       "path": "runtime/codex/skills/impl-verify/prompts/classify-checks.md",

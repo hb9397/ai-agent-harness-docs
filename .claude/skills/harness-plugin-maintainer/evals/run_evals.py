@@ -91,6 +91,8 @@ def test_pending_candidate_skill_is_canonical_but_not_packaged() -> None:
 def main() -> int:
     test_invalid_inventory_does_not_destroy_the_plugin_tree()
     test_pending_candidate_skill_is_canonical_but_not_packaged()
+    # Cross-skill properties that no single skill runner can observe.
+    run([str(Path(__file__).parent / "design_workflow.py")])
 
     with tempfile.TemporaryDirectory(prefix="harness-plugin-text-eval-") as tmp:
         payload_root = Path(tmp)

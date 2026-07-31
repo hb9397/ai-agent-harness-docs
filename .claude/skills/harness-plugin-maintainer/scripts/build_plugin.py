@@ -63,21 +63,23 @@ PACKAGED_INTEGRATION_MODES = {"adapted", "vendored"}
 
 
 def pending_user_skills(root: Path) -> list[str]:
-    """Canonical user skills whose upstream relationship is not promoted yet.
+    """Canonical user skills that are intentionally not shipped yet.
 
-    A skill can exist in `skills/` while its upstream group is still a candidate.
-    It is intentionally absent from the shipped package until promotion, so it
-    must not count as inventory drift.
+    Packaging inclusion is declared explicitly rather than inferred from upstream
+    lifecycle. A relationship can be promoted to active — so the skill records
+    real provenance and existing skills may reference it — while the packaging
+    phase has not happened yet.
     """
-    current_path = root / "maintainer" / "upstreams" / "provenance" / "current-skills.json"
-    if not current_path.is_file():
-        return []
-    current = load_json(current_path)
-    return sorted(
-        item["name"]
-        for item in current.get("skills", [])
-        if item.get("area") == "user" and item.get("lifecycle") == "candidate"
-    )
+    capabilities = load_json(root / "maintainer" / "plugin" / "CAPABILITIES.json")
+    pending = sorted(capabilities.get("pending_packaging", []))
+    logical = set(capabilities.get("logical_user_skills", []))
+    overlap = sorted(set(pending) & logical)
+    if overlap:
+        raise RuntimeError(f"pending_packaging must not overlap logical_user_skills: {overlap}")
+    missing = [name for name in pending if not (root / "skills" / name / "SKILL.md").is_file()]
+    if missing:
+        raise RuntimeError(f"pending_packaging lists non-canonical skills: {missing}")
+    return pending
 
 
 def check_user_skill_inventory(root: Path, capabilities: dict) -> None:

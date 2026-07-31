@@ -508,13 +508,16 @@ def test_canonical_skill_count_is_derived_not_hardcoded() -> None:
 
 
 def test_candidate_sources_are_not_claimed_by_established_skills() -> None:
-    """An in-progress skill may record its candidate source; a promoted one may not."""
+    """An in-progress skill may record its candidate source; a promoted one may not.
+
+    Zero candidates is a valid steady state, so this checks the rule rather than
+    asserting the repository is mid-integration.
+    """
     registry = json.loads((ROOT / "maintainer" / "upstreams" / "registry.json").read_text(encoding="utf-8"))
     current = json.loads((ROOT / "maintainer" / "upstreams" / "provenance" / "current-skills.json").read_text(encoding="utf-8"))
     candidate_ids = {
         source["id"] for source in registry["sources"] if source.get("lifecycle") == "candidate"
     }
-    assert candidate_ids, "expected candidate relationships during integration phases"
     for item in current["skills"]:
         overlap = candidate_ids & set(item.get("sources", []))
         if overlap:
@@ -524,22 +527,35 @@ def test_candidate_sources_are_not_claimed_by_established_skills() -> None:
 
 
 def test_established_skill_claiming_candidate_source_is_blocked() -> None:
-    root = ROOT
-    current_path = root / "maintainer" / "upstreams" / "provenance" / "current-skills.json"
-    backup = current_path.read_bytes()
+    """Demote one active relationship and confirm the guard fires.
+
+    Building the violation instead of relying on live repository state keeps the
+    check meaningful once every relationship is promoted.
+    """
+    registry_path = ROOT / "maintainer" / "upstreams" / "registry.json"
+    registry_backup = registry_path.read_bytes()
     try:
-        doc = json.loads(backup.decode("utf-8"))
-        for item in doc["skills"]:
-            if item["name"] == "ui-ux-pro-max":
-                item.pop("lifecycle", None)
-        current_path.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+        registry = json.loads(registry_backup.decode("utf-8"))
+        target = next(
+            source for source in registry["sources"]
+            if source.get("integration_mode") == "reference"
+            and source.get("relationship_group")
+            and source.get("lifecycle") == "active"
+        )
+        group = target["relationship_group"]
+        for source in registry["sources"]:
+            if source.get("relationship_group") == group:
+                source["lifecycle"] = "candidate"
+        registry_path.write_text(
+            json.dumps(registry, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
+        )
         errors: list[str] = []
-        validate_registry.validate_registry(root, errors)
+        validate_registry.validate_registry(ROOT, errors)
         assert any("must not declare an unpromoted candidate source" in item for item in errors), errors
     finally:
-        current_path.write_bytes(backup)
+        registry_path.write_bytes(registry_backup)
     errors = []
-    validate_registry.validate_registry(root, errors)
+    validate_registry.validate_registry(ROOT, errors)
     assert errors == [], "\n".join(errors)
 
 
