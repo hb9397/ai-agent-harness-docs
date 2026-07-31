@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "plugin_root": "plugins/ai-agent-harness",
   "archive": "plugins/ai-agent-harness-0.2.0.zip",
-  "archive_sha256": "f27f78f43409261ce5820e8d9ed6d223665ab0a506ce80851dc8a53ab841aeb6",
+  "archive_sha256": "248e8b04ff5fc7b1d39fb151419e15959c3a3176e1e0885508f598aac79701ea",
   "marketplaces": {
     "codex": ".agents/plugins/marketplace.json",
     "claude": ".claude-plugin/marketplace.json"
@@ -26,7 +26,9 @@
     "design-doc",
     "design-prototype-docs",
     "impl-doc",
-    "impl-fe-be-doc"
+    "impl-fe-be-doc",
+    "ui-ux-pro-max",
+    "motion-design"
   ],
   "released_state_preserved": true,
   "push_tag_release_created": false

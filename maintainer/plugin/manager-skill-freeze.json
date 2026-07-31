@@ -49,7 +49,7 @@
     },
     {
       "skill": "harness-plugin-maintainer",
-      "file_count": 17,
+      "file_count": 18,
       "files": [
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/design_workflow.py",
@@ -60,8 +60,12 @@
           "sha256": "cd6107efe786d87250d17ea8d99a3a25d16b8b6867993a45e05db5ecfbcaacce"
         },
         {
+          "path": "maintainer/skills/harness-plugin-maintainer/evals/markdown_producers.py",
+          "sha256": "a70f48cbb566df63f0a08a51f99dd3b87df304f194de4ee0d2ece12e552f4751"
+        },
+        {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/run_evals.py",
-          "sha256": "6167b964bc0b147c485f0859f6d3b05928b53e53215d4d296c574298fd52abdf"
+          "sha256": "5f852db0bda455baa48f08397d8c73229c77e7c45c9e03ac0589e572a110a116"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/references/plugin-structure.md",
@@ -69,7 +73,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py",
-          "sha256": "bc944dd4df73bd74100206c4428f9e6c4af3d90add33745890e041f618942223"
+          "sha256": "e668db7ed34962076990fc98c978241df0d4690d4166e482603adb486c647841"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/freeze_manager_inventory.py",
@@ -97,7 +101,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/validate_plugin.py",
-          "sha256": "b09c458d6e56600337d95163e3e7073144bcb6d3eaf1894b4baed26b8fbdeb57"
+          "sha256": "a65960c493655dfabc9a5f34cece256d5f9e52460c723d8bb0aea1dd88b443a9"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/verify_install_surfaces.py",

@@ -93,6 +93,7 @@ def main() -> int:
     test_pending_candidate_skill_is_canonical_but_not_packaged()
     # Cross-skill properties that no single skill runner can observe.
     run([str(Path(__file__).parent / "design_workflow.py")])
+    run([str(Path(__file__).parent / "markdown_producers.py")])
 
     with tempfile.TemporaryDirectory(prefix="harness-plugin-text-eval-") as tmp:
         payload_root = Path(tmp)

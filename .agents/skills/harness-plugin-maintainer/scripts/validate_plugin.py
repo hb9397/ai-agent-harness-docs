@@ -129,9 +129,27 @@ def validate_counts(root: Path, errors: list[str]) -> None:
         error(errors, "canonical Claude humanize skill mismatch")
     if caps["claude"].get("physical_skills") != 18 or caps["claude"].get("physical_agents") != 0:
         error(errors, "Claude capability counts must be 18 skills and 0 agents")
+    # Compare against the inventory rather than a second copy of the list, and
+    # require every declared producer to be a canonical skill that actually
+    # carries the handoff contract.
+    flow = load_json(root / "maintainer" / "inventory" / "markdown-artifact-flow.json")
+    expected = [item["skill"] for item in flow["producer_skills"]]
     producers = caps["markdown_artifact_flow"]["producers"]
-    if producers != ["harness-setup", "harness-bootstrap", "context-doc", "design-doc", "design-prototype-docs", "impl-doc", "impl-fe-be-doc"]:
-        error(errors, "Markdown producer inventory mismatch")
+    if producers != expected:
+        error(errors, f"Markdown producer inventory mismatch: {producers} != {expected}")
+    if caps["markdown_artifact_flow"].get("producer_count") != len(expected):
+        error(errors, "Markdown producer count does not match the inventory")
+    for item in flow["producer_skills"]:
+        name = item["skill"]
+        skill_file = root / "skills" / name / "SKILL.md"
+        if not skill_file.is_file():
+            error(errors, f"Markdown producer is not a canonical user skill: {name}")
+            continue
+        text = skill_file.read_text(encoding="utf-8")
+        if "humanize-korean" not in text:
+            error(errors, f"Markdown producer does not declare the refinement handoff: {name}")
+        if item.get("conditional") and "최외곽" not in text:
+            error(errors, f"conditional producer must gate the handoff on outermost ownership: {name}")
 
 
 def validate_skill_files(root: Path, errors: list[str]) -> None:

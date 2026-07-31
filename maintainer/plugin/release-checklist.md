@@ -7,12 +7,12 @@
 - 플러그인 ID: `ai-agent-harness`
 - 버전: `0.2.0`
 - 아카이브: `plugins/ai-agent-harness-0.2.0.zip`
-- 아카이브 SHA-256: `f27f78f43409261ce5820e8d9ed6d223665ab0a506ce80851dc8a53ab841aeb6`
+- 아카이브 SHA-256: `248e8b04ff5fc7b1d39fb151419e15959c3a3176e1e0885508f598aac79701ea`
 - Codex 물리 스킬 수: 18
 - Codex 물리 에이전트 수: 0
 - Claude 물리 스킬 수: 18
 - Claude 물리 에이전트 수: 0
-- Markdown 생성 스킬 handoff 수: 7
+- Markdown 생성 스킬 handoff 수: 9
 
 ## 자동화된 로컬 검사
 

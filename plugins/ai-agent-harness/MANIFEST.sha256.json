@@ -11,7 +11,7 @@
     },
     {
       "path": "CAPABILITIES.json",
-      "sha256": "710c230400911c8c429830f8886708b2757e1035d3a4c1f686262ac176f6bfb3"
+      "sha256": "e71f8aee19e5ca24a73b08b48ea62de74faa3a1e31434e66032542440363adee"
     },
     {
       "path": "LICENSE",
@@ -23,7 +23,7 @@
     },
     {
       "path": "UPSTREAMS.lock.json",
-      "sha256": "afa43b003e228116a43b2dbeb4a6c4e8ea5b015ffe51f163538cec3b3caa2235"
+      "sha256": "2cc0879cb993d23fcdca5b8892d6523e6217bd75e359202085a3f6473211dde5"
     },
     {
       "path": "licenses/anthropic-frontend-design-LICENSE",
@@ -347,7 +347,7 @@
     },
     {
       "path": "runtime/claude/skills/humanize-korean/references/document-refinement.md",
-      "sha256": "14324ffb437498f2b2e944f41a40992377c90c4bd1c21076251a42837041ac5b"
+      "sha256": "3de17900f1761c8a47d729384ea036f14d153b52c8f111c8fdef8dc3742e3587"
     },
     {
       "path": "runtime/claude/skills/humanize-korean/references/taxonomy.md",
@@ -859,7 +859,7 @@
     },
     {
       "path": "runtime/codex/skills/humanize-korean/references/document-refinement.md",
-      "sha256": "14324ffb437498f2b2e944f41a40992377c90c4bd1c21076251a42837041ac5b"
+      "sha256": "3de17900f1761c8a47d729384ea036f14d153b52c8f111c8fdef8dc3742e3587"
     },
     {
       "path": "runtime/codex/skills/humanize-korean/references/taxonomy.md",

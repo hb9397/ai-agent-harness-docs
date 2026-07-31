@@ -19,6 +19,30 @@
 - 직접 인용
 - 의무 수준 표현
 
+### 디자인 시스템 문서에서 추가로 보호할 값
+
+`.docs/design-system/**` 문서를 다룰 때 아래 값은 그대로 둔다.
+
+- hex, RGB, HSL 색상값
+- CSS 변수명과 디자인 토큰 이름
+- font family와 weight
+- spacing, breakpoint 값
+- 기술 스택과 컴포넌트 이름
+
+### 모션 명세 문서에서 추가로 보호할 값
+
+`.docs/design-system/**/motion/**` 문서를 다룰 때 아래 값은 그대로 둔다.
+
+- duration, delay 값
+- easing curve 이름과 cubic-bezier 계수
+- 애니메이션 대상 속성 이름
+- trigger와 상태 이름
+- reduced-motion 조건
+- 성능 budget
+
+이 값들은 기계적 의미를 가진 데이터다. 윤문은 문장을 다듬는 작업이지 데이터를
+바꾸는 작업이 아니다. 값이 바뀌면 문서가 설명하던 구현이 달라진다.
+
 ## 개선 우선순위
 
 1. 반복되는 종결어미와 접속어 완화

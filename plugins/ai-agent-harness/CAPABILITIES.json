@@ -49,7 +49,7 @@
     "canonical_humanize_skill": "humanize-korean"
   },
   "markdown_artifact_flow": {
-    "producer_count": 7,
+    "producer_count": 9,
     "producers": [
       "harness-setup",
       "harness-bootstrap",
@@ -57,7 +57,9 @@
       "design-doc",
       "design-prototype-docs",
       "impl-doc",
-      "impl-fe-be-doc"
+      "impl-fe-be-doc",
+      "ui-ux-pro-max",
+      "motion-design"
     ],
     "handoff_target": "humanize-korean",
     "proposal_only": true

@@ -1,49 +1,91 @@
 {
   "schema_version": "1.0.0",
-  "generated_at": "2026-07-29",
+  "generated_at": "2026-07-31",
   "purpose": "Track Markdown producer bundles and enforce one optional humanize-korean handoff owned by the outermost producer.",
   "producer_skills": [
     {
       "skill": "harness-setup",
-      "artifacts": ["AGENTS.md", "CLAUDE.md", ".docs/README.md"],
+      "artifacts": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        ".docs/README.md"
+      ],
       "structural_validator": "project layout allowlist, AGENTS canonical context, CLAUDE @AGENTS.md bridge",
       "handoff": "Outermost owner offers one humanize-korean document-refinement proposal after structural validation."
     },
     {
       "skill": "harness-bootstrap",
-      "artifacts": ["DESIGN.md", "AGENTS.md", "CLAUDE.md"],
+      "artifacts": [
+        "DESIGN.md",
+        "AGENTS.md",
+        "CLAUDE.md"
+      ],
       "structural_validator": "design output, context references, AGENTS/CLAUDE bridge and output paths",
       "handoff": "Own the combined design-doc/context-doc bundle; suppress both child handoffs and offer once after final validation."
     },
     {
       "skill": "context-doc",
-      "artifacts": ["AGENTS.md", "CLAUDE.md"],
+      "artifacts": [
+        "AGENTS.md",
+        "CLAUDE.md"
+      ],
       "structural_validator": "instruction references, AGENTS canonical context and CLAUDE @AGENTS.md bridge",
       "handoff": "Offer once only when directly invoked; return draft and validation result when a parent owns the bundle."
     },
     {
       "skill": "design-doc",
-      "artifacts": ["DESIGN.md"],
+      "artifacts": [
+        "DESIGN.md"
+      ],
       "structural_validator": "required sections, requirement traceability, links and save path",
       "handoff": "Offer once only when directly invoked and after OUTPUT validation."
     },
     {
       "skill": "design-prototype-docs",
-      "artifacts": ["prototype design .md"],
+      "artifacts": [
+        "prototype design .md"
+      ],
       "structural_validator": "seven quality checks, requirement coverage, routes, tables and code fences",
       "handoff": "Offer once only when directly invoked; revalidate before create-prototype handoff."
     },
     {
       "skill": "impl-doc",
-      "artifacts": ["implementation plan .md", "implementation roadmap index"],
+      "artifacts": [
+        "implementation plan .md",
+        "implementation roadmap index"
+      ],
       "structural_validator": "task IDs, commands, paths, verification scenarios and roadmap index links",
       "handoff": "Offer once for the plan/index bundle and revalidate before downstream implementation."
     },
     {
       "skill": "impl-fe-be-doc",
-      "artifacts": ["FE/BE implementation plan .md", "implementation roadmap index"],
+      "artifacts": [
+        "FE/BE implementation plan .md",
+        "implementation roadmap index"
+      ],
       "structural_validator": "FE-API-BE-DB traceability, task IDs, paths, verification scenarios and roadmap index links",
       "handoff": "Offer once for the FE/BE plan/index bundle and revalidate before downstream implementation."
+    },
+    {
+      "skill": "ui-ux-pro-max",
+      "conditional": true,
+      "condition": "Only when the user explicitly asks to persist the design system. The default is a chat report with no file write.",
+      "artifacts": [
+        ".docs/design-system/{project-slug}/MASTER.md",
+        ".docs/design-system/{project-slug}/pages/{page-slug}.md"
+      ],
+      "structural_validator": "required sections, token tables, slug-safe paths, MASTER/override split",
+      "handoff": "Offer once only when directly invoked and the outermost producer; suppress when a parent owns the bundle."
+    },
+    {
+      "skill": "motion-design",
+      "conditional": true,
+      "condition": "Only when the user explicitly asks to persist the motion spec. The default is a chat report with no file write.",
+      "artifacts": [
+        ".docs/design-system/{project-slug}/motion/{screen-or-component}.md"
+      ],
+      "structural_validator": "required spec fields, slug-safe paths, reduced-motion alternative present",
+      "handoff": "Offer once only when directly invoked and the outermost producer; suppress when a parent owns the bundle."
     }
   ],
   "policy": {
@@ -57,7 +99,13 @@
       "handoff_completed": "in-session state set after propose, skip, reject, apply, or revalidate",
       "artifact_bundle_fingerprint": "SHA-256 over the sorted normalized Markdown paths, each content SHA-256, and the profile name",
       "persistent_ledger": ".docs/.harness/humanize-handoffs.json; atomically keyed by artifact_bundle_fingerprint so retries and new sessions do not offer unchanged content twice",
-      "ledger_states": ["proposed", "skipped", "rejected", "applied", "revalidated"],
+      "ledger_states": [
+        "proposed",
+        "skipped",
+        "rejected",
+        "applied",
+        "revalidated"
+      ],
       "ledger_excluded_from_bundle": true
     },
     "required_order": [
@@ -67,5 +115,34 @@
       "producer structural revalidation after approved apply",
       "downstream consumes only the revalidated final Markdown"
     ]
+  },
+  "protected_tokens": {
+    "purpose": "Values that carry mechanical meaning must survive document refinement unchanged. Refinement improves prose, never data.",
+    "shared": [
+      "heading hierarchy and anchors",
+      "table structure",
+      "code fences and inline code",
+      "commands, paths, URLs",
+      "requirement/API/screen IDs and commit SHAs",
+      "numbers, dates, versions",
+      "direct quotations",
+      "obligation-level wording"
+    ],
+    "design_system_documents": [
+      "hex, RGB and HSL colour values",
+      "CSS variable and design token names",
+      "font family and weight",
+      "spacing and breakpoint values",
+      "stack and component names"
+    ],
+    "motion_documents": [
+      "duration and delay values",
+      "easing curve names and cubic-bezier coefficients",
+      "animated property names",
+      "trigger and state names",
+      "reduced-motion conditions",
+      "performance budgets"
+    ],
+    "contract": "skills/humanize-korean/references/document-refinement.md"
   }
 }

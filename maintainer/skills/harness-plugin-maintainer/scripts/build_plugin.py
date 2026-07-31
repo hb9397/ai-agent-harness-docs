@@ -30,15 +30,14 @@ from plugin_common import (
 )
 
 
-MARKDOWN_PRODUCERS = [
-    "harness-setup",
-    "harness-bootstrap",
-    "context-doc",
-    "design-doc",
-    "design-prototype-docs",
-    "impl-doc",
-    "impl-fe-be-doc",
-]
+def markdown_producers(root: Path) -> list[str]:
+    """Producer names come from the inventory, never from a literal here.
+
+    A second copy of the list would silently disagree with the inventory the
+    moment a skill starts or stops producing Markdown.
+    """
+    flow = load_json(root / "maintainer" / "inventory" / "markdown-artifact-flow.json")
+    return [item["skill"] for item in flow["producer_skills"]]
 TEXT_SUFFIXES = {
     ".md",
     ".json",
@@ -388,7 +387,7 @@ def build(root: Path, output_root: Path | None = None) -> dict:
         "codex_physical_agents": 0,
         "claude_physical_skills": 18,
         "claude_physical_agents": 0,
-        "markdown_producers": MARKDOWN_PRODUCERS,
+        "markdown_producers": markdown_producers(root),
         "released_state_preserved": True,
         "push_tag_release_created": False,
     }
