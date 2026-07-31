@@ -42,6 +42,7 @@ MARKDOWN_PRODUCERS = [
 TEXT_SUFFIXES = {
     ".md",
     ".json",
+    ".csv",
     ".py",
     ".sh",
     ".template",
