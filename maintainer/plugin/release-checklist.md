@@ -5,9 +5,9 @@
 ## 릴리스 후보
 
 - 플러그인 ID: `ai-agent-harness`
-- 버전: `0.1.0`
-- 아카이브: `plugins/ai-agent-harness-0.1.0.zip`
-- 아카이브 SHA-256: `f15060671deaedcd195760e738ba491be29a4e25c19e5e0d32336409311efd47`
+- 버전: `0.1.1`
+- 아카이브: `plugins/ai-agent-harness-0.1.1.zip`
+- 아카이브 SHA-256: `3bf0618b91d38b9aab98cf3f63879979744d23d85caa400f6ffd7b2b9726261a`
 - Codex 물리 스킬 수: 18
 - Codex 물리 에이전트 수: 0
 - Claude 물리 스킬 수: 18
@@ -30,24 +30,24 @@
 
 | 표면 | 상태 | 증적 |
 |---|---|---|
-| Codex CLI | `install-smoke-verified` | 격리된 마켓플레이스 등록/설치/목록 확인/제거 및 캐시 검사를 통과했으며, 모델 호출은 테스트하지 않음 |
+| Codex CLI | `blocked` | CLI 스모크 증적이 불완전하거나 실패함 |
 | Codex Desktop/App | `manual-required` | 대화형 Plugins UI 설치/업데이트에는 앱 표면이 필요하므로 이 셸에서 완료할 수 없음 |
-| Claude Code CLI | `install-smoke-verified` | 격리된 마켓플레이스 등록/설치/목록 확인/제거 및 캐시 검사를 통과했으며, 모델 호출은 테스트하지 않음 |
+| Claude Code CLI | `blocked` | CLI 스모크 증적이 불완전하거나 실패함 |
 | Claude Desktop Code | `manual-required` | Desktop Code 로컬/SSH 캐시 검증에는 Claude Desktop 앱 표면이 필요함 |
 
 ## 릴리스 게이트
 
 상태: **`not-release-ready`**
 
-사유: 격리된 Codex 및 Claude Code CLI 설치 스모크 검사는 통과했지만 설치/캐시 스모크 검사는 모델 호출이 아니다. Codex와 Claude의 모든 CLI/App 표면에는 직접 호출, 출력, 재시작 및 새 세션 수동 증적이 여전히 필요하다.
+사유: 격리된 CLI 설치 증적이 불완전하며, 네 가지 CLI/App 표면 모두 직접 모델 호출 증적이 필요하다.
 
 ## 완료한 자동 설치 검사
 
-- Codex CLI 설치 스모크: 마켓플레이스 등록/목록 확인/제거, 플러그인 등록/목록 확인/제거, `harness-setup`과 `humanize-korean` 디렉터리를 포함한 설치 캐시의 스킬 18개 / 에이전트 0개를 확인했다(모델 호출 아님).
-- Claude Code CLI 설치 스모크: 엄격한 플러그인/마켓플레이스 검증, 마켓플레이스 등록/목록 확인/제거, 플러그인 설치/목록 확인/제거, 설치 캐시의 스킬 18개 / 에이전트 0개를 확인했다(모델 호출 아님).
+- CLI 설치 스모크: 불완전.
 
 ## `release-ready` 전 필수 작업
 
+- Codex 및 Claude Code CLI: 공식 CLI로 `scripts/smoke_cli_install.py`를 실행하고 통과 증적을 보존한다.
 - 직접 테스트 기록: `maintainer/plugin/manual-surface-test-template.md`를 `maintainer/plugin/manual-evidence/YYYYMMDD/{surface}.md`로 복사하고 표면마다 새로운 픽스처 하나를 보존한다.
 - 네 표면 모두: `harness-setup`과 `humanize-korean`을 호출하고, 제안 전용 동작과 생성된 허용 목록을 검증하며, `.agents/skills`, `.claude/skills`, `skills`가 생성되지 않았는지 확인하고 관리 블록 확장을 보존한다.
 - 네 표면 모두: 새 작업/세션을 다시 열어 같은 산출물 지문을 다시 제안하지 않는지 확인하고 `.docs/.harness/humanize-handoffs.json` 이벤트를 보존한다.

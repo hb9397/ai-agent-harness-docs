@@ -12,6 +12,7 @@
       "harness-setup",
       "humanize-korean",
       "impl-verify",
+      "motion-design",
       "pre-commit",
       "ui-ux-pro-max"
     ],
@@ -22,12 +23,6 @@
     ]
   },
   "planned": [
-    {
-      "skill": "motion-design",
-      "canonical_root": "skills",
-      "required_from_phase": "20260730 Phase 3",
-      "note": "New skill. Contract checks only; the runtime carries no executable asset."
-    },
     {
       "skill": "design-prototype-docs",
       "canonical_root": "skills",

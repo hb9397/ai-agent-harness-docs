@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 import sys
@@ -150,6 +151,18 @@ def test_shell_parity_when_available(tmp: Path) -> None:
         assert marker in shell_result.stdout, shell_result.stdout
 
 
+def verbatim_upstream_paths(root: Path) -> set[str]:
+    """Repo-relative paths imported unchanged from a pinned upstream commit."""
+    provenance = root / "maintainer" / "upstreams" / "provenance"
+    paths: set[str] = set()
+    for file_map in sorted(provenance.glob("*/file-map.json")):
+        data = json.loads(file_map.read_text(encoding="utf-8"))
+        for entry in data.get("files", []):
+            if entry.get("treatment") == "verbatim" and entry.get("local_path"):
+                paths.add(entry["local_path"])
+    return paths
+
+
 def test_user_skill_frontmatter_contract() -> None:
     skills_root = SKILL_ROOT.parent
     for skill_file in sorted(skills_root.glob("*/SKILL.md")):
@@ -164,7 +177,13 @@ def test_user_skill_frontmatter_contract() -> None:
             f"legacy Task permission: {skill_file}"
         )
 
+    # Verbatim upstream imports are governed by the pinned provenance manifest
+    # and cannot be edited, so they are excluded here. The English word "Task"
+    # appears in upstream prose without referring to the legacy tool.
+    vendored = verbatim_upstream_paths(skills_root.parent)
     for markdown in sorted(skills_root.glob("**/*.md")):
+        if markdown.relative_to(skills_root.parent).as_posix() in vendored:
+            continue
         text = markdown.read_text(encoding="utf-8")
         assert not re.search(r"\bTask\b", text), f"legacy Task wording: {markdown}"
 

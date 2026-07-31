@@ -185,25 +185,45 @@ def load_cli_smoke(root: Path) -> dict:
     evidence = load_json(path)
     platforms = evidence.get("platforms", {})
     required = {"codex", "claude"}
+
+    # Smoke evidence is tied to the artifact it installed. Carrying a previous
+    # version's result forward would let a rebuilt archive inherit verification
+    # it never received.
+    smoke_versions = {
+        platforms[name].get("installed_payload", {}).get("version")
+        for name in required
+        if name in platforms
+    }
+    version_matches = smoke_versions == {PLUGIN_VERSION}
+
     passed = (
         evidence.get("status") == "passed"
         and evidence.get("evidence_level") == "marketplace-install-and-cache-smoke"
         and evidence.get("model_invocation_verified") is False
         and required.issubset(platforms)
+        and version_matches
         and all(
             platforms[name].get("status") == "passed"
             and platforms[name].get("model_invocation_verified") is False
             for name in required
         )
     )
+    if passed:
+        summary = "isolated marketplace add/install/list/uninstall/remove and cache inspection passed; model invocation not tested"
+    elif not version_matches:
+        observed = sorted(str(item) for item in smoke_versions)
+        summary = (
+            f"CLI smoke evidence covers plugin version(s) {observed}, not the current "
+            f"candidate {PLUGIN_VERSION}; re-run smoke_cli_install.py"
+        )
+    else:
+        summary = "CLI smoke evidence is incomplete or failed"
+
     return {
         **evidence,
         "status": "passed" if passed else "failed",
-        "summary": (
-            "isolated marketplace add/install/list/uninstall/remove and cache inspection passed; model invocation not tested"
-            if passed
-            else "CLI smoke evidence is incomplete or failed"
-        ),
+        "evidence_applies_to_current_version": version_matches,
+        "summary": summary,
     }
 
 

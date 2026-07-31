@@ -1,6 +1,6 @@
 {
   "name": "ai-agent-harness",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Project harness plugin for Codex and Claude Code.",
   "author": {
     "name": "AI Agent Harness Maintainers",

@@ -73,7 +73,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/plugin_common.py",
-          "sha256": "abc299f861074f4d53b47a80dc12c7678fe0610952e833deabb077567ba3caf9"
+          "sha256": "51970c518edecaed926100bc1dc03091b0416a80216b39032d64e2f00d755f10"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/run_all_skill_evals.py",
@@ -97,7 +97,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/verify_install_surfaces.py",
-          "sha256": "61437cd6e170e61ff52d5a9064a60f93ed4cc9d74ef0cb48dc3456e445efaac6"
+          "sha256": "92e783068f3f6f984f61fbebee89ff3309e92250a04dab1f2bc346e3ecdaccd7"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/SKILL.md",

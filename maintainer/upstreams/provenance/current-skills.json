@@ -1,11 +1,11 @@
 {
   "schema_version": "1.0.0",
   "generated_at": "2026-07-31",
-  "scope": "Post-refactor audit: 19 user skills plus 3 maintainer skills (1 user skill(s) pending upstream promotion)",
+  "scope": "Post-refactor audit: 20 user skills plus 3 maintainer skills (2 user skill(s) pending upstream promotion)",
   "counts": {
-    "user_skills": 19,
+    "user_skills": 20,
     "maintainer_skills": 3,
-    "candidate_skills": 1
+    "candidate_skills": 2
   },
   "classification_rules": {
     "native": "No identified external source relationship beyond local repository authorship.",
@@ -186,6 +186,17 @@
       ],
       "direct_import": false,
       "evidence": "Fresh-evidence verification references Superpowers completion discipline and gstack qa-only report semantics without importing auto-fix runtime."
+    },
+    {
+      "name": "motion-design",
+      "area": "user",
+      "mode": "adapted",
+      "lifecycle": "candidate",
+      "sources": [
+        "lottiefiles-motion-design-runtime"
+      ],
+      "direct_import": true,
+      "evidence": "Phase 3 imported the upstream skill tree at commit f9a8a041b85185ee4881b3471d3415e939aac772. director/, patterns/ and reference/ are preserved verbatim; SKILL.md is rewritten for purpose-first classification, optional motion, low-density defaults on public/medical/financial/enterprise screens, mandatory reduced-motion alternatives, evidence-backed layout-triggering properties, approval-gated persistence and public skill handoff. The relationship group stays candidate until the reference reflection lands and both relationships are promoted together."
     },
     {
       "name": "multi-review",

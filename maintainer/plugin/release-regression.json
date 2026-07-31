@@ -6,9 +6,10 @@
   "checks": {
     "source_projection_integrity": {
       "counts": {
-        "user_skills": 19,
+        "user_skills": 20,
         "packageable_user_skills": 18,
         "pending_user_skills": [
+          "motion-design",
           "ui-ux-pro-max"
         ],
         "manager_skills": 3,
@@ -36,7 +37,7 @@
       "passed": true
     },
     "reproducible_build": {
-      "archive_sha256": "f15060671deaedcd195760e738ba491be29a4e25c19e5e0d32336409311efd47",
+      "archive_sha256": "3bf0618b91d38b9aab98cf3f63879979744d23d85caa400f6ffd7b2b9726261a",
       "same_archive_hash": true,
       "same_manifest": true,
       "release_metadata_matches": true,

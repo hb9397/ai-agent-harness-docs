@@ -3,15 +3,15 @@
   "files": [
     {
       "path": ".claude-plugin/plugin.json",
-      "sha256": "46a515d3c463712e04f20d151cdb64f76de79807d569bc6e044977644193bcd0"
+      "sha256": "44daa30b6a4534f72e775fe7e80198fab6d5ce48994df61a13fc0d9ec3198313"
     },
     {
       "path": ".codex-plugin/plugin.json",
-      "sha256": "c97abfce320eb0c01af4c5e9bc3b305ffff964959df691834f59b0b00e596bd9"
+      "sha256": "4819df7293a6da4fc70c3c12fc9c0fa0fb67ad0e012c82181a39ca56f8f2925f"
     },
     {
       "path": "CAPABILITIES.json",
-      "sha256": "e58bda412e742f4988dcd1b53c5b628a0d5639ba4c031213e356bc6f12932a52"
+      "sha256": "8269171b3b1f4e76b400edf73b18bbf2a23ef96dde8d43a15084a79ec0603e73"
     },
     {
       "path": "LICENSE",
@@ -23,7 +23,7 @@
     },
     {
       "path": "UPSTREAMS.lock.json",
-      "sha256": "b7ac80af276e71c2081db7d6cce214c713e8a34d056754da478f32dd97298b84"
+      "sha256": "d890858c4d2be4c02cecca04783bcc6db101839c7a375678c48ac6f20ff0aaea"
     },
     {
       "path": "licenses/anthropic-frontend-design-LICENSE",
@@ -519,7 +519,7 @@
     },
     {
       "path": "runtime/claude/skills/pre-commit/evals/run_evals.py",
-      "sha256": "699af36de5d241d9057d5612f0ef1d92e307f3ff2ffb11cca4dfb671a1e6fee0"
+      "sha256": "8b8106b9db79ec76d8a399609502c140a9774c80c827825808401c27d0ee9795"
     },
     {
       "path": "runtime/claude/skills/pre-commit/prompts/check-rules.md",
@@ -1023,7 +1023,7 @@
     },
     {
       "path": "runtime/codex/skills/pre-commit/evals/run_evals.py",
-      "sha256": "699af36de5d241d9057d5612f0ef1d92e307f3ff2ffb11cca4dfb671a1e6fee0"
+      "sha256": "8b8106b9db79ec76d8a399609502c140a9774c80c827825808401c27d0ee9795"
     },
     {
       "path": "runtime/codex/skills/pre-commit/prompts/check-rules.md",

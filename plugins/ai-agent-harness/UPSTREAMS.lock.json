@@ -28,9 +28,9 @@
       },
       "packaged": {
         "plugin_id": "ai-agent-harness",
-        "version": "0.1.0",
+        "version": "0.1.1",
         "packaged_at": "2026-07-29",
-        "artifact_manifest_sha256": "e58bda412e742f4988dcd1b53c5b628a0d5639ba4c031213e356bc6f12932a52"
+        "artifact_manifest_sha256": "8269171b3b1f4e76b400edf73b18bbf2a23ef96dde8d43a15084a79ec0603e73"
       },
       "released": null
     },
@@ -263,9 +263,9 @@
       },
       "packaged": {
         "plugin_id": "ai-agent-harness",
-        "version": "0.1.0",
+        "version": "0.1.1",
         "packaged_at": "2026-07-29",
-        "artifact_manifest_sha256": "e58bda412e742f4988dcd1b53c5b628a0d5639ba4c031213e356bc6f12932a52"
+        "artifact_manifest_sha256": "8269171b3b1f4e76b400edf73b18bbf2a23ef96dde8d43a15084a79ec0603e73"
       },
       "released": null
     }
