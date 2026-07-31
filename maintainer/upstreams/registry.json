@@ -590,6 +590,336 @@
       }
     },
     {
+      "id": "ui-ux-pro-max-runtime",
+      "source_class": "reputable-third-party",
+      "integration_mode": "adapted",
+      "relationship_group": "ui-ux-pro-max",
+      "lifecycle": "candidate",
+      "upstream": {
+        "kind": "repository",
+        "source_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+        "repository": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+        "tracking": "release",
+        "tag_pattern": "v*",
+        "allow_prerelease": false,
+        "watched_paths": [
+          ".claude/skills/ui-ux-pro-max/**",
+          "src/ui-ux-pro-max/**",
+          "LICENSE"
+        ]
+      },
+      "target": {
+        "local_skills": ["ui-ux-pro-max"],
+        "platform_targets": ["codex", "claude-code"]
+      },
+      "policy": {
+        "channel": "stable",
+        "pin": "commit-sha",
+        "apply": "explicit-approval",
+        "deletion": "separate-explicit-approval",
+        "license_change": "block"
+      },
+      "provenance": {
+        "license_spdx": "MIT",
+        "license_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/v2.11.3/LICENSE",
+        "license_sha256": "738f69dfa83db5c347c678fb9d90e560877059f0de93a327c39001bff92dc014",
+        "notice_path": "maintainer/upstreams/provenance/ui-ux-pro-max/NOTICE.md",
+        "classification_evidence_url": "maintainer/upstreams/provenance/ui-ux-pro-max/file-map.json",
+        "classification_checked_at": "2026-07-31",
+        "file_map": [
+          {
+            "upstream_path": ".claude/skills/ui-ux-pro-max/SKILL.md",
+            "local_path": "skills/ui-ux-pro-max/SKILL.md",
+            "treatment": "modified"
+          },
+          {
+            "upstream_path": ".claude/skills/ui-ux-pro-max/data/**",
+            "local_path": "skills/ui-ux-pro-max/data/**",
+            "treatment": "verbatim"
+          },
+          {
+            "upstream_path": ".claude/skills/ui-ux-pro-max/references/**",
+            "local_path": "skills/ui-ux-pro-max/references/**",
+            "treatment": "verbatim"
+          },
+          {
+            "upstream_path": ".claude/skills/ui-ux-pro-max/scripts/**",
+            "local_path": "skills/ui-ux-pro-max/scripts/**",
+            "treatment": "verbatim"
+          },
+          {
+            "upstream_path": "LICENSE",
+            "local_path": "maintainer/upstreams/provenance/ui-ux-pro-max/LICENSE",
+            "treatment": "notice-preserved"
+          }
+        ]
+      },
+      "protection": {
+        "protected_globs": [
+          "**/scripts/**",
+          "**/templates/**",
+          "**/references/**",
+          "**/data/**",
+          "**/assets/**",
+          "**/evals/**",
+          "LICENSE*",
+          "NOTICE*"
+        ]
+      },
+      "validation": {
+        "structure_checks": [
+          "generated skill tree is the import target and src/ generator input is not vendored",
+          "sibling skills stay excluded",
+          "imported scripts stay standard-library only with no network or subprocess"
+        ],
+        "behavior_fixtures": [
+          "design direction recommendation reports candidates and rationale without writing files",
+          "existing project design tokens take precedence over generated suggestions",
+          "design system persistence requires explicit approval and a scoped output path"
+        ],
+        "codex_smoke_prompts": [
+          "Use $ui-ux-pro-max to propose a design system for an existing React admin screen, prefer current tokens and write no files."
+        ],
+        "claude_smoke_prompts": [
+          "Use /ai-agent-harness:ui-ux-pro-max to propose an accessibility-first design system for a medical booking screen."
+        ]
+      }
+    },
+    {
+      "id": "ui-ux-pro-max-principles",
+      "source_class": "reputable-third-party",
+      "integration_mode": "reference",
+      "relationship_group": "ui-ux-pro-max",
+      "lifecycle": "candidate",
+      "upstream": {
+        "kind": "repository",
+        "source_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+        "repository": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+        "tracking": "release",
+        "tag_pattern": "v*",
+        "allow_prerelease": false,
+        "watched_paths": [
+          ".claude/skills/ui-ux-pro-max/SKILL.md",
+          ".claude/skills/ui-ux-pro-max/references/**"
+        ]
+      },
+      "target": {
+        "local_skills": ["design-prototype-docs", "create-prototype", "frontend-design", "impl-verify"],
+        "platform_targets": ["codex", "claude-code", "docs"]
+      },
+      "policy": {
+        "channel": "stable",
+        "pin": "commit-sha",
+        "apply": "explicit-approval",
+        "deletion": "separate-explicit-approval",
+        "license_change": "block"
+      },
+      "provenance": {
+        "license_spdx": "MIT",
+        "license_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/v2.11.3/LICENSE",
+        "license_sha256": null,
+        "notice_path": null,
+        "classification_evidence_url": "maintainer/upstreams/candidates/ui-ux-pro-max/candidate.json",
+        "classification_checked_at": "2026-07-31",
+        "file_map": [
+          {
+            "upstream_path": ".claude/skills/ui-ux-pro-max/**",
+            "local_path": "skills/**",
+            "treatment": "reference-only"
+          }
+        ]
+      },
+      "protection": {
+        "protected_globs": [
+          "**/scripts/**",
+          "**/templates/**",
+          "**/references/**",
+          "**/data/**",
+          "LICENSE*"
+        ]
+      },
+      "validation": {
+        "structure_checks": [
+          "reference-only relationship stays file-free",
+          "existing skills do not bind to new skill internal paths"
+        ],
+        "behavior_fixtures": [
+          "design input concepts appear as local input contracts rather than copied upstream text"
+        ],
+        "codex_smoke_prompts": [
+          "Run the existing design and verification skills and confirm design-input concepts are applied without importing upstream files."
+        ],
+        "claude_smoke_prompts": [
+          "Run the existing design and verification skills and confirm design-input concepts are applied without importing upstream files."
+        ]
+      }
+    },
+    {
+      "id": "lottiefiles-motion-design-runtime",
+      "source_class": "reputable-third-party",
+      "integration_mode": "adapted",
+      "relationship_group": "lottiefiles-motion-design",
+      "lifecycle": "candidate",
+      "upstream": {
+        "kind": "repository",
+        "source_url": "https://github.com/LottieFiles/motion-design-skill",
+        "repository": "https://github.com/LottieFiles/motion-design-skill",
+        "tracking": "branch",
+        "tag_pattern": null,
+        "allow_prerelease": false,
+        "watched_paths": [
+          "skills/motion-design/**",
+          "LICENSE"
+        ]
+      },
+      "target": {
+        "local_skills": ["motion-design"],
+        "platform_targets": ["codex", "claude-code"]
+      },
+      "policy": {
+        "channel": "stable",
+        "pin": "commit-sha",
+        "apply": "explicit-approval",
+        "deletion": "separate-explicit-approval",
+        "license_change": "block"
+      },
+      "provenance": {
+        "license_spdx": "MIT",
+        "license_url": "https://github.com/LottieFiles/motion-design-skill/blob/f9a8a041b85185ee4881b3471d3415e939aac772/LICENSE",
+        "license_sha256": "9fc2e8685daa09e28d54b6afa8a38f168417c5735a3cd676c80c159785e93a80",
+        "notice_path": "maintainer/upstreams/provenance/lottiefiles-motion-design/NOTICE.md",
+        "classification_evidence_url": "maintainer/upstreams/provenance/lottiefiles-motion-design/file-map.json",
+        "classification_checked_at": "2026-07-31",
+        "file_map": [
+          {
+            "upstream_path": "skills/motion-design/SKILL.md",
+            "local_path": "skills/motion-design/SKILL.md",
+            "treatment": "modified"
+          },
+          {
+            "upstream_path": "skills/motion-design/director/**",
+            "local_path": "skills/motion-design/director/**",
+            "treatment": "verbatim"
+          },
+          {
+            "upstream_path": "skills/motion-design/patterns/**",
+            "local_path": "skills/motion-design/patterns/**",
+            "treatment": "verbatim"
+          },
+          {
+            "upstream_path": "skills/motion-design/reference/**",
+            "local_path": "skills/motion-design/reference/**",
+            "treatment": "verbatim"
+          },
+          {
+            "upstream_path": "LICENSE",
+            "local_path": "maintainer/upstreams/provenance/lottiefiles-motion-design/LICENSE",
+            "treatment": "notice-preserved"
+          }
+        ]
+      },
+      "protection": {
+        "protected_globs": [
+          "**/scripts/**",
+          "**/templates/**",
+          "**/director/**",
+          "**/patterns/**",
+          "**/reference/**",
+          "**/references/**",
+          "**/evals/**",
+          "LICENSE*",
+          "NOTICE*"
+        ]
+      },
+      "validation": {
+        "structure_checks": [
+          "director, patterns and reference trees are imported whole",
+          "runtime stays instruction and reference only with no executable asset",
+          "third-party cited values are recorded per file"
+        ],
+        "behavior_fixtures": [
+          "motion purpose is classified before timing is chosen",
+          "static alternative is accepted when motion adds no information",
+          "reduced-motion alternative and rest state are always designed"
+        ],
+        "codex_smoke_prompts": [
+          "Use $motion-design to design a payment button loading to success to error transition with a reduced-motion alternative."
+        ],
+        "claude_smoke_prompts": [
+          "Use /ai-agent-harness:motion-design to design modal open and close behaviour including a reduced-motion environment."
+        ]
+      }
+    },
+    {
+      "id": "lottiefiles-motion-design-principles",
+      "source_class": "reputable-third-party",
+      "integration_mode": "reference",
+      "relationship_group": "lottiefiles-motion-design",
+      "lifecycle": "candidate",
+      "upstream": {
+        "kind": "repository",
+        "source_url": "https://github.com/LottieFiles/motion-design-skill",
+        "repository": "https://github.com/LottieFiles/motion-design-skill",
+        "tracking": "branch",
+        "tag_pattern": null,
+        "allow_prerelease": false,
+        "watched_paths": [
+          "skills/motion-design/SKILL.md",
+          "skills/motion-design/reference/**"
+        ]
+      },
+      "target": {
+        "local_skills": ["design-prototype-docs", "create-prototype", "frontend-design", "impl-verify"],
+        "platform_targets": ["codex", "claude-code", "docs"]
+      },
+      "policy": {
+        "channel": "stable",
+        "pin": "commit-sha",
+        "apply": "explicit-approval",
+        "deletion": "separate-explicit-approval",
+        "license_change": "block"
+      },
+      "provenance": {
+        "license_spdx": "MIT",
+        "license_url": "https://github.com/LottieFiles/motion-design-skill/blob/f9a8a041b85185ee4881b3471d3415e939aac772/LICENSE",
+        "license_sha256": null,
+        "notice_path": null,
+        "classification_evidence_url": "maintainer/upstreams/candidates/motion-design/candidate.json",
+        "classification_checked_at": "2026-07-31",
+        "file_map": [
+          {
+            "upstream_path": "skills/motion-design/**",
+            "local_path": "skills/**",
+            "treatment": "reference-only"
+          }
+        ]
+      },
+      "protection": {
+        "protected_globs": [
+          "**/director/**",
+          "**/patterns/**",
+          "**/reference/**",
+          "**/templates/**",
+          "LICENSE*"
+        ]
+      },
+      "validation": {
+        "structure_checks": [
+          "reference-only relationship stays file-free",
+          "existing skills do not bind to new skill internal paths"
+        ],
+        "behavior_fixtures": [
+          "motion input concepts appear as local input contracts rather than copied upstream text"
+        ],
+        "codex_smoke_prompts": [
+          "Run the existing design and verification skills and confirm motion-input concepts are applied without importing upstream files."
+        ],
+        "claude_smoke_prompts": [
+          "Run the existing design and verification skills and confirm motion-input concepts are applied without importing upstream files."
+        ]
+      }
+    },
+    {
       "id": "im-not-ai",
       "source_class": "reputable-third-party",
       "integration_mode": "adapted",

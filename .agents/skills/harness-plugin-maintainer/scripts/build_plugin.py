@@ -213,6 +213,20 @@ def notices(root: Path, plugin_root: Path, sources: list[dict]) -> None:
 def lock(root: Path, artifact_manifest: list[dict], sources: list[dict]) -> dict:
     upstream_lock = load_json(root / "maintainer" / "upstreams" / "lock.json")
     packaged = copy.deepcopy(upstream_lock)
+
+    # Candidate relationships describe planned work, not shipped content. Keeping
+    # their lock states out of the packaged lock stops an accepted-but-unbuilt
+    # upstream from churning the archive hash of an already-built version.
+    registry = load_json(root / "maintainer" / "upstreams" / "registry.json")
+    candidate_ids = {
+        source["id"]
+        for source in registry.get("sources", [])
+        if source.get("lifecycle") == "candidate" and source.get("id")
+    }
+    packaged["states"] = [
+        state for state in packaged.get("states", []) if state.get("id") not in candidate_ids
+    ]
+
     packaged_ids = {source["id"] for source in sources}
     matched: set[str] = set()
     for state in packaged.get("states", []):
@@ -226,6 +240,21 @@ def lock(root: Path, artifact_manifest: list[dict], sources: list[dict]) -> dict
             }
     if matched != packaged_ids:
         raise RuntimeError(f"packaged sources missing lock state: {sorted(packaged_ids - matched)}")
+
+    # Derive the packaged timestamp from the packaged states themselves. Copying
+    # the source lock's document-level generated_at would rebuild the archive
+    # whenever any unrelated relationship is touched.
+    dates = [
+        entry[field]
+        for state in packaged["states"]
+        for key in ("observed", "accepted", "embedded")
+        if isinstance((entry := state.get(key)), dict)
+        for field in ("checked_at", "accepted_at", "embedded_at")
+        if entry.get(field)
+    ]
+    if dates:
+        packaged["generated_at"] = max(dates)
+
     packaged["generated_by"] = GENERATED_BY
     packaged["released_state_preserved"] = True
     return packaged

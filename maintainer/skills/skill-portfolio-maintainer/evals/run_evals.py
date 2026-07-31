@@ -420,6 +420,105 @@ def test_external_relationships_and_behavior_contracts_are_consistent() -> None:
     assert errors == [], "\n".join(errors)
 
 
+def _group_fixture() -> tuple[dict, dict]:
+    """Minimal registry/lock pair for one upstream tracked twice."""
+    registry = {
+        "sources": [
+            {
+                "id": "demo-runtime",
+                "integration_mode": "adapted",
+                "relationship_group": "demo",
+                "lifecycle": "candidate",
+                "upstream": {"repository": "https://example.invalid/demo", "source_url": "https://example.invalid/demo"},
+                "provenance": {"license_spdx": "MIT", "notice_path": "maintainer/upstreams/provenance/demo/NOTICE.md", "file_map": []},
+            },
+            {
+                "id": "demo-principles",
+                "integration_mode": "reference",
+                "relationship_group": "demo",
+                "lifecycle": "candidate",
+                "upstream": {"repository": "https://example.invalid/demo", "source_url": "https://example.invalid/demo"},
+                "provenance": {"license_spdx": "MIT", "notice_path": None,
+                               "file_map": [{"treatment": "reference-only"}]},
+            },
+        ]
+    }
+    lock = {
+        "states": [
+            {"id": "demo-runtime", "observed": {"sha": "a" * 40}, "accepted": {"sha": "a" * 40}},
+            {"id": "demo-principles", "observed": {"sha": "a" * 40}, "accepted": {"sha": "a" * 40}},
+        ]
+    }
+    return registry, lock
+
+
+def test_relationship_group_accepts_matched_pair() -> None:
+    registry, lock = _group_fixture()
+    errors: list[str] = []
+    validate_registry.validate_relationship_groups(registry, lock, errors)
+    assert errors == [], "\n".join(errors)
+
+
+def test_relationship_group_blocks_sha_drift() -> None:
+    registry, lock = _group_fixture()
+    lock["states"][1]["accepted"]["sha"] = "b" * 40
+    errors: list[str] = []
+    validate_registry.validate_relationship_groups(registry, lock, errors)
+    assert any("accepted sha must match" in item for item in errors), errors
+
+
+def test_relationship_group_blocks_partial_promotion() -> None:
+    registry, lock = _group_fixture()
+    registry["sources"][0]["lifecycle"] = "active"
+    errors: list[str] = []
+    validate_registry.validate_relationship_groups(registry, lock, errors)
+    assert any("promoted atomically" in item for item in errors), errors
+
+
+def test_relationship_group_blocks_license_and_repository_split() -> None:
+    registry, lock = _group_fixture()
+    registry["sources"][1]["provenance"]["license_spdx"] = "Apache-2.0"
+    registry["sources"][1]["upstream"]["repository"] = "https://example.invalid/other"
+    errors: list[str] = []
+    validate_registry.validate_relationship_groups(registry, lock, errors)
+    assert any("license_spdx must match" in item for item in errors), errors
+    assert any("upstream.repository must match" in item for item in errors), errors
+
+
+def test_reference_relationship_stays_out_of_packaging() -> None:
+    registry, lock = _group_fixture()
+    registry["sources"][1]["provenance"]["notice_path"] = "maintainer/upstreams/provenance/demo/NOTICE.md"
+    registry["sources"][1]["provenance"]["file_map"] = [{"treatment": "verbatim"}]
+    errors: list[str] = []
+    validate_registry.validate_relationship_groups(registry, lock, errors)
+    assert any("must not claim a packaged notice_path" in item for item in errors), errors
+    assert any("file_map must stay reference-only" in item for item in errors), errors
+
+
+def test_canonical_skill_count_is_derived_not_hardcoded() -> None:
+    expected = sum(
+        1
+        for base in (ROOT / "skills", ROOT / "maintainer" / "skills")
+        for path in base.iterdir()
+        if (path / "SKILL.md").is_file()
+    )
+    assert validate_registry.canonical_skill_count(ROOT) == expected
+    current = json.loads((ROOT / "maintainer" / "upstreams" / "provenance" / "current-skills.json").read_text(encoding="utf-8"))
+    assert len(current["skills"]) == expected
+
+
+def test_candidate_sources_are_not_claimed_by_existing_skills() -> None:
+    registry = json.loads((ROOT / "maintainer" / "upstreams" / "registry.json").read_text(encoding="utf-8"))
+    current = json.loads((ROOT / "maintainer" / "upstreams" / "provenance" / "current-skills.json").read_text(encoding="utf-8"))
+    candidate_ids = {
+        source["id"] for source in registry["sources"] if source.get("lifecycle") == "candidate"
+    }
+    assert candidate_ids, "expected candidate relationships during integration phases"
+    for item in current["skills"]:
+        overlap = candidate_ids & set(item.get("sources", []))
+        assert not overlap, f"{item['name']} claims unpromoted candidate sources {sorted(overlap)}"
+
+
 def test_self_update_blocks_same_session() -> None:
     run([
         str(SCRIPTS / "stage_upstream.py"),
@@ -544,6 +643,13 @@ def main() -> int:
         test_public_scripts_have_real_help,
         test_imported_status_check_is_prose_language_neutral,
         test_external_relationships_and_behavior_contracts_are_consistent,
+        test_relationship_group_accepts_matched_pair,
+        test_relationship_group_blocks_sha_drift,
+        test_relationship_group_blocks_partial_promotion,
+        test_relationship_group_blocks_license_and_repository_split,
+        test_reference_relationship_stays_out_of_packaging,
+        test_canonical_skill_count_is_derived_not_hardcoded,
+        test_candidate_sources_are_not_claimed_by_existing_skills,
         test_self_update_blocks_same_session,
         test_protected_asset_requires_asset_approval,
         test_protected_asset_path_variants_are_classified,

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "generated_at": "2026-07-30",
+  "generated_at": "2026-07-31",
   "states": [
     {
       "id": "anthropic-frontend-design",
@@ -256,6 +256,86 @@
           "maintainer/plugin/runtime-allowlist.json"
         ]
       },
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "ui-ux-pro-max-runtime",
+      "observed": {
+        "source_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/releases/tag/v2.11.3",
+        "checked_at": "2026-07-31",
+        "ref": "v2.11.3",
+        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
+        "note": "Pinned from the latest stable upstream release during Phase 0."
+      },
+      "accepted": {
+        "ref": "v2.11.3",
+        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
+        "accepted_at": "2026-07-31",
+        "mode": "adapted",
+        "evidence": "maintainer/upstreams/candidates/ui-ux-pro-max/candidate.json"
+      },
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "ui-ux-pro-max-principles",
+      "observed": {
+        "source_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/releases/tag/v2.11.3",
+        "checked_at": "2026-07-31",
+        "ref": "v2.11.3",
+        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
+        "note": "Pinned from the latest stable upstream release during Phase 0."
+      },
+      "accepted": {
+        "ref": "v2.11.3",
+        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
+        "accepted_at": "2026-07-31",
+        "mode": "reference",
+        "evidence": "maintainer/upstreams/candidates/ui-ux-pro-max/candidate.json"
+      },
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "lottiefiles-motion-design-runtime",
+      "observed": {
+        "source_url": "https://github.com/LottieFiles/motion-design-skill/tree/main",
+        "checked_at": "2026-07-31",
+        "ref": "main",
+        "sha": "f9a8a041b85185ee4881b3471d3415e939aac772",
+        "note": "Upstream publishes no release or tag; branch head pinned during Phase 0."
+      },
+      "accepted": {
+        "ref": "main",
+        "sha": "f9a8a041b85185ee4881b3471d3415e939aac772",
+        "accepted_at": "2026-07-31",
+        "mode": "adapted",
+        "evidence": "maintainer/upstreams/candidates/motion-design/candidate.json"
+      },
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "lottiefiles-motion-design-principles",
+      "observed": {
+        "source_url": "https://github.com/LottieFiles/motion-design-skill/tree/main",
+        "checked_at": "2026-07-31",
+        "ref": "main",
+        "sha": "f9a8a041b85185ee4881b3471d3415e939aac772",
+        "note": "Upstream publishes no release or tag; branch head pinned during Phase 0."
+      },
+      "accepted": {
+        "ref": "main",
+        "sha": "f9a8a041b85185ee4881b3471d3415e939aac772",
+        "accepted_at": "2026-07-31",
+        "mode": "reference",
+        "evidence": "maintainer/upstreams/candidates/motion-design/candidate.json"
+      },
+      "embedded": null,
       "packaged": null,
       "released": null
     }

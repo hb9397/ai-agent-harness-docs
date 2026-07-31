@@ -1,0 +1,356 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-07-31",
+  "source": {
+    "id": "ui-ux-pro-max-runtime",
+    "repository": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+    "tag": "v2.11.3",
+    "commit_sha": "4857a2c5ef989794751a0f66b8545a4a49566286"
+  },
+  "relationship_group": "ui-ux-pro-max",
+  "reference_relationship": {
+    "id": "ui-ux-pro-max-principles",
+    "copied_files": [],
+    "note": "Reference relationship copies no upstream file. Only concepts are adopted."
+  },
+  "files": [
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/SKILL.md",
+      "local_path": "skills/ui-ux-pro-max/SKILL.md",
+      "treatment": "modified",
+      "upstream_sha256": "305a7527fcb2f5b6e4129ab22cd839b5172d26df7f14d3324bfdec8fc1763560",
+      "note": "Rewritten for platform-neutral harness contract; see NOTICE.md."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/app-interface.csv",
+      "local_path": "skills/ui-ux-pro-max/data/app-interface.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "2a17ef810dab715ce1f339861817a8fbe3ccc38142b70517301e874803e838ac",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/charts.csv",
+      "local_path": "skills/ui-ux-pro-max/data/charts.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "a70ef7460b0eaaea8614f86a0d09a4bc38b467804179762464b5ca45b491baac",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/colors.csv",
+      "local_path": "skills/ui-ux-pro-max/data/colors.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "cb26759805217edaaa31b09836aec09eab0fe245c58f5884e9a16ef802c6e26a",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/google-fonts.csv",
+      "local_path": "skills/ui-ux-pro-max/data/google-fonts.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "3fd2898fb0fdd31ba758bf05cfcd2b58cd0f038a20cf08e417d09e5a8a4a509e",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/icons.csv",
+      "local_path": "skills/ui-ux-pro-max/data/icons.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "f376c29fb4df37b4bdb366a5aa70cb211ba3dd8b435390aaa03152a64b07d2e8",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/landing.csv",
+      "local_path": "skills/ui-ux-pro-max/data/landing.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "121a2cac7cf21050234b5f80e7b4e182f10123536032e0f9ad862ad3aec9677d",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/motion.csv",
+      "local_path": "skills/ui-ux-pro-max/data/motion.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "6452fbd8028ab71d52993775340e1bc40a150d92be8d4b4cb8710620fd1a7512",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/products.csv",
+      "local_path": "skills/ui-ux-pro-max/data/products.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "e9749e4fd8f7d4c94919c25ebd347a4adaddb671e7b01d33fbc2c87d447e6667",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/react-performance.csv",
+      "local_path": "skills/ui-ux-pro-max/data/react-performance.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "904c8afcda229629545912dde0e8ac37503757131f0169f80b016f1f58c4fd3f",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/angular.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/angular.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "9de35bbda536ced9af7642d88b7675cefa3e18c370ab40c0875f75ab473f0fd6",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/astro.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/astro.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "6b587e32df201b6e5e7b2ed187b65eee8e6d55dcd6cc16bde29fc25e0f911dae",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/avalonia.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/avalonia.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "6bfa40ec6609fcb59e52a38281edcc3a3e5b5e56341304fe5628b32cb9b1f875",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/flutter.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/flutter.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "fe36d404c799781e8ba6e9a8179b45799ed5126a545528550cd2eb0f2346e8c5",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/html-tailwind.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/html-tailwind.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "7aef38e75c53559470afcfa91580a9917ca8b7dbf8b92110389e23e93703ac52",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/javafx.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/javafx.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "5545e331b2479eb431ca45203799ce1b0ab1e369045ab7735d5a9f85ec78f956",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/jetpack-compose.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/jetpack-compose.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "6c8fd4b0391c342c12b0af15610cd5becbeccaef0bbe8dcfc01d928c3195d93e",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/laravel.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/laravel.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "3e9f551b5232136f7b5ce1304c5e1bf5a83bd63c0dc02afb37502b238772d145",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/nextjs.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/nextjs.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "e828ccc04843742f52f545a068e8a9ab0d2b97c0e771f7e93bf0cef74da05554",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/nuxt-ui.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/nuxt-ui.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "b9972b31e721faabc667ee2b4e93ba2af29e1df86f186c2ff608b68370f0e3a5",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/nuxtjs.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/nuxtjs.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "f7a3f2d9542856d00199f85c6c023b7c284cc698e2e6e12d61afce2edacb24d6",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/react-native.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/react-native.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "077aefc81d194895ecf7936b3ed298b978e36961f183e3a275f8acda19b5f621",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/react.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/react.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "e5624ab41d33427d88e41d07581ce4eca59b37b36ab72a6ad43a9c8e2d0a1c72",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/shadcn.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/shadcn.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "395c2e415ef6f48a474acccdc8eb2c7258a6ed751a5037ba171a2d8823e02ded",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/svelte.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/svelte.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "71af52d64f266c88070b91dbbaa900c2f8074b6baae9f35eaea6ba9cec6fd803",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/swiftui.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/swiftui.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "c9c2d2510f8e66281a2514e8dd0125a6b653b9ef53a71281b5e7dfe003d5b569",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/threejs.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/threejs.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "c74d6ba76021f8d72c0ed12c559caecfeb6961829242acf6bcb9e99926b1a396",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/uno.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/uno.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "5d2e0f396bb9dc5a2661204264cc0eda7cc4fa3d78152dec89d668704a41b8fc",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/uwp.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/uwp.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "debf669928871261ced9333788d5afd5784377ea1fa1b4f53993dd8f1574c0fc",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/vue.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/vue.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "c2724915d3c11cd67263f25896cff721f787a0fdd8326002d31e9f5806dfd8f8",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/winui.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/winui.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "2d970b08e44509d7afa53ce7feb446930b2d5e0667fa637df9aeeed65c42bbbe",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/stacks/wpf.csv",
+      "local_path": "skills/ui-ux-pro-max/data/stacks/wpf.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "ca78b5f28dc50d66900548d602d74856400097284c73e076fcfbb5a38ae5083c",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/styles.csv",
+      "local_path": "skills/ui-ux-pro-max/data/styles.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "1bf9c1d8484a0a7a54fb67555902380446865b604c8449e47a449cb3d9c1ef88",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/typography.csv",
+      "local_path": "skills/ui-ux-pro-max/data/typography.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "7abead73de0e43e09544f164cb60cd431674e411f1e063e555a8b44d51273328",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/ui-reasoning.csv",
+      "local_path": "skills/ui-ux-pro-max/data/ui-reasoning.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "06e4369445388ba9b7a57347510b125b7a2145bbf8546a327ba50292503b204a",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/ux-guidelines.csv",
+      "local_path": "skills/ui-ux-pro-max/data/ux-guidelines.csv",
+      "treatment": "verbatim",
+      "upstream_sha256": "e01943c433b2cad3040f19389b3b0455673758a569b7a927b5bedf65c989cb96",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/references/pro-rules.md",
+      "local_path": "skills/ui-ux-pro-max/references/pro-rules.md",
+      "treatment": "verbatim",
+      "upstream_sha256": "bc56db7cb40c5f4d8d4f6229f5c7072865278488fe5b97c76d3a38eb596da4fc",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/references/quick-reference.md",
+      "local_path": "skills/ui-ux-pro-max/references/quick-reference.md",
+      "treatment": "verbatim",
+      "upstream_sha256": "b01ad594cc069d18786d5e8865356cc511226ba6f48d328fd975d31aae8e5781",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/scripts/core.py",
+      "local_path": "skills/ui-ux-pro-max/scripts/core.py",
+      "treatment": "verbatim",
+      "upstream_sha256": "64c149019196ee24647464a27278eb96d3b4638ded73ebfc35ccd2bc99c083a9",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/scripts/design_system.py",
+      "local_path": "skills/ui-ux-pro-max/scripts/design_system.py",
+      "treatment": "verbatim",
+      "upstream_sha256": "fcdb279eb9691dffd6c80c333d29a4e5567368e38d724520c60013c8b1aaf242",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/scripts/search.py",
+      "local_path": "skills/ui-ux-pro-max/scripts/search.py",
+      "treatment": "verbatim",
+      "upstream_sha256": "69a349d69543f35f45a12c0c82922c550d1b0a16a2b37f6b1406afb2ad2919c8",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/scripts/tests/test_core.py",
+      "local_path": "skills/ui-ux-pro-max/scripts/tests/test_core.py",
+      "treatment": "verbatim",
+      "upstream_sha256": "ce60ac571164cf35e8c866550ad989fa686706a56fa48df4fdf76444b94fdd8d",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/scripts/validate_data.py",
+      "local_path": "skills/ui-ux-pro-max/scripts/validate_data.py",
+      "treatment": "verbatim",
+      "upstream_sha256": "f1b5e0916f3c2f8271416f93f6ff9ebf3311a68a943a19c1b83f16823cbb05a7",
+      "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": "LICENSE",
+      "local_path": "maintainer/upstreams/provenance/ui-ux-pro-max/LICENSE",
+      "treatment": "notice-preserved",
+      "upstream_sha256": "738f69dfa83db5c347c678fb9d90e560877059f0de93a327c39001bff92dc014",
+      "note": "MIT license text preserved for third-party notice tracking."
+    }
+  ],
+  "excluded": [
+    ".claude/skills/banner-design/**",
+    ".claude/skills/brand/**",
+    ".claude/skills/design/**",
+    ".claude/skills/design-system/**",
+    ".claude/skills/slides/**",
+    ".claude/skills/ui-styling/**",
+    "src/**",
+    "cli/**",
+    "stack/**",
+    "projects/**",
+    "scripts/**",
+    "docs/**",
+    "preview/**",
+    "screenshots/**",
+    ".github/**",
+    ".claude-plugin/**",
+    "skill.json",
+    "README.md",
+    "README.zh.md",
+    "CLAUDE.md",
+    "CONTRIBUTING.md",
+    "CODE_OF_CONDUCT.md",
+    "SECURITY.md",
+    ".releaserc.json",
+    ".gitignore"
+  ],
+  "planned_local_only": [
+    "skills/ui-ux-pro-max/evals/run_evals.py"
+  ]
+}

@@ -26,6 +26,9 @@ allowed-tools: Read, Write, Glob, Grep
 - 사용자가 “최신화”라고만 말해도 canonical source를 바로 수정하지 않는다.
 - `check`와 `discover`는 읽기 전용이다. `observed` 외 lock 상태(`accepted`, `embedded`, `packaged`, `released`)를 변경하지 않는다.
 - `promote`는 한 upstream/candidate씩 수행한다.
+- 하나의 upstream을 여러 integration relationship으로 동시에 추적할 수 있다. 조사와 staging은 여전히 GitHub upstream 하나씩 수행한다.
+- 같은 upstream에서 파생된 관계는 `relationship_group`으로 묶고 하나의 candidate로 원자적으로 승인·승격한다. 한쪽만 새 SHA로 올리거나 한쪽만 `active`로 바꾸지 않는다.
+- 서로 다른 upstream을 하나의 candidate에 섞지 않는다.
 - protected asset 추가·수정·보완은 별도 asset-impact approval이 필요하다.
 - 삭제·이동·교체는 별도 destructive approval이 필요하다.
 - license 변경, 불명확한 재배포 권리, scripts/hooks/MCP/network 권한 확대, path traversal, symlink, submodule, binary/LFS 의심은 차단한다.
@@ -88,6 +91,15 @@ inventory
 
 reference는 개념·권장사항 차이만 분석한다. vendored는 파일·hash·license diff를 분석한다. adapted는 upstream base와 local patch의 semantic mapping을 분석한다.
 
+한 upstream이 direct와 reference 관계를 함께 가지면 두 분석을 한 보고서 안에서 구분해 적는다.
+
+- 직접 반입 관계: upstream 파일 diff, hash, license, 로컬 수정 지점
+- 참고 관계: 의미 단위 차이와 채택 후보 개념
+
+`reference` 관계는 upstream 파일·번역문·요약문을 로컬에 반입하지 않는다. 외부 문장·표·체크리스트·코드를 복사해야 한다고 판단되면 그 파일은 `reference`가 아니라 `adapted` 재분류 대상이며 승인·NOTICE·라이선스 영향을 다시 판단한다.
+
+upstream 최상위 라이선스는 upstream 저작자가 보유하지 않은 제3자 권리까지 허가하지 못한다. 외부 가이드라인 값·표·도표를 인용한 파일은 원 저작자와 이용 조건을 파일 단위로 분리해 기록한다.
+
 ### 5. propose
 
 `templates/upstream-review-report.md`와 `templates/asset-impact-report.md`로 보고서를 작성한다.
@@ -100,6 +112,8 @@ reference는 개념·권장사항 차이만 분석한다. vendored는 파일·ha
 - protected asset 영향
 - Codex·Claude runtime 차이
 - 채택·부분 채택·보류·거부 권장
+
+같은 upstream에 여러 관계가 있으면 protected asset 영향과 destructive diff를 관계별·파일별로 나눠 적는다. 원본 자산의 추가·수정·삭제와 로컬에서만 만든 보완 자산도 구분한다.
 
 ### 6. approval
 

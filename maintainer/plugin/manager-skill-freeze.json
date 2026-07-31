@@ -35,7 +35,7 @@
         },
         {
           "path": "maintainer/skills/custom-skill-design/SKILL.md",
-          "sha256": "9370de8a7df9bb2795abd7ad64c0fa3f83afa02caa1a62f4c1cc4054c269dd27"
+          "sha256": "e5ccbadafdc217e9f9a20d81cf09075aae8e9d4ae05215965aa03c873303d28e"
         },
         {
           "path": "maintainer/skills/custom-skill-design/templates/skill-summary.md",
@@ -73,7 +73,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py",
-          "sha256": "5718307f428f7cd4a863f8e1e588905a98c2063ef222c7a9f6744f4ab3665e0b"
+          "sha256": "62e1c3d68b7a5e344d601b66676f28107c0ad82fbc2d64988d364d1a5965492d"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/freeze_manager_inventory.py",
@@ -85,7 +85,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/run_all_skill_evals.py",
-          "sha256": "aac8b4030668a2cba9c5402381db8db5a0b61cea129cc346842f839d2ffffb8a"
+          "sha256": "167718e5e289d6a3417747abe4e25a29ead209bc83cf007526064ef9811243a3"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/run_release_regression.py",
@@ -109,7 +109,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/SKILL.md",
-          "sha256": "f9c448537fe468f99e3e7b3e3ee419c0d3e5ff3226ef3c9a12fef0c843555a75"
+          "sha256": "3c928b47f59e57778e0c1bcfd4491a0dd772827b3c0d99c38b3c9de422110c7d"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/templates/.gitkeep",
@@ -171,7 +171,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/evals/run_evals.py",
-          "sha256": "be85d5983008ba06af17123ece1a9423d05c56edd88a9baf5508a25f73dd3836"
+          "sha256": "23e61e112e3f8ea78fe57ddf782ed2cd5a16ddae83d1f717488fca3b821102cf"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/references/.gitkeep",
@@ -219,11 +219,11 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py",
-          "sha256": "76df50f4d12331aa6dc85f29740b07a786470d5057940087abc4680ad08f2a12"
+          "sha256": "b4f87cce84c203c8c10ff072cf3df9859b0ac17cfcd46d86142d148b711c8a65"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/SKILL.md",
-          "sha256": "256efab35e0d9beeb7c8c773f870634319f0eb4ffa39d9f4fb3c0108ca85da4d"
+          "sha256": "289b361f1f0bf593f1b193ec5773a9fd40f103593e4055eca2211bc49d023067"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/templates/.gitkeep",

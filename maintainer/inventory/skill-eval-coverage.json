@@ -1,0 +1,69 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-07-31",
+  "purpose": "Declare which skills must carry an eval runner. run_all_skill_evals.py discovers runners by glob, so a skill without a runner is otherwise skipped silently while the log still reports a full pass. Only entries listed as required fail the build when their runner is missing.",
+  "runner_path_template": "{canonical_root}/{skill}/evals/run_evals.py",
+  "runner_nature": "Static contract regression checks. They assert that the contract wording a skill must keep is still present, not that a model behaves correctly.",
+  "required": {
+    "skills": [
+      "create-prototype",
+      "git-scoped-account",
+      "harness-bootstrap",
+      "harness-setup",
+      "humanize-korean",
+      "impl-verify",
+      "pre-commit"
+    ],
+    "maintainer_skills": [
+      "custom-skill-design",
+      "harness-plugin-maintainer",
+      "skill-portfolio-maintainer"
+    ]
+  },
+  "planned": [
+    {
+      "skill": "ui-ux-pro-max",
+      "canonical_root": "skills",
+      "required_from_phase": "20260730 Phase 2",
+      "note": "New skill. Needs contract checks plus behavioural fixtures for real Python search execution, data and reference path resolution, and absence of network calls."
+    },
+    {
+      "skill": "motion-design",
+      "canonical_root": "skills",
+      "required_from_phase": "20260730 Phase 3",
+      "note": "New skill. Contract checks only; the runtime carries no executable asset."
+    },
+    {
+      "skill": "design-prototype-docs",
+      "canonical_root": "skills",
+      "required_from_phase": "20260730 Phase 4",
+      "note": "Gains a motion handoff contract and must not bind to new skill internal paths."
+    },
+    {
+      "skill": "frontend-design",
+      "canonical_root": "skills",
+      "required_from_phase": "20260730 Phase 4",
+      "note": "Gains a two-axis preceding-input contract and a conditional motion rule."
+    }
+  ],
+  "not_required": {
+    "skills": [
+      "code-comment",
+      "commit",
+      "context-doc",
+      "design-doc",
+      "doc-audit",
+      "impl-doc",
+      "impl-fe-be-doc",
+      "impl-reuse-scan",
+      "multi-review"
+    ],
+    "rationale": "These skills carry no execution surface and no cross-skill boundary contract that a static check would protect today. They may be promoted to required when such a contract is added."
+  },
+  "policy": {
+    "missing_required_runner": "fail",
+    "missing_planned_runner": "report",
+    "runner_present_but_unlisted": "report",
+    "note": "Planned entries move into required in the phase named by required_from_phase."
+  }
+}

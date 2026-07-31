@@ -26,13 +26,40 @@ disable-model-invocation: true
 
 ## 운영 원칙
 
-- `skills/` 사용자 정본 18종만 payload에 포함한다.
+- `maintainer/plugin/CAPABILITIES.json`의 논리 사용자 스킬만 payload에 포함한다. 스킬 수는 이 inventory에서 파생하며 문서나 스크립트에 숫자를 고정하지 않는다.
 - `maintainer/skills/**`, `.agents/skills/**`, `.claude/skills/**` 관리자 projection은 payload에 포함하지 않는다.
 - build는 결정적이어야 한다. 같은 source에서 두 번 생성한 파일 목록·내용·archive hash가 같아야 한다.
+- 패키지에 들어가지 않는 정본 변경은 archive hash를 바꾸지 않아야 한다. `lifecycle`이 `candidate`인 관계와 source lock의 문서 수준 타임스탬프는 packaged lock에 반영하지 않는다.
 - release manifest 두 개(`.codex-plugin/plugin.json`, `.claude-plugin/plugin.json`)는 같은 plugin ID와 같은 semantic version을 사용한다.
 - `im-not-ai` 등 runtime direct import는 plugin NOTICE와 `licenses/{upstream-id}-LICENSE`에 닫혀야 한다.
 - `UPSTREAMS.lock.json`의 `packaged`는 artifact 검증 후에만 갱신한다. `released`는 이 스킬에서 갱신하지 않는다.
 - push, tag, GitHub release 생성은 별도 명시 승인 전 수행하지 않는다.
+
+## 버전 승격 기준
+
+SemVer 규격의 자동 귀결이 아니라 이 저장소의 자체 정책이다. SemVer는 `0.y.z`를
+초기 개발 단계로 규정하고 공개 API 안정성을 보장하지 않으므로, `0.x`에서
+breaking 변경을 어느 자리로 올릴지는 규격이 정해주지 않는다.
+
+| 변경 성격 | `0.x` | `1.0` 이후 |
+|---|---|---|
+| 스킬 이름·호출 계약·필수 입력·설치 표면·산출물 경로의 제거·변경 | 다음 MINOR로 올리고 changelog에 breaking 명시 | MAJOR |
+| 사용자 스킬 추가, 공개 capability 추가, 선택적 산출물 추가 | 다음 MINOR | MINOR |
+| 공개 동작을 바꾸지 않는 버그·문서·증적 수정 | PATCH | PATCH |
+
+`1.0.0`은 배포를 한 번 수행했다는 사실로 정하지 않는다. 공개 스킬 이름, 호출
+계약, 필수 입력, 산출물 경로, 설치 표면이 안정되어 이후 변경을 BREAKING으로
+관리할 준비가 됐을 때 정한다.
+
+이미 감사 산출물에 archive hash가 기록된 버전 번호로 내용이 다른 산출물을
+재빌드하지 않는다.
+
+## eval runner coverage
+
+`scripts/run_all_skill_evals.py`는 runner를 glob으로 탐색하므로 runner가 없는
+스킬은 조용히 검사에서 빠지고 로그는 전체 통과로 보인다.
+`maintainer/inventory/skill-eval-coverage.json`이 정본이며 여기에 `required`로
+선언된 runner가 없으면 실패시킨다. 모든 스킬에 runner를 강제하지는 않는다.
 
 ## 실행 절차
 
@@ -44,6 +71,7 @@ disable-model-invocation: true
 - `maintainer/plugin/CAPABILITIES.json`
 - `maintainer/plugin/runtime-allowlist.json`
 - `maintainer/inventory/markdown-artifact-flow.json`
+- `maintainer/inventory/skill-eval-coverage.json`
 - `maintainer/upstreams/lock.json`
 - `maintainer/upstreams/registry.json`
 - `maintainer/upstreams/provenance/**`

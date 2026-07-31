@@ -58,6 +58,11 @@
         "intended_integration_mode": {
           "enum": ["native", "reference", "vendored", "adapted", "unknown"]
         },
+        "relationship_group": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]*$",
+          "description": "Groups multiple integration relationships that derive from one upstream repository. Sources sharing a group must agree on repository URL, license determination and pinned commit, and must be approved and promoted together."
+        },
         "lifecycle": {
           "enum": ["candidate", "active", "blocked", "deprecated"]
         },

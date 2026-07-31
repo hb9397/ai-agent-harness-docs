@@ -36,6 +36,75 @@ def error(errors: list[str], message: str) -> None:
     errors.append(message)
 
 
+def canonical_skill_count(root: Path) -> int:
+    """Derive the expected current-skills.json entry count from canonical trees.
+
+    current-skills.json records provenance for every canonical skill, user and
+    manager alike. Deriving the number keeps the check correct when skills are
+    added or removed instead of requiring a hardcoded edit.
+    """
+    total = 0
+    for base in (root / "skills", root / "maintainer" / "skills"):
+        if base.is_dir():
+            total += sum(1 for path in base.iterdir() if (path / "SKILL.md").is_file())
+    return total
+
+
+def validate_relationship_groups(registry: dict, lock: dict, errors: list[str]) -> None:
+    """Keep every relationship derived from one upstream pinned to one commit.
+
+    A single upstream can be tracked as a direct import and as a reference at the
+    same time. Those relationships must not drift apart, so the group shares a
+    repository, a license determination and a pinned commit.
+    """
+    lock_by_id = {state.get("id"): state for state in lock.get("states", [])}
+    groups: dict[str, list[dict]] = {}
+    for source in registry.get("sources", []):
+        group = source.get("relationship_group")
+        if group:
+            groups.setdefault(group, []).append(source)
+
+    for group, sources in sorted(groups.items()):
+        if len(sources) < 2:
+            error(errors, f"relationship group {group}: needs at least two relationships")
+            continue
+
+        for field, label in (("repository", "upstream.repository"), ("source_url", "upstream.source_url")):
+            values = {source.get("upstream", {}).get(field) for source in sources}
+            if len(values) != 1:
+                error(errors, f"relationship group {group}: {label} must match across the group, got {sorted(map(str, values))}")
+
+        licenses = {source.get("provenance", {}).get("license_spdx") for source in sources}
+        if len(licenses) != 1:
+            error(errors, f"relationship group {group}: license_spdx must match across the group, got {sorted(map(str, licenses))}")
+
+        lifecycles = {source.get("lifecycle") for source in sources}
+        if len(lifecycles) != 1:
+            error(errors, f"relationship group {group}: lifecycle must be promoted atomically, got {sorted(map(str, lifecycles))}")
+
+        for key in ("observed", "accepted"):
+            shas = set()
+            for source in sources:
+                state = lock_by_id.get(source.get("id"))
+                entry = (state or {}).get(key)
+                shas.add(entry.get("sha") if isinstance(entry, dict) else None)
+            if len(shas) != 1:
+                error(errors, f"relationship group {group}: {key} sha must match across the group, got {sorted(map(str, shas))}")
+
+        modes = [source.get("integration_mode") for source in sources]
+        if "reference" not in modes:
+            error(errors, f"relationship group {group}: expected at least one reference relationship")
+        for source in sources:
+            if source.get("integration_mode") != "reference":
+                continue
+            provenance = source.get("provenance", {})
+            if provenance.get("notice_path"):
+                error(errors, f"{source.get('id')}: reference relationship must not claim a packaged notice_path")
+            for entry in provenance.get("file_map", []):
+                if entry.get("treatment") != "reference-only":
+                    error(errors, f"{source.get('id')}: reference relationship file_map must stay reference-only")
+
+
 def validate_registry(root: Path, errors: list[str]) -> None:
     registry_path = root / "maintainer" / "upstreams" / "registry.json"
     lock_path = root / "maintainer" / "upstreams" / "lock.json"
@@ -109,8 +178,13 @@ def validate_registry(root: Path, errors: list[str]) -> None:
 
     skills = current.get("skills", []) if isinstance(current, dict) else []
     candidates = current.get("candidates", []) if isinstance(current, dict) else []
-    if len(skills) != 21:
-        error(errors, f"current-skills.json must describe 21 current skills, got {len(skills)}")
+    expected_skills = canonical_skill_count(root)
+    if len(skills) != expected_skills:
+        error(
+            errors,
+            f"current-skills.json must describe {expected_skills} current skills "
+            f"(user + manager canonical directories), got {len(skills)}",
+        )
     if candidates:
         error(errors, f"current-skills.json must not keep candidates after Phase 4 promotion, got {len(candidates)}")
     humanize = next((item for item in skills if item.get("name") == "humanize-korean"), None)
@@ -133,12 +207,31 @@ def validate_registry(root: Path, errors: list[str]) -> None:
         for item in skills
         if isinstance(item, dict) and item.get("name")
     }
+    # Candidate sources describe planned relationships. Their targets may not
+    # exist as canonical skills yet, and existing skills must not claim them
+    # before promotion, so candidates are checked against a candidate bundle
+    # instead of the current-skills provenance view.
     targets_by_source: dict[str, set[str]] = {}
+    candidate_ids: set[str] = set()
     for source in registry["sources"]:
         sid = source.get("id")
         if not sid or sid == "internal-harness-native":
             continue
         targets = set(source.get("target", {}).get("local_skills", []))
+        if source.get("lifecycle") == "candidate":
+            candidate_ids.add(sid)
+            evidence = source.get("provenance", {}).get("classification_evidence_url", "")
+            bundle = root / evidence if evidence and not evidence.startswith("http") else None
+            if bundle is None or not bundle.is_file():
+                error(errors, f"{sid}: candidate source must point to a candidate or provenance bundle")
+            for skill_name in targets:
+                item = current_by_name.get(skill_name)
+                if item is not None and sid in item.get("sources", []):
+                    error(
+                        errors,
+                        f"{sid}: candidate source must not be declared by {skill_name} before promotion",
+                    )
+            continue
         targets_by_source[sid] = targets
         for skill_name in targets:
             item = current_by_name.get(skill_name)
@@ -154,11 +247,15 @@ def validate_registry(root: Path, errors: list[str]) -> None:
         for sid in item.get("sources", []):
             if sid == "internal-harness-native":
                 continue
+            if sid in candidate_ids:
+                continue
             if skill_name not in targets_by_source.get(sid, set()):
                 error(
                     errors,
                     f"{skill_name}: source {sid} does not target the skill in registry.json",
                 )
+
+    validate_relationship_groups(registry, lock, errors)
 
     for sid in ("superpowers", "gstack", "openai-codex-skill-creator"):
         source = next((item for item in registry["sources"] if item.get("id") == sid), None)

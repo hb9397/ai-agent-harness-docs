@@ -90,7 +90,15 @@
 
 ### 2-2. UI/UX Pro Max 반입 범위
 
-업스트림은 현재 `src/ui-ux-pro-max/`를 정본으로 설명하고 `.claude/skills/ui-ux-pro-max/`를 생성·시험 표면으로 제공한다. 구현 시 선택한 안정 태그 또는 commit SHA에서 다음을 확인한다.
+> Phase 0 실측 정정. `src/ui-ux-pro-max/`에는 `SKILL.md`가 없다. 이 트리는
+> `templates/base/skill-content.md`와 `templates/platforms/*.json`을 입력으로 쓰는
+> 생성기 소스다. 완성된 스킬은 `.claude/skills/ui-ux-pro-max/` 43개 파일이며
+> 이쪽이 반입 대상이다. `templates/platforms/`에는 `codex.json`도 이미 있다.
+> 생성기 자체는 `cli/`의 TypeScript npm CLI 187개 파일과 얽혀 있어 반입하지
+> 않는다. 상세는 `maintainer/upstreams/candidates/ui-ux-pro-max/candidate.json`의
+> `generator_decision`에 있다.
+
+구현 시 선택한 안정 태그 또는 commit SHA에서 다음을 확인한다.
 
 - `src/ui-ux-pro-max/**`
 - `.claude/skills/ui-ux-pro-max/**`

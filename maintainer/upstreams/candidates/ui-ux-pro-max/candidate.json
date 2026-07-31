@@ -1,0 +1,52 @@
+{
+  "id": "ui-ux-pro-max-candidate",
+  "checked_at": "2026-07-31",
+  "status": "accepted-pending-implementation",
+  "relationship_group": "ui-ux-pro-max",
+  "current_state": "Upstream snapshot is pinned and licensed. Both relationships are registered as candidate lifecycle. Local skills do not exist yet.",
+  "internal_skill_group": ["ui-ux-pro-max", "design-prototype-docs", "create-prototype", "frontend-design", "impl-verify"],
+  "atomic_promotion": {
+    "required": true,
+    "sources": ["ui-ux-pro-max-runtime", "ui-ux-pro-max-principles"],
+    "rule": "Both relationships derive from one upstream commit and must be promoted together. Promoting only one is rejected."
+  },
+  "candidate_sources": [
+    {
+      "source_id": "ui-ux-pro-max-runtime",
+      "integration_mode": "adapted",
+      "source_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+      "repository_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+      "officiality": "Reputable third-party skill with an active release cadence and semantic-release tagging.",
+      "observed_activity": "Latest stable release v2.11.3 published 2026-07-28. Pinned commit 4857a2c5ef989794751a0f66b8545a4a49566286.",
+      "license": "MIT, Copyright (c) 2024 Next Level Builder. LICENSE text and SHA-256 preserved in provenance.",
+      "security_surface": "Five Python modules. Standard library only, no network, no subprocess, no eval or exec. Paths resolve through Path(__file__). One opt-in write path persists a design system to disk and must gain a local approval gate.",
+      "fit": "Provides the design direction, token, typography, layout and stack guidance the harness currently lacks.",
+      "decision": "Accepted for direct import as an independent user skill. Implementation is deferred to Phase 2."
+    },
+    {
+      "source_id": "ui-ux-pro-max-principles",
+      "integration_mode": "reference",
+      "source_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+      "repository_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+      "officiality": "Same upstream as the runtime relationship.",
+      "observed_activity": "Same pinned commit as the runtime relationship.",
+      "license": "Same MIT determination as the runtime relationship.",
+      "security_surface": "No file is copied, so no runtime surface is added.",
+      "fit": "Selected design-input concepts belong in existing design, prototype and verification skills without duplicating the new skill.",
+      "decision": "Accepted as reference-only. No upstream file, translation or summary is imported."
+    }
+  ],
+  "import_scope": {
+    "target_tree": ".claude/skills/ui-ux-pro-max/",
+    "file_count": 43,
+    "note": "src/ui-ux-pro-max/ is generator input and carries no SKILL.md. The generated tree is the import target.",
+    "excluded_sibling_skills": ["banner-design", "brand", "design", "design-system", "slides", "ui-styling"],
+    "excluded_reason": "Feature overlap, separate provenance, dependency and license review required. Tracked as a separate future candidate."
+  },
+  "generator_decision": {
+    "choice": "import-generated-tree",
+    "rejected_alternative": "import src/ and templates/ and run the generator locally",
+    "reason": "The generator is coupled to a TypeScript npm CLI under cli/ with 187 files. Importing it would expand protected assets far beyond the skill and add a build toolchain the harness does not need."
+  },
+  "pending_approvals": ["asset-impact approval for scripts, data and references additions"]
+}
