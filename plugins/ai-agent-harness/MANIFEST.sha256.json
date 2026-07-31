@@ -3,15 +3,15 @@
   "files": [
     {
       "path": ".claude-plugin/plugin.json",
-      "sha256": "10d46878b3bcac9ee1efe2348ca570870269266063b92963a48506c8395dbb50"
+      "sha256": "0488a3832a2f0b1d6bc1cacaf8258a66533eb8b80a70180de4744d578adeea8b"
     },
     {
       "path": ".codex-plugin/plugin.json",
-      "sha256": "b456c7776852ab0ba215a0b8c363190885f3773bbe32f3fccf5c256efbe8148c"
+      "sha256": "ca951fb75b9c954777f3cea1b457cb9482d070119a6bf4d88f54b4a228a50dec"
     },
     {
       "path": "CAPABILITIES.json",
-      "sha256": "85dc750cd55fd495bfc43786705a16caa17ff3abf55a7b35043a040dbecfd9b5"
+      "sha256": "da19f248eb59e2c328a67c8b9fda0b1ea172185dd1398143c3dc2d4babe2c1b7"
     },
     {
       "path": "LICENSE",
@@ -19,7 +19,7 @@
     },
     {
       "path": "NOTICE",
-      "sha256": "6d6712243704cde48c5f923fa5390f677d87882328ca52664f49d29f5805a066"
+      "sha256": "bc29a5893ea71fcca06a271952f5821460257d50e7838bf6ca1c923f869c7054"
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
@@ -27,7 +27,7 @@
     },
     {
       "path": "UPSTREAMS.lock.json",
-      "sha256": "9e54ff8f662317dafff30240037ff26041228384cd35797a43728eaf9d212d7f"
+      "sha256": "c291f3e66bbe7eb060098e7a0927eae462ffce9b9c1e27c8a1b0ccffcb0bdb64"
     },
     {
       "path": "licenses/anthropic-frontend-design-LICENSE",

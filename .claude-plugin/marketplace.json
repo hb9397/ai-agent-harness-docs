@@ -2,7 +2,7 @@
   "name": "ai-agent-harness",
   "owner": {
     "name": "hb9397",
-    "url": "https://github.com/hb9397/AI_Agent_docs"
+    "url": "https://github.com/hb9397/ai-agent-harness-docs"
   },
   "description": "AI Agent Harness user skills for Codex and Claude Code projects.",
   "plugins": [
@@ -11,7 +11,7 @@
       "source": "./plugins/ai-agent-harness",
       "displayName": "AI Agent Harness",
       "description": "Project harness plugin for Codex and Claude Code.",
-      "version": "0.2.0"
+      "version": "0.2.1"
     }
   ]
 }

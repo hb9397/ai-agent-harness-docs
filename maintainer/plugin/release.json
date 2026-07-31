@@ -2,10 +2,10 @@
   "schema_version": "1.0.0",
   "generated_by": "harness-plugin-maintainer",
   "plugin_id": "ai-agent-harness",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "plugin_root": "plugins/ai-agent-harness",
-  "archive": "plugins/ai-agent-harness-0.2.0.zip",
-  "archive_sha256": "a0e64c04fd1f797851d6ed656ad1da14112124e263754e1d5410dece6316f4bd",
+  "archive": "plugins/ai-agent-harness-0.2.1.zip",
+  "archive_sha256": "ed5d08a52b99955b1b1d488ef3311161f011e8188d6e33253a9aa9c05e8b99cb",
   "marketplaces": {
     "codex": ".agents/plugins/marketplace.json",
     "claude": ".claude-plugin/marketplace.json"

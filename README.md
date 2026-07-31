@@ -11,8 +11,8 @@
 현재 릴리스 후보:
 
 - Plugin ID: `ai-agent-harness`
-- Version: `0.2.0`
-- Archive: `plugins/ai-agent-harness-0.2.0.zip`
+- Version: `0.2.1`
+- Archive: `plugins/ai-agent-harness-0.2.1.zip`
 - 사용자 스킬: 20종
 - Codex runtime: 20 skills / 0 agents
 - Claude runtime: 20 skills / 0 agents
@@ -56,7 +56,7 @@
 - Claude Chat/Cowork는 Code 플러그인과 별도 표면이다. 설치·권한·cache는
   별도로 검증한다.
 
-CLI 설치 smoke는 `0.2.0`에서 Codex CLI `0.146.0`과 Claude Code `2.1.220` 기준으로
+CLI 설치 smoke는 `0.2.1`에서 Codex CLI `0.146.0`과 Claude Code `2.1.220` 기준으로
 통과했다. 격리된 설정 디렉터리에서 marketplace 등록, 설치, 20 skills / 0 agents
 확인, 제거까지 수행했다. 설치 smoke는 cache 검사이며 실제 모델이 스킬을 올바르게
 수행했다는 증적이 아니다. 네 표면의 수동 행동 증적은 아직 남아 있다.

@@ -253,7 +253,7 @@ flowchart TD
 |---|---|
 | 저장소 본체 라이선스 | Apache-2.0 |
 | 저작권자 | `hb9397` |
-| 저장소 URL | `https://github.com/hb9397/AI_Agent_docs` |
+| 저장소 URL | `https://github.com/hb9397/ai-agent-harness-docs` |
 | 서드파티 고지 | 기존 `THIRD_PARTY_NOTICES.md`와 `licenses/` 체계 유지 |
 
 저작권자 표기는 저장소 remote URL에서 유추한 값이 아니라 저장소 소유자가 명시
@@ -443,7 +443,7 @@ python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projecti
 신규 스킬 구현은 보호 자산 추가가 예정되어 있으므로 asset-impact approval을 구현 Phase의 선행 조건으로 둔다.
 
 본체 라이선스와 귀속은 §2-8에서 Apache-2.0 / `hb9397` /
-`https://github.com/hb9397/AI_Agent_docs`로 확정했다.
+`https://github.com/hb9397/ai-agent-harness-docs`로 확정했다.
 
 ### 4-2. 금지 사항
 
@@ -1268,7 +1268,7 @@ fixture:
    builder가 루트 `LICENSE`를 복사하게 하고, 템플릿은 제거하거나 서드파티 안내
    전용으로 축소한다.
 7. 루트 `NOTICE`를 채택한 경우 plugin에도 복사하고 validator에 존재 검사를 넣는다.
-8. `build_plugin.py`의 `REPOSITORY_URL`을 `https://github.com/hb9397/AI_Agent_docs`로
+8. `build_plugin.py`의 `REPOSITORY_URL`을 `https://github.com/hb9397/ai-agent-harness-docs`로
    바꾸고 author 표기를 `hb9397`로 맞춘다. 이 상수 하나에서 root marketplace 2종과
    plugin manifest 2종의 `author.url`·`homepage`·`repository`·`websiteURL`이 모두
    파생된다.
@@ -1668,7 +1668,7 @@ Phase 2와 Phase 3은 Phase 1 완료 후 서로 독립적으로 구현할 수 �
 - [ ] 루트 `NOTICE` 파일의 채택 여부와 목적이 문서에 명시됐다.
 - [ ] plugin archive가 라이선스 전문을 자체적으로 담는다.
 - [ ] 플러그인 LICENSE 플레이스홀더가 제거됐다.
-- [ ] 생성물의 저작권 귀속이 `hb9397/AI_Agent_docs`를 가리킨다.
+- [ ] 생성물의 저작권 귀속이 `hb9397/ai-agent-harness-docs`를 가리킨다.
 - [ ] 릴리스 후보 버전이 `0.2.0`이고 승격 기준이 관리자 스킬에 성문화됐다.
 - [ ] 모든 감사 산출물이 같은 archive SHA를 기록한다.
 - [ ] 필수 eval runner가 coverage manifest로 관리되고 누락이 실패로 드러난다.

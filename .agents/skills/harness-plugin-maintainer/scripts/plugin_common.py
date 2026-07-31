@@ -14,7 +14,7 @@ from typing import Any
 
 
 PLUGIN_ID = "ai-agent-harness"
-PLUGIN_VERSION = "0.2.0"
+PLUGIN_VERSION = "0.2.1"
 PLUGIN_ROOT_REL = Path("plugins") / PLUGIN_ID
 GENERATED_BY = "harness-plugin-maintainer"
 

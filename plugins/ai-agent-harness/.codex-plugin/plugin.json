@@ -1,13 +1,13 @@
 {
   "name": "ai-agent-harness",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Project harness plugin for Codex and Claude Code.",
   "author": {
     "name": "hb9397",
-    "url": "https://github.com/hb9397/AI_Agent_docs"
+    "url": "https://github.com/hb9397/ai-agent-harness-docs"
   },
-  "homepage": "https://github.com/hb9397/AI_Agent_docs",
-  "repository": "https://github.com/hb9397/AI_Agent_docs",
+  "homepage": "https://github.com/hb9397/ai-agent-harness-docs",
+  "repository": "https://github.com/hb9397/ai-agent-harness-docs",
   "keywords": [
     "agent-harness",
     "skills",
@@ -25,6 +25,6 @@
       "Read",
       "Write"
     ],
-    "websiteURL": "https://github.com/hb9397/AI_Agent_docs"
+    "websiteURL": "https://github.com/hb9397/ai-agent-harness-docs"
   }
 }

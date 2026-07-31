@@ -1,7 +1,7 @@
 # Plugin Installation Guide
 
 > 기준일: 2026-07-29
-> 대상 플러그인: `ai-agent-harness` `0.2.0`
+> 대상 플러그인: `ai-agent-harness` `0.2.1`
 > 현재 상태: 공식 manifest·marketplace와 격리 CLI 설치 smoke를 자동 검증한다.
 > Codex와 Claude의 CLI·앱 네 표면에서 실제 모델 호출·산출물·새 세션 증적까지
 > 확보되기 전에는 `not release-ready`다.
@@ -26,9 +26,9 @@
 | 항목 | 값 |
 |------|----|
 | Plugin ID | `ai-agent-harness` |
-| Version | `0.2.0` |
+| Version | `0.2.1` |
 | Local plugin root | `plugins/ai-agent-harness` |
-| Archive | `plugins/ai-agent-harness-0.2.0.zip` |
+| Archive | `plugins/ai-agent-harness-0.2.1.zip` |
 | Archive SHA-256 | `maintainer/plugin/release.json`의 현재 생성값 |
 | Codex physical skills | 20 |
 | Codex agents | 0 |
@@ -42,7 +42,7 @@
 
 ## 3. Codex CLI
 
-> CLI 설치 smoke는 `0.1.0` 기준으로 통과한 기록이다. `0.2.0`은 아직 재실행하지
+> CLI 설치 smoke는 `0.1.0` 기준으로 통과한 기록이다. `0.2.1`은 아직 재실행하지
 > 않았으므로 두 CLI 표면은 `blocked` 상태다. 증적은 설치한 payload 버전과 함께
 > 기록되며, 버전이 다르면 이전 결과를 이어받지 않는다.
 
@@ -103,7 +103,7 @@ Desktop/App에서는 다음을 수동으로 확인한다.
 3. local marketplace가 앱에 보이지 않는 버전이면 앱과 같은 사용자 프로필의
    Codex CLI에서 marketplace와 플러그인을 등록하고 앱을 완전히 종료했다가 다시
    연다.
-4. Plugins Directory 또는 `/plugins`에서 `ai-agent-harness` `0.2.0`이
+4. Plugins Directory 또는 `/plugins`에서 `ai-agent-harness` `0.2.1`이
    설치·활성 상태인지 확인한다.
 5. 새 fixture 프로젝트에서 새 task/session을 연다.
 6. `$harness-setup`과 `$humanize-korean`을 명시 호출한다.
