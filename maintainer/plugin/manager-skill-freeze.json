@@ -61,7 +61,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/run_evals.py",
-          "sha256": "6314e49c239b59cb3b64d087564aacc43ea28fa7251c6c810c7508c2e43eaacd"
+          "sha256": "53215400c26b2b904830af4fc1e395a568b364f6d5bf85dac028e9ae55c4adfa"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/references/.gitkeep",
@@ -73,7 +73,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py",
-          "sha256": "62e1c3d68b7a5e344d601b66676f28107c0ad82fbc2d64988d364d1a5965492d"
+          "sha256": "53b80584ff058e710f4bcddd5e3debe9690a5de408b21be30708e86da127583e"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/freeze_manager_inventory.py",
@@ -89,7 +89,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/run_release_regression.py",
-          "sha256": "1654afd9dcb9a729c877d6e790472a54ac22682cc0759013afb4ad97819aa6c8"
+          "sha256": "12eb027a0ae0714b91639621fc2c3a364a4d07317bc859af429417d24a2f6d58"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/smoke_cli_install.py",
@@ -171,7 +171,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/evals/run_evals.py",
-          "sha256": "23e61e112e3f8ea78fe57ddf782ed2cd5a16ddae83d1f717488fca3b821102cf"
+          "sha256": "a6b064f66f968e92e45efce0a886fa612fb80b3a71277736050e8d22f0335276"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/references/.gitkeep",
@@ -219,7 +219,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py",
-          "sha256": "b4f87cce84c203c8c10ff072cf3df9859b0ac17cfcd46d86142d148b711c8a65"
+          "sha256": "3f761007afa1fcd0cb1c839c58aede2e3c5c45b930070973a43b0be7aaa2a6ef"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/SKILL.md",

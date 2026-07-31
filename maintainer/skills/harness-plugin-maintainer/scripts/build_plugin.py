@@ -61,11 +61,36 @@ EXECUTABLE_SUFFIXES = {".sh"}
 PACKAGED_INTEGRATION_MODES = {"adapted", "vendored"}
 
 
+def pending_user_skills(root: Path) -> list[str]:
+    """Canonical user skills whose upstream relationship is not promoted yet.
+
+    A skill can exist in `skills/` while its upstream group is still a candidate.
+    It is intentionally absent from the shipped package until promotion, so it
+    must not count as inventory drift.
+    """
+    current_path = root / "maintainer" / "upstreams" / "provenance" / "current-skills.json"
+    if not current_path.is_file():
+        return []
+    current = load_json(current_path)
+    return sorted(
+        item["name"]
+        for item in current.get("skills", [])
+        if item.get("area") == "user" and item.get("lifecycle") == "candidate"
+    )
+
+
+def check_user_skill_inventory(root: Path, capabilities: dict) -> None:
+    logical = capabilities["logical_user_skills"]
+    pending = pending_user_skills(root)
+    packageable = [skill for skill in user_skills(root) if skill not in pending]
+    if packageable != logical:
+        raise RuntimeError(
+            f"user skill inventory mismatch: {packageable} != {logical} (pending: {pending})"
+        )
+
+
 def copy_user_skills(root: Path, plugin_root: Path, capabilities: dict) -> None:
     logical = capabilities["logical_user_skills"]
-    current = user_skills(root)
-    if current != logical:
-        raise RuntimeError(f"user skill inventory mismatch: {current} != {logical}")
 
     codex_skills = plugin_root / "runtime" / "codex" / "skills"
     claude_skills = plugin_root / "runtime" / "claude" / "skills"
@@ -314,13 +339,17 @@ def reset_plugin_output(plugin_root: Path, output_root: Path) -> None:
 def build(root: Path, output_root: Path | None = None) -> dict:
     target_root = output_root if output_root is not None else root
     plugin_root = target_root / PLUGIN_ROOT_REL
-    reset_plugin_output(plugin_root, target_root)
-    plugin_root.mkdir(parents=True, exist_ok=True)
 
+    # Read and validate inputs before deleting anything. Resetting first would
+    # leave the repository without a plugin tree whenever an input is invalid.
     capabilities = load_json(root / "maintainer" / "plugin" / "CAPABILITIES.json")
     runtime_allowlist = load_json(root / "maintainer" / "plugin" / "runtime-allowlist.json")
     markdown_flow = load_json(root / "maintainer" / "inventory" / "markdown-artifact-flow.json")
     sources = packaged_sources(root)
+    check_user_skill_inventory(root, capabilities)
+
+    reset_plugin_output(plugin_root, target_root)
+    plugin_root.mkdir(parents=True, exist_ok=True)
 
     copy_user_skills(root, plugin_root, capabilities)
     notices(root, plugin_root, sources)

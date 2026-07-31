@@ -507,7 +507,8 @@ def test_canonical_skill_count_is_derived_not_hardcoded() -> None:
     assert len(current["skills"]) == expected
 
 
-def test_candidate_sources_are_not_claimed_by_existing_skills() -> None:
+def test_candidate_sources_are_not_claimed_by_established_skills() -> None:
+    """An in-progress skill may record its candidate source; a promoted one may not."""
     registry = json.loads((ROOT / "maintainer" / "upstreams" / "registry.json").read_text(encoding="utf-8"))
     current = json.loads((ROOT / "maintainer" / "upstreams" / "provenance" / "current-skills.json").read_text(encoding="utf-8"))
     candidate_ids = {
@@ -516,7 +517,30 @@ def test_candidate_sources_are_not_claimed_by_existing_skills() -> None:
     assert candidate_ids, "expected candidate relationships during integration phases"
     for item in current["skills"]:
         overlap = candidate_ids & set(item.get("sources", []))
-        assert not overlap, f"{item['name']} claims unpromoted candidate sources {sorted(overlap)}"
+        if overlap:
+            assert item.get("lifecycle") == "candidate", (
+                f"established skill {item['name']} claims unpromoted sources {sorted(overlap)}"
+            )
+
+
+def test_established_skill_claiming_candidate_source_is_blocked() -> None:
+    root = ROOT
+    current_path = root / "maintainer" / "upstreams" / "provenance" / "current-skills.json"
+    backup = current_path.read_bytes()
+    try:
+        doc = json.loads(backup.decode("utf-8"))
+        for item in doc["skills"]:
+            if item["name"] == "ui-ux-pro-max":
+                item.pop("lifecycle", None)
+        current_path.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+        errors: list[str] = []
+        validate_registry.validate_registry(root, errors)
+        assert any("must not declare an unpromoted candidate source" in item for item in errors), errors
+    finally:
+        current_path.write_bytes(backup)
+    errors = []
+    validate_registry.validate_registry(root, errors)
+    assert errors == [], "\n".join(errors)
 
 
 def test_self_update_blocks_same_session() -> None:
@@ -649,7 +673,8 @@ def main() -> int:
         test_relationship_group_blocks_license_and_repository_split,
         test_reference_relationship_stays_out_of_packaging,
         test_canonical_skill_count_is_derived_not_hardcoded,
-        test_candidate_sources_are_not_claimed_by_existing_skills,
+        test_candidate_sources_are_not_claimed_by_established_skills,
+        test_established_skill_claiming_candidate_source_is_blocked,
         test_self_update_blocks_same_session,
         test_protected_asset_requires_asset_approval,
         test_protected_asset_path_variants_are_classified,

@@ -12,7 +12,8 @@
       "harness-setup",
       "humanize-korean",
       "impl-verify",
-      "pre-commit"
+      "pre-commit",
+      "ui-ux-pro-max"
     ],
     "maintainer_skills": [
       "custom-skill-design",
@@ -21,12 +22,6 @@
     ]
   },
   "planned": [
-    {
-      "skill": "ui-ux-pro-max",
-      "canonical_root": "skills",
-      "required_from_phase": "20260730 Phase 2",
-      "note": "New skill. Needs contract checks plus behavioural fixtures for real Python search execution, data and reference path resolution, and absence of network calls."
-    },
     {
       "skill": "motion-design",
       "canonical_root": "skills",

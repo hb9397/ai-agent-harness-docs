@@ -39,7 +39,59 @@ def run(args: list[str]) -> subprocess.CompletedProcess[str]:
     return completed
 
 
+def test_invalid_inventory_does_not_destroy_the_plugin_tree() -> None:
+    """A failed build must not leave the repository without a plugin tree.
+
+    The builder resets its output directory before writing. If that reset ran
+    before input validation, any invalid input would delete the tracked plugin
+    and leave nothing behind.
+    """
+    with tempfile.TemporaryDirectory(prefix="harness-plugin-reset-eval-") as tmp:
+        fixture_root = Path(tmp)
+        build_plugin.build(ROOT, output_root=fixture_root)
+        plugin_root = fixture_root / "plugins" / "ai-agent-harness"
+        before = sorted(p.relative_to(fixture_root).as_posix() for p in plugin_root.rglob("*"))
+        assert before, "fixture build produced no plugin tree"
+
+        capabilities_path = ROOT / "maintainer" / "plugin" / "CAPABILITIES.json"
+        backup = capabilities_path.read_bytes()
+        try:
+            broken = json.loads(backup.decode("utf-8"))
+            broken["logical_user_skills"] = broken["logical_user_skills"][:-1]
+            capabilities_path.write_text(
+                json.dumps(broken, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
+            )
+            try:
+                build_plugin.build(ROOT, output_root=fixture_root)
+            except RuntimeError as exc:
+                assert "user skill inventory mismatch" in str(exc)
+            else:
+                raise AssertionError("build accepted a mismatched inventory")
+        finally:
+            capabilities_path.write_bytes(backup)
+
+        after = sorted(p.relative_to(fixture_root).as_posix() for p in plugin_root.rglob("*"))
+        assert after == before, "failed build deleted or altered the existing plugin tree"
+
+
+def test_pending_candidate_skill_is_canonical_but_not_packaged() -> None:
+    """A skill may exist canonically while its upstream group is unpromoted."""
+    pending = build_plugin.pending_user_skills(ROOT)
+    if not pending:
+        return
+    capabilities = json.loads((ROOT / "maintainer" / "plugin" / "CAPABILITIES.json").read_text(encoding="utf-8"))
+    for skill in pending:
+        assert (ROOT / "skills" / skill / "SKILL.md").is_file(), f"pending skill {skill} is not canonical"
+        assert skill not in capabilities["logical_user_skills"], f"pending skill {skill} leaked into capabilities"
+        for platform in ("codex", "claude"):
+            packaged = ROOT / "plugins" / "ai-agent-harness" / "runtime" / platform / "skills" / skill
+            assert not packaged.exists(), f"pending skill {skill} leaked into the {platform} runtime"
+
+
 def main() -> int:
+    test_invalid_inventory_does_not_destroy_the_plugin_tree()
+    test_pending_candidate_skill_is_canonical_but_not_packaged()
+
     with tempfile.TemporaryDirectory(prefix="harness-plugin-text-eval-") as tmp:
         payload_root = Path(tmp)
         extensionless = payload_root / "LICENSE"

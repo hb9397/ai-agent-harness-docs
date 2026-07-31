@@ -224,12 +224,17 @@ def validate_registry(root: Path, errors: list[str]) -> None:
             bundle = root / evidence if evidence and not evidence.startswith("http") else None
             if bundle is None or not bundle.is_file():
                 error(errors, f"{sid}: candidate source must point to a candidate or provenance bundle")
+            # A skill being built from this candidate may record it, but only
+            # while the skill itself is still marked candidate. An established
+            # skill claiming an unpromoted source would misreport provenance.
             for skill_name in targets:
                 item = current_by_name.get(skill_name)
-                if item is not None and sid in item.get("sources", []):
+                if item is None or sid not in item.get("sources", []):
+                    continue
+                if item.get("lifecycle") != "candidate":
                     error(
                         errors,
-                        f"{sid}: candidate source must not be declared by {skill_name} before promotion",
+                        f"{sid}: established skill {skill_name} must not declare an unpromoted candidate source",
                     )
             continue
         targets_by_source[sid] = targets

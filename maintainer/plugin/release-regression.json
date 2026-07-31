@@ -6,7 +6,11 @@
   "checks": {
     "source_projection_integrity": {
       "counts": {
-        "user_skills": 18,
+        "user_skills": 19,
+        "packageable_user_skills": 18,
+        "pending_user_skills": [
+          "ui-ux-pro-max"
+        ],
         "manager_skills": 3,
         "agents_projection": 3,
         "claude_projection": 3,
@@ -16,15 +20,17 @@
         "claude_physical_agents": 0
       },
       "checks": {
-        "user_skills_18": true,
+        "user_skills_match_inventory": true,
+        "pending_skills_are_canonical": true,
         "manager_skills_3": true,
         "agents_manager_projection_3": true,
         "claude_manager_projection_3": true,
-        "plugin_codex_18": true,
+        "plugin_codex_matches_inventory": true,
         "plugin_codex_agents_0": true,
-        "plugin_claude_18": true,
+        "plugin_claude_matches_inventory": true,
         "plugin_claude_agents_0": true,
         "plugin_admin_0": true,
+        "pending_not_packaged": true,
         "canonical_humanize_only": true
       },
       "passed": true

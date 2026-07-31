@@ -17,6 +17,7 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
+import build_plugin
 from plugin_common import PLUGIN_ID, PLUGIN_ROOT_REL, PLUGIN_VERSION, iter_files, load_json, repo_root, sha256_file, write_json, write_text
 
 
@@ -77,21 +78,33 @@ def source_projection_integrity(root: Path) -> dict[str, Any]:
     agents = skill_dirs(root / ".agents" / "skills")
     claude = skill_dirs(root / ".claude" / "skills")
     user = skill_dirs(root / "skills")
+
+    # Counts come from the capability inventory, not from a literal. A canonical
+    # skill whose upstream group is still a candidate is expected to exist in
+    # skills/ while staying out of the shipped runtime.
+    expected = load_json(root / "maintainer" / "plugin" / "CAPABILITIES.json")["logical_user_skills"]
+    pending = build_plugin.pending_user_skills(root)
+    packageable = [skill for skill in user if skill not in pending]
+
     checks = {
-        "user_skills_18": len(user) == 18,
+        "user_skills_match_inventory": packageable == sorted(expected),
+        "pending_skills_are_canonical": all((root / "skills" / name / "SKILL.md").is_file() for name in pending),
         "manager_skills_3": len(manager) == 3,
         "agents_manager_projection_3": agents == manager,
         "claude_manager_projection_3": claude == manager,
-        "plugin_codex_18": plugin["codex_physical_skills"] == 18,
+        "plugin_codex_matches_inventory": plugin["codex_physical_skills"] == len(expected),
         "plugin_codex_agents_0": plugin["codex_physical_agents"] == 0,
-        "plugin_claude_18": plugin["claude_physical_skills"] == 18,
+        "plugin_claude_matches_inventory": plugin["claude_physical_skills"] == len(expected),
         "plugin_claude_agents_0": plugin["claude_physical_agents"] == 0,
         "plugin_admin_0": plugin["admin_in_payload"] == [],
+        "pending_not_packaged": not (set(pending) & set(skill_dirs(root / PLUGIN_ROOT_REL / "runtime" / "codex" / "skills"))),
         "canonical_humanize_only": plugin["humanize_aliases"] == {},
     }
     return {
         "counts": {
             "user_skills": len(user),
+            "packageable_user_skills": len(packageable),
+            "pending_user_skills": pending,
             "manager_skills": len(manager),
             "agents_projection": len(agents),
             "claude_projection": len(claude),
