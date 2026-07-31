@@ -409,6 +409,21 @@ python maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py
 - [Skill Upstream Update Policy](./Docs/Skill_Upstream_Update_Policy.md) — 관리자
   최신화 정책
 
+## 14. 라이선스
+
+이 저장소가 직접 저작한 부분은 Apache License 2.0을 따른다. 전문은
+[LICENSE](./LICENSE)에 있고 저작권 표기는 [NOTICE](./NOTICE)에 있다.
+
+외부에서 반입한 구성요소는 각자의 원 라이선스를 그대로 유지한다. 원본 출처,
+고정 revision, 라이선스, 로컬 변경 여부는
+[THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)에서 추적한다. 사용자 플러그인
+아카이브는 독립 배포 단위이므로 라이선스 전문과 서드파티 고지를 자체적으로
+포함한다.
+
+`reference` 관계로만 참고한 외부 프로젝트는 파일을 반입하지 않으므로 라이선스
+배포 대상이 아니다. 해당 관계는
+[External Skill References](./Docs/External_Skill_References.md)에서 추적한다.
+
 ---
 
 하네스의 핵심은 단순하다. **사용자는 플러그인으로 같은 작업 흐름을 실행하고,

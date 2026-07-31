@@ -17,7 +17,7 @@ push, tag, GitHub release 생성 또는 `released` lock 갱신은 수행하지 �
 | 플러그인 ID | `ai-agent-harness` |
 | 버전 | `0.1.0` |
 | 아카이브 | `plugins/ai-agent-harness-0.1.0.zip` |
-| 아카이브 SHA-256 | `8c576a8ed68bf0a3ea035f04afc6890fd3079b1ab5915e4aa8ff8b07e145623e` |
+| 아카이브 SHA-256 | `f15060671deaedcd195760e738ba491be29a4e25c19e5e0d32336409311efd47` |
 | 논리 사용자 스킬 수 | 18 |
 | 관리자 스킬 수 | 3 |
 | Codex 물리 스킬 / agent 수 | 18 / 0 |

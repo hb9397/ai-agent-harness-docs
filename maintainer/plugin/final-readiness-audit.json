@@ -24,7 +24,7 @@
     "plugin_id": "ai-agent-harness",
     "version": "0.1.0",
     "archive": "plugins/ai-agent-harness-0.1.0.zip",
-    "archive_sha256": "8c576a8ed68bf0a3ea035f04afc6890fd3079b1ab5915e4aa8ff8b07e145623e",
+    "archive_sha256": "f15060671deaedcd195760e738ba491be29a4e25c19e5e0d32336409311efd47",
     "logical_user_skills": 18,
     "manager_skills": 3,
     "codex_physical_skills": 18,

@@ -1,0 +1,288 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-07-31",
+  "phase": "20260730 Phase 0",
+  "purpose": "Freeze the pre-change harness baseline and the pinned upstream snapshots before UI/UX Pro Max and Motion Design integration.",
+  "harness_baseline": {
+    "user_skills": {
+      "count": 18,
+      "names": [
+        "code-comment",
+        "commit",
+        "context-doc",
+        "create-prototype",
+        "design-doc",
+        "design-prototype-docs",
+        "doc-audit",
+        "frontend-design",
+        "git-scoped-account",
+        "harness-bootstrap",
+        "harness-setup",
+        "humanize-korean",
+        "impl-doc",
+        "impl-fe-be-doc",
+        "impl-reuse-scan",
+        "impl-verify",
+        "multi-review",
+        "pre-commit"
+      ]
+    },
+    "manager_skills": {
+      "count": 3,
+      "names": [
+        "custom-skill-design",
+        "harness-plugin-maintainer",
+        "skill-portfolio-maintainer"
+      ]
+    },
+    "codex_runtime": {
+      "skills": 18,
+      "agents": 0,
+      "matches_canonical": true
+    },
+    "claude_runtime": {
+      "skills": 18,
+      "agents": 0,
+      "matches_canonical": true
+    },
+    "markdown_producers": {
+      "count": 7,
+      "names": [
+        "harness-setup",
+        "harness-bootstrap",
+        "context-doc",
+        "design-doc",
+        "design-prototype-docs",
+        "impl-doc",
+        "impl-fe-be-doc"
+      ]
+    },
+    "eval_runners": {
+      "present": [
+        "create-prototype",
+        "git-scoped-account",
+        "harness-bootstrap",
+        "harness-setup",
+        "humanize-korean",
+        "impl-verify",
+        "pre-commit"
+      ],
+      "missing": [
+        "code-comment",
+        "commit",
+        "context-doc",
+        "design-doc",
+        "design-prototype-docs",
+        "doc-audit",
+        "frontend-design",
+        "impl-doc",
+        "impl-fe-be-doc",
+        "impl-reuse-scan",
+        "multi-review"
+      ],
+      "note": "run_all_skill_evals.py discovers runners by glob, so skills without a runner are silently skipped and the log still reports full pass."
+    },
+    "release_candidate": {
+      "version": "0.1.0",
+      "status": "not-release-ready"
+    }
+  },
+  "upstreams": {
+    "ui-ux-pro-max": {
+      "repository": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+      "default_branch": "main",
+      "selected_ref": "v2.11.3",
+      "selected_sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
+      "ref_kind": "stable-release",
+      "published_at": "2026-07-28T05:00:43Z",
+      "license": {
+        "spdx": "MIT",
+        "holder": "Next Level Builder",
+        "year": "2024",
+        "path": "LICENSE",
+        "sha256": "738f69dfa83db5c347c678fb9d90e560877059f0de93a327c39001bff92dc014",
+        "bytes": 1075
+      },
+      "repo_total_files": 530,
+      "canonical_layout": {
+        "generator_source": {
+          "path": "src/ui-ux-pro-max/",
+          "files": 61,
+          "note": "Generator input. Contains data/, scripts/, templates/ but NO SKILL.md."
+        },
+        "generated_skill": {
+          "path": ".claude/skills/ui-ux-pro-max/",
+          "files": 43,
+          "note": "Complete generated skill including SKILL.md. This is the import target."
+        },
+        "platform_templates_include_codex": true
+      },
+      "import_target": {
+        "path_prefix": ".claude/skills/ui-ux-pro-max/",
+        "file_count": 43,
+        "files": {
+          ".claude/skills/ui-ux-pro-max/SKILL.md": "305a7527fcb2f5b6e4129ab22cd839b5172d26df7f14d3324bfdec8fc1763560",
+          ".claude/skills/ui-ux-pro-max/data/app-interface.csv": "2a17ef810dab715ce1f339861817a8fbe3ccc38142b70517301e874803e838ac",
+          ".claude/skills/ui-ux-pro-max/data/charts.csv": "a70ef7460b0eaaea8614f86a0d09a4bc38b467804179762464b5ca45b491baac",
+          ".claude/skills/ui-ux-pro-max/data/colors.csv": "cb26759805217edaaa31b09836aec09eab0fe245c58f5884e9a16ef802c6e26a",
+          ".claude/skills/ui-ux-pro-max/data/google-fonts.csv": "3fd2898fb0fdd31ba758bf05cfcd2b58cd0f038a20cf08e417d09e5a8a4a509e",
+          ".claude/skills/ui-ux-pro-max/data/icons.csv": "f376c29fb4df37b4bdb366a5aa70cb211ba3dd8b435390aaa03152a64b07d2e8",
+          ".claude/skills/ui-ux-pro-max/data/landing.csv": "121a2cac7cf21050234b5f80e7b4e182f10123536032e0f9ad862ad3aec9677d",
+          ".claude/skills/ui-ux-pro-max/data/motion.csv": "6452fbd8028ab71d52993775340e1bc40a150d92be8d4b4cb8710620fd1a7512",
+          ".claude/skills/ui-ux-pro-max/data/products.csv": "e9749e4fd8f7d4c94919c25ebd347a4adaddb671e7b01d33fbc2c87d447e6667",
+          ".claude/skills/ui-ux-pro-max/data/react-performance.csv": "904c8afcda229629545912dde0e8ac37503757131f0169f80b016f1f58c4fd3f",
+          ".claude/skills/ui-ux-pro-max/data/stacks/angular.csv": "9de35bbda536ced9af7642d88b7675cefa3e18c370ab40c0875f75ab473f0fd6",
+          ".claude/skills/ui-ux-pro-max/data/stacks/astro.csv": "6b587e32df201b6e5e7b2ed187b65eee8e6d55dcd6cc16bde29fc25e0f911dae",
+          ".claude/skills/ui-ux-pro-max/data/stacks/avalonia.csv": "6bfa40ec6609fcb59e52a38281edcc3a3e5b5e56341304fe5628b32cb9b1f875",
+          ".claude/skills/ui-ux-pro-max/data/stacks/flutter.csv": "fe36d404c799781e8ba6e9a8179b45799ed5126a545528550cd2eb0f2346e8c5",
+          ".claude/skills/ui-ux-pro-max/data/stacks/html-tailwind.csv": "7aef38e75c53559470afcfa91580a9917ca8b7dbf8b92110389e23e93703ac52",
+          ".claude/skills/ui-ux-pro-max/data/stacks/javafx.csv": "5545e331b2479eb431ca45203799ce1b0ab1e369045ab7735d5a9f85ec78f956",
+          ".claude/skills/ui-ux-pro-max/data/stacks/jetpack-compose.csv": "6c8fd4b0391c342c12b0af15610cd5becbeccaef0bbe8dcfc01d928c3195d93e",
+          ".claude/skills/ui-ux-pro-max/data/stacks/laravel.csv": "3e9f551b5232136f7b5ce1304c5e1bf5a83bd63c0dc02afb37502b238772d145",
+          ".claude/skills/ui-ux-pro-max/data/stacks/nextjs.csv": "e828ccc04843742f52f545a068e8a9ab0d2b97c0e771f7e93bf0cef74da05554",
+          ".claude/skills/ui-ux-pro-max/data/stacks/nuxt-ui.csv": "b9972b31e721faabc667ee2b4e93ba2af29e1df86f186c2ff608b68370f0e3a5",
+          ".claude/skills/ui-ux-pro-max/data/stacks/nuxtjs.csv": "f7a3f2d9542856d00199f85c6c023b7c284cc698e2e6e12d61afce2edacb24d6",
+          ".claude/skills/ui-ux-pro-max/data/stacks/react-native.csv": "077aefc81d194895ecf7936b3ed298b978e36961f183e3a275f8acda19b5f621",
+          ".claude/skills/ui-ux-pro-max/data/stacks/react.csv": "e5624ab41d33427d88e41d07581ce4eca59b37b36ab72a6ad43a9c8e2d0a1c72",
+          ".claude/skills/ui-ux-pro-max/data/stacks/shadcn.csv": "395c2e415ef6f48a474acccdc8eb2c7258a6ed751a5037ba171a2d8823e02ded",
+          ".claude/skills/ui-ux-pro-max/data/stacks/svelte.csv": "71af52d64f266c88070b91dbbaa900c2f8074b6baae9f35eaea6ba9cec6fd803",
+          ".claude/skills/ui-ux-pro-max/data/stacks/swiftui.csv": "c9c2d2510f8e66281a2514e8dd0125a6b653b9ef53a71281b5e7dfe003d5b569",
+          ".claude/skills/ui-ux-pro-max/data/stacks/threejs.csv": "c74d6ba76021f8d72c0ed12c559caecfeb6961829242acf6bcb9e99926b1a396",
+          ".claude/skills/ui-ux-pro-max/data/stacks/uno.csv": "5d2e0f396bb9dc5a2661204264cc0eda7cc4fa3d78152dec89d668704a41b8fc",
+          ".claude/skills/ui-ux-pro-max/data/stacks/uwp.csv": "debf669928871261ced9333788d5afd5784377ea1fa1b4f53993dd8f1574c0fc",
+          ".claude/skills/ui-ux-pro-max/data/stacks/vue.csv": "c2724915d3c11cd67263f25896cff721f787a0fdd8326002d31e9f5806dfd8f8",
+          ".claude/skills/ui-ux-pro-max/data/stacks/winui.csv": "2d970b08e44509d7afa53ce7feb446930b2d5e0667fa637df9aeeed65c42bbbe",
+          ".claude/skills/ui-ux-pro-max/data/stacks/wpf.csv": "ca78b5f28dc50d66900548d602d74856400097284c73e076fcfbb5a38ae5083c",
+          ".claude/skills/ui-ux-pro-max/data/styles.csv": "1bf9c1d8484a0a7a54fb67555902380446865b604c8449e47a449cb3d9c1ef88",
+          ".claude/skills/ui-ux-pro-max/data/typography.csv": "7abead73de0e43e09544f164cb60cd431674e411f1e063e555a8b44d51273328",
+          ".claude/skills/ui-ux-pro-max/data/ui-reasoning.csv": "06e4369445388ba9b7a57347510b125b7a2145bbf8546a327ba50292503b204a",
+          ".claude/skills/ui-ux-pro-max/data/ux-guidelines.csv": "e01943c433b2cad3040f19389b3b0455673758a569b7a927b5bedf65c989cb96",
+          ".claude/skills/ui-ux-pro-max/references/pro-rules.md": "bc56db7cb40c5f4d8d4f6229f5c7072865278488fe5b97c76d3a38eb596da4fc",
+          ".claude/skills/ui-ux-pro-max/references/quick-reference.md": "b01ad594cc069d18786d5e8865356cc511226ba6f48d328fd975d31aae8e5781",
+          ".claude/skills/ui-ux-pro-max/scripts/core.py": "64c149019196ee24647464a27278eb96d3b4638ded73ebfc35ccd2bc99c083a9",
+          ".claude/skills/ui-ux-pro-max/scripts/design_system.py": "fcdb279eb9691dffd6c80c333d29a4e5567368e38d724520c60013c8b1aaf242",
+          ".claude/skills/ui-ux-pro-max/scripts/search.py": "69a349d69543f35f45a12c0c82922c550d1b0a16a2b37f6b1406afb2ad2919c8",
+          ".claude/skills/ui-ux-pro-max/scripts/tests/test_core.py": "ce60ac571164cf35e8c866550ad989fa686706a56fa48df4fdf76444b94fdd8d",
+          ".claude/skills/ui-ux-pro-max/scripts/validate_data.py": "f1b5e0916f3c2f8271416f93f6ff9ebf3311a68a943a19c1b83f16823cbb05a7"
+        }
+      },
+      "excluded": {
+        "sibling_skills": [
+          "banner-design",
+          "brand",
+          "design",
+          "design-system",
+          "slides",
+          "ui-styling"
+        ],
+        "cli": "cli/ is a TypeScript/npm install-and-sync CLI and is not required for a packaged local skill.",
+        "reason": "Out of scope for this phase; separate license, dependency and overlap review required."
+      },
+      "script_audit": {
+        "files": [
+          "scripts/core.py",
+          "scripts/design_system.py",
+          "scripts/search.py",
+          "scripts/validate_data.py",
+          "scripts/tests/test_core.py"
+        ],
+        "third_party_dependencies": [],
+        "stdlib_only": true,
+        "network_access": false,
+        "subprocess_or_shell": false,
+        "eval_or_exec": false,
+        "path_resolution": "Path(__file__) relative; no ${CLAUDE_PLUGIN_ROOT} and no hardcoded .claude/skills path.",
+        "writes": {
+          "function": "persist_design_system",
+          "target": "design-system/<project-slug>/ with MASTER and pages/",
+          "note": "Opt-in via persist flag. Local contract must add explicit approval and .docs/ base path."
+        }
+      }
+    },
+    "motion-design": {
+      "repository": "https://github.com/LottieFiles/motion-design-skill",
+      "default_branch": "main",
+      "selected_ref": "main",
+      "selected_sha": "f9a8a041b85185ee4881b3471d3415e939aac772",
+      "ref_kind": "branch-head",
+      "ref_kind_reason": "Upstream publishes no releases and no tags, so a branch head SHA is the only available pin.",
+      "committed_at": "2026-05-18T11:30:13Z",
+      "license": {
+        "spdx": "MIT",
+        "holder": "LottieFiles",
+        "year": "2025",
+        "path": "LICENSE",
+        "sha256": "9fc2e8685daa09e28d54b6afa8a38f168417c5735a3cd676c80c159785e93a80",
+        "bytes": 1068
+      },
+      "repo_total_files": 20,
+      "import_target": {
+        "path_prefix": "skills/motion-design/",
+        "file_count": 17,
+        "files": {
+          "skills/motion-design/SKILL.md": "8729ecbc7e5736c1295baaa8ba0384bb4b1aac9cf91b83fcdc64d9548a57bb19",
+          "skills/motion-design/director/choreography.md": "c81257b56160b9b2f3d99f78d4b8172b425c22d9ca73be06d3ffaa7305a34deb",
+          "skills/motion-design/director/context-adaptation.md": "550e96a1c8c369513304ee74c0e89b63168bc7287b83e9ed5685bb65609986b3",
+          "skills/motion-design/director/core-philosophy.md": "7aaa8a065d9940dad0198cf9cfe74979008495e6daf87f46f9022fff1b6a85e9",
+          "skills/motion-design/director/decision-framework.md": "4b6758da6742475c928b4f8be8c662f4b5ed0964468ba7760df8f7635c779358",
+          "skills/motion-design/director/disney-principles.md": "39024711890c2684a3434659a4d95a52ca8231facea74e87e79503054aaca671",
+          "skills/motion-design/director/emotion-mapping.md": "a279e55a3f52a9f5830d38dc54679c652d9a5c26f0dd360700c16e23766d468b",
+          "skills/motion-design/director/motion-personality.md": "66a3623b6654869482c02157ca791034a614ca6dcb02a8112049e28d292ee18a",
+          "skills/motion-design/director/narrative-structure.md": "d49db19db40425dec027c3012d553b50fd74ed79e27ace9dec1226796469061b",
+          "skills/motion-design/patterns/ambient-continuous.md": "f9cfa00d3325dceadcb9ffd77dcb5dcbc51d34121f3b1f162979939006056773",
+          "skills/motion-design/patterns/entrance-exit.md": "70b3fc3a8d58ebe58e293e643b78fd13750d9c8ef1c8fc5fe85e52f7378cbd91",
+          "skills/motion-design/patterns/multi-element.md": "46c8da91843c593deb763a4a7fa32849bdaeb7a7ecd4d559e3b21bcc976f2c46",
+          "skills/motion-design/patterns/state-feedback.md": "dac86388c2d8fcdfc2f194b4f8877caedcdc010df9ce29d27dfc99d08cf8c60e",
+          "skills/motion-design/reference/property-selection.md": "053d830795fc824fed27618fbd18084207af6aeed55b73c0a6e1d5665de894ae",
+          "skills/motion-design/reference/quality-checklist.md": "c11bf193b700d9c9ebc5d871f1d5f193bccc441c4eccc0509b53a40d6e8dc558",
+          "skills/motion-design/reference/timing-easing-tables.md": "e478f3b99c4cac3f96eca008e20f8808d4cfae165f5799f260092baf9b6ebcff",
+          "skills/motion-design/reference/troubleshooting.md": "69e5aaeee108231d51187143ae3fce4db7a42936f10682908ca9462a008a047a"
+        }
+      },
+      "script_audit": {
+        "executable_files": [],
+        "network_access": false,
+        "runtime": "instruction-and-reference-only"
+      },
+      "third_party_citations": [
+        {
+          "file": "skills/motion-design/reference/timing-easing-tables.md",
+          "cites": [
+            "Material Design 3 easing curve values",
+            "Apple HIG easing and spring values"
+          ],
+          "form": "numeric parameter values in comparison tables",
+          "assessment": "Functional/factual parameter values rather than copyrightable expression. Low risk. Keep attribution and do not expand into copied prose or full guideline tables."
+        },
+        {
+          "file": "skills/motion-design/director/disney-principles.md",
+          "cites": [
+            "Disney 12 principles of animation"
+          ],
+          "form": "concept names with upstream-authored explanation",
+          "assessment": "Principle names are facts. Upstream prose is MIT-licensed. Low risk."
+        },
+        {
+          "file": "skills/motion-design/reference/quality-checklist.md",
+          "cites": [
+            "Apple HIG"
+          ],
+          "form": "reference mention",
+          "assessment": "Low risk."
+        }
+      ],
+      "note": "Upstream top-level MIT cannot grant rights the upstream author does not hold. Third-party values above are recorded per file rather than assumed covered."
+    }
+  },
+  "pending_approvals": {
+    "asset_impact": [
+      "skills/ui-ux-pro-max/scripts/** (5 Python files)",
+      "skills/ui-ux-pro-max/data/** (35 CSV files)",
+      "skills/ui-ux-pro-max/references/** (2 Markdown files)",
+      "skills/motion-design/director|patterns|reference/** (16 Markdown files)",
+      "evals/run_evals.py for both new skills"
+    ],
+    "destructive": [],
+    "note": "No protected asset is deleted, moved or replaced in this plan. Additions only."
+  }
+}
