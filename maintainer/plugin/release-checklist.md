@@ -30,9 +30,9 @@
 
 | 표면 | 상태 | 증적 |
 |---|---|---|
-| Codex CLI | `blocked` | CLI 스모크 증적이 불완전하거나 실패함 |
+| Codex CLI | `blocked` | CLI 스모크 증적이 현재 릴리스 후보가 아닌 다른 플러그인 버전을 대상으로 한다. `smoke_cli_install.py`를 재실행해야 한다 |
 | Codex Desktop/App | `manual-required` | 대화형 Plugins UI 설치/업데이트에는 앱 표면이 필요하므로 이 셸에서 완료할 수 없음 |
-| Claude Code CLI | `blocked` | CLI 스모크 증적이 불완전하거나 실패함 |
+| Claude Code CLI | `blocked` | CLI 스모크 증적이 현재 릴리스 후보가 아닌 다른 플러그인 버전을 대상으로 한다. `smoke_cli_install.py`를 재실행해야 한다 |
 | Claude Desktop Code | `manual-required` | Desktop Code 로컬/SSH 캐시 검증에는 Claude Desktop 앱 표면이 필요함 |
 
 ## 릴리스 게이트

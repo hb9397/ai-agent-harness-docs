@@ -260,11 +260,17 @@ def render_release_checklist(evidence: dict) -> str:
     def check_result(value: bool) -> str:
         return "통과" if value else "실패"
 
-    cli_summary = (
-        "격리된 마켓플레이스 등록/설치/목록 확인/제거 및 캐시 검사를 통과했으며, 모델 호출은 테스트하지 않음"
-        if cli_smoke_verified
-        else "CLI 스모크 증적이 불완전하거나 실패함"
-    )
+    if cli_smoke_verified:
+        cli_summary = "격리된 마켓플레이스 등록/설치/목록 확인/제거 및 캐시 검사를 통과했으며, 모델 호출은 테스트하지 않음"
+    elif evidence["cli_smoke"].get("evidence_applies_to_current_version") is False:
+        # Say which artifact the evidence actually covers. "incomplete or failed"
+        # would hide that the smoke passed for a different version.
+        cli_summary = (
+            "CLI 스모크 증적이 현재 릴리스 후보가 아닌 다른 플러그인 버전을 대상으로 한다. "
+            "`smoke_cli_install.py`를 재실행해야 한다"
+        )
+    else:
+        cli_summary = "CLI 스모크 증적이 불완전하거나 실패함"
     return f"""# 플러그인 릴리스 체크리스트
 
 생성 시각: {evidence["generated_at"]}

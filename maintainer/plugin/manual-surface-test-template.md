@@ -115,6 +115,58 @@ ledger JSON 자체는 `humanize-korean`의 대상 파일 목록에 들어가면 
    경우 복구 가능한지 확인한다. 실패를 인위적으로 만들지 못했으면 `not-tested`와
    이유를 기록하고 성공으로 간주하지 않는다.
 
+### E. 디자인 결정 — 무저장 기본값
+
+1. fixture에 기존 디자인 토큰이 있는 상태와 없는 상태를 각각 준비한다.
+   토큰 예: `:root { --brand: #0D47A1; }`를 담은 CSS 파일 하나.
+2. `ui-ux-pro-max`를 명시 호출하고 **파일을 만들지 말라고** 지시한다.
+3. 확인한다.
+   - 스킬이 프로젝트 유형과 대상 앱을 재확인했는가
+   - 스택을 임의로 가정하지 않고 탐지했거나 물었는가
+   - 기존 토큰이 있을 때 그 값을 우선했는가
+   - 추천 근거를 제시했는가
+   - **파일을 하나도 만들지 않았는가**
+4. fixture 트리 hash를 호출 전후로 비교해 변화가 없음을 확인한다.
+
+### F. 디자인 시스템 저장 — 승인과 거절
+
+1. E에 이어 저장을 명시적으로 요청한다.
+2. `.docs/design-system/{slug}/MASTER.md`에만 생성되는지 확인한다. 다른 경로에
+   파일이 생기면 실패다.
+3. 같은 요청을 다시 보내 **기존 파일을 무승인 덮어쓰지 않는지** 확인한다.
+   diff나 확인 요청 없이 덮어쓰면 실패다.
+4. 저장을 거절하는 경로도 실행해 파일이 만들어지지 않는지 확인한다.
+5. 이 호출이 최외곽 producer일 때 `humanize-korean` 개선 제안이 **한 번만**
+   나오는지 확인한다. 색상 hex와 토큰 이름이 개선으로 바뀌면 실패다.
+
+### G. 모션 — 생략과 설계
+
+1. 정적 목록 화면을 주고 `motion-design`을 호출한다. 스킬이 **모션을 생략하고
+   그 이유를 보고하는지** 확인한다. 목적 없는 모션을 제안하면 실패다.
+2. 결제 버튼의 loading → success → error 전환을 요청한다. 확인한다.
+   - 목적을 먼저 분류했는가
+   - duration, easing, 사용할 속성을 제시했는가
+   - **reduced-motion 대체안**이 포함됐는가. 단순히 "애니메이션 제거"로 끝내지
+     않고 정보 전달 대체 수단을 적었는가
+   - 정지 상태를 함께 설계했는가
+3. 의료 예약 화면처럼 저밀도가 기본인 맥락을 주고 모션 밀도가 낮아지는지
+   확인한다.
+4. 레이아웃 유발 속성을 쓰겠다고 하면 **근거와 성능 검증 방법**을 함께
+   제시하는지 확인한다.
+
+### H. 두 분기 경계
+
+1. "프로토타입만 필요하다"로 요청해 `.docs/prototype/**`에만 산출물이 생기고,
+   제품 소스 디렉터리가 변하지 않는지 확인한다.
+2. 이어서 "이제 실제 화면으로 구현해달라"고 요청한다. 확인한다.
+   - 프로토타입 HTML을 **복사하지 않고** 제품 구조에 맞게 다시 구현하는가
+   - 기존 컴포넌트·토큰을 먼저 조사하는가
+3. 새 fixture에서 처음부터 실제 화면 구현을 요청해 `create-prototype`을
+   **강제하지 않는지** 확인한다.
+4. 두 경로 모두 `impl-verify`로 연결되는지 확인한다.
+5. 스킬이 다른 스킬의 내부 파일 경로를 읽으려 시도하면 실패로 기록한다.
+   연결은 공개 스킬 이름으로만 이뤄져야 한다.
+
 ## Codex CLI 예시
 
 ```text
@@ -143,7 +195,26 @@ $humanize-korean
 이 프로젝트의 문서 하네스를 설정해줘.
 ```
 
-종료 후 공통 시나리오 A·B·C·D를 검사하고, 테스트가 끝나면
+디자인 흐름은 다음 호출로 시나리오 E~H를 검사한다.
+
+```text
+$ui-ux-pro-max
+기존 React 관리자 화면의 디자인 시스템을 제안해줘.
+현재 토큰이 있으면 우선하고 파일은 아직 만들지 마.
+```
+
+```text
+$motion-design
+이 결제 버튼의 loading → success → error 전환을 설계해줘.
+reduced-motion 대체안과 성능 검증 기준도 포함해줘.
+```
+
+```text
+$motion-design
+이 정적 공지 목록 화면에 모션이 필요한지 판단해줘.
+```
+
+종료 후 공통 시나리오 A·B·C·D·E·F·G·H를 검사하고, 테스트가 끝나면
 `codex plugin marketplace list`에서 marketplace 이름
 `ai-agent-harness`를 다시 확인한 뒤:
 
@@ -164,7 +235,8 @@ codex plugin marketplace remove ai-agent-harness
    상태인지 확인하고 설치 경로가 UI 직접 설치인지 CLI fallback인지 기록한다.
 5. `<codex-app-fixture>`를 작업 폴더로 새 task를 연다.
 6. `$harness-setup`과 `$humanize-korean`을 각각 명시 호출해 공통 시나리오
-   A·B·C·D를 수행한다. `humanize-korean`은 `.docs/README.md`의 개선안만
+   A·B·C·D를 수행하고, `$ui-ux-pro-max`와 `$motion-design`으로 E·F·G·H를
+   수행한다. `humanize-korean`은 `.docs/README.md`의 개선안만
    제시하고 원본을 적용하지 않게 한다.
 7. 플러그인 ID·버전 화면, 두 호출 화면, 최종 파일 트리, 금지 경로 확인 결과를
    캡처한다.
@@ -207,7 +279,19 @@ claude
 이 프로젝트의 문서 하네스를 설정해줘.
 ```
 
-종료 후 공통 시나리오 A·B·C·D를 검사하고, 테스트가 끝나면
+디자인 흐름은 다음 호출로 시나리오 E~H를 검사한다.
+
+```text
+/ai-agent-harness:ui-ux-pro-max
+의료 예약 화면의 접근성 중심 디자인 시스템을 제안해줘.
+```
+
+```text
+/ai-agent-harness:motion-design
+모달 열기/닫기 동작을 설계하고 motion 감소 환경을 포함해줘.
+```
+
+종료 후 공통 시나리오 A·B·C·D·E·F·G·H를 검사하고, 테스트가 끝나면
 `claude plugin marketplace list`에서 marketplace 이름
 `ai-agent-harness`를 다시 확인한 뒤:
 
@@ -228,7 +312,8 @@ claude plugin marketplace remove ai-agent-harness
    `/ai-agent-harness:harness-setup`과
    `/ai-agent-harness:humanize-korean`을 각각 호출한다. 두 번째 호출은
    `.docs/README.md`의 개선안만 제시하고 적용하지 않게 한다.
-5. 공통 시나리오 A·B·C·D를 수행한다.
+5. 공통 시나리오 A·B·C·D를 수행하고, `/ai-agent-harness:ui-ux-pro-max`와
+   `/ai-agent-harness:motion-design`으로 E·F·G·H를 수행한다.
 6. local host 외에 SSH host 지원을 릴리스 범위로 주장하려면 SSH host에도
    플러그인을 별도로 설치하고 새 fixture로 같은 검사를 반복한다.
 7. cloud Code 또는 WSL처럼 검증하지 않은 host는 `verified`로 합치지 않고
@@ -262,6 +347,11 @@ Cross-session fingerprint / ledger result:
 Plugin/version screenshot or transcript:
 Harness invocation screenshot or transcript:
 Humanize invocation/proposal-only result:
+Design invocation (ui-ux-pro-max) result:
+Motion invocation (motion-design) result:
+Motion skip decision on a static screen:
+Design-system save path and overwrite-guard result:
+Prototype / real-screen branch result:
 Failure/rollback notes:
 Evidence file:
 Sensitive values redacted: <yes/no>
@@ -278,6 +368,12 @@ Final decision:
 | 새 task/session에서 스킬 발견 | ☐ | ☐ | ☐ | ☐ |
 | `harness-setup` 명시 호출 성공 | ☐ | ☐ | ☐ | ☐ |
 | `humanize-korean` 명시 호출·proposal-only 확인 | ☐ | ☐ | ☐ | ☐ |
+| `ui-ux-pro-max` 명시 호출·무저장 기본값 확인 | ☐ | ☐ | ☐ | ☐ |
+| `motion-design` 명시 호출·모션 생략 판단 확인 | ☐ | ☐ | ☐ | ☐ |
+| 디자인 시스템 저장 경로·무승인 덮어쓰기 차단 | ☐ | ☐ | ☐ | ☐ |
+| reduced-motion 대체안 포함 확인 | ☐ | ☐ | ☐ | ☐ |
+| 프로토타입 코드 제품 소스 미승격 | ☐ | ☐ | ☐ | ☐ |
+| 공개 skill-name handoff만 사용 | ☐ | ☐ | ☐ | ☐ |
 | 자연어 호출 결과 기록 | ☐ | ☐ | ☐ | ☐ |
 | 최초 설정 파일 6종 확인 | ☐ | ☐ | ☐ | ☐ |
 | local skill 디렉터리 3종 미생성 | ☐ | ☐ | ☐ | ☐ |

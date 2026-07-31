@@ -105,7 +105,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/verify_install_surfaces.py",
-          "sha256": "92e783068f3f6f984f61fbebee89ff3309e92250a04dab1f2bc346e3ecdaccd7"
+          "sha256": "b6511e0d1ef3166bb95ea44cb876c5be29c1143e0db4c87f97a04c6b5a7db8b2"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/SKILL.md",
