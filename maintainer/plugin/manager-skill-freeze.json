@@ -73,7 +73,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py",
-          "sha256": "e29676763289ea1f3b9f862106281a5989092efeb1c4741b8c33d399ff5985cb"
+          "sha256": "5c8efabb587c13645b70db1601cbcc83f5665f01b6ff7788b71af4a7c6b2d902"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/freeze_manager_inventory.py",
@@ -81,7 +81,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/plugin_common.py",
-          "sha256": "d342d8ec3e97a0939fc070a02e702183b8fc1b26bfa7f687a2e2dc8de2a8a54e"
+          "sha256": "de42054630dc683ba05b391d88c469678af4dc4489e8f7aa10a6232dfd7a97dd"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/run_all_skill_evals.py",

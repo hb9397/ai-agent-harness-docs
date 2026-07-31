@@ -8,6 +8,7 @@ import json
 import os
 import shutil
 import tempfile
+import time
 from pathlib import Path
 from typing import Any
 
@@ -27,6 +28,24 @@ def load_json(path: Path) -> Any:
         return json.load(fh)
 
 
+def retry_filesystem(operation, *, attempts: int = 5, delay: float = 0.05):
+    """Retry a filesystem call that Windows can fail transiently.
+
+    A scanner or indexer holding a brief handle surfaces as OSError and makes an
+    otherwise deterministic build fail at random. Retrying a bounded number of
+    times keeps the verification suite trustworthy; a real error still raises
+    once the attempts run out.
+    """
+    for attempt in range(attempts):
+        try:
+            return operation()
+        except OSError:
+            if attempt == attempts - 1:
+                raise
+            time.sleep(delay * (2**attempt))
+    raise AssertionError("unreachable")
+
+
 def _write_atomic(path: Path, payload: str) -> None:
     """Write through a temporary file and replace the target in one step.
 
@@ -41,7 +60,7 @@ def _write_atomic(path: Path, payload: str) -> None:
     try:
         with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as fh:
             fh.write(payload)
-        os.replace(tmp, path)
+        retry_filesystem(lambda: os.replace(tmp, path))
     except BaseException:
         tmp.unlink(missing_ok=True)
         raise
@@ -86,8 +105,15 @@ def tree_manifest(root: Path) -> list[dict[str, str]]:
 
 def copy_tree_clean(source: Path, target: Path) -> None:
     if target.exists():
-        shutil.rmtree(target)
-    shutil.copytree(source, target, copy_function=shutil.copy2, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+        retry_filesystem(lambda: shutil.rmtree(target))
+    retry_filesystem(
+        lambda: shutil.copytree(
+            source,
+            target,
+            copy_function=shutil.copy2,
+            ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+        )
+    )
 
 
 def remove_dir(path: Path) -> None:

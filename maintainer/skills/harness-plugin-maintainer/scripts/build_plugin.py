@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import os
 import shutil
 import stat
 import sys
@@ -22,6 +23,7 @@ from plugin_common import (
     ensure_no_symlink,
     load_json,
     repo_root,
+    retry_filesystem,
     sha256_file,
     tree_manifest,
     user_skills,
@@ -299,23 +301,36 @@ def lock(root: Path, artifact_manifest: list[dict], sources: list[dict]) -> dict
 
 
 def write_archive(plugin_root: Path) -> Path:
+    """Build the archive beside its destination and replace it in one step.
+
+    Unlinking the previous archive and recreating it in place has the same two
+    problems as an in-place JSON write: a transient handle on Windows fails the
+    build, and a failure part-way through leaves no archive at all.
+    """
     archive = plugin_root.parent / f"{PLUGIN_ID}-{PLUGIN_VERSION}.zip"
-    if archive.exists():
-        archive.unlink()
+    archive.parent.mkdir(parents=True, exist_ok=True)
     fixed_dt = (2026, 7, 29, 0, 0, 0)
-    with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
-        files = sorted(
-            (path for path in plugin_root.rglob("*") if path.is_file()),
-            key=lambda path: path.relative_to(plugin_root).as_posix(),
-        )
-        for path in files:
-            info = zipfile.ZipInfo(str(path.relative_to(plugin_root)).replace("\\", "/"), fixed_dt)
-            mode = 0o755 if path.suffix.lower() in EXECUTABLE_SUFFIXES else 0o644
-            info.create_system = 3
-            info.external_attr = (stat.S_IFREG | mode) << 16
-            info.compress_type = zipfile.ZIP_DEFLATED
-            info._compresslevel = 9
-            zf.writestr(info, path.read_bytes())
+    fd, tmp_name = tempfile.mkstemp(dir=archive.parent, prefix=f".{archive.name}.", suffix=".tmp")
+    os.close(fd)
+    tmp = Path(tmp_name)
+    try:
+        with zipfile.ZipFile(tmp, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
+            files = sorted(
+                (path for path in plugin_root.rglob("*") if path.is_file()),
+                key=lambda path: path.relative_to(plugin_root).as_posix(),
+            )
+            for path in files:
+                info = zipfile.ZipInfo(str(path.relative_to(plugin_root)).replace("\\", "/"), fixed_dt)
+                mode = 0o755 if path.suffix.lower() in EXECUTABLE_SUFFIXES else 0o644
+                info.create_system = 3
+                info.external_attr = (stat.S_IFREG | mode) << 16
+                info.compress_type = zipfile.ZIP_DEFLATED
+                info._compresslevel = 9
+                zf.writestr(info, path.read_bytes())
+        retry_filesystem(lambda: os.replace(tmp, archive))
+    except BaseException:
+        tmp.unlink(missing_ok=True)
+        raise
     return archive
 
 
@@ -346,7 +361,7 @@ def reset_plugin_output(plugin_root: Path, output_root: Path) -> None:
     if resolved_plugin == resolved_root:
         raise RuntimeError(f"refusing to reset output root itself: {plugin_root}")
     if plugin_root.exists():
-        shutil.rmtree(plugin_root)
+        retry_filesystem(lambda: shutil.rmtree(plugin_root))
 
 
 def build(root: Path, output_root: Path | None = None) -> dict:
@@ -429,7 +444,7 @@ def _assemble(
     # survives until this point.
     if plugin_root != final_root:
         reset_plugin_output(final_root, target_root)
-        plugin_root.rename(final_root)
+        retry_filesystem(lambda: plugin_root.rename(final_root))
 
     write_json(target_root / "maintainer" / "plugin" / "release.json", release)
     return release

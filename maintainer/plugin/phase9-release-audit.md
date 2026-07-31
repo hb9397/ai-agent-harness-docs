@@ -1,0 +1,133 @@
+# 최종 감사 — `0.2.0` 릴리스 후보
+
+생성 시각: 2026-07-31
+
+대상 계획서: `improvement_plan/20260730/UI UX Pro Max 및 Motion Design 업스트림 통합 작업 계획서.md`
+
+## 판정
+
+**`not-release-ready`**
+
+자동 검증과 CLI 설치 smoke는 모두 통과했다. 네 실행 표면의 **실제 모델 호출
+수동 증적**이 아직 없으므로 릴리스 준비 완료로 표시하지 않는다.
+
+## 릴리스 후보
+
+| 항목 | 값 |
+|---|---|
+| 플러그인 ID | `ai-agent-harness` |
+| 버전 | `0.2.0` |
+| 아카이브 | `plugins/ai-agent-harness-0.2.0.zip` |
+| 아카이브 SHA-256 | `a0e64c04fd1f797851d6ed656ad1da14112124e263754e1d5410dece6316f4bd` |
+| 논리 사용자 스킬 | 20 |
+| 관리자 스킬 | 3 (payload 제외) |
+| Codex 물리 스킬 / agent | 20 / 0 |
+| Claude 물리 스킬 / agent | 20 / 0 |
+| Markdown producer | 9 (고정 7 + 조건부 2) |
+| 본체 라이선스 | Apache-2.0, `hb9397` |
+
+`release.json`, `install-verification.json`, `release-checklist.md`가 모두 같은
+archive 해시를 기록한다.
+
+### 버전 이력
+
+| 버전 | 성격 | 사유 |
+|---|---|---|
+| `0.1.0` | 기준선 | 이번 작업 이전 상태. 감사 증적은 역사 기록으로 보존한다. |
+| `0.1.1` | PATCH | `pre-commit` eval의 오탐 수정. 공개 동작 변경 없음. |
+| `0.2.0` | MINOR | 사용자 스킬 2종 추가, 기존 4종의 선택적 산출물과 검증 항목 확대. |
+
+## Packaged upstream
+
+| source | ref | commit |
+|---|---|---|
+| `anthropic-frontend-design` | `main` | `b29e7cf65e5cb78a5ac33d582270551bc74a14eb` |
+| `im-not-ai` | `v2.3.0` | `82137e858763dadb99561f194c5c00465735017b` |
+| `ui-ux-pro-max-runtime` | `v2.11.3` | `4857a2c5ef989794751a0f66b8545a4a49566286` |
+| `lottiefiles-motion-design-runtime` | `main` | `f9a8a041b85185ee4881b3471d3415e939aac772` |
+
+참고 관계 `ui-ux-pro-max-principles`와 `lottiefiles-motion-design-principles`는
+파일을 복사하지 않으므로 `licenses/` 패키징 대상이 아니다. 각 관계 그룹은 같은
+commit을 가리킨다.
+
+## 자동 증적 (TEST-014)
+
+| 검증 | 결과 |
+|---|---|
+| `skill-portfolio-maintainer/evals/run_evals.py` | PASS |
+| `harness-plugin-maintainer/evals/run_evals.py` | PASS |
+| `run_all_skill_evals.py` (14 runners + 통합 fixture 2종) | PASS |
+| `build_plugin.py --check` | PASS |
+| `validate_plugin.py` | PASS |
+| `verify_install_surfaces.py --check` | PASS |
+| `freeze_manager_inventory.py --check` | PASS |
+| `run_release_regression.py` | PASS |
+| `sync_manager_projections.py --check` | PASS |
+| `validate_registry.py` | PASS |
+| `git diff --check` | PASS |
+
+2회 연속 실행에서 모두 통과했다. 같은 source로 두 번 build한 archive 해시가
+동일하다.
+
+### 검증 안정성에 대한 기록
+
+TEST-014 초기 실행에서 간헐적 실패가 있었다. 원인은 Windows에서 파일을 제자리에
+다시 여는 쓰기 패턴이 스캐너 핸들과 충돌해 `OSError(EINVAL)`을 내는 것이었다.
+다음을 적용해 해소했다.
+
+- JSON·텍스트 쓰기를 임시 파일 + `os.replace`로 원자화
+- archive 쓰기도 같은 방식으로 원자화
+- `rmtree`, `rename`, `copytree`에 제한적 재시도 적용
+- 빌드를 staging 디렉터리에 조립한 뒤 교체해, 실패해도 기존 트리가 남게 함
+
+적용 후 2회 연속 전체 통과했다. 이 항목은 산출물 내용이 아니라 검증 실행
+환경의 문제였으며, 아티팩트 해시는 변하지 않았다.
+
+## 의도 재감사 (TEST-015)
+
+| # | 질문 | 판정 |
+|---|---|---|
+| 1 | 두 신규 스킬은 독립 호출 가능한가 | PASS |
+| 2 | 원본의 실행·참조 자산을 모두 패키징하는가 | PASS |
+| 3 | direct/reference 관계가 같은 SHA를 가리키는가 | PASS |
+| 4 | 기존 스킬이 외부 내부 경로에 결합되지 않았는가 | PASS |
+| 5 | 디자인 흐름이 일반 흐름을 복잡하게 만들지 않는가 | PASS |
+| 6 | 프로토타입과 제품 source 경계가 지켜지는가 | PASS |
+| 7 | 모션을 필요 없는 화면에 강제하지 않는가 | PASS |
+| 8 | 사용자 프로젝트에 local skill 디렉터리를 만들지 않는가 | PASS |
+| 9 | Caveman·Ruflo가 별도 설치 대상으로만 설명되는가 | PASS |
+| 10 | 문서·manifest·runtime의 skill count가 모두 20인가 | PASS |
+| 11 | 본체·플러그인 라이선스에 플레이스홀더가 없는가 | PASS |
+| 12 | 생성물의 저작권 귀속이 실제 저장소를 가리키는가 | PASS |
+| 13 | 스킬 수·producer 수가 inventory에서 파생되는가 | PASS |
+| 14 | runner 없는 스킬이 보고되는가 | PASS |
+
+## 표면별 증적
+
+| 표면 | 상태 | 증적 |
+|---|---|---|
+| Codex CLI | `install-smoke-verified` | Codex CLI `0.146.0`, payload `0.2.0` / 20 skills / 0 agents / cleanup passed. **모델 호출 미검증.** |
+| Codex Desktop/App | `manual-required` | 대화형 Plugins UI 표면이 필요하다. |
+| Claude Code CLI | `install-smoke-verified` | Claude Code `2.1.220`, payload `0.2.0` / 20 skills / 0 agents / cleanup passed. **모델 호출 미검증.** |
+| Claude Desktop Code | `manual-required` | Desktop Code 앱 표면이 필요하다. |
+
+판정 규칙에 따라 자동 설치 성공을 모델 동작 성공으로 대신하지 않고, CLI 성공을
+앱 성공으로 대신하지 않는다.
+
+## 릴리스 전 남은 작업
+
+1. 네 표면에서 `maintainer/plugin/manual-surface-test-template.md`의 시나리오
+   A~H를 수행한다. E~H는 이번에 추가한 디자인 흐름 검증이다.
+2. 완료본을 `maintainer/plugin/manual-evidence/YYYYMMDD/{surface}.md`에 저장하고
+   릴리스 체크리스트에 연결한다.
+3. 네 표면의 검토자 확인이 끝난 뒤에만 상태를 `verified`로 바꾼다.
+4. 미지원 표면은 `SKIP`이 아니라 근거가 있는 `미지원`으로 기록한다.
+
+## 릴리스 통제
+
+- 릴리스 준비 완료: 아니요
+- push 생성: 아니요
+- tag 생성: 아니요
+- GitHub release 생성: 아니요
+- `released` lock 갱신: 아니요
+- 배포 전 명시적인 관리자 승인 필요: 예
