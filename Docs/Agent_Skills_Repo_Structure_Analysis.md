@@ -4,7 +4,7 @@
 >
 > 이 문서의 본문은 2026-05-27 당시 외부 생태계 조사 기록이다. 현행 운영 기준은 플러그인 전환 이후 문서인 [README.md](../README.md), [Plugin Installation Guide](./Plugin_Installation_Guide.md), [Harness Engineering Guide](./Harness_Engineering.md)를 따른다.
 >
-> 현재 하네스 구성은 사용자 스킬 18종과 관리자 스킬 3종으로 분리되어 있다. 사용자 스킬은 `skills/`에서 관리되어 `ai-agent-harness` 플러그인 payload에 포함되고, 관리자 스킬은 `maintainer/skills/`와 repo-local `.agents/skills`, `.claude/skills` projection에서만 사용한다.
+> 현재 하네스 구성은 사용자 스킬 20종과 관리자 스킬 3종으로 분리되어 있다. 사용자 스킬은 `skills/`에서 관리되어 `ai-agent-harness` 플러그인 payload에 포함되고, 관리자 스킬은 `maintainer/skills/`와 repo-local `.agents/skills`, `.claude/skills` projection에서만 사용한다.
 >
 > `agent-sync`와 `rfp-ingest`는 제거됐다. `custom-skill-design`은 사용자 스킬에서 관리자 스킬로 이동했다. 실제 프로젝트 사용자는 이 저장소를 clone하거나 `.agents/.claude` 스킬을 직접 복사하지 않고, Codex/Claude 플러그인을 설치한 뒤 `harness-setup`을 실행한다.
 >

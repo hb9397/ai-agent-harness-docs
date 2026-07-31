@@ -57,6 +57,21 @@ exact watched path 중 하나라도 rate limit·네트워크·API 오류가 발�
 
 “최신 버전으로 업데이트”라는 표현만으로는 G4 또는 G5 승인이 되지 않는다.
 
+### 하나의 upstream에서 파생된 여러 관계
+
+같은 저장소를 직접 반입과 참고로 동시에 추적할 때, 두 관계는
+`relationship_group`으로 묶고 **하나의 candidate로 원자적으로 승인·승격**한다.
+
+- 그룹 안의 저장소 URL, `source_url`, `license_spdx`, `lifecycle`,
+  observed·accepted SHA는 모두 일치해야 한다.
+- 한쪽만 새 SHA로 올리거나 한쪽만 `active`로 바꾸는 요청은 차단한다.
+- 서로 다른 upstream을 하나의 candidate에 섞지 않는다.
+- 조사와 staging은 여전히 GitHub upstream 하나씩 수행한다.
+
+보고서에는 직접 반입 관계의 **파일 diff·hash·라이선스**와 참고 관계의 **의미 단위
+차이**를 구분해 적는다. protected asset 영향과 destructive diff도 관계별·파일별로
+나눈다.
+
 ## 보호 자산
 
 보호 대상 경로는 다음과 같다.

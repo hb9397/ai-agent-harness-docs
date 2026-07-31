@@ -11,11 +11,11 @@
 현재 릴리스 후보:
 
 - Plugin ID: `ai-agent-harness`
-- Version: `0.1.0`
-- Archive: `plugins/ai-agent-harness-0.1.0.zip`
-- 사용자 스킬: 18종
-- Codex runtime: 18 skills / 0 agents
-- Claude runtime: 18 skills / 0 agents
+- Version: `0.2.0`
+- Archive: `plugins/ai-agent-harness-0.2.0.zip`
+- 사용자 스킬: 20종
+- Codex runtime: 20 skills / 0 agents
+- Claude runtime: 20 skills / 0 agents
 - 관리자 스킬: 3종, 이 저장소 안에서만 사용
 - 릴리스 상태: `not release-ready` — 공식 CLI 설치 smoke와 별도로 Codex·Claude
   CLI·앱 네 표면의 실제 모델 호출 수동 증적이 모두 필요함
@@ -56,9 +56,9 @@
 - Claude Chat/Cowork는 Code 플러그인과 별도 표면이다. 설치·권한·cache는
   별도로 검증한다.
 
-현재 자동 증적은 Codex CLI `0.146.0`과 Claude Code `2.1.220`에서 marketplace
-등록, plugin 설치, 18 skills / 0 agents 확인, 제거까지 통과한 것이다. 이는
-설치·cache smoke이며 실제 모델이 스킬을 올바르게 수행했다는 증적은 아니다.
+CLI 설치 smoke는 `0.1.0`에서 Codex CLI `0.146.0`과 Claude Code `2.1.220` 기준으로
+통과했다. `0.2.0`은 아직 재실행하지 않았으므로 두 CLI 표면은 `blocked` 상태다.
+설치 smoke는 cache 검사이며 실제 모델이 스킬을 올바르게 수행했다는 증적이 아니다.
 
 ## 2. 기본 작업 흐름 한눈에 보기
 
@@ -257,7 +257,65 @@ my-project/
 `{YYMMDD}-0.{앱이름}-roadmap-impl-index.md`를 공유한다. 생성 스킬은 문서
 머리말로 구분한다.
 
-## 7. 사용자 스킬 18종
+## 6-1. 디자인 작업 흐름
+
+화면이 있는 작업에서 선택하는 별도 흐름이다. §2의 일반 흐름을 대체하지 않고,
+UI 판단이 필요할 때만 그 안에서 갈라져 나온다. 백엔드 전용 작업이나 화면 명세가
+이미 확정된 단순 구현에는 쓰지 않는다.
+
+```mermaid
+flowchart TD
+    R["승인된 요구사항 또는 design-doc"] --> U["ui-ux-pro-max<br/>디자인 방향·시스템"]
+    U --> S["design-prototype-docs<br/>화면·상태·반응형 명세"]
+    S --> M{"모션이 필요한가?"}
+    M -->|"예"| MD["motion-design<br/>목적·타이밍·대체안"]
+    M -->|"아니오"| B{"최종 목적"}
+    MD --> B
+
+    B -->|"검증용 프로토타입"| P["create-prototype<br/>.docs/prototype의 폐기 가능 시안"]
+    P --> A{"사용자 검토"}
+    A -->|"프로토타입만 필요"| PV["impl-verify<br/>시안·요구사항 검증"]
+    A -->|"실제 화면 구현 승인"| F["frontend-design<br/>제품 소스 구현"]
+
+    B -->|"실제 제품 화면"| F
+    F --> V["impl-verify<br/>기능·UI·접근성·모션 검증"]
+```
+
+두 갈래의 차이는 **산출물의 수명**이다.
+
+| | 프로토타입 분기 | 실제 화면 분기 |
+|---|---|---|
+| 산출물 | `.docs/prototype/**`의 HTML·CSS·JS | 제품 소스코드 |
+| 목적 | 요구사항·UX 검증 | 유지보수되는 제품 화면 |
+| 수명 | 검증이 끝나면 폐기 가능 | 계속 유지 |
+
+**프로토타입 코드는 제품 소스로 복사하지 않는다.** 승인 후 실제 구현으로 넘어갈
+때는 승인된 디자인 결정과 화면 명세만 전달하고, `frontend-design`이 제품의 기존
+컴포넌트·토큰·프레임워크에 맞게 다시 구현한다. 처음부터 실제 화면을 요청하면
+프로토타입 단계를 강제하지 않는다.
+
+모션은 조건부다. 정적 화면으로 목적이 충분하거나 요구사항에 모션이 없으면
+`motion-design`을 건너뛴다. 공공·의료·금융·엔터프라이즈 화면은 낮은 모션 밀도가
+기본값이다.
+
+### 두 신규 스킬 호출 예시
+
+```text
+$ui-ux-pro-max
+기존 React 관리자 화면의 디자인 시스템을 제안해줘.
+현재 토큰이 있으면 우선하고 파일은 아직 만들지 마.
+```
+
+```text
+/ai-agent-harness:motion-design
+이 결제 버튼의 loading → success → error 전환을 설계해줘.
+reduced-motion 대체안과 성능 검증 기준도 포함해줘.
+```
+
+두 스킬 모두 기본은 대화창 보고다. 사용자가 명시적으로 요청할 때만
+`.docs/design-system/**`에 저장한다.
+
+## 7. 사용자 스킬 20종
 
 | 계열 | 스킬 | 주 용도 |
 |------|------|---------|
@@ -266,6 +324,8 @@ my-project/
 | 설치·기반 | `git-scoped-account` | 프로젝트 트리 하위 repo Git 계정 설정 |
 | 설계·컨텍스트 | `design-doc` | 요구사항·아이디어·RFP를 구조화한 설계 |
 | 설계·컨텍스트 | `context-doc` | `AGENTS.md` 정본, Claude bridge, instruction 생성 |
+| UI/UX 설계 | `ui-ux-pro-max` | 제품 유형·스타일·색·타이포그래피·레이아웃 결정 |
+| 모션 설계 | `motion-design` | 모션 목적·타이밍·이징·접근성·성능 결정 |
 | 프로토타입 | `design-prototype-docs` | 화면 설계 문서 생성 |
 | 프로토타입 | `create-prototype` | HTML/CSS/JS 기반 검증 시안 생성 |
 | UI | `frontend-design` | 실제 제품 UI 구현 품질 기준 |
@@ -359,6 +419,32 @@ upstream 비교, 영향 분석, 승인된 promotion handoff를 수행한다. mod
 번역·수정·재구성해 하네스의 승인형 문서 후처리로 반영한 `adapted` 사용자
 스킬이다. 전체 upstream runtime을 그대로 `vendored`하지 않는다. 사용자는 별도
 upstream clone 없이 플러그인 안에서 사용하고, 관리자가 GitHub upstream을 추적한다.
+
+### 같은 저장소를 두 방식으로 추적하기
+
+`ui-ux-pro-max`와 `motion-design`은 각 upstream을 **두 관계로 동시에** 추적한다.
+
+| 구분 | 하는 일 | 플러그인 포함 |
+|---|---|---|
+| 직접 반입 `adapted` | 독립 스킬과 실행·지식 자산을 제공 | 포함 |
+| 참고 `reference` | 기존 디자인·검증 스킬에 개념만 반영 | 미포함 |
+
+두 관계는 같은 저장소 URL, 같은 라이선스 판정, 같은 고정 commit을 공유해야 하며
+한쪽만 승격할 수 없다. 참고 관계는 파일을 복사하지 않으므로 라이선스 배포 대상이
+아니다.
+
+### 별도 설치 대상
+
+다음 프로젝트는 이 플러그인에 포함하지 않는다. 필요하면 사용자가 원본 안내에
+따라 직접 설치한다. 이 하네스의 필수 의존성이 아니다.
+
+- [Caveman](https://github.com/JuliusBrussee/caveman) — 응답 표현과 토큰 사용
+  방식을 바꾸는 별도 플러그인이다. 하네스의 설계·검증 계약과 목적이 다르다.
+- [Ruflo](https://github.com/ruvnet/ruflo) — 다중 에이전트, 메모리, MCP, hook을
+  포함하는 독립 메타 하네스다. 일부만 복제하지 않고 원본 제품으로 쓴다.
+
+설치 방법은 바뀔 수 있으므로 여기에 명령을 복제하지 않는다. **최신 설치 방법은
+각 원본 저장소의 안내를 따른다.**
 
 세부 업데이트 기준은
 [Skill Upstream Update Policy](./Docs/Skill_Upstream_Update_Policy.md)를 따른다.

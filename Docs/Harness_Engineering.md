@@ -42,7 +42,7 @@ AI Agent Harness는 Codex, Claude Code처럼 서로 다른 에이전트가 같�
 
 | 영역 | 담당 | 프로젝트에 남는가 |
 |------|------|-------------------|
-| 사용자 스킬 18종 | 설치된 `ai-agent-harness` 플러그인 | local copy를 남기지 않음 |
+| 사용자 스킬 20종 | 설치된 `ai-agent-harness` 플러그인 | local copy를 남기지 않음 |
 | 프로젝트 문서 골격 | 프로젝트 수행자가 `harness-setup`으로 생성 | `.docs/**`, `AGENTS.md`, `CLAUDE.md` |
 | 설계·구현 계획·프로토타입 | 프로젝트 수행자와 사용자 스킬 | `.docs/**` |
 | 코드·테스트 산출물 | 프로젝트 수행자 | 각 앱 repo |
@@ -442,6 +442,8 @@ ledger 자체는 문서 개선 대상에서 제외한다.
 | 설치·기반 | `git-scoped-account` | 상위 트리의 여러 repo에 한정된 Git 계정 설정 |
 | 설계 | `design-doc` | 요구사항·아이디어·RFP 입력을 OUTPUT_V2 설계로 변환 |
 | 컨텍스트 | `context-doc` | `AGENTS.md` 정본, Claude bridge, instruction 생성 |
+| UI/UX 설계 | `ui-ux-pro-max` | 제품 유형·스타일·색·타이포그래피·레이아웃·접근성 결정 |
+| 모션 설계 | `motion-design` | 모션 목적·타이밍·이징·안무·접근성·성능 결정 |
 | 화면 설계 | `design-prototype-docs` | 프로토타입 입력용 화면 설계 문서 |
 | 프로토타입 | `create-prototype` | 화면별 HTML/CSS/JS/JSON 기반 검증 시안 |
 | 제품 UI | `frontend-design` | 실제 UI 구현 품질 기준 |
@@ -464,6 +466,72 @@ ledger 자체는 문서 개선 대상에서 제외한다.
 `custom-skill-design`은 반복 업무를 스킬로 만들기 위한 **관리자 스킬**이다.
 프로젝트 사용자가 local custom skill을 만들도록 배포하지 않는다. 반복되는
 workflow가 보이면 관리자에게 후보와 사례를 전달한다.
+
+### 7-1. 디자인 전용 흐름
+
+§5의 일반 흐름을 대체하지 않는다. UI 판단이 필요한 작업에서만 그 안에서 갈라져
+나오는 선택적 흐름이다.
+
+```mermaid
+flowchart TD
+    R["승인된 요구사항 또는 design-doc"] --> U["ui-ux-pro-max"]
+    U --> S["design-prototype-docs"]
+    S --> M{"모션이 필요한가?"}
+    M -->|"예"| MD["motion-design"]
+    M -->|"아니오"| B{"최종 목적"}
+    MD --> B
+    B -->|"검증용 프로토타입"| P["create-prototype"]
+    P --> A{"사용자 검토"}
+    A -->|"프로토타입만"| PV["impl-verify"]
+    A -->|"실제 구현 승인"| F["frontend-design"]
+    B -->|"실제 제품 화면"| F
+    F --> V["impl-verify"]
+```
+
+| 단계 | 입력 | 산출물 | 승인 gate | 검증 |
+|---|---|---|---|---|
+| `ui-ux-pro-max` | 제품 유형·업종·스택·접근성 요구 | 대화창 디자인 결정과 근거 | 저장 시 승인 필요 | 기존 토큰 우선 여부 |
+| `design-prototype-docs` | 디자인 결정 또는 기존 시스템 | 화면·상태·반응형 명세 `.md` | producer gate | 7개 품질 기준 |
+| `motion-design` | 모션 후보와 목적 | 모션 결정표 | 저장 시 승인 필요 | reduced-motion 대체안 필수 |
+| `create-prototype` | 승인된 명세와 모션 | `.docs/prototype/**` | — | 시안·요구사항 일치 |
+| `frontend-design` | 승인된 결정과 명세 | 제품 소스 | — | 기능·UI·접근성·모션 |
+
+#### 호출·생략 조건
+
+| 스킬 | 호출 | 생략 |
+|---|---|---|
+| `ui-ux-pro-max` | 디자인 방향·토큰·레이아웃을 정할 때, 기존 화면 UX·접근성 리뷰 | 백엔드 전용, 명세 확정 후 단순 구현, 문구·데이터만 수정 |
+| `motion-design` | 전환·상태 피드백·등장 순서·브랜드 모션 설계, 기존 애니메이션 리뷰 | 정적 화면으로 충분, 요구사항에 모션 없음, 기존 모션 명세 그대로 적용 |
+
+#### 공개 skill-name handoff 계약
+
+디자인 흐름의 스킬은 서로의 내부 파일이나 상대경로를 읽지 않는다. 연결은 공개
+스킬 이름으로만 한다. 내부 경로에 결합하면 상대 스킬의 리팩터링이 이쪽을 조용히
+깨뜨리고, 설치된 플러그인에서는 그 경로가 해소되지도 않는다.
+
+#### 선택적 저장 경로
+
+두 신규 스킬의 기본 동작은 대화창 보고다. 사용자가 명시적으로 요청할 때만
+저장한다.
+
+```text
+.docs/design-system/{project-slug}/MASTER.md
+.docs/design-system/{project-slug}/pages/{page-slug}.md
+.docs/design-system/{project-slug}/motion/{screen-or-component}.md
+```
+
+기존 파일이 있으면 diff를 제시하고 승인 전에는 덮어쓰지 않는다. 두 스킬은
+조건부 Markdown producer이므로, 최외곽 생성자일 때만 `humanize-korean` 개선안을
+한 번 제안한다. 색상값, 토큰 이름, duration, easing, reduced-motion 조건, 성능
+budget은 문서 개선 단계의 보호 토큰이며 개선으로 값이 바뀌지 않는다.
+
+#### 두 분기의 경계
+
+프로토타입 산출물은 폐기 가능한 검증 자료다. **제품 소스로 복사하지 않는다.**
+승인 후 실제 구현으로 넘어갈 때는 승인된 디자인 결정과 화면 명세만 전달하고,
+`frontend-design`이 제품의 기존 컴포넌트·토큰·프레임워크에 맞게 다시 구현한다.
+사용자가 처음부터 실제 화면을 요청하면 프로토타입 단계를 강제하지 않는다. 두
+분기 모두 목적에 맞는 `impl-verify` 검증으로 끝난다.
 
 ## 8. 산출물과 형상관리
 
@@ -679,8 +747,45 @@ upstream integration mode는 네 가지다.
 릴리스하지 않는다.
 
 현재 활성 `vendored` 관계는 없다. `humanize-korean`, `frontend-design`,
-`custom-skill-design`의 원본 관계는 `adapted`이며, 별도의 공식·유명 출처를
-`reference`로 함께 추적할 수 있다.
+`custom-skill-design`, `ui-ux-pro-max`, `motion-design`의 원본 관계는
+`adapted`이며, 별도의 공식·유명 출처를 `reference`로 함께 추적할 수 있다.
+
+### 14-1. 하나의 upstream을 두 관계로 추적하기
+
+같은 저장소를 직접 반입과 참고로 동시에 쓸 수 있다. `ui-ux-pro-max`와
+`motion-design`이 이 구조다.
+
+| 관계 | 모드 | 대상 | 패키징 |
+|---|---|---|---|
+| `{source}-runtime` | `adapted` | 신규 독립 스킬 | 포함 |
+| `{source}-principles` | `reference` | 기존 디자인·검증 스킬 | 미포함 |
+
+두 관계는 `relationship_group`으로 묶인다. 그룹 안에서는 저장소 URL,
+`source_url`, `license_spdx`, `lifecycle`, observed·accepted SHA가 모두 일치해야
+한다. 한쪽만 새 SHA로 승격하거나 한쪽만 `active`로 바꾸면 검증이 실패한다.
+`reference` 관계가 packaged notice를 주장하거나 file-map에 `reference-only`가
+아닌 treatment를 쓰면 역시 실패한다.
+
+참고 관계는 파일을 복사하지 않으므로 `licenses/` 패키징 대상이 아니다. 외부
+문장·표·체크리스트·코드를 복사해야 한다고 판단되면 그 파일은 `reference`가
+아니라 `adapted` 재분류 대상이다.
+
+upstream 최상위 라이선스는 upstream 저작자가 보유하지 않은 제3자 권리까지
+허가하지 못한다. 외부 가이드라인 값이나 표를 인용한 파일은 원 저작자와 이용
+조건을 파일 단위로 판정해 provenance NOTICE에 기록한다.
+
+### 14-2. 별도 설치 대상
+
+다음은 이 플러그인에 포함하지 않는다. 필수 의존성이 아니며 사용자가 필요할 때
+원본 안내에 따라 직접 설치한다.
+
+| 프로젝트 | 성격 | 포함하지 않는 이유 |
+|---|---|---|
+| [Caveman](https://github.com/JuliusBrussee/caveman) | 응답 표현·토큰 사용 방식 변경 | 하네스의 설계·검증 계약과 목적이 다르다 |
+| [Ruflo](https://github.com/ruvnet/ruflo) | 다중 에이전트·메모리·MCP·hook 메타 하네스 | 일부만 복제하면 원본 이점은 사라지고 유지보수 부담만 남는다 |
+
+설치 명령은 바뀌므로 이 문서에 복제하지 않는다. 최신 설치 방법은 각 원본
+저장소의 안내를 따른다.
 
 공통 최신화 흐름:
 
@@ -728,7 +833,7 @@ skills/ 사용자 정본 수정
 
 자동 검증 대상:
 
-- 사용자 source 18종과 양 runtime 18종 일치
+- 사용자 source와 양 runtime의 스킬 이름 집합 일치 (capability inventory 파생)
 - 양 runtime agents 0, 관리자 스킬 0
 - 공식 manifest와 marketplace catalog
 - 결정적 archive와 checksum
@@ -791,7 +896,7 @@ CI에서는 `--check`를 사용하고, 실제 수동 증적을 검토해 갱신�
 명시적으로 실행한다.
 
 검증 결과는 자동 PASS, 수동 확인, 미검증을 구분한다. 공식 패키지 설치 성공,
-cache에 18개 스킬이 존재함, 실제 모델이 산출물 계약을 지킴은 서로 다른
+cache에 선언된 수의 스킬이 존재함, 실제 모델이 산출물 계약을 지킴은 서로 다른
 증적이다.
 
 ## 18. 관리자 체크리스트
