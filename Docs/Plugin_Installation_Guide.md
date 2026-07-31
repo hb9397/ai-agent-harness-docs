@@ -30,9 +30,9 @@
 | Local plugin root | `plugins/ai-agent-harness` |
 | Archive | `plugins/ai-agent-harness-0.2.0.zip` |
 | Archive SHA-256 | `maintainer/plugin/release.json`의 현재 생성값 |
-| Codex physical skills | 18 |
+| Codex physical skills | 20 |
 | Codex agents | 0 |
-| Claude physical skills | 18 |
+| Claude physical skills | 20 |
 | Claude agents | 0 |
 | Release gate | `not-release-ready` |
 

@@ -238,12 +238,22 @@ def render_release_checklist(evidence: dict) -> str:
             "스모크 검사는 모델 호출이 아니다. Codex와 Claude의 모든 CLI/App 표면에는 "
             "직접 호출, 출력, 재시작 및 새 세션 수동 증적이 여전히 필요하다."
         )
+        # 스킬 수는 실제 설치 증적에서 읽는다. 리터럴을 두면 체크리스트가 실제와
+        # 다른 숫자를 주장해도 --check가 통과한다.
+        counts = sorted(
+            {
+                platform.get("installed_payload", {}).get("skill_count")
+                for platform in evidence["cli_smoke"].get("platforms", {}).values()
+            }
+            - {None}
+        )
+        skill_count = counts[0] if len(counts) == 1 else "/".join(map(str, counts))
         completed_cli = (
             "- Codex CLI 설치 스모크: 마켓플레이스 등록/목록 확인/제거, 플러그인 등록/목록 확인/제거, "
-            "`harness-setup`과 `humanize-korean` 디렉터리를 포함한 설치 캐시의 스킬 18개 / "
+            f"`harness-setup`과 `humanize-korean` 디렉터리를 포함한 설치 캐시의 스킬 {skill_count}개 / "
             "에이전트 0개를 확인했다(모델 호출 아님).\n"
             "- Claude Code CLI 설치 스모크: 엄격한 플러그인/마켓플레이스 검증, 마켓플레이스 "
-            "등록/목록 확인/제거, 플러그인 설치/목록 확인/제거, 설치 캐시의 스킬 18개 / "
+            f"등록/목록 확인/제거, 플러그인 설치/목록 확인/제거, 설치 캐시의 스킬 {skill_count}개 / "
             "에이전트 0개를 확인했다(모델 호출 아님)."
         )
         pending_cli = ""

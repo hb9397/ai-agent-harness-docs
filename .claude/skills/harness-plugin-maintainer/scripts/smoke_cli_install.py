@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -38,7 +39,22 @@ def command_from_json(raw: str, label: str) -> list[str]:
         or any(not isinstance(item, str) or not item for item in value)
     ):
         raise SmokeFailure(f"{label} command must be a non-empty JSON string array")
-    return value
+    return resolve_executable(value)
+
+
+def resolve_executable(command: list[str]) -> list[str]:
+    """Resolve a bare command name to a full path before spawning it.
+
+    npm global installs put `codex.CMD` and `claude.CMD` on PATH. Windows shell
+    lookup finds those, but subprocess without a shell does not, so a bare name
+    fails with WinError 2 even though the CLI is installed. shutil.which applies
+    PATHEXT the same way the shell does.
+    """
+    head, *rest = command
+    if os.sep in head or (os.altsep and os.altsep in head):
+        return command
+    resolved = shutil.which(head)
+    return [resolved, *rest] if resolved else command
 
 
 def run(

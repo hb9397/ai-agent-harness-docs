@@ -50,6 +50,54 @@ def canonical_skill_count(root: Path) -> int:
     return total
 
 
+def validate_promotion_evidence(root: Path, registry: dict, errors: list[str]) -> None:
+    """An active external relationship must carry a promotion record.
+
+    Implementing and packaging a source without recording the approvals leaves
+    no evidence that the governance procedure was followed. The code alone
+    cannot show that upstream selection, asset impact and licence were approved.
+    """
+    promotions = root / "maintainer" / "upstreams" / "promotions"
+    recorded: set[str] = set()
+    for path in sorted(promotions.glob("*.json")):
+        data = load_json(path)
+        promotion = data.get("promotion", {})
+        ids = promotion.get("source_ids") or [promotion.get("source_id")]
+        recorded.update(item for item in ids if item)
+
+    for source in registry.get("sources", []):
+        sid = source.get("id")
+        if not sid or sid == "internal-harness-native":
+            continue
+        if source.get("lifecycle") != "active":
+            continue
+        if source.get("integration_mode") not in {"adapted", "vendored"}:
+            continue
+        if sid not in recorded:
+            error(errors, f"{sid}: active direct-import source has no promotion record")
+
+    # A candidate bundle must not still claim work is pending once its sources
+    # are active and its skill exists.
+    for path in sorted((root / "maintainer" / "upstreams" / "candidates").glob("*/candidate.json")):
+        data = load_json(path)
+        ids = {item.get("source_id") for item in data.get("candidate_sources", [])}
+        lifecycles = {
+            source.get("lifecycle")
+            for source in registry.get("sources", [])
+            if source.get("id") in ids
+        }
+        if not lifecycles or lifecycles != {"active"}:
+            continue
+        # Status vocabulary varies across historical bundles, so judge by what
+        # the bundle still claims is outstanding rather than by an exact string.
+        rel = path.relative_to(root).as_posix()
+        status = str(data.get("status", ""))
+        if "pending" in status:
+            error(errors, f"{rel}: sources are active but candidate status is {status!r}")
+        if data.get("pending_approvals"):
+            error(errors, f"{rel}: sources are active but approvals are still pending")
+
+
 def validate_relationship_groups(registry: dict, lock: dict, errors: list[str]) -> None:
     """Keep every relationship derived from one upstream pinned to one commit.
 
@@ -261,6 +309,7 @@ def validate_registry(root: Path, errors: list[str]) -> None:
                 )
 
     validate_relationship_groups(registry, lock, errors)
+    validate_promotion_evidence(root, registry, errors)
 
     for sid in ("superpowers", "gstack", "openai-codex-skill-creator"):
         source = next((item for item in registry["sources"] if item.get("id") == sid), None)

@@ -69,7 +69,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/references/plugin-structure.md",
-          "sha256": "3ac58e7ca3c7bd0e2f80b35eed1998bbbf052a925fc8f155126c12ff610fca32"
+          "sha256": "8bedbc8cd46593191436c42f0d51625e97fd01edc8006d11ba0cdade27b7d8aa"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py",
@@ -93,7 +93,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/smoke_cli_install.py",
-          "sha256": "c73f0a0f9d2114bc337a28514b3bd232ec75fd129008b486e49171bb51b2b6b9"
+          "sha256": "1dbb22b9cc5da848220e5c30df621edcac6539358d1b72a84e96efd713af7a7d"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projections.py",
@@ -101,15 +101,15 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/validate_plugin.py",
-          "sha256": "4a34138601a50eaa4da5b7bdf1e8dc1ff3dc875cdf5bc8ec667900b0091b2f1b"
+          "sha256": "6e3caf4228c1b03bec994b13fb995658a6cd4f68766f6a6c7e4e620b6ff6a048"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/verify_install_surfaces.py",
-          "sha256": "b6511e0d1ef3166bb95ea44cb876c5be29c1143e0db4c87f97a04c6b5a7db8b2"
+          "sha256": "d59269d88a8830dfc2382d08eb083ccf6ed20499f82e93e8167a130cd18a86a1"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/SKILL.md",
-          "sha256": "3c928b47f59e57778e0c1bcfd4491a0dd772827b3c0d99c38b3c9de422110c7d"
+          "sha256": "1a26efb2c56040675cca3da479c13f07408e8a955f045dd997cb5281036fbcab"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/templates/claude-agent.md",
@@ -199,7 +199,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py",
-          "sha256": "15218d86831f9dc91f418264134b590980104ad55bf0dd8c5c2406d922988b92"
+          "sha256": "a9e90fbb896d59755fdc6316901e9dc9100be03a29a12a3af27092941414d204"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/SKILL.md",

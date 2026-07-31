@@ -400,7 +400,7 @@ impl-verify
 
 ## 6. Markdown producer와 `humanize-korean`
 
-Markdown bundle을 만드는 producer는 7종이다.
+Markdown bundle을 만드는 producer는 9종이다. 고정 7종과 조건부 2종으로 나뉜다.
 
 - `harness-setup`
 - `harness-bootstrap`

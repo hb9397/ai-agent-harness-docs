@@ -99,8 +99,25 @@ TEST-014 초기 실행에서 간헐적 실패가 있었다. 원인은 Windows에
 | 10 | 문서·manifest·runtime의 skill count가 모두 20인가 | PASS |
 | 11 | 본체·플러그인 라이선스에 플레이스홀더가 없는가 | PASS |
 | 12 | 생성물의 저작권 귀속이 실제 저장소를 가리키는가 | PASS |
-| 13 | 스킬 수·producer 수가 inventory에서 파생되는가 | PASS |
+| 13 | 스킬 수·producer 수가 inventory에서 파생되는가 | 최초 오판 후 수정 |
 | 14 | runner 없는 스킬이 보고되는가 | PASS |
+
+### 13번 오판 정정
+
+최초 감사에서 13번을 PASS로 기록했으나 이는 잘못이었다. 감사 스크립트가
+`!= 18`, `== 18` 같은 비교 연산자만 검사하고 **문자열 리터럴을 놓쳤다.**
+외부 검토에서 다음이 드러났다.
+
+- `verify_install_surfaces.py`가 릴리스 체크리스트 본문에 "스킬 18개"를
+  하드코딩해, 실제 20종인데도 18종이라 주장하는 체크리스트를 생성하고
+  `--check`는 자기 자신과 비교하므로 통과했다.
+- `Docs/Plugin_Installation_Guide.md`, `Docs/Harness_Engineering.md`,
+  `harness-plugin-maintainer/SKILL.md`, `references/plugin-structure.md`에
+  18종·7종 표현이 남아 있었다.
+
+체크리스트 생성기는 실제 설치 증적의 `skill_count`에서 값을 읽도록 바꿨고,
+문서 4곳은 20종·9종 또는 inventory 파생 표현으로 정정했다.
+`final-readiness-audit.*`의 18은 `0.1.0` 역사 기록이므로 유지한다.
 
 ## 표면별 증적
 

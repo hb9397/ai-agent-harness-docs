@@ -1,13 +1,22 @@
 {
   "id": "ui-ux-pro-max-candidate",
   "checked_at": "2026-07-31",
-  "status": "accepted-pending-implementation",
+  "status": "promoted",
   "relationship_group": "ui-ux-pro-max",
-  "current_state": "Upstream snapshot is pinned and licensed. Both relationships are registered as candidate lifecycle. Local skills do not exist yet.",
-  "internal_skill_group": ["ui-ux-pro-max", "design-prototype-docs", "create-prototype", "frontend-design", "impl-verify"],
+  "current_state": "Implemented in 20260730 Phase 2 and promoted in 20260730 Phase 4. Both relationships are active and pinned to the same commit. The skill is canonical in skills/ and packaged in the 0.2.0 plugin as of Phase 6.",
+  "internal_skill_group": [
+    "ui-ux-pro-max",
+    "design-prototype-docs",
+    "create-prototype",
+    "frontend-design",
+    "impl-verify"
+  ],
   "atomic_promotion": {
     "required": true,
-    "sources": ["ui-ux-pro-max-runtime", "ui-ux-pro-max-principles"],
+    "sources": [
+      "ui-ux-pro-max-runtime",
+      "ui-ux-pro-max-principles"
+    ],
     "rule": "Both relationships derive from one upstream commit and must be promoted together. Promoting only one is rejected."
   },
   "candidate_sources": [
@@ -21,7 +30,7 @@
       "license": "MIT, Copyright (c) 2024 Next Level Builder. LICENSE text and SHA-256 preserved in provenance.",
       "security_surface": "Five Python modules. Standard library only, no network, no subprocess, no eval or exec. Paths resolve through Path(__file__). One opt-in write path persists a design system to disk and must gain a local approval gate.",
       "fit": "Provides the design direction, token, typography, layout and stack guidance the harness currently lacks.",
-      "decision": "Accepted for direct import as an independent user skill. Implementation is deferred to Phase 2."
+      "decision": "Accepted for direct import as an independent user skill. Implemented and promoted."
     },
     {
       "source_id": "ui-ux-pro-max-principles",
@@ -40,7 +49,14 @@
     "target_tree": ".claude/skills/ui-ux-pro-max/",
     "file_count": 43,
     "note": "src/ui-ux-pro-max/ is generator input and carries no SKILL.md. The generated tree is the import target.",
-    "excluded_sibling_skills": ["banner-design", "brand", "design", "design-system", "slides", "ui-styling"],
+    "excluded_sibling_skills": [
+      "banner-design",
+      "brand",
+      "design",
+      "design-system",
+      "slides",
+      "ui-styling"
+    ],
     "excluded_reason": "Feature overlap, separate provenance, dependency and license review required. Tracked as a separate future candidate."
   },
   "generator_decision": {
@@ -48,5 +64,13 @@
     "rejected_alternative": "import src/ and templates/ and run the generator locally",
     "reason": "The generator is coupled to a TypeScript npm CLI under cli/ with 187 files. Importing it would expand protected assets far beyond the skill and add a build toolchain the harness does not need."
   },
-  "pending_approvals": ["asset-impact approval for scripts, data and references additions"]
+  "pending_approvals": [],
+  "granted_approvals": [
+    "upstream selection (Phase 0)",
+    "general application (20260730 Phase 2)",
+    "asset-impact approval granted in Phase 2 for scripts, data and references additions",
+    "licence: MIT, text and SHA-256 preserved"
+  ],
+  "promotion_record": "maintainer/upstreams/promotions/ui-ux-pro-max-v2.11.3.json",
+  "promoted_at": "2026-07-31"
 }

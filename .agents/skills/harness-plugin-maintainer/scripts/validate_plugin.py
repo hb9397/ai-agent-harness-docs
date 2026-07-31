@@ -303,7 +303,23 @@ def validate_runtime_execution_policy(root: Path, errors: list[str]) -> None:
                 error(errors, f"{platform}/{name} executables differ from policy: {shipped} != {sorted(entry['executables'])}")
 
             allow_subprocess = bool(entry.get("subprocess"))
+            allowed_commands = set(entry.get("subprocess_allowlist", []))
             for path in (skill_dir / rel for rel in shipped):
+                if path.suffix == ".sh":
+                    # Shell scripts are not parsed, so scan for the capabilities
+                    # the policy denies. Skipping them would leave a hole big
+                    # enough to drive a network call through.
+                    text = path.read_text(encoding="utf-8", errors="replace")
+                    for token in ("curl", "wget", "nc ", "ncat", "ssh ", "scp ",
+                                  "pip install", "npm install", "Invoke-WebRequest"):
+                        if re.search(rf"(?<![\w-]){re.escape(token.strip())}(?![\w-])", text):
+                            error(errors, f"{platform}/{name}/{path.name}: denied shell capability {token.strip()!r}")
+                    if allowed_commands:
+                        invoked = set(re.findall(r"^\s*([a-z][\w.-]*)\s", text, re.MULTILINE))
+                        external = {c for c in invoked if c in {"git", "docker", "kubectl", "aws", "gh"}}
+                        for cmd in sorted(external - allowed_commands):
+                            error(errors, f"{platform}/{name}/{path.name}: command {cmd!r} is not in the policy allowlist")
+                    continue
                 if path.suffix != ".py":
                     continue
                 try:
@@ -337,6 +353,31 @@ def validate_runtime_execution_policy(root: Path, errors: list[str]) -> None:
                         and func.attr in process_calls
                     ):
                         error(errors, f"{platform}/{name}/{path.name}: process call os.{func.attr} is denied")
+
+                    # Declaring subprocess is not a blank cheque. The policy names
+                    # which executables a skill may spawn, so check the literal
+                    # command actually passed to subprocess.
+                    if (
+                        allowed_commands
+                        and isinstance(func, ast.Attribute)
+                        and isinstance(func.value, ast.Name)
+                        and func.value.id == "subprocess"
+                        and node.args
+                    ):
+                        first = node.args[0]
+                        literal = None
+                        if isinstance(first, ast.Constant) and isinstance(first.value, str):
+                            literal = first.value.split()[0] if first.value.split() else None
+                        elif isinstance(first, (ast.List, ast.Tuple)) and first.elts:
+                            head = first.elts[0]
+                            if isinstance(head, ast.Constant) and isinstance(head.value, str):
+                                literal = head.value
+                        if literal and literal not in allowed_commands:
+                            error(
+                                errors,
+                                f"{platform}/{name}/{path.name}: subprocess command {literal!r} "
+                                f"is not in the policy allowlist {sorted(allowed_commands)}",
+                            )
 
 
 def validate_manual_surface_contract(root: Path, errors: list[str]) -> None:

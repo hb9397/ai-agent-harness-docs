@@ -55,7 +55,7 @@ Claude는 로컬 플러그인 소스를 마켓플레이스 루트 기준 상대�
 1. 저장소 루트 마켓플레이스 등록
 2. `ai-agent-harness@ai-agent-harness` 설치
 3. 활성화된 플러그인 목록 표시
-4. 논리 스킬 18개와 `agents` 0개를 기준으로 설치된 런타임의 일치 여부
+4. `CAPABILITIES.json`의 논리 스킬 수와 `agents` 0개를 기준으로 설치된 런타임의 일치 여부
 5. `harness-setup`과 `humanize-korean`의 존재
 6. 중첩된 마켓플레이스 카탈로그의 부재
 7. 제거 및 마켓플레이스 정리

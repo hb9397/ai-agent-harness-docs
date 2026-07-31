@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "verified_at": "2026-07-31T16:30:00+09:00",
+  "verified_at": "2026-07-29T00:00:00+09:00",
   "plugin_id": "ai-agent-harness",
   "qualified_plugin_id": "ai-agent-harness@ai-agent-harness",
   "marketplace_source": ".",

@@ -8,7 +8,15 @@ on:
 
 jobs:
   plugin:
-    runs-on: ubuntu-latest
+    # Windows is a first-class maintainer platform here, and its filesystem and
+    # PATH behaviour differ enough that a Linux-only run misses real breakage:
+    # CRLF normalisation, .CMD shims for the plugin CLIs, and transient file
+    # locks during rebuild have all surfaced there and not on Linux.
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-python@v6

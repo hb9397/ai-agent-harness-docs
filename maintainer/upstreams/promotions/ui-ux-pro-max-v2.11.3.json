@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-07-31",
+  "promotion": {
+    "relationship_group": "ui-ux-pro-max",
+    "source_ids": [
+      "ui-ux-pro-max-runtime",
+      "ui-ux-pro-max-principles"
+    ],
+    "target_skill": "ui-ux-pro-max",
+    "reference_targets": [
+      "design-prototype-docs",
+      "create-prototype",
+      "frontend-design",
+      "impl-verify"
+    ],
+    "decision": "accepted-adapted-and-reference",
+    "atomic": true,
+    "atomic_note": "Both relationships derive from one upstream commit and were promoted together. Registry lifecycle, lock accepted/observed SHA and licence determination are identical across the group.",
+    "accepted_tag": "v2.11.3",
+    "accepted_commit_sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
+    "repository": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+    "basis": [
+      "Latest stable upstream release v2.11.3 published 2026-07-28; pinned rather than branch head.",
+      "MIT LICENSE text and SHA-256 recorded in provenance before import.",
+      "The generated .claude/skills tree is the complete skill; src/ is generator input with no SKILL.md.",
+      "Five Python modules are standard library only with no network, subprocess or dynamic execution.",
+      "Six sibling skills and the TypeScript CLI are excluded and recorded with reasons."
+    ]
+  },
+  "approvals": {
+    "upstream_selection": {
+      "granted": true,
+      "phase": "20260730 Phase 0",
+      "scope": "repository, pinned revision, file range, classification"
+    },
+    "general_application": {
+      "granted": true,
+      "phase": "20260730 Phase 2",
+      "scope": "direct import and reference reflection"
+    },
+    "asset_impact": {
+      "granted": true,
+      "phase": "20260730 Phase 2",
+      "scope": "43 files: SKILL.md (rewritten), data/ 35 CSV, references/ 2, scripts/ 5 — all verbatim except SKILL.md",
+      "note": "Additions only. No existing protected asset was deleted, moved or replaced."
+    },
+    "destructive_change": {
+      "required": false,
+      "note": "No protected asset deletion, move or replacement occurred."
+    },
+    "licence": {
+      "granted": true,
+      "spdx": "MIT",
+      "note": "Licence text and SHA-256 preserved in provenance and packaged under licenses/."
+    }
+  },
+  "safety_review": {
+    "upstream_scripts_executed": false,
+    "path_traversal_found": false,
+    "symlink_or_submodule_promoted": false,
+    "binary_or_lfs_promoted": false,
+    "external_network_runtime_dependency": false,
+    "protected_assets_removed": false
+  },
+  "reference_relationship": {
+    "id": "ui-ux-pro-max-principles",
+    "copied_files": [],
+    "note": "Concepts only. No upstream file, translation or summary was imported. Not a licence packaging target."
+  },
+  "validation": {
+    "tests": [
+      "python skills/ui-ux-pro-max/evals/run_evals.py",
+      "python maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py",
+      "python maintainer/skills/harness-plugin-maintainer/evals/design_workflow.py",
+      "python maintainer/skills/harness-plugin-maintainer/scripts/validate_plugin.py"
+    ]
+  },
+  "packaged_in": {
+    "plugin_id": "ai-agent-harness",
+    "version": "0.2.0",
+    "phase": "20260730 Phase 6"
+  }
+}

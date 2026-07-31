@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-07-31",
+  "record_type": "backfill",
+  "backfill_note": "Reconstructed on 2026-07-31 from evidence that already existed. The original promotion happened during the 20260729 plugin conversion project, which recorded provenance, licence and lock state but did not write a promotion record. This file closes that gap; it is not a claim that a separate approval session occurred on the generated_at date.",
+  "promotion": {
+    "source_id": "skill-creator-guides",
+    "target_skill": "maintainer/skills/custom-skill-design",
+    "decision": "accepted-adapted",
+    "accepted_ref": "main",
+    "accepted_commit_sha": "b29e7cf65e5cb78a5ac33d582270551bc74a14eb",
+    "promoted_during": "20260729 플러그인 전환 및 스킬 거버넌스 리팩토링",
+    "basis": [
+      "Provenance file map and NOTICE were recorded at maintainer/upstreams/provenance/anthropic-skills/.",
+      "Apache-2.0 licence text and SHA-256 are preserved and packaged under licenses/.",
+      "Lock state records the accepted and embedded commit for this source.",
+      "custom-skill-design translates and restructures the upstream skill-creator into the manager repository, projection and plugin-release workflow. It is excluded from the user plugin."
+    ]
+  },
+  "approvals": {
+    "upstream_selection": {
+      "granted": true,
+      "evidence": "maintainer/upstreams/lock.json accepted state"
+    },
+    "general_application": {
+      "granted": true,
+      "evidence": "maintainer/upstreams/provenance/anthropic-skills/file-map.json"
+    },
+    "asset_impact": {
+      "granted": true,
+      "scope": "SKILL.md adaptation only; no upstream script or asset imported"
+    },
+    "destructive_change": {
+      "required": false
+    },
+    "licence": {
+      "granted": true,
+      "spdx": "Apache-2.0",
+      "evidence": "maintainer/upstreams/provenance/anthropic-skills/LICENSE"
+    }
+  },
+  "safety_review": {
+    "upstream_scripts_executed": false,
+    "path_traversal_found": false,
+    "symlink_or_submodule_promoted": false,
+    "binary_or_lfs_promoted": false,
+    "external_network_runtime_dependency": false,
+    "protected_assets_removed": false
+  },
+  "validation": {
+    "tests": [
+      "python maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py",
+      "python maintainer/skills/harness-plugin-maintainer/scripts/validate_plugin.py"
+    ]
+  }
+}

@@ -1,13 +1,22 @@
 {
   "id": "motion-design-candidate",
   "checked_at": "2026-07-31",
-  "status": "accepted-pending-implementation",
+  "status": "promoted",
   "relationship_group": "lottiefiles-motion-design",
-  "current_state": "Upstream snapshot is pinned and licensed. Both relationships are registered as candidate lifecycle. Local skills do not exist yet.",
-  "internal_skill_group": ["motion-design", "design-prototype-docs", "create-prototype", "frontend-design", "impl-verify"],
+  "current_state": "Implemented in 20260730 Phase 3 and promoted in 20260730 Phase 4. Both relationships are active and pinned to the same commit. The skill is canonical in skills/ and packaged in the 0.2.0 plugin as of Phase 6.",
+  "internal_skill_group": [
+    "motion-design",
+    "design-prototype-docs",
+    "create-prototype",
+    "frontend-design",
+    "impl-verify"
+  ],
   "atomic_promotion": {
     "required": true,
-    "sources": ["lottiefiles-motion-design-runtime", "lottiefiles-motion-design-principles"],
+    "sources": [
+      "lottiefiles-motion-design-runtime",
+      "lottiefiles-motion-design-principles"
+    ],
     "rule": "Both relationships derive from one upstream commit and must be promoted together. Promoting only one is rejected."
   },
   "candidate_sources": [
@@ -21,7 +30,7 @@
       "license": "MIT, Copyright (c) 2025 LottieFiles. LICENSE text and SHA-256 preserved in provenance.",
       "security_surface": "No executable code. Instruction and reference material only.",
       "fit": "Provides motion purpose, timing, easing, choreography and accessibility guidance the harness currently lacks.",
-      "decision": "Accepted for direct import as an independent user skill. Implementation is deferred to Phase 3."
+      "decision": "Accepted for direct import as an independent user skill. Implemented and promoted."
     },
     {
       "source_id": "lottiefiles-motion-design-principles",
@@ -39,7 +48,12 @@
   "import_scope": {
     "target_tree": "skills/motion-design/",
     "file_count": 17,
-    "subtrees": ["director/ (8)", "patterns/ (4)", "reference/ (4)", "SKILL.md (1)"]
+    "subtrees": [
+      "director/ (8)",
+      "patterns/ (4)",
+      "reference/ (4)",
+      "SKILL.md (1)"
+    ]
   },
   "pin_risk": {
     "issue": "No release or tag exists upstream, so the pin is a branch head.",
@@ -52,5 +66,13 @@
     "assessment": "Numeric parameter values and principle names are functional or factual rather than protected expression. Recorded per file in NOTICE.md.",
     "constraint": "Do not expand these into copied prose or whole third-party guideline tables during local adaptation."
   },
-  "pending_approvals": ["asset-impact approval for director, patterns and reference additions"]
+  "pending_approvals": [],
+  "granted_approvals": [
+    "upstream selection (Phase 0)",
+    "general application (20260730 Phase 3)",
+    "asset-impact approval granted in Phase 3 for director, patterns and reference additions",
+    "licence: MIT, text and SHA-256 preserved"
+  ],
+  "promotion_record": "maintainer/upstreams/promotions/motion-design-f9a8a041.json",
+  "promoted_at": "2026-07-31"
 }

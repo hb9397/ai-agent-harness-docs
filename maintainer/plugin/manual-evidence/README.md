@@ -45,16 +45,10 @@ CLI가 설치된 환경에서 관리 저장소 루트를 기준으로 실행한�
 python maintainer/skills/harness-plugin-maintainer/scripts/smoke_cli_install.py
 ```
 
-Windows에서 npm 전역 설치를 쓰면 `codex`와 `claude`가 `.CMD` shim이라
-`subprocess`가 이름만으로 찾지 못한다. 해소된 경로를 넘긴다.
-
-```bash
-CODEX=$(python -c "import shutil,json;print(json.dumps([shutil.which('codex')]))")
-CLAUDE=$(python -c "import shutil,json;print(json.dumps([shutil.which('claude')]))")
-python maintainer/skills/harness-plugin-maintainer/scripts/smoke_cli_install.py --codex-command-json "$CODEX" --claude-command-json "$CLAUDE" --output maintainer/plugin/cli-smoke.json
-```
-
 `--output`을 주지 않으면 결과를 출력만 하고 `cli-smoke.json`을 갱신하지 않는다.
+
+명령 이름은 `shutil.which`로 해소하므로 Windows의 `.CMD` shim도 그대로 동작한다.
+다른 설치본을 쓰려면 `--codex-command-json`, `--claude-command-json`으로 지정한다.
 
 성공하면 `maintainer/plugin/cli-smoke.json`이 새 payload 버전으로 갱신된다.
 이어서 증적을 다시 생성하고 검사한다.
