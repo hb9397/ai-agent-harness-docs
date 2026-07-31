@@ -25,14 +25,17 @@ manual-evidence/
 
 | 표면 | 상태 | 근거 |
 |---|---|---|
-| Codex CLI | `blocked` | CLI 미설치 환경. `0.1.0` smoke 증적은 버전 불일치로 무효. |
+| Codex CLI | `install-smoke-verified` | Codex CLI `0.146.0`, payload `0.2.0` / 20 skills / 0 agents. 모델 호출은 미검증. |
 | Codex Desktop/App | `manual-required` | 대화형 앱 표면이 필요하다. |
-| Claude Code CLI | `blocked` | 위와 같음. |
+| Claude Code CLI | `install-smoke-verified` | Claude Code `2.1.220`, payload `0.2.0` / 20 skills / 0 agents. 모델 호출은 미검증. |
 | Claude Desktop Code | `manual-required` | Desktop 앱 표면이 필요하다. |
 
-`0.1.0`에서 수행한 CLI 설치 smoke는 Codex CLI `0.146.0`, Claude Code `2.1.220`
-기준이며 `0.2.0`에는 적용되지 않는다. 스킬이 18종에서 20종으로 늘고 archive가
-바뀌었으므로 재실행이 필요하다.
+`0.2.0` 설치 smoke는 2026-07-31에 재실행해 통과했다. 격리된 `CODEX_HOME`과
+`CLAUDE_CONFIG_DIR`에서 marketplace 등록, 설치, 목록 확인, cache 검사, 제거까지
+수행했다.
+
+**설치 smoke는 cache에 파일이 놓였다는 증적일 뿐이다.** 실제 모델이 스킬 계약을
+수행했다는 증적은 아니며, 네 표면 모두 시나리오 A~H 수동 검증이 남아 있다.
 
 ## 재실행 절차
 
@@ -41,6 +44,17 @@ CLI가 설치된 환경에서 관리 저장소 루트를 기준으로 실행한�
 ```bash
 python maintainer/skills/harness-plugin-maintainer/scripts/smoke_cli_install.py
 ```
+
+Windows에서 npm 전역 설치를 쓰면 `codex`와 `claude`가 `.CMD` shim이라
+`subprocess`가 이름만으로 찾지 못한다. 해소된 경로를 넘긴다.
+
+```bash
+CODEX=$(python -c "import shutil,json;print(json.dumps([shutil.which('codex')]))")
+CLAUDE=$(python -c "import shutil,json;print(json.dumps([shutil.which('claude')]))")
+python maintainer/skills/harness-plugin-maintainer/scripts/smoke_cli_install.py --codex-command-json "$CODEX" --claude-command-json "$CLAUDE" --output maintainer/plugin/cli-smoke.json
+```
+
+`--output`을 주지 않으면 결과를 출력만 하고 `cli-smoke.json`을 갱신하지 않는다.
 
 성공하면 `maintainer/plugin/cli-smoke.json`이 새 payload 버전으로 갱신된다.
 이어서 증적을 다시 생성하고 검사한다.
