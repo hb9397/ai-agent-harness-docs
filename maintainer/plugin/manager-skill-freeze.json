@@ -49,12 +49,8 @@
     },
     {
       "skill": "harness-plugin-maintainer",
-      "file_count": 19,
+      "file_count": 16,
       "files": [
-        {
-          "path": "maintainer/skills/harness-plugin-maintainer/evals/.gitkeep",
-          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
-        },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/fixtures/README.md",
           "sha256": "cd6107efe786d87250d17ea8d99a3a25d16b8b6867993a45e05db5ecfbcaacce"
@@ -62,10 +58,6 @@
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/run_evals.py",
           "sha256": "53215400c26b2b904830af4fc1e395a568b364f6d5bf85dac028e9ae55c4adfa"
-        },
-        {
-          "path": "maintainer/skills/harness-plugin-maintainer/references/.gitkeep",
-          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/references/plugin-structure.md",
@@ -112,10 +104,6 @@
           "sha256": "3c928b47f59e57778e0c1bcfd4491a0dd772827b3c0d99c38b3c9de422110c7d"
         },
         {
-          "path": "maintainer/skills/harness-plugin-maintainer/templates/.gitkeep",
-          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
-        },
-        {
           "path": "maintainer/skills/harness-plugin-maintainer/templates/claude-agent.md",
           "sha256": "ef4ab24194d6717cf6a2087c935dc103f86abdfc09a49a6069012e002eec964e"
         },
@@ -131,12 +119,8 @@
     },
     {
       "skill": "skill-portfolio-maintainer",
-      "file_count": 26,
+      "file_count": 22,
       "files": [
-        {
-          "path": "maintainer/skills/skill-portfolio-maintainer/evals/.gitkeep",
-          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
-        },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/evals/fixtures/check_upstreams.json",
           "sha256": "5ed85d0e94acedd3f9d219f06edb184b55bd186630eb467c5dbaf0b68f20aff4"
@@ -174,10 +158,6 @@
           "sha256": "a6b064f66f968e92e45efce0a886fa612fb80b3a71277736050e8d22f0335276"
         },
         {
-          "path": "maintainer/skills/skill-portfolio-maintainer/references/.gitkeep",
-          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
-        },
-        {
           "path": "maintainer/skills/skill-portfolio-maintainer/references/adapted-mode.md",
           "sha256": "7ec6e07cdb7d343cffc61d8e69ad427cd285a1d14b833544a046bb637db8fb7d"
         },
@@ -188,10 +168,6 @@
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/references/vendored-mode.md",
           "sha256": "a72cddbc4897ef47d99893e09894c6f87a772998dd814e14fea4284a3440b999"
-        },
-        {
-          "path": "maintainer/skills/skill-portfolio-maintainer/scripts/.gitkeep",
-          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/check_upstreams.py",
@@ -224,10 +200,6 @@
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/SKILL.md",
           "sha256": "289b361f1f0bf593f1b193ec5773a9fd40f103593e4055eca2211bc49d023067"
-        },
-        {
-          "path": "maintainer/skills/skill-portfolio-maintainer/templates/.gitkeep",
-          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/templates/asset-impact-report.md",
