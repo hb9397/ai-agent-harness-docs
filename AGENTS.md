@@ -19,7 +19,7 @@
 | 관리자 스킬 원본 | `maintainer/skills/` | `.agents/skills/`, `.claude/skills/` repo-local projection |
 | 관리자 upstream·provenance | `maintainer/upstreams/` | 외부 공식·유명 스킬 조사 및 반영 증적 |
 | 관리자 inventory·plugin metadata | `maintainer/inventory/`, `maintainer/plugin/` | machine-readable 기준선과 릴리스 증적 |
-| 운영 문서 | `README.md`, `Docs/` | 사용자 설치·하네스 흐름 설명 |
+| 운영 문서 | `README.md`, `.user-docs/` | 사용자 설치·하네스 흐름 설명 |
 
 ## 사용자 스킬과 관리자 스킬
 
@@ -67,9 +67,9 @@ projection에는 관리자 3종만 있어야 한다.
 스킬 구조, 사용자 플러그인 설치 방식, 하네스 흐름이 바뀌면 다음 문서를 함께 갱신한다.
 
 - `README.md`
-- `Docs/Harness_Engineering.md`
-- `Docs/Harness_Engineering_Intro.md`
-- 관련 `Docs/**`와 `example/**`
+- `.user-docs/Harness_Engineering.md`
+- `.user-docs/Harness_Engineering_Intro.md`
+- 관련 `.user-docs/**`와 `example/**`
 
 역사 문서인 `improvement_plan/20260627/**`는 byte-preserve 대상이다. 수정하지 않고 현행 문서에서 새 기준을 설명한다.
 
@@ -89,6 +89,6 @@ projection에는 관리자 3종만 있어야 한다.
 ## 참조 문서
 
 - `improvement_plan/20260729/플러그인 전환 및 스킬 거버넌스 리팩토링 작업 계획서.md`
-- `Docs/Harness_Engineering.md`
-- `Docs/Harness_Engineering_Intro.md`
-- `Docs/Agent_Skills_Repo_Structure_Analysis.md`
+- `.user-docs/Harness_Engineering.md`
+- `.user-docs/Harness_Engineering_Intro.md`
+- `.user-docs/Agent_Skills_Repo_Structure_Analysis.md`

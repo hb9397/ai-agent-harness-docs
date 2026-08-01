@@ -3,7 +3,7 @@
 이 문서는 외부 공식·신뢰 출처에서 **개념만 참고하는 `reference` 관계**를 기록한다.
 업스트림 파일을 복사·번역·패키징했다는 뜻이 아니며, 원본 runtime과 동일하게
 동작한다는 보증도 아니다. 번역·재구성한 `adapted` 관계는
-`Docs/Imported_Skill_Provenance.md`에서 별도로 추적한다.
+`.user-docs/Imported_Skill_Provenance.md`에서 별도로 추적한다.
 
 ## 참조 출처
 
@@ -21,13 +21,13 @@
 
 위 두 출처는 같은 저장소를 **직접 반입 관계와 동시에** 추적한다.
 `skills/ui-ux-pro-max`와 `skills/motion-design`은 `adapted`이며
-`Docs/Imported_Skill_Provenance.md`에서 다룬다. 이 표의 참고 관계는 기존 스킬 4종에
+`.user-docs/Imported_Skill_Provenance.md`에서 다룬다. 이 표의 참고 관계는 기존 스킬 4종에
 **개념만** 반영한 것으로, 업스트림 파일·번역문·요약문을 반입하지 않는다. 두 관계는
 하나의 `relationship_group`으로 묶여 같은 고정 SHA를 가리킨다.
 
 `frontend-design`의 Anthropic 원본 관계와 `custom-skill-design`의 Anthropic
 `skill-creator` 관계는 번역·축약·재구성된 `adapted` 관계다. 위 표의 참조 관계와
-혼동하지 않고 `Docs/Imported_Skill_Provenance.md`에서 라이선스·고정 ref·파일
+혼동하지 않고 `.user-docs/Imported_Skill_Provenance.md`에서 라이선스·고정 ref·파일
 대응표를 추적한다.
 
 ## impl 계열 재분류

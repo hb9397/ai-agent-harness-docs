@@ -14,7 +14,7 @@
 
 > **⚠ 과거 스냅샷 문서** — 2026-05-27 시점 분석이며, 이후 리팩토링(D-7 파일 생성 폐지, `.instruction` → `.docs/root-context` 전환 등)으로 일부 내용이 현행과 다릅니다.
 >
-> 특히 이 문서의 `18개`, `skill-designer`, `skill-design`, `model:` 예시는 당시 조사 기록입니다. 현재 운영 기준은 `README.md`, `Docs/Harness_Engineering.md`, `CLAUDE.md`, `AGENTS.md`를 따릅니다.
+> 특히 이 문서의 `18개`, `skill-designer`, `skill-design`, `model:` 예시는 당시 조사 기록입니다. 현재 운영 기준은 `README.md`, `.user-docs/Harness_Engineering.md`, `CLAUDE.md`, `AGENTS.md`를 따릅니다.
 
 > 작성일: 2026-05-27
 >

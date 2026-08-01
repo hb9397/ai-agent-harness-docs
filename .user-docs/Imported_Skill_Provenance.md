@@ -1,6 +1,6 @@
 # 반입 스킬 출처 추적
 
-이 문서는 하네스 플러그인에 포함·변형·패키징되는 업스트림 콘텐츠를 기록한다. 참조 전용 출처는 `Docs/External_Skill_References.md`에서 별도로 추적한다.
+이 문서는 하네스 플러그인에 포함·변형·패키징되는 업스트림 콘텐츠를 기록한다. 참조 전용 출처는 `.user-docs/External_Skill_References.md`에서 별도로 추적한다.
 
 현재 감사 결과, 업스트림 저장소 4개와의 `adapted` 관계 5건이 확인되었다.
 활성 `vendored` 관계는 없다.
@@ -45,7 +45,7 @@
 | `lottiefiles-motion-design-principles` | `reference` | 기존 디자인·검증 스킬 4종 | 아니오 |
 
 참고 관계는 파일을 복사하지 않으므로 라이선스 패키징 대상이 아니다. 자세한 내용은
-`Docs/External_Skill_References.md`에 있다.
+`.user-docs/External_Skill_References.md`에 있다.
 
 Motion Design의 참조 자료에는 Material Design 3, Apple Human Interface Guidelines,
 Disney 애니메이션 원칙이 인용되어 있다. 업스트림 최상위 MIT는 업스트림 저작자가
@@ -84,7 +84,7 @@ python maintainer/skills/skill-portfolio-maintainer/scripts/check_upstreams.py \
 이 명령은 읽기 전용 관찰이다. `--write-observed`를 추가해도 `observed`만 갱신하며,
 `custom-skill-design` 정본 수정은 두 출처의 차이와 충돌을 관리자가 검토하고 명시적으로
 승인한 뒤 별도 작업으로 수행한다. OpenAI reference의 세부 최신 관찰값과 동작 동등성
-한계는 `Docs/External_Skill_References.md`에서 추적한다.
+한계는 `.user-docs/External_Skill_References.md`에서 추적한다.
 
 ## 동작 검증 해석
 
@@ -121,5 +121,5 @@ python maintainer/skills/skill-portfolio-maintainer/scripts/check_upstreams.py \
 
 위에 열거한 로컬 파일에 대해 `im-not-ai`와 Anthropic Skills를 참조 전용으로 표시해서는
 안 된다. 현행 문서 또는 다른 디자인 출처에 대한 별도의 개념적 참조는
-`Docs/External_Skill_References.md`에 남길 수 있지만, 번역·재구성 관계와 그에 따른
+`.user-docs/External_Skill_References.md`에 남길 수 있지만, 번역·재구성 관계와 그에 따른
 재배포 의무는 이 문서에서 추적한다.

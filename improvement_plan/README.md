@@ -1,6 +1,6 @@
 # improvement_plan — 리팩토링 의사결정·점검 이력
 
-이 디렉터리는 하네스 구조 변경의 계획과 점검 기록을 보관한다. 현행 운영 기준은 루트 [README.md](../README.md), [Docs/Plugin_Installation_Guide.md](../Docs/Plugin_Installation_Guide.md), [Docs/Harness_Engineering.md](../Docs/Harness_Engineering.md)를 우선한다.
+이 디렉터리는 하네스 구조 변경의 계획과 점검 기록을 보관한다. 현행 운영 기준은 루트 [README.md](../README.md), [.user-docs/Plugin_Installation_Guide.md](../.user-docs/Plugin_Installation_Guide.md), [.user-docs/Harness_Engineering.md](../.user-docs/Harness_Engineering.md)를 우선한다.
 
 ---
 
@@ -8,7 +8,7 @@
 
 | 위치 | 상태 | 설명 |
 |------|------|------|
-| [20260801/260801-1.user-docs-migration-and-education-removal-impl-refactor.md](./20260801/260801-1.user-docs-migration-and-education-removal-impl-refactor.md) | 구현 대기 | 루트 `Docs/`를 `.user-docs/`로 이전하고 `education/`을 제거한 뒤, 정본·projection·플러그인 `0.2.2` 재빌드와 Codex·Claude 기술 회귀검증을 수행하는 impl-doc 계획 |
+| [20260801/260801-1.user-docs-migration-and-education-removal-impl-refactor.md](./20260801/260801-1.user-docs-migration-and-education-removal-impl-refactor.md) | 구현 대기 | 루트 `.user-docs/`를 `.user-docs/`로 이전하고 `education/`을 제거한 뒤, 정본·projection·플러그인 `0.2.2` 재빌드와 Codex·Claude 기술 회귀검증을 수행하는 impl-doc 계획 |
 | [20260729/플러그인 전환 및 스킬 거버넌스 리팩토링 작업 계획서.md](./20260729/플러그인%20전환%20및%20스킬%20거버넌스%20리팩토링%20작업%20계획서.md) | Phase 0~10 구현 완료 / 직접 표면 검증 대기 | 사용자 플러그인 전환, 관리자/사용자 스킬 분리, upstream governance, 문서 최신화, release gate 구현 완료. Codex CLI·Claude Code CLI의 로컬 marketplace 설치 smoke는 통과했고 Codex·Claude CLI/앱 네 표면의 실제 모델 호출 증적과 관리자 최종 승인이 남아 있음 |
 
 ---

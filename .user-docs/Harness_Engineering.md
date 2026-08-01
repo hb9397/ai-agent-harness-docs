@@ -739,9 +739,9 @@ upstream integration mode는 네 가지다.
 | mode | 의미 | 정본 문서 |
 |------|------|-----------|
 | `native` | 외부 upstream 관계가 없는 로컬 스킬 | registry |
-| `reference` | 원칙·workflow·아이디어만 참고하고 원문 자산은 배포하지 않음 | `Docs/External_Skill_References.md` |
-| `adapted` | upstream 콘텐츠를 번역·수정·재구성함 | `Docs/Imported_Skill_Provenance.md` |
-| `vendored` | upstream 파일을 원문 그대로 복사함 | `Docs/Imported_Skill_Provenance.md` |
+| `reference` | 원칙·workflow·아이디어만 참고하고 원문 자산은 배포하지 않음 | `.user-docs/External_Skill_References.md` |
+| `adapted` | upstream 콘텐츠를 번역·수정·재구성함 | `.user-docs/Imported_Skill_Provenance.md` |
+| `vendored` | upstream 파일을 원문 그대로 복사함 | `.user-docs/Imported_Skill_Provenance.md` |
 
 증거가 부족한 관계는 `unknown` 차단 상태로 두며, 해소 전에는 반입하거나
 릴리스하지 않는다.

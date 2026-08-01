@@ -21,9 +21,9 @@
   CLI·앱 네 표면의 실제 모델 호출 수동 증적이 모두 필요함
 
 설치 명령과 앱별 확인 절차는
-[Plugin Installation Guide](./Docs/Plugin_Installation_Guide.md)를 먼저 본다.
+[Plugin Installation Guide](./.user-docs/Plugin_Installation_Guide.md)를 먼저 본다.
 하네스의 상세 운영 계약은
-[Harness Engineering](./Docs/Harness_Engineering.md)이 정본이다.
+[Harness Engineering](./.user-docs/Harness_Engineering.md)이 정본이다.
 
 ---
 
@@ -401,11 +401,11 @@ python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projecti
 
 - `native`: 외부 upstream 관계가 없는 로컬 스킬
 - `reference`: 원칙·아이디어·workflow만 참고하고 원문 자산은 배포하지 않음 —
-  [External Skill References](./Docs/External_Skill_References.md)
+  [External Skill References](./.user-docs/External_Skill_References.md)
 - `adapted`: upstream 콘텐츠를 번역·수정·재구성해 사용함 —
-  [Imported Skill Provenance](./Docs/Imported_Skill_Provenance.md)
+  [Imported Skill Provenance](./.user-docs/Imported_Skill_Provenance.md)
 - `vendored`: upstream 파일을 원문 그대로 포함함 —
-  [Imported Skill Provenance](./Docs/Imported_Skill_Provenance.md)
+  [Imported Skill Provenance](./.user-docs/Imported_Skill_Provenance.md)
 
 증거가 부족하면 `unknown` 차단 상태로 두며, 해소 전에는 반입하거나
 릴리스하지 않는다.
@@ -448,7 +448,7 @@ upstream clone 없이 플러그인 안에서 사용하고, 관리자가 GitHub u
 각 원본 저장소의 안내를 따른다.**
 
 세부 업데이트 기준은
-[Skill Upstream Update Policy](./Docs/Skill_Upstream_Update_Policy.md)를 따른다.
+[Skill Upstream Update Policy](./.user-docs/Skill_Upstream_Update_Policy.md)를 따른다.
 
 ## 12. 플러그인 빌드와 릴리스
 
@@ -484,16 +484,16 @@ python maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py
 
 ## 13. 상세 문서
 
-- [Plugin Installation Guide](./Docs/Plugin_Installation_Guide.md) — Codex·Claude
+- [Plugin Installation Guide](./.user-docs/Plugin_Installation_Guide.md) — Codex·Claude
   CLI/App 설치·업데이트·제거·수동 증적
-- [Harness Engineering](./Docs/Harness_Engineering.md) — 사용자 런북과 관리자
+- [Harness Engineering](./.user-docs/Harness_Engineering.md) — 사용자 런북과 관리자
   운영 계약
-- [Harness Engineering Intro](./Docs/Harness_Engineering_Intro.md) — 도입 배경,
+- [Harness Engineering Intro](./.user-docs/Harness_Engineering_Intro.md) — 도입 배경,
   선택 가이드, 프롬프트 예시
-- [Docs Index](./Docs/README.md) — 문서 역할 인덱스
-- [External Skill References](./Docs/External_Skill_References.md) — 외부 `reference` 관계
-- [Imported Skill Provenance](./Docs/Imported_Skill_Provenance.md) — `adapted`·`vendored` provenance
-- [Skill Upstream Update Policy](./Docs/Skill_Upstream_Update_Policy.md) — 관리자
+- [Docs Index](./.user-docs/README.md) — 문서 역할 인덱스
+- [External Skill References](./.user-docs/External_Skill_References.md) — 외부 `reference` 관계
+- [Imported Skill Provenance](./.user-docs/Imported_Skill_Provenance.md) — `adapted`·`vendored` provenance
+- [Skill Upstream Update Policy](./.user-docs/Skill_Upstream_Update_Policy.md) — 관리자
   최신화 정책
 
 ## 14. 라이선스
@@ -509,7 +509,7 @@ python maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py
 
 `reference` 관계로만 참고한 외부 프로젝트는 파일을 반입하지 않으므로 라이선스
 배포 대상이 아니다. 해당 관계는
-[External Skill References](./Docs/External_Skill_References.md)에서 추적한다.
+[External Skill References](./.user-docs/External_Skill_References.md)에서 추적한다.
 
 ---
 

@@ -112,7 +112,7 @@ TEST-014 초기 실행에서 간헐적 실패가 있었다. 원인은 Windows에
 - `verify_install_surfaces.py`가 릴리스 체크리스트 본문에 "스킬 18개"를
   하드코딩해, 실제 20종인데도 18종이라 주장하는 체크리스트를 생성하고
   `--check`는 자기 자신과 비교하므로 통과했다.
-- `Docs/Plugin_Installation_Guide.md`, `Docs/Harness_Engineering.md`,
+- `.user-docs/Plugin_Installation_Guide.md`, `.user-docs/Harness_Engineering.md`,
   `harness-plugin-maintainer/SKILL.md`, `references/plugin-structure.md`에
   18종·7종 표현이 남아 있었다.
 

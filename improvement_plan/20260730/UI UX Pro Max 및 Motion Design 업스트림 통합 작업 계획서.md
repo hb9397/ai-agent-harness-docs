@@ -19,7 +19,7 @@
 4. 기존 일반 하네스 흐름과 구분되는 디자인 전용 흐름을 추가한다.
 5. 디자인 전용 흐름은 프로토타입과 실제 제품 화면 구현의 두 갈래로 분기한다.
 6. Caveman과 Ruflo는 하네스 플러그인에 내장하지 않고 별도 설치 대상으로 문서화한다.
-7. `README.md`, `Docs/Harness_Engineering_Intro.md`, `Docs/Harness_Engineering.md`와 관련 운영 문서를 현재 구조에 맞게 갱신한다.
+7. `README.md`, `.user-docs/Harness_Engineering_Intro.md`, `.user-docs/Harness_Engineering.md`와 관련 운영 문서를 현재 구조에 맞게 갱신한다.
 8. 저장소 본체 라이선스와 저작권 귀속을 확정하고, 플러그인 버전 승격 기준을 성문화한다.
 
 이 계획서는 구현 결과물이 아니다. 외부 파일 반입, 보호 자산 추가·변경, 플러그인 재생성은 각 Phase의 승인·검증 조건을 충족한 뒤 수행한다.
@@ -396,16 +396,16 @@ python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projecti
 필수:
 
 - `README.md`
-- `Docs/Harness_Engineering_Intro.md`
-- `Docs/Harness_Engineering.md`
+- `.user-docs/Harness_Engineering_Intro.md`
+- `.user-docs/Harness_Engineering.md`
 
 연쇄 갱신:
 
-- `Docs/README.md`
-- `Docs/Plugin_Installation_Guide.md`
-- `Docs/Imported_Skill_Provenance.md`
-- `Docs/External_Skill_References.md`
-- `Docs/Skill_Upstream_Update_Policy.md`
+- `.user-docs/README.md`
+- `.user-docs/Plugin_Installation_Guide.md`
+- `.user-docs/Imported_Skill_Provenance.md`
+- `.user-docs/External_Skill_References.md`
+- `.user-docs/Skill_Upstream_Update_Policy.md`
 - `maintainer/README.md`
 - 관련 `example/**`
 
@@ -482,7 +482,7 @@ python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projecti
 - `maintainer/upstreams/**`
 - `plugins/ai-agent-harness/**`
 - `README.md`
-- `Docs/**`
+- `.user-docs/**`
 
 작업:
 
@@ -1095,8 +1095,8 @@ TEST-003과 같다.
 
 - `maintainer/upstreams/provenance/current-skills.json`
 - 신규 source provenance
-- `Docs/External_Skill_References.md`
-- `Docs/Imported_Skill_Provenance.md`
+- `.user-docs/External_Skill_References.md`
+- `.user-docs/Imported_Skill_Provenance.md`
 
 규칙:
 
@@ -1345,7 +1345,7 @@ git diff --check
     `THIRD_PARTY_NOTICES.md`와 플러그인 `licenses/`를 따른다고 설명한다.
     LIC-001에서 추가한 내용이 이미 있으면 버전·스킬 수 변경에 맞춰 정합만 맞춘다.
 
-#### CORE-014 — `Docs/Harness_Engineering_Intro.md` 갱신
+#### CORE-014 — `.user-docs/Harness_Engineering_Intro.md` 갱신
 
 중학생도 이해할 수 있는 수준으로 다음을 설명한다.
 
@@ -1357,7 +1357,7 @@ git diff --check
 - 모션을 항상 넣지 않는 이유
 - Caveman과 Ruflo가 하네스에 포함되지 않는 이유
 
-#### CORE-015 — `Docs/Harness_Engineering.md` 갱신
+#### CORE-015 — `.user-docs/Harness_Engineering.md` 갱신
 
 상세 반영:
 
@@ -1375,11 +1375,11 @@ git diff --check
 
 대상:
 
-- `Docs/README.md`
-- `Docs/Plugin_Installation_Guide.md`
-- `Docs/Imported_Skill_Provenance.md`
-- `Docs/External_Skill_References.md`
-- `Docs/Skill_Upstream_Update_Policy.md`
+- `.user-docs/README.md`
+- `.user-docs/Plugin_Installation_Guide.md`
+- `.user-docs/Imported_Skill_Provenance.md`
+- `.user-docs/External_Skill_References.md`
+- `.user-docs/Skill_Upstream_Update_Policy.md`
 - `maintainer/README.md`
 - 관련 `example/**`
 
@@ -1390,8 +1390,8 @@ git diff --check
 - 과거 release evidence와 역사 계획의 숫자는 역사 기록으로 보존한다.
 - 직접 반입과 참고 관계를 같은 것으로 설명하지 않는다.
 - 별도 설치 도구가 이 플러그인의 필수 의존성인 것처럼 쓰지 않는다.
-- `Docs/Imported_Skill_Provenance.md`에는 직접 반입 2종을,
-  `Docs/External_Skill_References.md`에는 참고 2종을 각각 기록한다.
+- `.user-docs/Imported_Skill_Provenance.md`에는 직접 반입 2종을,
+  `.user-docs/External_Skill_References.md`에는 참고 2종을 각각 기록한다.
 
 #### TEST-008 — 문서 검증
 
