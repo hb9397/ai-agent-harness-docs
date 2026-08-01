@@ -275,7 +275,7 @@ def lock(root: Path, artifact_manifest: list[dict], sources: list[dict]) -> dict
             state["packaged"] = {
                 "plugin_id": PLUGIN_ID,
                 "version": PLUGIN_VERSION,
-                "packaged_at": "2026-07-29",
+                "packaged_at": "2026-08-01",
                 "artifact_manifest_sha256": next(item["sha256"] for item in artifact_manifest if item["path"] == "CAPABILITIES.json"),
             }
     if matched != packaged_ids:

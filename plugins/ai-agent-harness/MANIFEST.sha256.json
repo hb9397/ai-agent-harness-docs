@@ -3,15 +3,15 @@
   "files": [
     {
       "path": ".claude-plugin/plugin.json",
-      "sha256": "0488a3832a2f0b1d6bc1cacaf8258a66533eb8b80a70180de4744d578adeea8b"
+      "sha256": "f0467ac7a06846255dae4903825954097f4c7256c125c4504dc262618a4ac4b8"
     },
     {
       "path": ".codex-plugin/plugin.json",
-      "sha256": "ca951fb75b9c954777f3cea1b457cb9482d070119a6bf4d88f54b4a228a50dec"
+      "sha256": "53dbf9ca46985782cb6e45c855d8bf2f544b82b3a22a3e4449b9b4010ab50ab5"
     },
     {
       "path": "CAPABILITIES.json",
-      "sha256": "da19f248eb59e2c328a67c8b9fda0b1ea172185dd1398143c3dc2d4babe2c1b7"
+      "sha256": "56446c32fbb232afb87a7b8233c68eceb70cfc8f30ea0bd7fd4325b1387ab4d2"
     },
     {
       "path": "LICENSE",
@@ -27,7 +27,7 @@
     },
     {
       "path": "UPSTREAMS.lock.json",
-      "sha256": "c291f3e66bbe7eb060098e7a0927eae462ffce9b9c1e27c8a1b0ccffcb0bdb64"
+      "sha256": "d8659c94fd83d3a113bb2205ff46b8d0d023791943070a8bd0992dd71741f0d0"
     },
     {
       "path": "licenses/anthropic-frontend-design-LICENSE",
@@ -235,11 +235,11 @@
     },
     {
       "path": "runtime/claude/skills/frontend-design/SKILL.md",
-      "sha256": "bbe48e9a8fa2b825431603c11149c4cbb1e9baca1982006a4ef456fa38c7903e"
+      "sha256": "02be47d17a8ab37a1aeabfc26d6ad40a5f8873bd116354e17459721d14d26f29"
     },
     {
       "path": "runtime/claude/skills/frontend-design/evals/run_evals.py",
-      "sha256": "ae6ba0cd208be3555e6bf39bd14cc8a435f6d30e063da42f108d62f22f5d35fc"
+      "sha256": "463129ba940806b1ac8c76b1b22b187a62bcd0df70b60c28b877c187903b0dbd"
     },
     {
       "path": "runtime/claude/skills/git-scoped-account/SKILL.md",
@@ -303,7 +303,7 @@
     },
     {
       "path": "runtime/claude/skills/harness-setup/prompts/detection.md",
-      "sha256": "5d975d52a2cce65a4a6640eeaa659459d8e56a8df2c65c2e3713d84ffadc6d77"
+      "sha256": "73eab3c5f3a406c345df6b233a229b6a25e494e90b2bf953663b56ac258d697d"
     },
     {
       "path": "runtime/claude/skills/harness-setup/prompts/multi-app-setup.md",
@@ -507,7 +507,7 @@
     },
     {
       "path": "runtime/claude/skills/motion-design/SKILL.md",
-      "sha256": "c9d3a53357eae9362e12fcb085bcb366ca3161193f94a314c899e8187136b5ad"
+      "sha256": "4f3e9e2f071e4ff226181e90b661a7e48ae34b217333e44cdc05503ad0f0f377"
     },
     {
       "path": "runtime/claude/skills/motion-design/director/choreography.md",
@@ -631,7 +631,7 @@
     },
     {
       "path": "runtime/claude/skills/ui-ux-pro-max/SKILL.md",
-      "sha256": "2084c76c97e7730ca551d9f09925924b98df49fc3652e1402e209fe8cf20a412"
+      "sha256": "7d02806f27270f7297bb273128f5bbf1c6264f1b41d226fdd2ba3c210fd03521"
     },
     {
       "path": "runtime/claude/skills/ui-ux-pro-max/data/app-interface.csv",
@@ -995,11 +995,11 @@
     },
     {
       "path": "runtime/codex/skills/frontend-design/SKILL.md",
-      "sha256": "bbe48e9a8fa2b825431603c11149c4cbb1e9baca1982006a4ef456fa38c7903e"
+      "sha256": "02be47d17a8ab37a1aeabfc26d6ad40a5f8873bd116354e17459721d14d26f29"
     },
     {
       "path": "runtime/codex/skills/frontend-design/evals/run_evals.py",
-      "sha256": "ae6ba0cd208be3555e6bf39bd14cc8a435f6d30e063da42f108d62f22f5d35fc"
+      "sha256": "463129ba940806b1ac8c76b1b22b187a62bcd0df70b60c28b877c187903b0dbd"
     },
     {
       "path": "runtime/codex/skills/git-scoped-account/SKILL.md",
@@ -1063,7 +1063,7 @@
     },
     {
       "path": "runtime/codex/skills/harness-setup/prompts/detection.md",
-      "sha256": "5d975d52a2cce65a4a6640eeaa659459d8e56a8df2c65c2e3713d84ffadc6d77"
+      "sha256": "73eab3c5f3a406c345df6b233a229b6a25e494e90b2bf953663b56ac258d697d"
     },
     {
       "path": "runtime/codex/skills/harness-setup/prompts/multi-app-setup.md",
@@ -1267,7 +1267,7 @@
     },
     {
       "path": "runtime/codex/skills/motion-design/SKILL.md",
-      "sha256": "c9d3a53357eae9362e12fcb085bcb366ca3161193f94a314c899e8187136b5ad"
+      "sha256": "4f3e9e2f071e4ff226181e90b661a7e48ae34b217333e44cdc05503ad0f0f377"
     },
     {
       "path": "runtime/codex/skills/motion-design/director/choreography.md",
@@ -1391,7 +1391,7 @@
     },
     {
       "path": "runtime/codex/skills/ui-ux-pro-max/SKILL.md",
-      "sha256": "2084c76c97e7730ca551d9f09925924b98df49fc3652e1402e209fe8cf20a412"
+      "sha256": "7d02806f27270f7297bb273128f5bbf1c6264f1b41d226fdd2ba3c210fd03521"
     },
     {
       "path": "runtime/codex/skills/ui-ux-pro-max/data/app-interface.csv",

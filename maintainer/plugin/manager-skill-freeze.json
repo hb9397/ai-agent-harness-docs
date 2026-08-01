@@ -73,7 +73,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py",
-          "sha256": "aeac1bff17bf781c7aa0bf978c60c85ec022e8d277fc5cb584e01eba3864247c"
+          "sha256": "2129afc52fb470a34bc94ee47a90a16bc716af5ae6386a2c69e8bfc38ec0bdb5"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/freeze_manager_inventory.py",
@@ -81,7 +81,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/plugin_common.py",
-          "sha256": "4417efb82543af0344050072822b8a5883f2130e57f44ed23d04d8f1c8e5e686"
+          "sha256": "cd3d2f22c77f8c9cfffe1313983328eb725db33289724e2cf5c71c3777c95b93"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/run_all_skill_evals.py",
@@ -89,7 +89,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/run_release_regression.py",
-          "sha256": "12eb027a0ae0714b91639621fc2c3a364a4d07317bc859af429417d24a2f6d58"
+          "sha256": "d3f9a108751f4ae41e6fd999d34ea60b860db408f3f2479d4d349b68ddbf310f"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/smoke_cli_install.py",
@@ -199,7 +199,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py",
-          "sha256": "a9e90fbb896d59755fdc6316901e9dc9100be03a29a12a3af27092941414d204"
+          "sha256": "4e450bb6cf03459dd8a63acf0d4be314703459bdba3b58528352d53ffd080a88"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/SKILL.md",

@@ -135,7 +135,7 @@ def reproducible_build(root: Path) -> dict[str, Any]:
 
 def local_links(root: Path) -> dict[str, Any]:
     files = [root / "README.md"]
-    for base in ["Docs", "example", "improvement_plan"]:
+    for base in [".user-docs", "example", "improvement_plan"]:
         files.extend(sorted((root / base).rglob("*.md")))
     pattern = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
     missing: list[dict[str, str]] = []

@@ -17,7 +17,7 @@
 
    날짜가 들어간 계획서 이름이나 특정 shell 명령은 관리 레포 판정 기준으로 쓰지
    않는다. 이전 구조 fallback이 필요하면 `skills/harness-setup/SKILL.md`와
-   `Docs/Harness_Engineering.md`의 공존 여부만 읽기 전용으로 확인한다.
+   `.user-docs/Harness_Engineering.md`의 공존 여부만 읽기 전용으로 확인한다.
 
 2. 위 조건이 성립하면 → **하네스 관리 레포 내부**. 사용자에게 대상 프로젝트 루트 경로를 질문한다. 부모 폴더를 자동 적용하지 않는다.
 
