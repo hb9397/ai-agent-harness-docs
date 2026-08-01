@@ -332,9 +332,9 @@ def has_accepted_adapted_status(text: str) -> bool:
 
 
 def validate_docs(root: Path, errors: list[str]) -> None:
-    refs = root / "Docs" / "External_Skill_References.md"
-    imports = root / "Docs" / "Imported_Skill_Provenance.md"
-    policy = root / "Docs" / "Skill_Upstream_Update_Policy.md"
+    refs = root / ".user-docs" / "External_Skill_References.md"
+    imports = root / ".user-docs" / "Imported_Skill_Provenance.md"
+    policy = root / ".user-docs" / "Skill_Upstream_Update_Policy.md"
     for path in (refs, imports, policy):
         if not path.exists():
             error(errors, f"missing doc: {path.relative_to(root)}")
