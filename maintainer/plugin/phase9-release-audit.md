@@ -1,6 +1,6 @@
-# 최종 감사 — `0.2.1` 릴리스 후보
+# 최종 감사 — `0.2.2` 릴리스 후보
 
-생성 시각: 2026-07-31
+생성 시각: 2026-08-01
 
 대상 계획서: `improvement_plan/20260730/UI UX Pro Max 및 Motion Design 업스트림 통합 작업 계획서.md`
 
@@ -16,9 +16,9 @@
 | 항목 | 값 |
 |---|---|
 | 플러그인 ID | `ai-agent-harness` |
-| 버전 | `0.2.1` |
-| 아카이브 | `plugins/ai-agent-harness-0.2.1.zip` |
-| 아카이브 SHA-256 | `ed5d08a52b99955b1b1d488ef3311161f011e8188d6e33253a9aa9c05e8b99cb` |
+| 버전 | `0.2.2` |
+| 아카이브 | `plugins/ai-agent-harness-0.2.2.zip` |
+| 아카이브 SHA-256 | `016be105eaebf46f164641946c1705edbf1b70bed7a3bf4aff661a6e0814d27c` |
 | 논리 사용자 스킬 | 20 |
 | 관리자 스킬 | 3 (payload 제외) |
 | Codex 물리 스킬 / agent | 20 / 0 |
@@ -37,6 +37,7 @@ archive 해시를 기록한다.
 | `0.1.1` | PATCH | `pre-commit` eval의 오탐 수정. 공개 동작 변경 없음. |
 | `0.2.0` | MINOR | 사용자 스킬 2종 추가, 기존 4종의 선택적 산출물과 검증 항목 확대. |
 | `0.2.1` | PATCH | 저장소 개명(`AI_Agent_docs` → `ai-agent-harness-docs`)에 따른 manifest·marketplace·NOTICE URL 정정. 공개 동작 변경 없음. |
+| `0.2.2` | PATCH | 관리 저장소 운영문서를 `.user-docs/`로 이전하고, 공개 사용자 계약 변경 없이 정본·검증·runtime 참조를 정합화. 교육자료 제거. |
 
 ## Packaged upstream
 
@@ -124,9 +125,9 @@ TEST-014 초기 실행에서 간헐적 실패가 있었다. 원인은 Windows에
 
 | 표면 | 상태 | 증적 |
 |---|---|---|
-| Codex CLI | `install-smoke-verified` | Codex CLI `0.146.0`, payload `0.2.1` / 20 skills / 0 agents / cleanup passed. **모델 호출 미검증.** |
+| Codex CLI | `install-smoke-verified` | Codex CLI `0.146.0`, payload `0.2.2` / 20 skills / 0 agents / cleanup passed. **모델 호출 미검증.** |
 | Codex Desktop/App | `manual-required` | 대화형 Plugins UI 표면이 필요하다. |
-| Claude Code CLI | `install-smoke-verified` | Claude Code `2.1.220`, payload `0.2.1` / 20 skills / 0 agents / cleanup passed. **모델 호출 미검증.** |
+| Claude Code CLI | `install-smoke-verified` | Claude Code `2.1.220`, payload `0.2.2` / 20 skills / 0 agents / cleanup passed. **모델 호출 미검증.** |
 | Claude Desktop Code | `manual-required` | Desktop Code 앱 표면이 필요하다. |
 
 판정 규칙에 따라 자동 설치 성공을 모델 동작 성공으로 대신하지 않고, CLI 성공을

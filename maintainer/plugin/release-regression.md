@@ -5,8 +5,8 @@
 ## 요약
 
 - 전체 상태: `not-release-ready`
-- 플러그인: `ai-agent-harness` `0.2.1`
-- 아카이브 SHA-256: `ed5d08a52b99955b1b1d488ef3311161f011e8188d6e33253a9aa9c05e8b99cb`
+- 플러그인: `ai-agent-harness` `0.2.2`
+- 아카이브 SHA-256: `016be105eaebf46f164641946c1705edbf1b70bed7a3bf4aff661a6e0814d27c`
 - 릴리스 게이트: `not-release-ready`
 - push/tag/release 생성: `false`
 

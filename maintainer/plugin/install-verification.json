@@ -4,10 +4,10 @@
   "plugin": {
     "plugin_root": "plugins/ai-agent-harness",
     "plugin_id": "ai-agent-harness",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "codex_manifest_matches_claude": true,
-    "archive": "plugins/ai-agent-harness-0.2.1.zip",
-    "archive_sha256": "ed5d08a52b99955b1b1d488ef3311161f011e8188d6e33253a9aa9c05e8b99cb",
+    "archive": "plugins/ai-agent-harness-0.2.2.zip",
+    "archive_sha256": "016be105eaebf46f164641946c1705edbf1b70bed7a3bf4aff661a6e0814d27c",
     "archive_sha256_matches_release": true,
     "logical_user_skills": 20,
     "codex_physical_skills": 20,
@@ -82,7 +82,7 @@
       "status": "failed-to-start",
       "exit_code": null,
       "stdout_excerpt": "",
-      "stderr_excerpt": "[WinError 2] 지정된 파일을 찾을 수 없습니다"
+      "stderr_excerpt": "[WinError 5] 액세스가 거부되었습니다"
     },
     "codex_plugin_help": {
       "command": [
@@ -94,7 +94,7 @@
       "status": "failed-to-start",
       "exit_code": null,
       "stdout_excerpt": "",
-      "stderr_excerpt": "[WinError 2] 지정된 파일을 찾을 수 없습니다"
+      "stderr_excerpt": "[WinError 5] 액세스가 거부되었습니다"
     },
     "claude_help": {
       "command": [
@@ -125,7 +125,7 @@
         "evidence_level": "marketplace-install-and-cache-smoke",
         "model_invocation_verified": false,
         "installed_payload": {
-          "version": "0.2.1",
+          "version": "0.2.2",
           "skill_count": 20,
           "agent_count": 0,
           "required_skills": [
@@ -146,7 +146,7 @@
         "evidence_level": "marketplace-install-and-cache-smoke",
         "model_invocation_verified": false,
         "installed_payload": {
-          "version": "0.2.1",
+          "version": "0.2.2",
           "skill_count": 20,
           "agent_count": 0,
           "required_skills": [
