@@ -5,7 +5,7 @@
 
 ```text
 manual-evidence/
-└── 20260801/
+└── 20260803/
     ├── codex-cli.md
     ├── codex-desktop-app.md
     ├── claude-code-cli.md
@@ -21,16 +21,16 @@ manual-evidence/
   이어받지 않는다. `verify_install_surfaces.py`가 이 불일치를 검사한다.
 - 네 표면의 수동 증적이 모두 충족되기 전에는 release-ready로 표시하지 않는다.
 
-## 현재 상태 — `0.2.2`
+## 현재 상태 — `0.3.0`
 
 | 표면 | 상태 | 근거 |
 |---|---|---|
-| Codex CLI | `install-smoke-verified` | Codex CLI `0.146.0`, payload `0.2.2` / 20 skills / 0 agents. 모델 호출은 미검증. |
+| Codex CLI | `install-smoke-verified` | Codex CLI `0.146.0`, `harness-kit@hb9397` payload `0.3.0` / 19 skills / 0 agents. 모델 호출은 미검증. |
 | Codex Desktop/App | `manual-required` | 대화형 앱 표면이 필요하다. |
-| Claude Code CLI | `install-smoke-verified` | Claude Code `2.1.220`, payload `0.2.2` / 20 skills / 0 agents. 모델 호출은 미검증. |
+| Claude Code CLI | `install-smoke-verified` | Claude Code `2.1.220`, `harness-kit@hb9397` payload `0.3.0` / 19 skills / 0 agents. 모델 호출은 미검증. |
 | Claude Desktop Code | `manual-required` | Desktop 앱 표면이 필요하다. |
 
-`0.2.2` 설치 smoke는 2026-08-01에 재실행해 통과했다. 격리된 `CODEX_HOME`과
+`0.3.0` 설치 smoke는 2026-08-03에 재실행해 통과했다. 격리된 `CODEX_HOME`과
 `CLAUDE_CONFIG_DIR`에서 marketplace 등록, 설치, 목록 확인, cache 검사, 제거까지
 수행했다.
 

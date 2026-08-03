@@ -2,6 +2,11 @@
 
 생성 시각: 2026-07-29T00:00:00+00:00
 
+> Historical report: 이 문서는 `0.2.2` 후보에 대한 회귀검증 기록이다. 현재
+> `harness-kit` `0.3.0` 설치 증적은 `install-verification.json`과
+> `release-checklist.md`에 갱신되어 있으며, 현재 후보의 전체 회귀 보고서는
+> Phase 7에서 재생성한다.
+
 ## 요약
 
 - 전체 상태: `not-release-ready`

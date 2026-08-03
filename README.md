@@ -1,24 +1,22 @@
-# AI Agent Harness — 관리 저장소
+# Harness Kit — 관리 저장소
 
 > 이 저장소는 하네스를 개발·검증·배포하는 **관리 저장소**다.
 > 실제 프로젝트에서는 이 저장소를 clone하거나 스킬을 복사하지 않고,
-> Codex 또는 Claude에 사용자용 `ai-agent-harness` 플러그인을 설치해서 사용한다.
+> Codex 또는 Claude에 사용자용 `harness-kit` 플러그인을 설치해서 사용한다.
 
 플러그인을 설치한 프로젝트 수행자는 `harness-setup`으로 `.docs/**`,
 `AGENTS.md`, `CLAUDE.md`를 만든 뒤 설계·구현·검증 흐름을 수행한다. 관리자는
 이 저장소에서 사용자 스킬, 외부 upstream, 플러그인 패키지를 유지한다.
 
-현재 Phase 1 정본과 마지막 생성 artifact:
+현재 정본과 마지막 생성 artifact:
 
 - 현행 사용자 스킬 정본: 19종 (`pre-commit` 제거 후 `skills/` 기준)
-- 마지막 생성 Plugin ID: `ai-agent-harness`
-- 마지막 생성 Version: `0.2.2`
-- immutable Archive: `plugins/ai-agent-harness-0.2.2.zip`
-- `0.2.2` Codex runtime: 20 skills / 0 agents
-- `0.2.2` Claude runtime: 20 skills / 0 agents
+- 마지막 생성 Plugin ID: `harness-kit`
+- 마지막 생성 Version: `0.3.0`
+- immutable Archive: `plugins/harness-kit-0.3.0.zip`
+- `0.3.0` Codex runtime: 19 skills / 0 agents
+- `0.3.0` Claude runtime: 19 skills / 0 agents
 - 관리자 스킬: 3종, 이 저장소 안에서만 사용
-- 생성 drift: Phase 1 source는 19종이지만 `0.2.2` generated tree·release evidence는
-  Phase 5~7 재생성·검증 전까지 20종을 보존한다.
 - 릴리스 상태: `not release-ready` — 공식 CLI 설치 smoke와 별도로 Codex·Claude
   CLI·앱 네 표면의 실제 모델 호출 수동 증적이 모두 필요함
 
@@ -36,7 +34,7 @@
 ### Codex
 
 - CLI: `codex plugin marketplace add <이 저장소 URL 또는 루트 경로>` 후
-  `codex plugin add ai-agent-harness@ai-agent-harness`
+  `codex plugin add harness-kit@hb9397`
 - Codex Desktop/App: Codex의 Plugins 화면에서 marketplace와 플러그인을
   추가한다. 앱 UI가 local marketplace 등록을 지원하지 않으면 같은 사용자
   프로필의 CLI에서 등록한 뒤 앱을 재시작한다.
@@ -49,17 +47,17 @@
 
 - Claude Code CLI:
   `claude plugin marketplace add <이 저장소 URL 또는 루트 경로>` 후
-  `claude plugin install ai-agent-harness@ai-agent-harness`
+  `claude plugin install harness-kit@hb9397`
 - 설치 후 대화형 session에서 `/reload-plugins`를 실행하고
-  `/ai-agent-harness:harness-setup`처럼 namespaced skill을 명시 호출한다.
+  `/harness-kit:harness-setup`처럼 namespaced skill을 명시 호출한다.
 - Claude Desktop Code 탭은 Plugins UI에서 설치한다. local marketplace가
   보이지 않으면 같은 사용자 프로필의 CLI에서 marketplace를 등록한 뒤 앱에서
   설치하고 새 session을 연다.
 - Claude Chat/Cowork는 Code 플러그인과 별도 표면이다. 설치·권한·cache는
   별도로 검증한다.
 
-CLI 설치 smoke는 `0.2.2`에서 Codex CLI `0.146.0`과 Claude Code `2.1.220` 기준으로
-통과했다. 격리된 설정 디렉터리에서 marketplace 등록, 설치, 20 skills / 0 agents
+CLI 설치 smoke는 `0.3.0`에서 Codex CLI `0.146.0`과 Claude Code `2.1.220` 기준으로
+통과했다. 격리된 설정 디렉터리에서 marketplace 등록, 설치, 19 skills / 0 agents
 확인, 제거까지 수행했다. 설치 smoke는 cache 검사이며 실제 모델이 스킬을 올바르게
 수행했다는 증적이 아니다. 네 표면의 수동 행동 증적은 아직 남아 있다.
 
@@ -258,7 +256,7 @@ my-project/
 | 프로토타입 | 단일 `.docs/prototype/{사용자}/{식별자}/`, 복수 `.docs/{앱}/prototype/{사용자}/{식별자}/` | 검증용 산출물, 프로젝트 정책에 따라 commit |
 | 구현 계획 | 단일 `.docs/impl-doc/{사용자}/`, 복수 `.docs/{앱}/impl-doc/{사용자}/` | 계획서와 공용 roadmap index를 함께 관리 |
 | 문서 개선 ledger | `.docs/.harness/humanize-handoffs.json` | 최종 Markdown fingerprint와 결정 상태 관리 |
-| 사용자 스킬 | 설치된 `ai-agent-harness` 플러그인 | 프로젝트에 복사하지 않음 |
+| 사용자 스킬 | 설치된 `harness-kit` 플러그인 | 프로젝트에 복사하지 않음 |
 
 `impl-doc`과 `impl-fe-be-doc`은 같은 저장소와
 `{YYMMDD}-0.{앱이름}-roadmap-impl-index.md`를 공유한다. 생성 스킬은 문서
@@ -314,7 +312,7 @@ $ui-ux-pro-max
 ```
 
 ```text
-/ai-agent-harness:motion-design
+/harness-kit:motion-design
 이 결제 버튼의 loading → success → error 전환을 설계해줘.
 reduced-motion 대체안과 성능 검증 기준도 포함해줘.
 ```
@@ -376,12 +374,12 @@ reduced-motion 대체안과 성능 검증 기준도 포함해줘.
 | 외부 upstream·provenance | `maintainer/upstreams/` | 하네스 관리자 |
 | inventory·plugin metadata | `maintainer/inventory/`, `maintainer/plugin/` | 하네스 관리자 |
 | 관리자 projection | `.agents/skills/`, `.claude/skills/` | repo-local 생성물 |
-| 사용자 플러그인 후보 | `plugins/ai-agent-harness/` | 빌드·검증 산출물 |
+| 사용자 플러그인 후보 | `plugins/harness-kit/` | 빌드·검증 산출물 |
 | 실제 프로젝트 | `.docs/**`, `AGENTS.md`, `CLAUDE.md`, 코드 | 프로젝트 수행자 |
 
 별도의 관리자 플러그인은 만들지 않는다. 관리자는 이 저장소의 repo-local
 projection으로 정본을 관리하고, 사용자 경험을 검증할 때 일반 사용자와 같은
-`ai-agent-harness` 플러그인을 격리된 CLI/App 설정에 설치해 dogfood한다.
+`harness-kit` 플러그인을 격리된 CLI/App 설정에 설치해 dogfood한다.
 
 관리자 projection은 직접 편집하지 않고 다음 생성기로만 맞춘다.
 

@@ -27,7 +27,7 @@ AI를 팀에서 쓰기 시작하면 처음에는 생산성이 크게 올라가�
 > 공통 작업 체계를 만드는 것.
 
 이전에는 그 체계를 저장소 clone과 스킬 복사로 배포했다. 현재는 실제 프로젝트가
-`ai-agent-harness` 플러그인을 설치해서 같은 흐름을 사용한다. 사용자는 프로젝트
+`harness-kit` 플러그인을 설치해서 같은 흐름을 사용한다. 사용자는 프로젝트
 결과물에 집중하고, 관리자는 스킬과 배포 품질을 한곳에서 관리한다.
 
 ---
@@ -337,10 +337,10 @@ $impl-verify
 Claude Code:
 
 ```text
-/ai-agent-harness:harness-setup
-/ai-agent-harness:design-doc
-/ai-agent-harness:impl-doc
-/ai-agent-harness:impl-verify
+/harness-kit:harness-setup
+/harness-kit:design-doc
+/harness-kit:impl-doc
+/harness-kit:impl-verify
 ```
 
 파일 첨부와 경로 참조 문법은 플랫폼 표면에 따라 다를 수 있다. 중요한 것은
@@ -364,7 +364,7 @@ Claude Code:
 ## 8. 실전 프롬프트 예시
 
 아래 예시는 Codex 문법을 사용한다. Claude에서는 `$skill-name`을
-`/ai-agent-harness:skill-name`으로 바꾼다.
+`/harness-kit:skill-name`으로 바꾼다.
 
 ### 예시 1. 아이디어에서 설계 문서로
 
@@ -474,7 +474,7 @@ $doc-audit
 ```
 
 필요한 코드 주석을 승인해 반영했다면 마지막 변경 상태를 재검증한 뒤 범위를 적어
-`$commit <범위>` 또는 `/ai-agent-harness:commit <범위>`를 명시 호출한다.
+`$commit <범위>` 또는 `/harness-kit:commit <범위>`를 명시 호출한다.
 `commit`은 기존·범위 밖 staged 변경을 보존하며, message-only 요청은 index,
 worktree, HEAD를 바꾸지 않는다. 리뷰에서 commit으로 자동 handoff하지 않는다.
 
@@ -547,7 +547,7 @@ ID를 다시 준다. 오래된 대화 전체를 끌고 가는 것보다 고정 �
 움직이는지 정할 때 쓴다.
 
 호출은 다른 스킬과 같다. Codex는 `$ui-ux-pro-max`, Claude Code는
-`/ai-agent-harness:motion-design` 형식이다. 둘 다 기본은 대화창으로 결과를
+`/harness-kit:motion-design` 형식이다. 둘 다 기본은 대화창으로 결과를
 알려주는 것이고, 파일은 사용자가 만들라고 해야 만든다.
 
 ### 프로토타입과 실제 화면은 다르다
@@ -597,9 +597,9 @@ ID를 다시 준다. 오래된 대화 전체를 끌고 가는 것보다 고정 �
 
 ## 10. 추천하는 최초 도입 순서
 
-Phase 1의 현행 source inventory 19개를 처음부터 모두 쓰려고 하지 않아도 된다.
-마지막 immutable `0.2.2` artifact는 20개 runtime을 담고 있으며, source와 generated
-tree의 이 drift는 후속 rebuild·검증 전까지 남는다.
+현재 source inventory 19개를 처음부터 모두 쓰려고 하지 않아도 된다. 이전 immutable
+`0.2.2` artifact는 20개 runtime을 담은 historical 기록이며, 현재 `0.3.0` source와
+generated tree는 서로 일치한다.
 
 ### 0단계 — 설치와 문서 골격
 

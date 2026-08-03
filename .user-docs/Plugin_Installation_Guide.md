@@ -1,7 +1,7 @@
 # Plugin Installation Guide
 
-> 기준일: 2026-08-01
-> 대상 플러그인: `ai-agent-harness` `0.2.2`
+> 기준일: 2026-08-03
+> 대상 플러그인: `harness-kit` `0.3.0`
 > 현재 상태: 공식 manifest·marketplace와 격리 CLI 설치 smoke를 자동 검증한다.
 > Codex와 Claude의 CLI·앱 네 표면에서 실제 모델 호출·산출물·새 세션 증적까지
 > 확보되기 전에는 `not release-ready`다.
@@ -13,7 +13,7 @@
 ## 1. 먼저 알아야 할 것
 
 - 이 저장소는 관리자용 원본 저장소다.
-- 실제 프로젝트에는 `plugins/ai-agent-harness` 또는 배포된 marketplace source를 통해 플러그인을 설치한다.
+- 실제 프로젝트에는 `plugins/harness-kit` 또는 배포된 marketplace source를 통해 플러그인을 설치한다.
 - 설치 후 새 task/session 또는 reload가 필요하다.
 - 프로젝트에서는 `harness-setup`을 호출해 `.docs/**`, 루트 `AGENTS.md`, `CLAUDE.md`만 만든다.
 - `harness-setup`은 사용자 프로젝트에 `.agents/skills/`, `.claude/skills/`, `skills/`를 생성하거나 스킬을 복사·동기화하지 않는다.
@@ -25,14 +25,14 @@
 
 | 항목 | 값 |
 |------|----|
-| Plugin ID | `ai-agent-harness` |
-| Version | `0.2.2` |
-| Local plugin root | `plugins/ai-agent-harness` |
-| Archive | `plugins/ai-agent-harness-0.2.2.zip` |
+| Plugin ID | `harness-kit` |
+| Version | `0.3.0` |
+| Local plugin root | `plugins/harness-kit` |
+| Archive | `plugins/harness-kit-0.3.0.zip` |
 | Archive SHA-256 | `maintainer/plugin/release.json`의 현재 생성값 |
-| Codex physical skills | 20 |
+| Codex physical skills | 19 |
 | Codex agents | 0 |
-| Claude physical skills | 20 |
+| Claude physical skills | 19 |
 | Claude agents | 0 |
 | Release gate | `not-release-ready` |
 
@@ -42,7 +42,7 @@
 
 ## 3. Codex CLI
 
-> CLI 설치 smoke는 `0.2.2` 기준으로 Codex CLI와 Claude Code 양쪽에서 통과했다.
+> CLI 설치 smoke는 `0.3.0` 기준으로 Codex CLI와 Claude Code 양쪽에서 통과했다.
 > 격리된 설정 디렉터리에서 설치 payload와 cache를 확인했으며, 실제 모델 호출은
 > 별도 수동 증적으로 남긴다.
 
@@ -61,22 +61,22 @@ codex plugin marketplace list
 
 `marketplace add`에는 source 하나만 전달한다. Git ref를 고정하려면 `--ref`를
 사용한다. 저장소 루트의 `.agents/plugins/marketplace.json`이
-`ai-agent-harness` marketplace를 노출한다.
+`hb9397` marketplace에서 `harness-kit` 플러그인을 노출한다.
 
 업데이트는 marketplace를 갱신한 뒤 plugin을 재설치하는 방식으로 검증한다.
 
 ```text
-codex plugin marketplace upgrade ai-agent-harness
-codex plugin remove ai-agent-harness@ai-agent-harness
-codex plugin add ai-agent-harness@ai-agent-harness
+codex plugin marketplace upgrade hb9397
+codex plugin remove ai-agent-harness@ai-agent-harness   # 이전 설치가 남아 있을 때만
+codex plugin add harness-kit@hb9397
 ```
 
 ### 3-2. 비대화식 설치 관리
 
 ```text
-codex plugin add ai-agent-harness@ai-agent-harness
+codex plugin add harness-kit@hb9397
 codex plugin list
-codex plugin remove ai-agent-harness@ai-agent-harness
+codex plugin remove harness-kit@hb9397
 ```
 
 설치 후 새 task를 열고 Codex 명시 호출인 `$harness-setup`,
@@ -98,12 +98,12 @@ Phase 8 기준 Codex IDE extension은 별도 공식 플러그인 설치 표면�
 Desktop/App에서는 다음을 수동으로 확인한다.
 
 1. 앱 전환기에서 **Codex**를 선택하고 Plugins Directory를 연다.
-2. configured marketplace에 `ai-agent-harness`가 보이면 상세 화면의 설치
+2. configured marketplace에 `hb9397`의 `harness-kit`이 보이면 상세 화면의 설치
    버튼으로 직접 설치한다.
 3. local marketplace가 앱에 보이지 않는 버전이면 앱과 같은 사용자 프로필의
    Codex CLI에서 marketplace와 플러그인을 등록하고 앱을 완전히 종료했다가 다시
    연다.
-4. Plugins Directory 또는 `/plugins`에서 `ai-agent-harness` `0.2.2`가
+4. Plugins Directory 또는 `/plugins`에서 `harness-kit` `0.3.0`이
    설치·활성 상태인지 확인한다.
 5. 새 fixture 프로젝트에서 새 task/session을 연다.
 6. `$harness-setup`과 `$humanize-korean`을 명시 호출한다.
@@ -126,11 +126,11 @@ Codex 표면은 `$skill-name`, ChatGPT Work 표면은 `@` mention을 사용하�
 반복한다.
 
 ```text
-claude plugin validate plugins/ai-agent-harness --strict
+claude plugin validate plugins/harness-kit --strict
 claude plugin validate . --strict
 claude plugin marketplace add <github-owner/repo | git-url | 저장소-루트-경로>
 claude plugin marketplace list
-claude plugin install ai-agent-harness@ai-agent-harness
+claude plugin install harness-kit@hb9397
 claude plugin list
 ```
 
@@ -139,15 +139,15 @@ claude plugin list
 업데이트와 제거:
 
 ```text
-claude plugin marketplace update ai-agent-harness
-claude plugin update ai-agent-harness@ai-agent-harness
-claude plugin uninstall ai-agent-harness@ai-agent-harness
+claude plugin marketplace update hb9397
+claude plugin update harness-kit@hb9397
+claude plugin uninstall harness-kit@hb9397
 ```
 
 검증:
 
-- namespaced `/ai-agent-harness:harness-setup` 호출 가능
-- namespaced `/ai-agent-harness:humanize-korean` 호출 가능
+- namespaced `/harness-kit:harness-setup` 호출 가능
+- namespaced `/harness-kit:humanize-korean` 호출 가능
 - `.claude-plugin/plugin.json`의 version 확인
 - `/reload-plugins` 후 새 skill 목록 확인
 
@@ -159,15 +159,15 @@ Claude Desktop Code 탭과 CLI는 설정을 공유하지만 host별 plugin cache
 따로 확인해야 한다.
 
 1. local Code session에서 prompt 옆 `+` → Plugins → Add plugin을 열고
-   `ai-agent-harness`를 설치한다.
+   `harness-kit`를 설치한다.
 2. local marketplace가 브라우저에 보이지 않으면 같은 사용자 설정의 Claude Code
    CLI에서 marketplace만 등록한 뒤 앱을 다시 열어 Add plugin에서 설치한다.
 3. SSH host를 공식 지원 범위로 선언하는 릴리스라면 해당 remote host에서도
    plugin cache와 설치를 별도로 확인한다.
 4. 앱 재시작
 5. 새 Code session
-6. `/ai-agent-harness:harness-setup`,
-   `/ai-agent-harness:humanize-korean` 명시 호출 확인
+6. `/harness-kit:harness-setup`,
+   `/harness-kit:humanize-korean` 명시 호출 확인
 7. cloud Code 세션은 plugin browser가 없어 프로젝트 `enabledPlugins` 정책을 별도 적용
 8. WSL session은 Desktop plugin 설치 표면으로 지원하지 않음을 명시
 
@@ -199,9 +199,9 @@ Private GitHub source를 사용할 때 확인할 것:
 
 ```text
 codex plugin list 또는 claude plugin list
-플랫폼별 plugin remove/uninstall ai-agent-harness@ai-agent-harness
-플랫폼별 plugin marketplace upgrade/update ai-agent-harness
-플랫폼별 plugin add/install ai-agent-harness@ai-agent-harness
+플랫폼별 plugin remove/uninstall ai-agent-harness@ai-agent-harness  # 구 버전 migration 시 1회
+플랫폼별 plugin marketplace upgrade/update hb9397
+플랫폼별 plugin add/install harness-kit@hb9397
 새 task/session
 version marker 확인
 ```
@@ -229,7 +229,7 @@ harness-setup 명시 호출
 | 플랫폼 | 호출 예 |
 |---|---|
 | Codex CLI·앱 | `$harness-setup` |
-| Claude Code CLI·Desktop Code | `/ai-agent-harness:harness-setup` |
+| Claude Code CLI·Desktop Code | `/harness-kit:harness-setup` |
 
 ---
 

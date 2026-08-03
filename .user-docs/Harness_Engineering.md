@@ -1,7 +1,7 @@
-# AI Agent Harness Engineering Guide
+# Harness Kit Engineering Guide
 
-> 기준일: 2026-07-30
-> 이 문서는 `ai-agent-harness` 플러그인의 **실제 프로젝트 사용자 런북**과
+> 기준일: 2026-08-03
+> 이 문서는 `harness-kit` 플러그인의 **실제 프로젝트 사용자 런북**과
 > **관리 저장소 운영 계약**을 함께 설명하는 현행 정본이다.
 
 설치 명령과 Codex·Claude CLI/App별 증적 절차는
@@ -43,16 +43,15 @@ AI Agent Harness는 Codex, Claude Code처럼 서로 다른 에이전트가 같�
 | 영역 | 담당 | 프로젝트에 남는가 |
 |------|------|-------------------|
 | 현행 사용자 스킬 정본 19종 | 관리 저장소 `skills/` | 다음 plugin build의 입력 |
-| 마지막 `0.2.2` runtime 20종 | 설치된 `ai-agent-harness` 플러그인 | local copy를 남기지 않음 |
+| 현재 `0.3.0` runtime 19종 | 설치된 `harness-kit` 플러그인 | local copy를 남기지 않음 |
 | 프로젝트 문서 골격 | 프로젝트 수행자가 `harness-setup`으로 생성 | `.docs/**`, `AGENTS.md`, `CLAUDE.md` |
 | 설계·구현 계획·프로토타입 | 프로젝트 수행자와 사용자 스킬 | `.docs/**` |
 | 코드·테스트 산출물 | 프로젝트 수행자 | 각 앱 repo |
 | 리뷰·검증 보고 | 프로젝트 수행자와 사용자 스킬 | 기본은 대화 보고, 스킬이 별도 파일 생성을 금지하면 repo에 저장하지 않음 |
 | 플러그인 build·upstream 최신화 | 하네스 관리자 | 이 관리 저장소 |
 
-Phase 1에서 `pre-commit`을 제거한 source inventory는 19종이다. 다만 immutable
-`0.2.2` archive와 generated runtime·release evidence는 20종이며, 19종 runtime은
-Phase 5~7의 rebuild·검증 전에는 생성됐다고 단정하지 않는다.
+Phase 5에서 `pre-commit`을 제거한 source inventory와 `0.3.0` generated runtime은
+모두 19종이다. 이전 `0.2.2` archive는 historical immutable artifact로만 보존한다.
 
 `harness-setup`의 쓰기 allowlist는 `.docs/**`, 루트 `AGENTS.md`,
 `CLAUDE.md`다. `.agents/skills/**`, `.claude/skills/**`, `skills/**`를
@@ -138,7 +137,7 @@ FE/BE 페어 다중 기능을 함께 끝내거나 여러 화면의 흐름을 다
 | 표면 | 설치 후 첫 호출 |
 |------|----------------|
 | Codex CLI·앱 | `$harness-setup` |
-| Claude Code CLI·Desktop Code | `/ai-agent-harness:harness-setup` |
+| Claude Code CLI·Desktop Code | `/harness-kit:harness-setup` |
 
 Codex는 설치 후 새 task를 열고 필요하면 앱을 재시작한다. Claude Code는
 `/reload-plugins` 후 새 session에서 확인한다. 스킬이 보인다는 사실은 설치
@@ -707,7 +706,7 @@ session의 기준이 되지 않는다.
 
 | 구분 | 수 | 정본 | 생성물 또는 대상 |
 |------|---:|------|-------------------|
-| 사용자 스킬 | 18 | `skills/` | `plugins/ai-agent-harness/**` |
+| 사용자 스킬 | 19 | `skills/` | `plugins/harness-kit/**` |
 | 관리자 스킬 | 3 | `maintainer/skills/` | `.agents/skills/`, `.claude/skills/` |
 | upstream·provenance | - | `maintainer/upstreams/` | registry, lock, 비교·반영 증적 |
 | plugin metadata | - | `maintainer/inventory/`, `maintainer/plugin/` | manifest, catalog, release 증적 |
@@ -850,7 +849,7 @@ skills/ 사용자 정본 수정
 
 - Codex CLI에서 `$harness-setup` 명시 호출
 - Codex 앱에서 `$harness-setup` 명시 호출
-- Claude Code CLI에서 `/ai-agent-harness:harness-setup` 명시 호출
+- Claude Code CLI에서 `/harness-kit:harness-setup` 명시 호출
 - Claude Desktop Code에서 같은 namespaced 호출
 - 실제 fixture 산출물과 금지 경로 확인
 - 재시작·새 session discovery

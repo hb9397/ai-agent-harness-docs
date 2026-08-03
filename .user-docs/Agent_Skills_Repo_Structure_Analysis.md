@@ -6,8 +6,8 @@
 >
 > 현재 source 구성은 사용자 스킬 19종과 관리자 스킬 3종으로 분리되어 있다.
 > 사용자 정본은 `skills/`에서 관리해 다음 plugin build의 입력으로 사용한다. 마지막
-> immutable `0.2.2` payload는 아직 20종이며 후속 rebuild 전까지 source와 drift가
-> 남는다. 관리자 스킬은 `maintainer/skills/`와 repo-local `.agents/skills`,
+> 현재 `0.3.0` payload도 19종이며, immutable `0.2.2` 20종 archive는 historical
+> 비교 증적으로만 보존한다. 관리자 스킬은 `maintainer/skills/`와 repo-local `.agents/skills`,
 > `.claude/skills` projection에서만 사용한다.
 >
 > `agent-sync`와 `rfp-ingest`는 제거됐다. `custom-skill-design`은 사용자 스킬에서 관리자 스킬로 이동했다. 실제 프로젝트 사용자는 이 저장소를 clone하거나 `.agents/.claude` 스킬을 직접 복사하지 않고, Codex/Claude 플러그인을 설치한 뒤 `harness-setup`을 실행한다.

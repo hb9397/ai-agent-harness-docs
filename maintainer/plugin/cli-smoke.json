@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0.0",
-  "verified_at": "2026-07-29T00:00:00+09:00",
-  "plugin_id": "ai-agent-harness",
-  "qualified_plugin_id": "ai-agent-harness@ai-agent-harness",
+  "verified_at": "2026-08-03T00:00:00+09:00",
+  "plugin_id": "harness-kit",
+  "qualified_plugin_id": "harness-kit@hb9397",
   "marketplace_source": ".",
   "evidence_level": "marketplace-install-and-cache-smoke",
   "model_invocation_verified": false,
@@ -10,13 +10,13 @@
     "codex": {
       "status": "passed",
       "cli_version": "codex-cli 0.146.0",
-      "marketplace": "ai-agent-harness",
-      "plugin_id": "ai-agent-harness@ai-agent-harness",
+      "marketplace": "hb9397",
+      "plugin_id": "harness-kit@hb9397",
       "evidence_level": "marketplace-install-and-cache-smoke",
       "model_invocation_verified": false,
       "installed_payload": {
-        "version": "0.2.2",
-        "skill_count": 20,
+        "version": "0.3.0",
+        "skill_count": 19,
         "agent_count": 0,
         "required_skills": [
           "harness-setup",
@@ -31,13 +31,13 @@
     "claude": {
       "status": "passed",
       "cli_version": "2.1.220 (Claude Code)",
-      "marketplace": "ai-agent-harness",
-      "plugin_id": "ai-agent-harness@ai-agent-harness",
+      "marketplace": "hb9397",
+      "plugin_id": "harness-kit@hb9397",
       "evidence_level": "marketplace-install-and-cache-smoke",
       "model_invocation_verified": false,
       "installed_payload": {
-        "version": "0.2.2",
-        "skill_count": 20,
+        "version": "0.3.0",
+        "skill_count": 19,
         "agent_count": 0,
         "required_skills": [
           "harness-setup",

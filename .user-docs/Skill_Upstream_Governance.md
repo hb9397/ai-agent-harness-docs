@@ -18,7 +18,7 @@ upstream을 반입·변형하거나 개념·행동만 참고한다는 뜻이다.
 | `skills/ui-ux-pro-max` ← [UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | `ui-ux-pro-max-runtime` | `adapted` / `active`; accepted·embedded; group `ui-ux-pro-max` | `v2.11.3` / `4857a2c5ef989794751a0f66b8545a4a49566286` | accepted와 일치 / 2026-07-31 | 생성된 스킬 트리 43개 파일을 반입했다. `data/`, `references/`, `scripts/`는 보존하고 `SKILL.md`는 플랫폼 중립 경로·범위 확인·승인형 저장 계약으로 수정했다. | 생성기 `src/`, CLI `cli/`, 형제 스킬 6종은 제외한다. | 포함; 패키징 source | MIT / `maintainer/upstreams/provenance/ui-ux-pro-max/NOTICE.md` / `maintainer/upstreams/provenance/ui-ux-pro-max/file-map.json` |
 | `skills/motion-design` ← [LottieFiles Motion Design](https://github.com/LottieFiles/motion-design-skill) | `lottiefiles-motion-design-runtime` | `adapted` / `active`; accepted·embedded; group `lottiefiles-motion-design` | `main` / `f9a8a041b85185ee4881b3471d3415e939aac772` | accepted와 일치 / 2026-07-31 | `director/`, `patterns/`, `reference/` 16개 파일을 보존하고 `SKILL.md`는 목적 우선 분류·모션 생략 허용·저밀도·접근성·성능·승인형 저장 계약으로 수정했다. | upstream 생성·개발 표면은 file-map의 `excluded`에 따른다. | 포함; 패키징 source | MIT / `maintainer/upstreams/provenance/lottiefiles-motion-design/NOTICE.md` / `maintainer/upstreams/provenance/lottiefiles-motion-design/file-map.json` |
 
-Phase 1의 사용자 스킬 정본은 19개이고, 관리자 스킬은 3개다. 직접 반입 관계는
+현재 사용자 스킬 정본은 19개이고, 관리자 스킬은 3개다. 직접 반입 관계는
 upstream 저장소 4개에 `adapted` 5건이다. 이 중 사용자 스킬은 4개, 관리자 전용
 스킬은 `custom-skill-design` 1개이며 활성
 `vendored` 관계는 0건이다. UI/UX Pro Max와 Motion Design은 이미 사용자 payload와
@@ -63,10 +63,10 @@ upstream 저장소 4개에 `adapted` 5건이다. 이 중 사용자 스킬은 4�
 6. `maintainer/upstreams/provenance/**`: license, NOTICE, file-map, 제3자 권리
    판정과 promotion evidence의 정본
 
-문서에 숫자나 날짜를 독립적으로 고정해 machine source를 대체하지 않는다. Phase 1
-정본에서 `pre-commit`이 제거된 뒤 사용자 skill은 19개다. 이전 `0.2.2` artifact의
-20개 inventory는 다음 생성 Phase 전까지 남을 수 있는 역사적 generated-tree 증적이지
-현행 source inventory가 아니다.
+문서에 숫자나 날짜를 독립적으로 고정해 machine source를 대체하지 않는다. 현재
+정본에서 `pre-commit`이 제거된 뒤 사용자 skill과 `0.3.0` payload는 19개다. 이전
+`0.2.2` artifact의 20개 inventory는 historical immutable archive 증적이지 현행
+source inventory가 아니다.
 
 <a id="source-and-evidence-model"></a>
 ## 출처 mode, lifecycle, evidence state
@@ -132,7 +132,7 @@ URL·SHA-256, copyright·NOTICE, file별 `verbatim`·`modified`·`excluded`·
   만들지 않는다. 같은 upstream의 별도 `adapted` runtime 관계가 있으면 그 관계의
   재배포 의무만 적용한다.
 
-마지막 immutable `0.2.2` artifact의 `packaged_upstreams`는
+현재 `0.3.0` artifact의 `packaged_upstreams`는
 `anthropic-frontend-design`, `im-not-ai`, `ui-ux-pro-max-runtime`,
 `lottiefiles-motion-design-runtime` 네 source다. `THIRD_PARTY_NOTICES.md`와
 `licenses/`는 네 source를 모두 닫는다. 관리자 전용 `skill-creator-guides`와
@@ -380,8 +380,8 @@ python maintainer/upstreams/provenance/im-not-ai/tests/test_humanize_korean.py
 - runtime allowlist: `maintainer/plugin/runtime-allowlist.json`
 - capability inventory: `maintainer/plugin/CAPABILITIES.json`
 - release artifact facts: `maintainer/plugin/release.json`
-- 패키징 NOTICE: `plugins/ai-agent-harness/THIRD_PARTY_NOTICES.md`
-- 패키징 lock: `plugins/ai-agent-harness/UPSTREAMS.lock.json`
+- 패키징 NOTICE: `plugins/harness-kit/THIRD_PARTY_NOTICES.md`
+- 패키징 lock: `plugins/harness-kit/UPSTREAMS.lock.json`
 - 문서 merge coverage: `maintainer/inventory/upstream-governance-doc-merge.json`
 
 모든 direct promotion은 이전 lock snapshot, 승인 ref, file-map, 생성 hash와 검증

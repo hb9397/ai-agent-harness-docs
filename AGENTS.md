@@ -1,13 +1,13 @@
-# AI Agent Harness — Agent 운영 가이드
+# Harness Kit — Agent 운영 가이드
 
 > AI 에이전트 스킬·운영 문서와 사용자 플러그인 원본을 관리하는 하네스 저장소
 
-이 저장소는 실제 프로젝트에 직접 복사해서 쓰는 저장소가 아니다. 실제 프로젝트 수행자는 생성된 사용자 플러그인 `ai-agent-harness`를 설치해서 사용한다. 이 저장소는 관리자가 사용자 스킬, 관리자 스킬, 외부 upstream, 플러그인 packaging 산출물을 관리하는 원본 저장소다.
+이 저장소는 실제 프로젝트에 직접 복사해서 쓰는 저장소가 아니다. 실제 프로젝트 수행자는 생성된 사용자 플러그인 `harness-kit`을 설치해서 사용한다. 이 저장소는 관리자가 사용자 스킬, 관리자 스킬, 외부 upstream, 플러그인 packaging 산출물을 관리하는 원본 저장소다.
 
 ## 현재 전환 상태
 
 - 기준 계획서: `improvement_plan/20260729/플러그인 전환 및 스킬 거버넌스 리팩토링 작업 계획서.md`
-- Phase 0~10 구현과 최종 감사 보완을 진행한 `0.1.0` 릴리스 후보가 있다.
+- `harness-kit` `0.3.0` 릴리스 후보와 최종 감사 보완을 진행 중이다.
 - inventory, upstream provenance, license/NOTICE, plugin build, 설치 표면과 회귀검증 기준선은 `maintainer/` 아래에서 관리한다.
 - CLI 자동 설치 검증과 Codex·Claude 앱 수동 증적이 모두 충족되기 전에는 `release-ready`로 표시하지 않는다.
 
@@ -15,7 +15,7 @@
 
 | 영역 | 정본 | 생성물 또는 대상 |
 |---|---|---|
-| 사용자 스킬 원본 | `skills/` | `plugins/ai-agent-harness/**` 사용자 payload |
+| 사용자 스킬 원본 | `skills/` | `plugins/harness-kit/**` 사용자 payload |
 | 관리자 스킬 원본 | `maintainer/skills/` | `.agents/skills/`, `.claude/skills/` repo-local projection |
 | 관리자 upstream·provenance | `maintainer/upstreams/` | 외부 공식·유명 스킬 조사 및 반영 증적 |
 | 관리자 inventory·plugin metadata | `maintainer/inventory/`, `maintainer/plugin/` | machine-readable 기준선과 릴리스 증적 |
