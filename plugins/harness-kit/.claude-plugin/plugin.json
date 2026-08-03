@@ -1,0 +1,19 @@
+{
+  "name": "harness-kit",
+  "version": "0.3.0",
+  "description": "Harness Kit plugin for Codex and Claude Code projects.",
+  "author": {
+    "name": "hb9397",
+    "url": "https://github.com/hb9397/harness-kit"
+  },
+  "homepage": "https://github.com/hb9397/harness-kit",
+  "repository": "https://github.com/hb9397/harness-kit",
+  "keywords": [
+    "agent-harness",
+    "skills",
+    "codex",
+    "claude-code"
+  ],
+  "skills": "./runtime/claude/skills/",
+  "displayName": "Harness Kit"
+}

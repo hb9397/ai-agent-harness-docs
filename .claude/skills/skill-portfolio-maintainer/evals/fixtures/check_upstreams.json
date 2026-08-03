@@ -9,5 +9,51 @@
     "status": "error",
     "error": "HTTP 429: rate limit",
     "note": "current pinned state preserved"
+  },
+  "openai-codex-commit-behavior": {
+    "status": "ok",
+    "ref": "main",
+    "sha": "bb5054fe47abe73ecbbd454751066a28c89f4bb9",
+    "source_url": "https://github.com/openai/codex/tree/main",
+    "product_version": "codex-cli 0.146.0",
+    "watched_paths": [
+      {
+        "path": "codex-rs/protocol/src/prompts/base_instructions/default.md",
+        "status": "ok",
+        "latest_commit_sha": "2cf2a6a844f1fc2ddd489c8a67fa8bc2f59a6f3d"
+      }
+    ],
+    "watched_surfaces": [
+      {
+        "id": "base-instructions",
+        "status": "ok",
+        "content_sha256": "ac8ae107a0d72fe3476b430afb161ea4e67da2e446d778aefc44828160559807"
+      },
+      {
+        "id": "agents-md",
+        "status": "ok",
+        "content_sha256": "9d1f87a2d1cb55b4782b95abe710692b35b9659789c2db31a22c7074a3383e8e"
+      },
+      {
+        "id": "code-review",
+        "status": "ok",
+        "content_sha256": "2fbdecf95f49cf19905ebed1752eadc9a7878b7de3ab94037fa0d7622fe9450f"
+      },
+      {
+        "id": "cli-customization",
+        "status": "ok",
+        "content_sha256": "7f59bf08264c63061b59a6a0050376c4633d22c9e96915ec1d565e85a032b382"
+      },
+      {
+        "id": "agent-approvals-security",
+        "status": "ok",
+        "content_sha256": "23fada5ed8b7d1d40e809b3cb7d4363a61386d8ffa1eb31414bfc2d7521426cd"
+      }
+    ]
+  },
+  "anthropic-claude-code-commit-behavior": {
+    "status": "error",
+    "error": "fixture documentation timeout",
+    "note": "last accepted behavior observation must be preserved"
   }
 }

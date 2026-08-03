@@ -18,6 +18,7 @@ from pathlib import Path
 sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[4]
 INVENTORY = ROOT / "maintainer" / "inventory" / "markdown-artifact-flow.json"
+PLUGIN_ROOT = ROOT / "plugins" / "harness-kit"
 
 
 def inventory() -> dict:
@@ -30,7 +31,7 @@ def test_producer_list_has_a_single_source() -> None:
     release = json.loads((ROOT / "maintainer" / "plugin" / "release.json").read_text(encoding="utf-8"))
     assert release["markdown_producers"] == expected, "release metadata drifted from the inventory"
 
-    caps = json.loads((ROOT / "plugins" / "ai-agent-harness" / "CAPABILITIES.json").read_text(encoding="utf-8"))
+    caps = json.loads((PLUGIN_ROOT / "CAPABILITIES.json").read_text(encoding="utf-8"))
     flow = caps["markdown_artifact_flow"]
     assert flow["producers"] == expected, "packaged capabilities drifted from the inventory"
     assert flow["producer_count"] == len(expected)

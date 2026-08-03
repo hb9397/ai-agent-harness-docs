@@ -1,0 +1,103 @@
+# [프로젝트명] [FE/BE/전체] — AI Agent Guide
+
+> [부제 또는 시스템 설명 한 줄]
+> [기술 스택 태그] 기반 Agent 참조용 프로젝트 맥락 문서
+
+---
+
+## 1. 프로젝트 개요
+
+<!-- 3~5줄. 무엇을 하는 시스템인지, 구성, 통신 방식, 실행 환경 -->
+
+---
+
+## 2. 기술 스택
+
+| 분류 | 라이브러리 | 버전 |
+|------|-----------|------|
+| | | |
+
+---
+
+## 3. 아키텍처 (디렉토리 트리)
+
+<!-- 폴더/파일 옆에 한 줄 역할 주석만. 레이어 의존성 규칙은 여기 쓰지 않는다. -->
+
+```
+[프로젝트명]/
+└── [레이어 폴더]/          # 역할 설명
+    ├── [파일]              # 역할 설명
+    └── [폴더]/             # 역할 설명
+        └── [파일]          # 역할 설명
+```
+
+---
+
+## 4. 핵심 도메인 개념
+
+<!-- 프로젝트 고유 용어, 핵심 식별자 정의 -->
+
+- **[용어]**: [정의]
+
+---
+
+## 5. 실행 방법
+
+### [배포 환경 — 예: Podman Compose / Docker]
+
+```bash
+# 실행 명령
+# 접근 URL
+```
+
+### 로컬 직접 실행 (개발 환경)
+
+```bash
+# 초기 세팅 (최초 1회)
+
+# 실행 명령
+```
+
+---
+
+## 6. 환경 변수
+
+### `.env.development`
+
+```bash
+# 변수명=설명
+```
+
+### `.env.production`
+
+```bash
+# 변수명=설명
+```
+
+---
+
+## 7. 주의사항 (프로젝트 고유)
+
+<!-- "이 프로젝트에서만 해당되는" 함정/제약만. 일반 코딩 규칙은 instruction 파일로. -->
+
+- **[주의사항]**: [설명]
+
+---
+
+## 8. 코딩 지침 (Instruction Index)
+
+코드 작성 시 아래 지침들을 반드시 준수한다.
+각 파일은 주제별 규칙·금지 목록·예시 스니펫을 담고 있다.
+
+| 주제 | 파일 |
+|------|------|
+| 아키텍처 제약 | @.docs/instruction/architecture-instruction.md |
+| 코드 스타일 | @.docs/instruction/code-style-instruction.md |
+| 프레임워크/라이브러리 사용 규칙 | @.docs/instruction/framework-instruction.md |
+| API 설계 규약 | @.docs/instruction/api-instruction.md |
+| 통신 프로토콜 규약 | @.docs/instruction/comm-instruction.md |
+| 파일 생성 규칙 | @.docs/instruction/file-convention-instruction.md |
+| AI Agent 동작 규칙 | @.docs/instruction/agent-instruction.md |
+| 산출물 위치·소유권·인계 | @.docs/instruction/artifact-output-routing-instruction.md |
+
+<!-- 설계 문서에 해당 주제가 없어서 생성하지 않은 파일은 이 표에서 제거한다. -->

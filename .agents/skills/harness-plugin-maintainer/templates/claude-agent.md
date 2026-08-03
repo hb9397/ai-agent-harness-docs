@@ -1,6 +1,6 @@
 ---
 name: {agent_name}
-description: "Runtime support agent allowed for the ai-agent-harness humanize-korean Claude projection."
+description: "Runtime support agent allowed for the harness-kit humanize-korean Claude projection."
 ---
 
 # {agent_name}

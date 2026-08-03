@@ -158,7 +158,7 @@ def local_links(root: Path) -> dict[str, Any]:
 
 def selected_workspace_manifest(root: Path) -> list[dict[str, str]]:
     selected: list[Path] = []
-    for rel in ["skills", "maintainer/skills", "maintainer/upstreams", "plugins/ai-agent-harness"]:
+    for rel in ["skills", "maintainer/skills", "maintainer/upstreams", PLUGIN_ROOT_REL.as_posix()]:
         selected.extend(iter_files(root / rel))
     selected.extend(
         path

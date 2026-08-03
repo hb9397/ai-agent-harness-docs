@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build deterministic ai-agent-harness plugin runtime."""
+"""Build deterministic harness-kit plugin runtime."""
 
 from __future__ import annotations
 
@@ -16,9 +16,13 @@ from pathlib import Path
 
 from plugin_common import (
     GENERATED_BY,
+    MARKETPLACE_NAME,
+    PLUGIN_DESCRIPTION,
+    PLUGIN_DISPLAY_NAME,
     PLUGIN_ID,
     PLUGIN_ROOT_REL,
     PLUGIN_VERSION,
+    REPOSITORY_URL,
     copy_tree_clean,
     ensure_no_symlink,
     load_json,
@@ -54,11 +58,7 @@ TEXT_SUFFIXES = {
     ".yml",
     ".yaml",
 }
-PLUGIN_DISPLAY_NAME = "AI Agent Harness"
-PLUGIN_DESCRIPTION = "Project harness plugin for Codex and Claude Code."
-MARKETPLACE_NAME = "ai-agent-harness"
 MAINTAINER_NAME = "hb9397"
-REPOSITORY_URL = "https://github.com/hb9397/ai-agent-harness-docs"
 ROOT_CODEX_MARKETPLACE = Path(".agents") / "plugins" / "marketplace.json"
 ROOT_CLAUDE_MARKETPLACE = Path(".claude-plugin") / "marketplace.json"
 EXECUTABLE_SUFFIXES = {".sh"}
@@ -163,7 +163,7 @@ def marketplace(platform: str) -> dict:
             "name": MAINTAINER_NAME,
             "url": REPOSITORY_URL,
         },
-        "description": "AI Agent Harness user skills for Codex and Claude Code projects.",
+        "description": PLUGIN_DESCRIPTION,
         "plugins": [
             {
                 "name": PLUGIN_ID,
@@ -475,7 +475,7 @@ def compare_file(expected: Path, actual: Path, label: str) -> list[str]:
 def check(root: Path, canonical_root: Path | None = None) -> int:
     actual_root = canonical_root if canonical_root is not None else root
     messages: list[str] = []
-    with tempfile.TemporaryDirectory(prefix="ai-agent-harness-build-check-") as tmp:
+    with tempfile.TemporaryDirectory(prefix="harness-kit-build-check-") as tmp:
         expected_root = Path(tmp)
         release = build(root, output_root=expected_root)
         messages.extend(compare_tree(expected_root / PLUGIN_ROOT_REL, actual_root / PLUGIN_ROOT_REL))

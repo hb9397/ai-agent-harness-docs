@@ -1,0 +1,30 @@
+{
+  "name": "harness-kit",
+  "version": "0.3.0",
+  "description": "Harness Kit plugin for Codex and Claude Code projects.",
+  "author": {
+    "name": "hb9397",
+    "url": "https://github.com/hb9397/harness-kit"
+  },
+  "homepage": "https://github.com/hb9397/harness-kit",
+  "repository": "https://github.com/hb9397/harness-kit",
+  "keywords": [
+    "agent-harness",
+    "skills",
+    "codex",
+    "claude-code"
+  ],
+  "skills": "./runtime/codex/skills/",
+  "interface": {
+    "displayName": "Harness Kit",
+    "shortDescription": "Reusable project harness skills for Codex and Claude Code.",
+    "longDescription": "Install the shared project setup, documentation, implementation, review, and Korean document refinement workflows.",
+    "developerName": "hb9397",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/hb9397/harness-kit"
+  }
+}

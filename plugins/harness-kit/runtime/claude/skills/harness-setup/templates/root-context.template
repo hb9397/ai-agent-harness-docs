@@ -1,0 +1,58 @@
+<!-- harness-kit:managed:start -->
+# {{PROJECT_NAME}} — AI Agent 컨텍스트
+
+> 이 파일은 `harness-setup` 스킬이 생성·갱신하는 공통 컨텍스트 정본이다.
+> Claude Code에서는 `CLAUDE.md` bridge가 이 파일을 `@AGENTS.md`로 가져온다.
+> 직접 수정이 필요하면 앱별 컨텍스트 파일을 먼저 수정한 뒤 `harness-setup`
+> 스킬을 재실행한다.
+
+---
+
+## 프로젝트 구조
+
+| 구분 | 경로 | 설명 |
+|------|------|------|
+| 프로젝트 루트 | `{{PROJECT_NAME}}/` | git 관리 안 함 |
+{{APP_LIST}}
+| AI 문서 | `.docs/` | 별도 git 레포 |
+
+---
+
+## 애플리케이션별 컨텍스트
+
+작업 대상 애플리케이션에 따라 아래 파일을 참조한다:
+
+{{APP_CONTEXT_ENTRIES}}
+
+---
+
+## 애플리케이션별 instruction
+
+{{APP_INSTRUCTION_ENTRIES}}
+
+- 공용 산출물 위치·소유권·인계: `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`
+
+---
+
+## 산출물 위치
+
+| 스킬 | 경로 |
+|------|------|
+| design-doc | `.docs/{앱}/context-base/DESIGN.md` |
+| context-doc | `.docs/{앱}-context.md` + `.docs/{앱}/instruction/*-instruction.md` |
+| impl-doc / impl-fe-be-doc | `.docs/{앱}/impl-doc/{사용자}/{기능}.md` |
+| design-prototype-docs / create-prototype | `.docs/prototype/{사용자}/{id}/` |
+| artifact-output-routing | `.docs/{앱}/instruction/artifact-output-routing-instruction.md` |
+
+> `.docs/` 구조·산출물 규칙은 `.docs/README.md`에 정리되어 있다.
+> `.docs/_inbox/`는 에이전트에게 읽힐 파일을 잠시 올려두는 **로컬 전용 공간**으로, 내용은 git에 올라가지 않는다 (`.docs/.gitignore`가 지정).
+
+---
+
+## 관리 원칙
+
+- 이 파일(`AGENTS.md`)은 어떤 git 레포에도 속하지 않는다.
+- `CLAUDE.md`는 공통 본문을 복제하지 않고 `@AGENTS.md` bridge만 둔다.
+- `harness-setup` 스킬 재실행으로 관리 블록을 갱신한다.
+- 원본 복사본: `.docs/root-context/AGENTS.md`, `.docs/root-context/CLAUDE.md`
+<!-- harness-kit:managed:end -->

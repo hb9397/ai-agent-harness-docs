@@ -1132,7 +1132,7 @@
       "destination_anchor": "direct-import-provenance",
       "disposition": "superseded",
       "reason": "패키징 NOTICE는 UI/UX·Motion을 포함한 모든 packaged direct source를 고지한다.",
-      "evidence_source": "plugins/ai-agent-harness/THIRD_PARTY_NOTICES.md"
+      "evidence_source": "plugins/harness-kit/THIRD_PARTY_NOTICES.md"
     },
     {
       "source_path": ".user-docs/Imported_Skill_Provenance.md",
@@ -1636,7 +1636,7 @@
       "destination_anchor": "validation-and-rollback",
       "disposition": "deduplicated",
       "reason": "목록 규칙과 별개로 증적 경로를 고정했다.",
-      "evidence_source": "plugins/ai-agent-harness/THIRD_PARTY_NOTICES.md"
+      "evidence_source": "plugins/harness-kit/THIRD_PARTY_NOTICES.md"
     },
     {
       "source_path": ".user-docs/Imported_Skill_Provenance.md",
@@ -1650,7 +1650,7 @@
       "destination_anchor": "validation-and-rollback",
       "disposition": "deduplicated",
       "reason": "목록 규칙과 별개로 증적 경로를 고정했다.",
-      "evidence_source": "plugins/ai-agent-harness/UPSTREAMS.lock.json"
+      "evidence_source": "plugins/harness-kit/UPSTREAMS.lock.json"
     },
     {
       "source_path": ".user-docs/Imported_Skill_Provenance.md",

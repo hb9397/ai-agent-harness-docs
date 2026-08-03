@@ -1,0 +1,632 @@
+{
+  "schema_version": "1.1.0",
+  "generated_at": "2026-08-03",
+  "behavior_contracts": [
+    {
+      "id": "commit-workflow",
+      "lifecycle": "active",
+      "accepted_at": "2026-08-03",
+      "evidence_status": "fresh",
+      "source_ids": [
+        "openai-codex-commit-behavior",
+        "anthropic-claude-code-commit-behavior",
+        "conventional-commits"
+      ],
+      "consumer_skills": [
+        "commit"
+      ],
+      "runtime_fixtures": [
+        {
+          "id": "cross-product-commit-workflow",
+          "status": "planned",
+          "evidence_path": null
+        }
+      ],
+      "unsupported_guarantees_verified": true
+    }
+  ],
+  "states": [
+    {
+      "id": "anthropic-frontend-design",
+      "observed": {
+        "source_url": "https://github.com/anthropics/skills/tree/main",
+        "checked_at": "2026-07-30",
+        "ref": "main",
+        "sha": "b29e7cf65e5cb78a5ac33d582270551bc74a14eb",
+        "note": "Observed by check_upstreams.py with status=ok"
+      },
+      "accepted": {
+        "ref": "main",
+        "sha": "b29e7cf65e5cb78a5ac33d582270551bc74a14eb",
+        "accepted_at": "2026-07-29",
+        "mode": "adapted",
+        "evidence": "maintainer/upstreams/provenance/anthropic-skills/file-map.json"
+      },
+      "embedded": {
+        "ref": "main",
+        "sha": "b29e7cf65e5cb78a5ac33d582270551bc74a14eb",
+        "embedded_at": "2026-07-29",
+        "targets": [
+          "skills/frontend-design"
+        ]
+      },
+      "packaged": {
+        "plugin_id": "harness-kit",
+        "version": "0.3.0",
+        "packaged_at": "2026-08-01",
+        "artifact_manifest_sha256": "619339f9fd686a2b3d59fdc54bebbeaa6c1cc1623f8ba91e97a5d5ed652f9122"
+      },
+      "released": null
+    },
+    {
+      "id": "openai-product-design",
+      "observed": {
+        "source_url": "https://github.com/openai/role-specific-plugins/tree/main",
+        "checked_at": "2026-07-30",
+        "ref": "main",
+        "sha": "fe5608d2512a7d6a7b9821ce8a88c48464ecd6e4",
+        "note": "Observed by check_upstreams.py with status=ok"
+      },
+      "accepted": null,
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "superpowers",
+      "observed": {
+        "source_url": "https://github.com/obra/superpowers/releases/tag/v6.2.0",
+        "checked_at": "2026-07-30",
+        "ref": "v6.2.0",
+        "sha": "3dcbd5c4b48e02263fbf4a3c01e3fe4f81d584d9",
+        "note": "Observed by check_upstreams.py with status=ok",
+        "watched_paths": [
+          {
+            "path": "skills/brainstorming/SKILL.md",
+            "status": "ok",
+            "latest_commit_sha": "05d90ac59248e6716f1a81e79757d850e62f4f7d",
+            "latest_commit_url": "https://github.com/obra/superpowers/commit/05d90ac59248e6716f1a81e79757d850e62f4f7d"
+          },
+          {
+            "path": "skills/writing-plans/SKILL.md",
+            "status": "ok",
+            "latest_commit_sha": "1e14b2377e37a06f4ac2ab0ea3095d1076db36fd",
+            "latest_commit_url": "https://github.com/obra/superpowers/commit/1e14b2377e37a06f4ac2ab0ea3095d1076db36fd"
+          },
+          {
+            "path": "skills/test-driven-development/SKILL.md",
+            "status": "ok",
+            "latest_commit_sha": "b9e75dddec7a384f42ce08532ec17bb1ef5d9459",
+            "latest_commit_url": "https://github.com/obra/superpowers/commit/b9e75dddec7a384f42ce08532ec17bb1ef5d9459"
+          },
+          {
+            "path": "skills/subagent-driven-development/SKILL.md",
+            "status": "ok",
+            "latest_commit_sha": "ebdd4ec61f2f560bada4f6ded7b0806e62bf33f7",
+            "latest_commit_url": "https://github.com/obra/superpowers/commit/ebdd4ec61f2f560bada4f6ded7b0806e62bf33f7"
+          },
+          {
+            "path": "skills/systematic-debugging/SKILL.md",
+            "status": "ok",
+            "latest_commit_sha": "c74782ead66b8ded584d9b9cf64dcba95457f320",
+            "latest_commit_url": "https://github.com/obra/superpowers/commit/c74782ead66b8ded584d9b9cf64dcba95457f320"
+          },
+          {
+            "path": "skills/verification-before-completion/SKILL.md",
+            "status": "ok",
+            "latest_commit_sha": "3be5aad3dd2400ef23b15680969f4bcd3b6d7b8b",
+            "latest_commit_url": "https://github.com/obra/superpowers/commit/3be5aad3dd2400ef23b15680969f4bcd3b6d7b8b"
+          },
+          {
+            "path": "skills/requesting-code-review/SKILL.md",
+            "status": "ok",
+            "latest_commit_sha": "cfb6281371ef2d2b7937b22eb475a11a9644ff87",
+            "latest_commit_url": "https://github.com/obra/superpowers/commit/cfb6281371ef2d2b7937b22eb475a11a9644ff87"
+          },
+          {
+            "path": "skills/dispatching-parallel-agents/SKILL.md",
+            "status": "ok",
+            "latest_commit_sha": "6dbbbda3baeff8407f3dddb0cc9e8a9495a273bc",
+            "latest_commit_url": "https://github.com/obra/superpowers/commit/6dbbbda3baeff8407f3dddb0cc9e8a9495a273bc"
+          },
+          {
+            "path": "skills/writing-skills/SKILL.md",
+            "status": "ok",
+            "latest_commit_sha": "d238a48f5d6b8f51f822fea17d646cfe177747ee",
+            "latest_commit_url": "https://github.com/obra/superpowers/commit/d238a48f5d6b8f51f822fea17d646cfe177747ee"
+          },
+          {
+            "path": ".codex-plugin/plugin.json",
+            "status": "ok",
+            "latest_commit_sha": "3dcbd5c4b48e02263fbf4a3c01e3fe4f81d584d9",
+            "latest_commit_url": "https://github.com/obra/superpowers/commit/3dcbd5c4b48e02263fbf4a3c01e3fe4f81d584d9"
+          }
+        ]
+      },
+      "accepted": null,
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "gstack",
+      "observed": {
+        "source_url": "https://github.com/garrytan/gstack/tree/main",
+        "checked_at": "2026-07-30",
+        "ref": "main",
+        "sha": "a3259400a366593e0c909dd9ac3e59752efd2488",
+        "note": "Branch head observed on 2026-07-30; exact watched path verification was incomplete due GitHub rate limiting, so partial path results were not persisted."
+      },
+      "accepted": null,
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "openai-codex-commit-behavior",
+      "observed": {
+        "source_url": "https://github.com/openai/codex/tree/main",
+        "checked_at": "2026-08-03",
+        "ref": "main",
+        "sha": "bb5054fe47abe73ecbbd454751066a28c89f4bb9",
+        "evidence_status": "fresh",
+        "product_version": "codex-cli 0.146.0",
+        "note": "Official repository and documentation surfaces observed independently; changes require manual semantic review and never auto-import.",
+        "watched_paths": [
+          {
+            "path": "codex-rs/protocol/src/prompts/base_instructions/default.md",
+            "status": "ok",
+            "latest_commit_sha": "2cf2a6a844f1fc2ddd489c8a67fa8bc2f59a6f3d",
+            "latest_commit_url": "https://github.com/openai/codex/commit/2cf2a6a844f1fc2ddd489c8a67fa8bc2f59a6f3d"
+          }
+        ],
+        "watched_surfaces": [
+          {
+            "id": "base-instructions",
+            "url": "https://raw.githubusercontent.com/openai/codex/2cf2a6a844f1fc2ddd489c8a67fa8bc2f59a6f3d/codex-rs/protocol/src/prompts/base_instructions/default.md",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "ac8ae107a0d72fe3476b430afb161ea4e67da2e446d778aefc44828160559807"
+          },
+          {
+            "id": "agents-md",
+            "url": "https://learn.chatgpt.com/docs/agent-configuration/agents-md.md",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "9d1f87a2d1cb55b4782b95abe710692b35b9659789c2db31a22c7074a3383e8e"
+          },
+          {
+            "id": "code-review",
+            "url": "https://learn.chatgpt.com/docs/code-review.md",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "2fbdecf95f49cf19905ebed1752eadc9a7878b7de3ab94037fa0d7622fe9450f"
+          },
+          {
+            "id": "cli-customization",
+            "url": "https://learn.chatgpt.com/docs/cli-customization.md",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "7f59bf08264c63061b59a6a0050376c4633d22c9e96915ec1d565e85a032b382"
+          },
+          {
+            "id": "agent-approvals-security",
+            "url": "https://learn.chatgpt.com/docs/agent-approvals-security.md",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "23fada5ed8b7d1d40e809b3cb7d4363a61386d8ffa1eb31414bfc2d7521426cd"
+          }
+        ]
+      },
+      "accepted": {
+        "source_url": "https://github.com/openai/codex/blob/2cf2a6a844f1fc2ddd489c8a67fa8bc2f59a6f3d/codex-rs/protocol/src/prompts/base_instructions/default.md",
+        "checked_at": "2026-08-03",
+        "ref": "base-instructions@2cf2a6a",
+        "sha": "2cf2a6a844f1fc2ddd489c8a67fa8bc2f59a6f3d",
+        "accepted_at": "2026-08-03",
+        "mode": "reference",
+        "evidence_status": "fresh",
+        "product_version": "codex-cli 0.146.0",
+        "evidence": "maintainer/upstreams/candidates/openai-codex-commit-workflow/candidate.json",
+        "watched_paths": [
+          {
+            "path": "codex-rs/protocol/src/prompts/base_instructions/default.md",
+            "latest_commit_sha": "2cf2a6a844f1fc2ddd489c8a67fa8bc2f59a6f3d"
+          }
+        ],
+        "watched_surfaces": [
+          {
+            "id": "base-instructions",
+            "content_sha256": "ac8ae107a0d72fe3476b430afb161ea4e67da2e446d778aefc44828160559807"
+          },
+          {
+            "id": "agents-md",
+            "content_sha256": "9d1f87a2d1cb55b4782b95abe710692b35b9659789c2db31a22c7074a3383e8e"
+          },
+          {
+            "id": "code-review",
+            "content_sha256": "2fbdecf95f49cf19905ebed1752eadc9a7878b7de3ab94037fa0d7622fe9450f"
+          },
+          {
+            "id": "cli-customization",
+            "content_sha256": "7f59bf08264c63061b59a6a0050376c4633d22c9e96915ec1d565e85a032b382"
+          },
+          {
+            "id": "agent-approvals-security",
+            "content_sha256": "23fada5ed8b7d1d40e809b3cb7d4363a61386d8ffa1eb31414bfc2d7521426cd"
+          }
+        ]
+      },
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "anthropic-claude-code-commit-behavior",
+      "observed": {
+        "source_url": "https://code.claude.com/docs/en/headless#create-a-commit",
+        "checked_at": "2026-08-03",
+        "ref": "documentation",
+        "sha": null,
+        "evidence_status": "fresh",
+        "product_version": "Claude Code 2.1.220",
+        "note": "Official Markdown surfaces normalized and hashed independently; changes require manual semantic review and never auto-import.",
+        "watched_surfaces": [
+          {
+            "id": "headless-create-a-commit",
+            "url": "https://code.claude.com/docs/en/headless.md",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "94bdf2c41c2cc85eaecfb0c6e03f4839a8a3121b5a020a0e0f0d7be27ec4ebaa"
+          },
+          {
+            "id": "configuration",
+            "url": "https://code.claude.com/docs/en/configuration.md",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "c4fce2f04af815c24442bf77515d66eff75051ac41c9bccae92819fa9e0c63c3"
+          },
+          {
+            "id": "permissions",
+            "url": "https://code.claude.com/docs/en/permissions.md",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "f43c04fd9342606bea2be41ce863a4f6d4c499333a4245801042d8ed54c4c4b3"
+          },
+          {
+            "id": "hooks",
+            "url": "https://code.claude.com/docs/en/hooks.md",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "eb0207ab2cf7e88e9667d3a0fb424db5a2938b721c65fbebbe28b16110e55346"
+          },
+          {
+            "id": "changelog",
+            "url": "https://code.claude.com/docs/en/changelog.md",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "31d84f0e990ed6875ccf6ba1947e7d7382d8ecff717a28ff8ac9af75127fc94e"
+          }
+        ]
+      },
+      "accepted": {
+        "source_url": "https://code.claude.com/docs/en/headless#create-a-commit",
+        "checked_at": "2026-08-03",
+        "ref": "documentation@2026-08-03",
+        "sha": null,
+        "accepted_at": "2026-08-03",
+        "mode": "reference",
+        "evidence_status": "fresh",
+        "product_version": "Claude Code 2.1.220",
+        "evidence": "maintainer/upstreams/candidates/claude-code-commit-workflow/candidate.json",
+        "watched_surfaces": [
+          {
+            "id": "headless-create-a-commit",
+            "content_sha256": "94bdf2c41c2cc85eaecfb0c6e03f4839a8a3121b5a020a0e0f0d7be27ec4ebaa"
+          },
+          {
+            "id": "configuration",
+            "content_sha256": "c4fce2f04af815c24442bf77515d66eff75051ac41c9bccae92819fa9e0c63c3"
+          },
+          {
+            "id": "permissions",
+            "content_sha256": "f43c04fd9342606bea2be41ce863a4f6d4c499333a4245801042d8ed54c4c4b3"
+          },
+          {
+            "id": "hooks",
+            "content_sha256": "eb0207ab2cf7e88e9667d3a0fb424db5a2938b721c65fbebbe28b16110e55346"
+          },
+          {
+            "id": "changelog",
+            "content_sha256": "31d84f0e990ed6875ccf6ba1947e7d7382d8ecff717a28ff8ac9af75127fc94e"
+          }
+        ]
+      },
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "conventional-commits",
+      "observed": {
+        "source_url": "https://www.conventionalcommits.org/en/v1.0.0/",
+        "checked_at": "2026-08-03",
+        "ref": "1.0.0",
+        "sha": null,
+        "evidence_status": "fresh",
+        "note": "Specification reference only; no specification text is imported.",
+        "watched_surfaces": [
+          {
+            "id": "specification-1.0.0",
+            "url": "https://www.conventionalcommits.org/en/v1.0.0/",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "1f02d0f99e4a830daafa4cc75d92e1fe4aef50984c6c398aabd50d7c1214091f"
+          }
+        ]
+      },
+      "accepted": {
+        "source_url": "https://www.conventionalcommits.org/en/v1.0.0/",
+        "checked_at": "2026-08-03",
+        "ref": "1.0.0",
+        "sha": null,
+        "accepted_at": "2026-08-03",
+        "mode": "reference",
+        "evidence_status": "fresh",
+        "evidence": "https://www.conventionalcommits.org/en/v1.0.0/",
+        "watched_surfaces": [
+          {
+            "id": "specification-1.0.0",
+            "content_sha256": "1f02d0f99e4a830daafa4cc75d92e1fe4aef50984c6c398aabd50d7c1214091f"
+          }
+        ]
+      },
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "openai-agents-md",
+      "observed": {
+        "source_url": "https://learn.chatgpt.com/docs/agent-configuration/agents-md",
+        "checked_at": "2026-07-29",
+        "ref": "documentation",
+        "sha": null,
+        "note": "Documentation reference only."
+      },
+      "accepted": null,
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "claude-memory",
+      "observed": {
+        "source_url": "https://code.claude.com/docs/en/memory",
+        "checked_at": "2026-07-29",
+        "ref": "documentation",
+        "sha": null,
+        "note": "Documentation reference only; supports @AGENTS.md bridge pattern."
+      },
+      "accepted": null,
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "openai-codex-skill-creator",
+      "observed": {
+        "source_url": "https://github.com/openai/codex/tree/main",
+        "checked_at": "2026-07-30",
+        "ref": "main",
+        "sha": "b1ccaa0e080f59cfd71a136f6fcc60a4f2d60fba",
+        "note": "Branch head observed on 2026-07-30; watched SKILL.md last changed at 59533a2c26e349c59417e4773b930c26211d7bdd. references/openai_yaml.md matched the current official raw content after line-ending normalization; its path-level last-commit lookup was rate-limited and is not claimed.",
+        "watched_paths": [
+          {
+            "path": "codex-rs/skills/src/assets/samples/skill-creator/SKILL.md",
+            "status": "ok",
+            "latest_commit_sha": "59533a2c26e349c59417e4773b930c26211d7bdd",
+            "latest_commit_url": "https://github.com/openai/codex/commit/59533a2c26e349c59417e4773b930c26211d7bdd"
+          },
+          {
+            "path": "codex-rs/skills/src/assets/samples/skill-creator/references/openai_yaml.md",
+            "status": "content-verified",
+            "content_sha256": "ffac39318e408108141d40f820968e59f70434a891694f9bf1d25be8237b150c",
+            "content_source_url": "https://raw.githubusercontent.com/openai/codex/main/codex-rs/skills/src/assets/samples/skill-creator/references/openai_yaml.md",
+            "verification_note": "Current official raw content and the locally installed Codex system reference matched after CRLF/LF normalization on 2026-07-30. GitHub API rate limiting prevented a path-level last-commit claim."
+          }
+        ]
+      },
+      "accepted": null,
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "skill-creator-guides",
+      "observed": {
+        "source_url": "https://github.com/anthropics/skills/tree/main",
+        "checked_at": "2026-07-30",
+        "ref": "main",
+        "sha": "b29e7cf65e5cb78a5ac33d582270551bc74a14eb",
+        "note": "Observed by check_upstreams.py with status=ok"
+      },
+      "accepted": {
+        "ref": "main",
+        "sha": "b29e7cf65e5cb78a5ac33d582270551bc74a14eb",
+        "accepted_at": "2026-07-29",
+        "mode": "adapted",
+        "evidence": "maintainer/upstreams/provenance/anthropic-skills/file-map.json"
+      },
+      "embedded": {
+        "ref": "main",
+        "sha": "b29e7cf65e5cb78a5ac33d582270551bc74a14eb",
+        "embedded_at": "2026-07-29",
+        "targets": [
+          "maintainer/skills/custom-skill-design"
+        ]
+      },
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "im-not-ai",
+      "observed": {
+        "source_url": "https://github.com/epoko77-ai/im-not-ai/releases/tag/v2.3.0",
+        "checked_at": "2026-07-30",
+        "ref": "v2.3.0",
+        "sha": "82137e858763dadb99561f194c5c00465735017b",
+        "note": "Observed by check_upstreams.py with status=ok"
+      },
+      "accepted": {
+        "ref": "v2.3.0",
+        "sha": "82137e858763dadb99561f194c5c00465735017b",
+        "accepted_at": "2026-07-29",
+        "mode": "adapted",
+        "evidence": "maintainer/upstreams/promotions/humanize-korean-im-not-ai-v2.3.0.json"
+      },
+      "embedded": {
+        "ref": "v2.3.0",
+        "sha": "82137e858763dadb99561f194c5c00465735017b",
+        "embedded_at": "2026-07-29",
+        "targets": [
+          "skills/humanize-korean",
+          "maintainer/plugin/runtime-allowlist.json"
+        ]
+      },
+      "packaged": {
+        "plugin_id": "harness-kit",
+        "version": "0.3.0",
+        "packaged_at": "2026-08-01",
+        "artifact_manifest_sha256": "619339f9fd686a2b3d59fdc54bebbeaa6c1cc1623f8ba91e97a5d5ed652f9122"
+      },
+      "released": null
+    },
+    {
+      "id": "ui-ux-pro-max-runtime",
+      "observed": {
+        "source_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/releases/tag/v2.11.3",
+        "checked_at": "2026-07-31",
+        "ref": "v2.11.3",
+        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
+        "note": "Pinned from the latest stable upstream release during Phase 0."
+      },
+      "accepted": {
+        "ref": "v2.11.3",
+        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
+        "accepted_at": "2026-07-31",
+        "mode": "adapted",
+        "evidence": "maintainer/upstreams/candidates/ui-ux-pro-max/candidate.json"
+      },
+      "embedded": {
+        "ref": "v2.11.3",
+        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
+        "embedded_at": "2026-07-31",
+        "targets": [
+          "skills/ui-ux-pro-max"
+        ]
+      },
+      "packaged": {
+        "plugin_id": "harness-kit",
+        "version": "0.3.0",
+        "packaged_at": "2026-08-01",
+        "artifact_manifest_sha256": "619339f9fd686a2b3d59fdc54bebbeaa6c1cc1623f8ba91e97a5d5ed652f9122"
+      },
+      "released": null
+    },
+    {
+      "id": "ui-ux-pro-max-principles",
+      "observed": {
+        "source_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/releases/tag/v2.11.3",
+        "checked_at": "2026-07-31",
+        "ref": "v2.11.3",
+        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
+        "note": "Pinned from the latest stable upstream release during Phase 0."
+      },
+      "accepted": {
+        "ref": "v2.11.3",
+        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
+        "accepted_at": "2026-07-31",
+        "mode": "reference",
+        "evidence": "maintainer/upstreams/candidates/ui-ux-pro-max/candidate.json"
+      },
+      "embedded": {
+        "ref": "v2.11.3",
+        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
+        "embedded_at": "2026-07-31",
+        "targets": [
+          "skills/design-prototype-docs",
+          "skills/create-prototype",
+          "skills/frontend-design",
+          "skills/impl-verify"
+        ]
+      },
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "lottiefiles-motion-design-runtime",
+      "observed": {
+        "source_url": "https://github.com/LottieFiles/motion-design-skill/tree/main",
+        "checked_at": "2026-07-31",
+        "ref": "main",
+        "sha": "f9a8a041b85185ee4881b3471d3415e939aac772",
+        "note": "Upstream publishes no release or tag; branch head pinned during Phase 0."
+      },
+      "accepted": {
+        "ref": "main",
+        "sha": "f9a8a041b85185ee4881b3471d3415e939aac772",
+        "accepted_at": "2026-07-31",
+        "mode": "adapted",
+        "evidence": "maintainer/upstreams/candidates/motion-design/candidate.json"
+      },
+      "embedded": {
+        "ref": "main",
+        "sha": "f9a8a041b85185ee4881b3471d3415e939aac772",
+        "embedded_at": "2026-07-31",
+        "targets": [
+          "skills/motion-design"
+        ]
+      },
+      "packaged": {
+        "plugin_id": "harness-kit",
+        "version": "0.3.0",
+        "packaged_at": "2026-08-01",
+        "artifact_manifest_sha256": "619339f9fd686a2b3d59fdc54bebbeaa6c1cc1623f8ba91e97a5d5ed652f9122"
+      },
+      "released": null
+    },
+    {
+      "id": "lottiefiles-motion-design-principles",
+      "observed": {
+        "source_url": "https://github.com/LottieFiles/motion-design-skill/tree/main",
+        "checked_at": "2026-07-31",
+        "ref": "main",
+        "sha": "f9a8a041b85185ee4881b3471d3415e939aac772",
+        "note": "Upstream publishes no release or tag; branch head pinned during Phase 0."
+      },
+      "accepted": {
+        "ref": "main",
+        "sha": "f9a8a041b85185ee4881b3471d3415e939aac772",
+        "accepted_at": "2026-07-31",
+        "mode": "reference",
+        "evidence": "maintainer/upstreams/candidates/motion-design/candidate.json"
+      },
+      "embedded": {
+        "ref": "main",
+        "sha": "f9a8a041b85185ee4881b3471d3415e939aac772",
+        "embedded_at": "2026-07-31",
+        "targets": [
+          "skills/design-prototype-docs",
+          "skills/create-prototype",
+          "skills/frontend-design",
+          "skills/impl-verify"
+        ]
+      },
+      "packaged": null,
+      "released": null
+    }
+  ],
+  "generated_by": "harness-plugin-maintainer",
+  "released_state_preserved": true
+}

@@ -1,6 +1,6 @@
 ---
 name: harness-plugin-maintainer
-description: "관리자가 사용자용 ai-agent-harness 플러그인의 Codex·Claude runtime projection, manifest, smoke test, 릴리스 후보를 생성·검증할 때 사용한다. 사용자 스킬 upstream 품질 개선 자체는 담당하지 않는다."
+description: "관리자가 사용자용 harness-kit 플러그인의 Codex·Claude runtime projection, manifest, smoke test, 릴리스 후보를 생성·검증할 때 사용한다. 사용자 스킬 upstream 품질 개선 자체는 담당하지 않는다."
 allowed-tools: Read, Write, Glob, Grep
 disable-model-invocation: true
 ---
@@ -90,7 +90,7 @@ python maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py
 repo root/
   .agents/plugins/marketplace.json
   .claude-plugin/marketplace.json
-plugins/ai-agent-harness/
+plugins/harness-kit/
   .codex-plugin/plugin.json
   .claude-plugin/plugin.json
   runtime/codex/skills/**
@@ -113,7 +113,7 @@ plugins/ai-agent-harness/
 - Codex·Claude physical skill 수는 inventory와 일치, agent 0
 - `humanize-korean`만 canonical 문서 개선 스킬로 패키징
 - manifest `name`과 marketplace `name`이 kebab-case 공식 식별자 형식
-- Codex·Claude marketplace가 관리 저장소 루트에서 `./plugins/ai-agent-harness`를 가리킴
+- Codex·Claude marketplace가 관리 저장소 루트에서 `./plugins/harness-kit`를 가리킴
 - Markdown producer는 inventory에서 파생하며 각 producer가 public handoff를 선언
 - `model:`과 `agent: fork` 금지
 - plugin root 밖 상대경로 금지

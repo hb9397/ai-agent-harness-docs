@@ -1,0 +1,63 @@
+# 산출물 위치·소유권·인계 규칙
+
+> 이 파일은 `context-doc`·`harness-setup`·`harness-bootstrap`이 생성하는 공용
+> artifact routing instruction이다.
+> 단일 앱은 이 파일을 `.docs/instruction/artifact-output-routing-instruction.md`,
+> 복수 앱은 `.docs/{앱}/instruction/artifact-output-routing-instruction.md`에 둔다.
+
+## 1. 읽기 규칙과 적용 범위
+
+- 이 문서는 산출물을 만드는 모든 사용자 스킬의 위치·소유자·승인·인계 정본이다.
+- `AGENTS.md`는 아래 instruction을 `@`로 참조하고, `CLAUDE.md`는 `@AGENTS.md`
+  bridge만 유지한다.
+- 복수 앱에서는 `{앱}`을 실제 애플리케이션 식별자로 치환한다. 앱 식별자나 source
+  root가 모호하면 파일을 만들거나 수정하지 않고 사용자에게 확인한다.
+- manager 스킬의 `maintainer/**`, `plugins/**` 산출물과 사용자 프로젝트의 `.docs/**`
+  산출물을 서로 교차 작성하지 않는다.
+
+## 2. 단일 앱·복수 앱 토폴로지
+
+| 범위 | 설계·context | 구현 계획 | prototype | design system |
+|---|---|---|---|---|
+| 단일 앱 | `.docs/context-base/DESIGN.md`, root `AGENTS.md`·`CLAUDE.md` | `.docs/impl-doc/{사용자}/` | `.docs/prototype/{사용자}/{식별자}/` | `.docs/design-system/{project-slug}/` |
+| 복수 앱 | `.docs/{앱}/context-base/DESIGN.md`, `.docs/{앱}-context.md` | `.docs/{앱}/impl-doc/{사용자}/` | `.docs/{앱}/prototype/{사용자}/{식별자}/` | `.docs/{앱}/design-system/{project-slug}/` |
+
+복수 앱 root에 앱별 산출물을 평평하게 쓰지 않는다. 이미 공통 경로에 있는 문서를
+앱별 위치로 이동해야 하면 migration map·사용자 승인·hash·link 검증을 먼저 남긴다.
+
+## 3. 스킬별 위치와 인계
+
+정확한 전체 매니페스트는 `maintainer/inventory/artifact-output-contract.json`에
+있다. 아래는 작업 시 반드시 지켜야 하는 요약이다.
+
+- `design-doc` → `context-base/DESIGN.md` → `context-doc`
+- `context-doc`·`harness-setup`·`harness-bootstrap` → AGENTS/CLAUDE bridge와
+  instruction files. 이 파일은 항상 생성되는 routing instruction이다.
+- `impl-doc`·`impl-fe-be-doc` → 앱별 `impl-doc/{사용자}/`와 공유
+  `*-roadmap-impl-index.md`. 계획 승인·index 확정 후 Phase 시작에
+  `impl-reuse-scan`, Phase 종료에 명시 호출 `impl-verify`를 연결한다.
+- `design-prototype-docs`·`create-prototype` → prototype bundle. prototype code를
+  실제 제품 source로 복사하지 않는다.
+- `ui-ux-pro-max`·`motion-design` → design-system 문서. 명시적 저장 승인 전에는
+  파일을 만들지 않는다.
+- `frontend-design`·`code-comment` → 실제 source root. 제품 source를 `.docs`에
+  복제하지 않는다.
+- `humanize-korean` → outer producer가 소유한 입력 artifact 원위치. 독립 경로를
+  만들지 않는다.
+- `impl-reuse-scan`·`impl-verify`·`doc-audit`·`multi-review` → 기본 report-only/
+  chat-only. 명시적 저장 요청 없이는 임의 Markdown을 만들지 않는다.
+- `commit` → Git history, `git-scoped-account` → 사용자가 지정한 Git config.
+- manager 스킬 → manager repository `maintainer/**`·`plugins/**`만 사용한다.
+
+## 4. 승인·fingerprint·금지 규칙
+
+1. 산출물 producer가 owner이며, 외곽 producer가 있으면 새 owner나 bundle ID를 만들지
+   않는다.
+2. overwrite·이동·삭제는 해당 스킬의 명시 승인과 destructive/asset-impact 승인 여부를
+   확인한다.
+3. 계획서·roadmap index·producer bundle의 상대 경로와 SHA-256을 evidence에 연결한다.
+4. report-only 결과의 `passed`는 실제 report reference나 사용자 확인 없이는 기록하지
+   않는다.
+5. 앱 A에서 앱 B, manager repository, `.docs` 밖에 쓰는 경로는 금지한다.
+6. 경로가 존재하지 않거나 `@` 참조가 실제 파일과 1:1로 맞지 않으면 저장하지 않고
+   경로를 먼저 고친다.

@@ -1,14 +1,14 @@
 {
-  "name": "ai-agent-harness",
+  "name": "hb9397",
   "interface": {
-    "displayName": "AI Agent Harness"
+    "displayName": "Harness Kit"
   },
   "plugins": [
     {
-      "name": "ai-agent-harness",
+      "name": "harness-kit",
       "source": {
         "source": "local",
-        "path": "./plugins/ai-agent-harness"
+        "path": "./plugins/harness-kit"
       },
       "policy": {
         "installation": "AVAILABLE",

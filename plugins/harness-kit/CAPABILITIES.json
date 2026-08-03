@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-08-03",
+  "logical_user_skills": [
+    "code-comment",
+    "commit",
+    "context-doc",
+    "create-prototype",
+    "design-doc",
+    "design-prototype-docs",
+    "doc-audit",
+    "frontend-design",
+    "git-scoped-account",
+    "harness-bootstrap",
+    "harness-setup",
+    "humanize-korean",
+    "impl-doc",
+    "impl-fe-be-doc",
+    "impl-reuse-scan",
+    "impl-verify",
+    "motion-design",
+    "multi-review",
+    "ui-ux-pro-max"
+  ],
+  "pending_packaging": [],
+  "pending_packaging_note": "Canonical user skills that exist in skills/ but are intentionally not shipped yet. Empty means every canonical user skill is packaged. Listing a skill here keeps the inventory check strict instead of silently tolerating drift.",
+  "aliases": {},
+  "maintainer_skills_excluded_from_user_plugin": [
+    "custom-skill-design",
+    "harness-plugin-maintainer",
+    "skill-portfolio-maintainer"
+  ],
+  "generated_by": "harness-plugin-maintainer",
+  "version": "0.3.0",
+  "plugin_id": "harness-kit",
+  "codex": {
+    "physical_skills": 19,
+    "physical_agents": 0,
+    "skills_path": "./runtime/codex/skills"
+  },
+  "claude": {
+    "physical_skills": 19,
+    "physical_agents": 0,
+    "skills_path": "./runtime/claude/skills",
+    "runtime_agents": [],
+    "aliases": {},
+    "canonical_humanize_skill": "humanize-korean"
+  },
+  "markdown_artifact_flow": {
+    "producer_count": 9,
+    "producers": [
+      "harness-setup",
+      "harness-bootstrap",
+      "context-doc",
+      "design-doc",
+      "design-prototype-docs",
+      "impl-doc",
+      "impl-fe-be-doc",
+      "ui-ux-pro-max",
+      "motion-design"
+    ],
+    "handoff_target": "humanize-korean",
+    "proposal_only": true
+  }
+}

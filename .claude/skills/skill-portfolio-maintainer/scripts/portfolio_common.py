@@ -218,7 +218,7 @@ def mask_token(value: str) -> str:
 def http_json(url: str, timeout: int = 15, retries: int = 2) -> Any:
     headers = {
         "Accept": "application/vnd.github+json",
-        "User-Agent": "ai-agent-harness-skill-portfolio-maintainer",
+        "User-Agent": "harness-kit-skill-portfolio-maintainer",
     }
     token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
     if token:

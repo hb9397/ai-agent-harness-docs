@@ -21,6 +21,7 @@ sys.path.insert(0, str(SCRIPTS))
 import build_plugin  # noqa: E402
 import freeze_manager_inventory  # noqa: E402
 import verify_install_surfaces  # noqa: E402
+from plugin_common import PLUGIN_ROOT_REL  # noqa: E402
 
 
 def run(args: list[str]) -> subprocess.CompletedProcess[str]:
@@ -49,7 +50,7 @@ def test_invalid_inventory_does_not_destroy_the_plugin_tree() -> None:
     with tempfile.TemporaryDirectory(prefix="harness-plugin-reset-eval-") as tmp:
         fixture_root = Path(tmp)
         build_plugin.build(ROOT, output_root=fixture_root)
-        plugin_root = fixture_root / "plugins" / "ai-agent-harness"
+        plugin_root = fixture_root / PLUGIN_ROOT_REL
         before = sorted(p.relative_to(fixture_root).as_posix() for p in plugin_root.rglob("*"))
         assert before, "fixture build produced no plugin tree"
 
@@ -98,7 +99,7 @@ def test_pending_candidate_skill_is_canonical_but_not_packaged() -> None:
         assert (ROOT / "skills" / skill / "SKILL.md").is_file(), f"pending skill {skill} is not canonical"
         assert skill not in capabilities["logical_user_skills"], f"pending skill {skill} leaked into capabilities"
         for platform in ("codex", "claude"):
-            packaged = ROOT / "plugins" / "ai-agent-harness" / "runtime" / platform / "skills" / skill
+            packaged = ROOT / PLUGIN_ROOT_REL / "runtime" / platform / "skills" / skill
             assert not packaged.exists(), f"pending skill {skill} leaked into the {platform} runtime"
 
 
@@ -109,6 +110,8 @@ def main() -> int:
     # Cross-skill properties that no single skill runner can observe.
     run([str(Path(__file__).parent / "design_workflow.py")])
     run([str(Path(__file__).parent / "markdown_producers.py")])
+    run([str(Path(__file__).parent / "impl_workflow.py")])
+    run([str(Path(__file__).parent / "identity_source.py")])
 
     with tempfile.TemporaryDirectory(prefix="harness-plugin-text-eval-") as tmp:
         payload_root = Path(tmp)
@@ -134,7 +137,7 @@ def main() -> int:
     with tempfile.TemporaryDirectory(prefix="harness-plugin-check-eval-") as tmp:
         fixture_root = Path(tmp)
         build_plugin.build(ROOT, output_root=fixture_root)
-        drifted = fixture_root / "plugins" / "ai-agent-harness" / ".codex-plugin" / "plugin.json"
+        drifted = fixture_root / PLUGIN_ROOT_REL / ".codex-plugin" / "plugin.json"
         drifted.write_text('{"name":"drift-must-survive-check"}\n', encoding="utf-8", newline="\n")
         before = drifted.read_bytes()
         with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
