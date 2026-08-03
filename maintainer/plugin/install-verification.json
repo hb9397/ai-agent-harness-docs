@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "generated_at": "2026-08-03T00:00:00+00:00",
+  "generated_at": "2026-07-29T00:00:00+00:00",
   "plugin": {
     "plugin_root": "plugins/harness-kit",
     "plugin_id": "harness-kit",

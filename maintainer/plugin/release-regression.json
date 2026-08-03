@@ -6,15 +6,15 @@
   "checks": {
     "source_projection_integrity": {
       "counts": {
-        "user_skills": 20,
-        "packageable_user_skills": 20,
+        "user_skills": 19,
+        "packageable_user_skills": 19,
         "pending_user_skills": [],
         "manager_skills": 3,
         "agents_projection": 3,
         "claude_projection": 3,
-        "codex_physical_skills": 20,
+        "codex_physical_skills": 19,
         "codex_physical_agents": 0,
-        "claude_physical_skills": 20,
+        "claude_physical_skills": 19,
         "claude_physical_agents": 0
       },
       "checks": {
@@ -34,7 +34,7 @@
       "passed": true
     },
     "reproducible_build": {
-      "archive_sha256": "016be105eaebf46f164641946c1705edbf1b70bed7a3bf4aff661a6e0814d27c",
+      "archive_sha256": "04ab3cf120c9b0aee227971f2df7ee19c87d467759ef15e7f1d0e6ab7cffd334",
       "same_archive_hash": true,
       "same_manifest": true,
       "release_metadata_matches": true,

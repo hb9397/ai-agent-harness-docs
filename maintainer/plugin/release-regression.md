@@ -2,16 +2,11 @@
 
 생성 시각: 2026-07-29T00:00:00+00:00
 
-> Historical report: 이 문서는 `0.2.2` 후보에 대한 회귀검증 기록이다. 현재
-> `harness-kit` `0.3.0` 설치 증적은 `install-verification.json`과
-> `release-checklist.md`에 갱신되어 있으며, 현재 후보의 전체 회귀 보고서는
-> Phase 7에서 재생성한다.
-
 ## 요약
 
 - 전체 상태: `not-release-ready`
-- 플러그인: `ai-agent-harness` `0.2.2`
-- 아카이브 SHA-256: `016be105eaebf46f164641946c1705edbf1b70bed7a3bf4aff661a6e0814d27c`
+- 플러그인: `harness-kit` `0.3.0`
+- 아카이브 SHA-256: `04ab3cf120c9b0aee227971f2df7ee19c87d467759ef15e7f1d0e6ab7cffd334`
 - 릴리스 게이트: `not-release-ready`
 - push/tag/release 생성: `false`
 
