@@ -14,7 +14,7 @@ disable-model-invocation: true
 - 커밋 메시지만 요청하면 메시지만 제안하고 index, worktree, `HEAD`를 변경하지 말라.
 - 실제 커밋 요청이 있을 때만 stage와 `git commit`을 실행하라. 범위가 모호하면 먼저 질문하라.
 - 현재 직접 호출 형식은 Codex의 `$commit <범위>`와 Claude Code의
-  `/ai-agent-harness:commit <범위>`다. 호출에 적힌 범위를 권한 경계로 사용하라.
+  `/harness-kit:commit <범위>`다. 호출에 적힌 범위를 권한 경계로 사용하라.
 - `--no-verify`, `--amend`, push, tag, branch 생성은 각각 별도의 명시적 요청 없이는 수행하지 말라.
 - 저장소 정책이나 사용자 요청에 없는 `Co-Authored-By` trailer를 강제하거나 자동 삽입하지 말라.
 

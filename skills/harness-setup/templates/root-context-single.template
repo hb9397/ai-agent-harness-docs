@@ -1,4 +1,4 @@
-<!-- ai-agent-harness:managed:start -->
+<!-- harness-kit:managed:start -->
 # {{PROJECT_NAME}} — AI Agent 컨텍스트
 
 > 이 파일은 `harness-setup`이 만든 공통 컨텍스트 정본의 뼈대다.
@@ -26,10 +26,10 @@
 
 ## 운영 원칙
 
-- 사용자 스킬은 프로젝트 local copy가 아니라 설치된 `ai-agent-harness`
+- 사용자 스킬은 프로젝트 local copy가 아니라 설치된 `harness-kit`
   플러그인에서 제공한다.
 - 프로젝트에 `.agents/skills/`, `.claude/skills/`, `skills/` 사용자 스킬
   projection을 만들거나 동기화하지 않는다.
 - 공통 규칙은 이 파일에 두고 `CLAUDE.md`에는 Claude 전용 차이만 둔다.
 - 기존 파일과 사용자 코드를 변경하기 전에 적용 범위를 확인한다.
-<!-- ai-agent-harness:managed:end -->
+<!-- harness-kit:managed:end -->

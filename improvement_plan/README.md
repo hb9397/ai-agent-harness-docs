@@ -8,7 +8,7 @@
 
 | 위치 | 상태 | 설명 |
 |------|------|------|
-| [20260803/260803-1.harness-kit-plugin-rename-and-example-removal-impl-doc.md](./20260803/260803-1.harness-kit-plugin-rename-and-example-removal-impl-doc.md) | Phase 3 완료 / Phase 4~8 대기 | plugin ID를 `harness-kit`, marketplace를 `hb9397`로 전환하고, root `example/`을 외부 저장소 없이 제거하며 산출물 routing·impl downstream 계약을 정립하는 impl-doc 계획 |
+| [20260803/260803-1.harness-kit-plugin-rename-and-example-removal-impl-doc.md](./20260803/260803-1.harness-kit-plugin-rename-and-example-removal-impl-doc.md) | Phase 4 완료 / Phase 5~8 대기 | plugin ID를 `harness-kit`, marketplace를 `hb9397`로 전환하고, root `example/`을 외부 저장소 없이 제거하며 산출물 routing·impl downstream 계약을 정립하는 impl-doc 계획 |
 | [20260801/260801-1.user-docs-migration-and-education-removal-impl-refactor.md](./20260801/260801-1.user-docs-migration-and-education-removal-impl-refactor.md) | 구현 대기 | 루트 `.user-docs/`를 `.user-docs/`로 이전하고 `education/`을 제거한 뒤, 정본·projection·플러그인 `0.2.2` 재빌드와 Codex·Claude 기술 회귀검증을 수행하는 impl-doc 계획 |
 | [20260729/플러그인 전환 및 스킬 거버넌스 리팩토링 작업 계획서.md](./20260729/플러그인%20전환%20및%20스킬%20거버넌스%20리팩토링%20작업%20계획서.md) | Phase 0~10 구현 완료 / 직접 표면 검증 대기 | 사용자 플러그인 전환, 관리자/사용자 스킬 분리, upstream governance, 문서 최신화, release gate 구현 완료. Codex CLI·Claude Code CLI의 로컬 marketplace 설치 smoke는 통과했고 Codex·Claude CLI/앱 네 표면의 실제 모델 호출 증적과 관리자 최종 승인이 남아 있음 |
 

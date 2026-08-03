@@ -17,7 +17,7 @@
 
 이 스킬은 프로젝트 local skill copy를 만들지 않는다. `.agents/skills/`,
 `.claude/skills/`, `skills/`는 생성·동기화 대상이 아니다. 사용자가 `design-doc`,
-`context-doc` 등 후속 스킬을 아직 사용할 수 없다면 `ai-agent-harness` 플러그인
+`context-doc` 등 후속 스킬을 아직 사용할 수 없다면 `harness-kit` 플러그인
 설치·새 세션 시작을 안내한다.
 
 ---
@@ -114,7 +114,7 @@
 >   인덱스는 `context-doc`이 보강한다.
 > - `CLAUDE.md`는 `@AGENTS.md` bridge다.
 > - `.docs/` 이하 산출물은 소스코드와 함께 동일 git 레포에서 형상관리한다.
-> - 사용자 스킬은 프로젝트 local copy가 아니라 `ai-agent-harness` 플러그인으로 사용한다.
+> - 사용자 스킬은 프로젝트 local copy가 아니라 `harness-kit` 플러그인으로 사용한다.
 > - `.agents/skills/`, `.claude/skills/`, `skills/`에는 사용자 스킬을 생성하거나
 >   동기화하지 않는다.
 

@@ -1,8 +1,8 @@
-<!-- ai-agent-harness:managed:start -->
+<!-- harness-kit:managed:start -->
 @AGENTS.md
 
 ## Claude Code 전용 차이
 
 - 공통 프로젝트 컨텍스트와 작업 규칙은 `AGENTS.md`를 따른다.
 - 이 파일에는 Claude Code에서만 필요한 차이만 추가한다.
-<!-- ai-agent-harness:managed:end -->
+<!-- harness-kit:managed:end -->

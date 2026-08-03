@@ -83,7 +83,7 @@ handoff한다.
 ## 워크플로우
 
 직접 호출할 때는 Codex에서 `$create-prototype`, Claude Code에서
-`/ai-agent-harness:create-prototype`를 사용한다. 스킬이 호출되면 먼저 사용자
+`/harness-kit:create-prototype`를 사용한다. 스킬이 호출되면 먼저 사용자
 메시지에서 아래 4가지를 사전 추출한다.
 
 | 항목 | 추출 기준 |

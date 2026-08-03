@@ -1,4 +1,4 @@
-# ai-agent-harness 플러그인 구조
+# harness-kit 플러그인 구조
 
 생성된 플러그인은 단일 루트에 두 개의 매니페스트를 갖는 번들이다. Codex와
 Claude는 로컬 플러그인 소스를 마켓플레이스 루트 기준 상대경로로 해석하므로,
@@ -8,11 +8,11 @@ Claude는 로컬 플러그인 소스를 마켓플레이스 루트 기준 상대�
 
 - Codex: `.agents/plugins/marketplace.json`
 - Claude: `.claude-plugin/marketplace.json`
-- 로컬 소스: `./plugins/ai-agent-harness`
+- 로컬 소스: `./plugins/harness-kit`
 
 ## 루트
 
-`plugins/ai-agent-harness/`
+`plugins/harness-kit/`
 
 ## Codex 런타임
 
@@ -53,7 +53,7 @@ Claude는 로컬 플러그인 소스를 마켓플레이스 루트 기준 상대�
 디렉터리를 사용하며 Codex와 Claude Code 모두에서 다음을 검증해야 한다.
 
 1. 저장소 루트 마켓플레이스 등록
-2. `ai-agent-harness@ai-agent-harness` 설치
+2. `harness-kit@hb9397` 설치
 3. 활성화된 플러그인 목록 표시
 4. `CAPABILITIES.json`의 논리 스킬 수와 `agents` 0개를 기준으로 설치된 런타임의 일치 여부
 5. `harness-setup`과 `humanize-korean`의 존재

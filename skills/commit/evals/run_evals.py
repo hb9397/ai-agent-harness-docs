@@ -55,7 +55,7 @@ def check_explicit_request_gate(skill: str) -> None:
             "실제 커밋 요청이 있을 때만 stage와 `git commit`을 실행하라",
             "범위가 모호하면 먼저 질문하라",
             "`$commit <범위>`",
-            "`/ai-agent-harness:commit <범위>`",
+            "`/harness-kit:commit <범위>`",
         ),
     )
 

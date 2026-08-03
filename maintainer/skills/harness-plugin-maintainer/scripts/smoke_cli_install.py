@@ -18,10 +18,10 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-from plugin_common import PLUGIN_ID, PLUGIN_ROOT_REL, load_json, repo_root, write_json
+from plugin_common import MARKETPLACE_NAME, PLUGIN_ID, PLUGIN_ROOT_REL, load_json, repo_root, write_json
 
 
-QUALIFIED_PLUGIN_ID = f"{PLUGIN_ID}@{PLUGIN_ID}"
+QUALIFIED_PLUGIN_ID = f"{PLUGIN_ID}@{MARKETPLACE_NAME}"
 
 
 class SmokeFailure(RuntimeError):
@@ -173,7 +173,7 @@ def codex_smoke(root: Path, command: list[str]) -> dict[str, Any]:
     marketplace_added = False
     plugin_installed = False
     cleanup_errors: list[str] = []
-    with tempfile.TemporaryDirectory(prefix="ai-agent-harness-codex-") as temp_dir:
+    with tempfile.TemporaryDirectory(prefix="harness-kit-codex-") as temp_dir:
         env = os.environ.copy()
         codex_home = Path(temp_dir) / "codex-home"
         codex_home.mkdir()
@@ -190,7 +190,7 @@ def codex_smoke(root: Path, command: list[str]) -> dict[str, Any]:
                 "Codex marketplace add",
             )
             marketplace_added = True
-            if added.get("marketplaceName") != PLUGIN_ID:
+            if added.get("marketplaceName") != MARKETPLACE_NAME:
                 raise SmokeFailure(f"unexpected Codex marketplace: {added!r}")
 
             marketplaces = parse_json_stdout(
@@ -202,10 +202,10 @@ def codex_smoke(root: Path, command: list[str]) -> dict[str, Any]:
                 ),
                 "Codex marketplace list",
             )
-            if PLUGIN_ID not in {
+            if MARKETPLACE_NAME not in {
                 item.get("name") for item in marketplaces.get("marketplaces", [])
             }:
-                raise SmokeFailure("Codex marketplace list does not contain ai-agent-harness")
+                raise SmokeFailure("Codex marketplace list does not contain harness-kit")
 
             installed = parse_json_stdout(
                 run(
@@ -246,7 +246,7 @@ def codex_smoke(root: Path, command: list[str]) -> dict[str, Any]:
             if marketplace_added:
                 removed_marketplace = run(
                     command,
-                    ["plugin", "marketplace", "remove", PLUGIN_ID, "--json"],
+                    ["plugin", "marketplace", "remove", MARKETPLACE_NAME, "--json"],
                     cwd=root,
                     env=env,
                     check=False,
@@ -259,7 +259,7 @@ def codex_smoke(root: Path, command: list[str]) -> dict[str, Any]:
     return {
         "status": "passed",
         "cli_version": version,
-        "marketplace": PLUGIN_ID,
+        "marketplace": MARKETPLACE_NAME,
         "plugin_id": QUALIFIED_PLUGIN_ID,
         "evidence_level": "marketplace-install-and-cache-smoke",
         "model_invocation_verified": False,
@@ -272,7 +272,7 @@ def claude_smoke(root: Path, command: list[str]) -> dict[str, Any]:
     marketplace_added = False
     plugin_installed = False
     cleanup_errors: list[str] = []
-    with tempfile.TemporaryDirectory(prefix="ai-agent-harness-claude-") as temp_dir:
+    with tempfile.TemporaryDirectory(prefix="harness-kit-claude-") as temp_dir:
         temp_root = Path(temp_dir)
         env = os.environ.copy()
         claude_config = temp_root / "config"
@@ -312,8 +312,8 @@ def claude_smoke(root: Path, command: list[str]) -> dict[str, Any]:
                 ),
                 "Claude marketplace list",
             )
-            if PLUGIN_ID not in {item.get("name") for item in marketplaces}:
-                raise SmokeFailure("Claude marketplace list does not contain ai-agent-harness")
+            if MARKETPLACE_NAME not in {item.get("name") for item in marketplaces}:
+                raise SmokeFailure("Claude marketplace list does not contain harness-kit")
 
             run(
                 command,
@@ -356,7 +356,7 @@ def claude_smoke(root: Path, command: list[str]) -> dict[str, Any]:
             if marketplace_added:
                 removed_marketplace = run(
                     command,
-                    ["plugin", "marketplace", "remove", PLUGIN_ID, "--scope", "user"],
+                    ["plugin", "marketplace", "remove", MARKETPLACE_NAME, "--scope", "user"],
                     cwd=root,
                     env=env,
                     check=False,
@@ -369,7 +369,7 @@ def claude_smoke(root: Path, command: list[str]) -> dict[str, Any]:
     return {
         "status": "passed",
         "cli_version": version,
-        "marketplace": PLUGIN_ID,
+        "marketplace": MARKETPLACE_NAME,
         "plugin_id": QUALIFIED_PLUGIN_ID,
         "evidence_level": "marketplace-install-and-cache-smoke",
         "model_invocation_verified": False,
@@ -381,7 +381,7 @@ def claude_smoke(root: Path, command: list[str]) -> dict[str, Any]:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
-            "Install ai-agent-harness from the local repository in isolated Codex and "
+            "Install harness-kit from the local repository in isolated Codex and "
             "Claude configuration directories, verify it, then uninstall it."
         )
     )

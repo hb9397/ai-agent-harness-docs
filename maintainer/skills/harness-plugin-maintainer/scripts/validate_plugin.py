@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate generated ai-agent-harness plugin."""
+"""Validate generated harness-kit plugin."""
 
 from __future__ import annotations
 
@@ -12,6 +12,8 @@ from pathlib import Path
 
 from plugin_common import (
     GENERATED_BY,
+    MARKETPLACE_NAME,
+    PLUGIN_DISPLAY_NAME,
     PLUGIN_ID,
     PLUGIN_ROOT_REL,
     PLUGIN_VERSION,
@@ -25,8 +27,6 @@ from plugin_common import (
 
 FRONTMATTER_RE = re.compile(r"^---\n.*?\n---\n", re.DOTALL)
 KEBAB_CASE_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-PLUGIN_DISPLAY_NAME = "AI Agent Harness"
-MARKETPLACE_NAME = "ai-agent-harness"
 ROOT_CODEX_MARKETPLACE = Path(".agents") / "plugins" / "marketplace.json"
 ROOT_CLAUDE_MARKETPLACE = Path(".claude-plugin") / "marketplace.json"
 PACKAGED_INTEGRATION_MODES = {"adapted", "vendored"}
@@ -387,8 +387,8 @@ def validate_manual_surface_contract(root: Path, errors: list[str]) -> None:
         "## Claude Desktop Code 예시",
         "$harness-setup",
         "$humanize-korean",
-        "/ai-agent-harness:harness-setup",
-        "/ai-agent-harness:humanize-korean",
+        "/harness-kit:harness-setup",
+        "/harness-kit:humanize-korean",
         "### A. 최초 설정",
         "### B. 갱신과 사용자 확장 보존",
         "### C. 새 session 중복 handoff 방지",

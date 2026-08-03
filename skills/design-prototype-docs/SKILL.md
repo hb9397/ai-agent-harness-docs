@@ -20,7 +20,7 @@ allowed-tools: Read, Write, Glob, Agent
 `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를 따른다.
 
 직접 호출할 때는 Codex에서 `$design-prototype-docs`, Claude Code에서
-`/ai-agent-harness:design-prototype-docs`를 사용한다.
+`/harness-kit:design-prototype-docs`를 사용한다.
 
 ```
 design-prototype-docs OUTPUT (.md)

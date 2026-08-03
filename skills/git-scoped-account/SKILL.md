@@ -11,7 +11,7 @@ disable-model-invocation: true
 리뷰, 검증 요청에서 계정 변경 의도를 추론하지 않는다.
 
 이 스킬은 명시 호출 전용이다. Codex에서는 `$git-scoped-account`, Claude
-Code에서는 `/ai-agent-harness:git-scoped-account`를 호출하고 적용 또는 확인
+Code에서는 `/harness-kit:git-scoped-account`를 호출하고 적용 또는 확인
 범위를 함께 적는다.
 
 전역 `~/.gitconfig`는 그대로 두고, git으로 관리하지 않는 프로젝트 최상위 폴더 바로 아래의 애플리케이션 git repo들이

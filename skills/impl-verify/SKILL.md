@@ -22,7 +22,7 @@ disable-model-invocation: true
 검증 명령 실행 의도를 추론하지 않는다.
 
 이 스킬은 명시 호출 전용이다. Codex에서는 `$impl-verify`, Claude Code에서는
-`/ai-agent-harness:impl-verify`를 호출하고 검증할 작업지침서와 Phase/태스크 범위를
+`/harness-kit:impl-verify`를 호출하고 검증할 작업지침서와 Phase/태스크 범위를
 함께 적는다.
 
 작업지침서에 박혀 있는 **태스크별 검증 기준**과 **Phase 통합 검증 시나리오**를

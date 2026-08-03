@@ -9,7 +9,7 @@
 - 프로젝트 최상위 폴더는 사용자가 직접 만든 컨테이너이며 **`git init` 조차 하지 않는다.**
 - 그 하위의 `.docs`(별도 git 레포), 각 애플리케이션(별도 git 레포)만 각각 독립 git으로 관리된다.
 - 프로젝트 최상위에 생성되는 `AGENTS.md`/`CLAUDE.md`는 **어떤 git에도 속하지 않으며** `harness-setup`이 단독 관리한다.
-- 사용자 스킬은 local copy가 아니라 `ai-agent-harness` 플러그인으로 사용한다.
+- 사용자 스킬은 local copy가 아니라 `harness-kit` 플러그인으로 사용한다.
 
 ---
 
@@ -17,7 +17,7 @@
 
 이 스킬은 `.claude/skills/`, `.agents/skills/`, `skills/`에 사용자 스킬을
 생성·동기화하지 않는다. 사용자가 후속 스킬을 사용할 수 없다면
-`ai-agent-harness` 플러그인 설치와 새 세션 시작을 안내한다.
+`harness-kit` 플러그인 설치와 새 세션 시작을 안내한다.
 
 ---
 
@@ -167,7 +167,7 @@ Step 2에서 확인된 각 `{앱}` 폴더에 대해 현재 플랫폼의 파일 �
 > - `.docs`, 각 애플리케이션이 **각각 독립 git 레포**로 관리된다.
 > - 루트 `AGENTS.md`/`CLAUDE.md`는 어떤 git에도 속하지 않으며 harness-setup이 단독 관리한다.
 > - `.docs/root-context/`에 복사본을 두어 갱신 시 원본으로 활용한다.
-> - 사용자 스킬은 `ai-agent-harness` 플러그인으로 사용한다.
+> - 사용자 스킬은 `harness-kit` 플러그인으로 사용한다.
 > - `.agents/skills/`, `.claude/skills/`, `skills/`에는 사용자 스킬을 생성하거나
 >   동기화하지 않는다.
 

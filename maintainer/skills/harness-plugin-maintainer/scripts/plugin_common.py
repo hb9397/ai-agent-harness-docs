@@ -13,9 +13,13 @@ from pathlib import Path
 from typing import Any
 
 
-PLUGIN_ID = "ai-agent-harness"
+PLUGIN_ID = "harness-kit"
 PLUGIN_VERSION = "0.2.2"
 PLUGIN_ROOT_REL = Path("plugins") / PLUGIN_ID
+MARKETPLACE_NAME = "hb9397"
+PLUGIN_DISPLAY_NAME = "Harness Kit"
+PLUGIN_DESCRIPTION = "Harness Kit plugin for Codex and Claude Code projects."
+REPOSITORY_URL = "https://github.com/hb9397/harness-kit"
 GENERATED_BY = "harness-plugin-maintainer"
 
 
@@ -143,5 +147,5 @@ def user_skills(root: Path) -> list[str]:
 def generated_marker() -> dict[str, str]:
     return {
         "generated_by": GENERATED_BY,
-        "source": "D:/Dev_Workspace/ai-agent-harness-docs",
+        "source": REPOSITORY_URL,
     }

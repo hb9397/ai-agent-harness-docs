@@ -77,7 +77,7 @@ done
 ### B. 갱신과 사용자 확장 보존
 
 1. `.docs/README.md`의
-   `<!-- ai-agent-harness:managed:end -->` 뒤에 `TEAM-README-SENTINEL`을
+   `<!-- harness-kit:managed:end -->` 뒤에 `TEAM-README-SENTINEL`을
    추가한다.
 2. `AGENTS.md`의 관리 블록 뒤에 `TEAM-AGENT-SENTINEL`을 추가한다.
 3. `CLAUDE.md`의 관리 블록 뒤에 `TEAM-CLAUDE-SENTINEL`을 추가한다.
@@ -173,7 +173,7 @@ ledger JSON 자체는 `humanize-korean`의 대상 파일 목록에 들어가면 
 codex --version
 codex plugin marketplace add <관리-저장소-절대경로>
 codex plugin marketplace list
-codex plugin add ai-agent-harness@ai-agent-harness
+codex plugin add harness-kit@hb9397
 codex plugin list
 cd <codex-cli-fixture>
 codex
@@ -216,22 +216,22 @@ $motion-design
 
 종료 후 공통 시나리오 A·B·C·D·E·F·G·H를 검사하고, 테스트가 끝나면
 `codex plugin marketplace list`에서 marketplace 이름
-`ai-agent-harness`를 다시 확인한 뒤:
+`harness-kit`를 다시 확인한 뒤:
 
 ```text
-codex plugin remove ai-agent-harness@ai-agent-harness
-codex plugin marketplace remove ai-agent-harness
+codex plugin remove harness-kit@hb9397
+codex plugin marketplace remove hb9397
 ```
 
 ## Codex 앱 예시
 
 1. ChatGPT 데스크톱 앱 전환기에서 **Codex**를 선택하고 Plugins Directory를
    연다.
-2. configured marketplace에 `ai-agent-harness`가 보이면 상세 화면의 설치
+2. configured marketplace에 `harness-kit`가 보이면 상세 화면의 설치
    버튼으로 직접 설치한다.
 3. local marketplace가 앱에 보이지 않으면 같은 사용자 프로필의 Codex CLI에서
    위 local marketplace와 플러그인을 등록하고 앱을 완전히 종료했다가 다시 연다.
-4. Plugins Directory 또는 `/plugins`에서 `ai-agent-harness`가 설치·활성
+4. Plugins Directory 또는 `/plugins`에서 `harness-kit`가 설치·활성
    상태인지 확인하고 설치 경로가 UI 직접 설치인지 CLI fallback인지 기록한다.
 5. `<codex-app-fixture>`를 작업 폴더로 새 task를 연다.
 6. `$harness-setup`과 `$humanize-korean`을 각각 명시 호출해 공통 시나리오
@@ -253,11 +253,11 @@ Codex 표면의 스킬 명시 호출은 `$skill-name`이다. ChatGPT Work에서 
 
 ```text
 claude --version
-claude plugin validate plugins/ai-agent-harness --strict
+claude plugin validate plugins/harness-kit --strict
 claude plugin validate . --strict
 claude plugin marketplace add <관리-저장소-절대경로>
 claude plugin marketplace list
-claude plugin install ai-agent-harness@ai-agent-harness
+claude plugin install harness-kit@hb9397
 claude plugin list
 cd <claude-cli-fixture>
 claude
@@ -266,8 +266,8 @@ claude
 새 Claude Code session에서:
 
 ```text
-/ai-agent-harness:harness-setup
-/ai-agent-harness:humanize-korean
+/harness-kit:harness-setup
+/harness-kit:humanize-korean
 ```
 
 두 번째 호출에는 `.docs/README.md`를 대상으로 `document-refinement` 개선안만
@@ -282,38 +282,38 @@ claude
 디자인 흐름은 다음 호출로 시나리오 E~H를 검사한다.
 
 ```text
-/ai-agent-harness:ui-ux-pro-max
+/harness-kit:ui-ux-pro-max
 의료 예약 화면의 접근성 중심 디자인 시스템을 제안해줘.
 ```
 
 ```text
-/ai-agent-harness:motion-design
+/harness-kit:motion-design
 모달 열기/닫기 동작을 설계하고 motion 감소 환경을 포함해줘.
 ```
 
 종료 후 공통 시나리오 A·B·C·D·E·F·G·H를 검사하고, 테스트가 끝나면
 `claude plugin marketplace list`에서 marketplace 이름
-`ai-agent-harness`를 다시 확인한 뒤:
+`harness-kit`를 다시 확인한 뒤:
 
 ```text
-claude plugin uninstall ai-agent-harness@ai-agent-harness
-claude plugin marketplace remove ai-agent-harness
+claude plugin uninstall harness-kit@hb9397
+claude plugin marketplace remove hb9397
 ```
 
 ## Claude Desktop Code 예시
 
 1. Desktop Code의 local session에서 prompt 옆 `+` → Plugins → Add plugin을
-   열고 configured marketplace의 `ai-agent-harness`를 설치한다.
+   열고 configured marketplace의 `harness-kit`를 설치한다.
 2. local marketplace가 보이지 않으면 같은 사용자 설정을 쓰는 Claude Code CLI로
    marketplace만 등록한 뒤 앱을 다시 열고, 앱의 Add plugin에서 설치한다.
 3. Claude Desktop을 완전히 종료했다가 다시 열고 Code 탭에서 새 local session을
    만든다.
 4. `<claude-desktop-fixture>`를 열고
-   `/ai-agent-harness:harness-setup`과
-   `/ai-agent-harness:humanize-korean`을 각각 호출한다. 두 번째 호출은
+   `/harness-kit:harness-setup`과
+   `/harness-kit:humanize-korean`을 각각 호출한다. 두 번째 호출은
    `.docs/README.md`의 개선안만 제시하고 적용하지 않게 한다.
-5. 공통 시나리오 A·B·C·D를 수행하고, `/ai-agent-harness:ui-ux-pro-max`와
-   `/ai-agent-harness:motion-design`으로 E·F·G·H를 수행한다.
+5. 공통 시나리오 A·B·C·D를 수행하고, `/harness-kit:ui-ux-pro-max`와
+   `/harness-kit:motion-design`으로 E·F·G·H를 수행한다.
 6. local host 외에 SSH host 지원을 릴리스 범위로 주장하려면 SSH host에도
    플러그인을 별도로 설치하고 새 fixture로 같은 검사를 반복한다.
 7. cloud Code 또는 WSL처럼 검증하지 않은 host는 `verified`로 합치지 않고

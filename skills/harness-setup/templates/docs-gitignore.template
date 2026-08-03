@@ -1,4 +1,4 @@
-# ai-agent-harness:managed:start
+# harness-kit:managed:start
 # ─────────────────────────────────────────────────────────────
 # .docs 로컬 전용 영역 — git에 올리지 않고 각자 로컬에서만 보관한다.
 # 이 파일은 harness-setup 스킬이 생성·관리한다.
@@ -18,4 +18,4 @@
 .DS_Store
 Thumbs.db
 *.swp
-# ai-agent-harness:managed:end
+# harness-kit:managed:end

@@ -21,12 +21,12 @@ FORBIDDEN_LOCAL_SKILL_PATHS = (
     "skills/",
 )
 MARKDOWN_MARKERS = (
-    "<!-- ai-agent-harness:managed:start -->",
-    "<!-- ai-agent-harness:managed:end -->",
+    "<!-- harness-kit:managed:start -->",
+    "<!-- harness-kit:managed:end -->",
 )
 GITIGNORE_MARKERS = (
-    "# ai-agent-harness:managed:start",
-    "# ai-agent-harness:managed:end",
+    "# harness-kit:managed:start",
+    "# harness-kit:managed:end",
 )
 
 
@@ -263,7 +263,7 @@ def check_setup_contract() -> None:
         "원자적 replace",
         "ledger는 Markdown이 아니며",
         "correlation 용도",
-        "`ai-agent-harness:managed:start/end` marker",
+        "`harness-kit:managed:start/end` marker",
     ):
         require(skill_text, needle, SETUP_ROOT / "SKILL.md")
 

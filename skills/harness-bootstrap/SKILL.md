@@ -19,7 +19,7 @@ allowed-tools: Read, Glob, Grep, Write
 2. **`context-doc` 결과물** — `AGENTS.md` 정본 + `CLAUDE.md` bridge + `.docs/instruction/*-instruction.md`
 
 생성 전 반드시 사용자 확인을 거친다. 파일을 무단으로 생성하지 않는다.
-사용자 스킬은 설치된 `ai-agent-harness` 플러그인에서 제공하며 프로젝트에
+사용자 스킬은 설치된 `harness-kit` 플러그인에서 제공하며 프로젝트에
 `.agents/skills/`, `.claude/skills/`, `skills/`를 만들거나 동기화하지 않는다.
 
 > 이 스킬은 "레거시/기존 프로젝트에 AI 하네스를 처음 도입"하는 진입점이다.
@@ -415,4 +415,4 @@ fingerprint를 연결한다. `applied`와 Step 7 재검증의 `revalidated`는 �
 후처리는 proposal-only가 기본이며 승인 전 파일 쓰기는 금지한다. 요구사항, 경로,
 ID, 숫자, 날짜, 코드 fence, 표 구조, 의무 수준은 변경하지 않는다. 승인 적용 후에는
 Step 7의 경로·참조·bridge 검증을 다시 수행한다.
-`ai-agent-harness:managed:start/end` marker는 변경하거나 제거하지 않는다.
+`harness-kit:managed:start/end` marker는 변경하거나 제거하지 않는다.

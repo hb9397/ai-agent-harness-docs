@@ -37,7 +37,7 @@ def main() -> int:
         "`.docs/.harness/humanize-handoffs.json`",
         "`proposed`, `skipped`, `rejected`, `applied`, `revalidated`",
         "원자적 replace",
-        "`ai-agent-harness:managed:start/end` marker",
+        "`harness-kit:managed:start/end` marker",
     ):
         require(skill, needle)
 

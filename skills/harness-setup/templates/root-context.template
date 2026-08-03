@@ -1,4 +1,4 @@
-<!-- ai-agent-harness:managed:start -->
+<!-- harness-kit:managed:start -->
 # {{PROJECT_NAME}} — AI Agent 컨텍스트
 
 > 이 파일은 `harness-setup` 스킬이 생성·갱신하는 공통 컨텍스트 정본이다.
@@ -55,4 +55,4 @@
 - `CLAUDE.md`는 공통 본문을 복제하지 않고 `@AGENTS.md` bridge만 둔다.
 - `harness-setup` 스킬 재실행으로 관리 블록을 갱신한다.
 - 원본 복사본: `.docs/root-context/AGENTS.md`, `.docs/root-context/CLAUDE.md`
-<!-- ai-agent-harness:managed:end -->
+<!-- harness-kit:managed:end -->

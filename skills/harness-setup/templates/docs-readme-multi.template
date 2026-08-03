@@ -1,4 +1,4 @@
-<!-- ai-agent-harness:managed:start -->
+<!-- harness-kit:managed:start -->
 # .docs — 프로젝트 AI 문서 저장소
 
 > 이 디렉토리는 `harness-setup` 스킬이 생성하며, 프로젝트 전체의 AI 에이전트 산출물
@@ -67,4 +67,4 @@
 
 > `_inbox/` 디렉토리 자체는 `.gitkeep`으로 유지되지만, 그 안에 넣은 파일은 커밋되지 않는다.
 > 공유가 필요한 산출물은 `_inbox/` 밖의 정규 위치로 옮긴다.
-<!-- ai-agent-harness:managed:end -->
+<!-- harness-kit:managed:end -->

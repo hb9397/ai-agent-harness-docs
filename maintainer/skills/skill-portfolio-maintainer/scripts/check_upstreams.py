@@ -58,7 +58,7 @@ def http_text(url: str, timeout: int = 15, retries: int = 2) -> str:
     """Read a public documentation surface without storing or executing it."""
     headers = {
         "Accept": "text/markdown,text/plain,text/html;q=0.8,*/*;q=0.1",
-        "User-Agent": "ai-agent-harness-skill-portfolio-maintainer",
+        "User-Agent": "harness-kit-skill-portfolio-maintainer",
     }
     token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
     if token and urlparse(url).hostname in {"github.com", "api.github.com", "raw.githubusercontent.com"}:

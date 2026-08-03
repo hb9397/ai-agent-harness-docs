@@ -54,6 +54,11 @@
       "path": "maintainer/skills/harness-plugin-maintainer/evals/impl_workflow.py",
       "scope": "impl-doc and impl-fe-be-doc roadmap index preflight, impl-reuse-scan/impl-verify handoff, and artifact routing instruction",
       "rationale": "Roadmap discovery and downstream reuse/verify gates span multiple implementation-document skills and must be checked as one contract."
+    },
+    {
+      "path": "maintainer/skills/harness-plugin-maintainer/evals/identity_source.py",
+      "scope": "harness-kit plugin identity, hb9397 marketplace namespace, stable generated marker, and managed template markers",
+      "rationale": "The identity migration must be checked from source constants and live templates before Phase 5 regenerates projections and plugin artifacts."
     }
   ]
 }

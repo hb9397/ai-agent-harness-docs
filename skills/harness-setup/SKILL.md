@@ -1,20 +1,20 @@
 ---
 name: harness-setup
 description: >
-  ai-agent-harness 플러그인이 설치된 프로젝트에 문서 하네스를 설정·갱신한다.
+  harness-kit 플러그인이 설치된 프로젝트에 문서 하네스를 설정·갱신한다.
   '하네스 설정', '하네스 세팅', '프로젝트 세팅',
   '하네스 설치', 'setup', '초기 설정', '프로젝트 초기화',
   '하네스 갱신', '하네스 업데이트',
   'harness setup', 'harness init' 요청이 오면 이 스킬을 사용한다.
   단일/복수 애플리케이션 프로젝트를 판별하여 .docs 구조와 루트 Agent 컨텍스트를 세팅한다.
-  사용자 스킬 설치·갱신은 ai-agent-harness 플러그인이 담당하며, 이 스킬은 프로젝트 local skill copy를 만들거나 덮어쓰지 않는다.
+  사용자 스킬 설치·갱신은 harness-kit 플러그인이 담당하며, 이 스킬은 프로젝트 local skill copy를 만들거나 덮어쓰지 않는다.
 allowed-tools: Read, Write, Glob, Grep
 ---
 
 ## 스킬 연계
 
 ```
-ai-agent-harness plugin
+harness-kit plugin
     ↓
 harness-setup  ← 지금 여기
     ↓
@@ -31,7 +31,7 @@ design-doc, context-doc 등 후속 스킬 사용 가능
 
 | 영역 | 처리 |
 |------|------|
-| 사용자 스킬 설치·업데이트 | `ai-agent-harness` 플러그인 설치·업데이트가 담당 |
+| 사용자 스킬 설치·업데이트 | `harness-kit` 플러그인 설치·업데이트가 담당 |
 | 프로젝트 `.docs/` 구조 | harness-setup이 생성·갱신 |
 | 루트 `AGENTS.md` | harness-setup이 공통 컨텍스트 정본의 뼈대를 생성·갱신하고, `context-doc`이 프로젝트 팩트와 instruction 인덱스를 보강 |
 | 루트 `CLAUDE.md` | harness-setup이 `@AGENTS.md` bridge와 Claude 전용 delta만 생성 |
@@ -189,7 +189,7 @@ Step 2 확인 결과에 따라 분기한다.
 > ```
 >
 > 📌 멀티플랫폼 안내:
-> - 스킬은 프로젝트 local copy가 아니라 `ai-agent-harness` 플러그인으로 사용합니다.
+> - 스킬은 프로젝트 local copy가 아니라 `harness-kit` 플러그인으로 사용합니다.
 > - `AGENTS.md`는 공통 정본, `CLAUDE.md`는 `@AGENTS.md` bridge입니다.
 > - `.agents/skills/`, `.claude/skills/`, `skills/`에는 사용자 스킬을 만들거나 동기화하지 않았습니다.
 
@@ -246,7 +246,7 @@ Step 2 확인 결과에 따라 분기한다.
 > - 하네스 갱신: `harness-setup` 스킬
 >
 > 명시 호출 예: Codex는 `$harness-setup`, Claude Code 플러그인은
-> `/ai-agent-harness:harness-setup`을 사용한다.
+> `/harness-kit:harness-setup`을 사용한다.
 
 ---
 
@@ -321,4 +321,4 @@ fingerprint를 연결한 새 record에도 `applied`를 기록한다. 원 produce
 실행 내에서는 결과와 관계없이 `handoff_completed = true`로 기록한다. 기본은
 개선안 제안만 수행하며 사용자 승인 전에는 산출물 파일을 덮어쓰지 않는다. 제목,
 표, 경로, 명령어, ID, 숫자, 날짜, 의무 수준 표현과
-`ai-agent-harness:managed:start/end` marker는 원문 그대로 보존한다.
+`harness-kit:managed:start/end` marker는 원문 그대로 보존한다.

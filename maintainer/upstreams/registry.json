@@ -177,7 +177,7 @@
       "lifecycle": "active",
       "upstream": {
         "kind": "local",
-        "source_url": "D:/Dev_Workspace/ai-agent-harness-docs",
+        "source_url": "https://github.com/hb9397/harness-kit",
         "repository": null,
         "tracking": "none",
         "tag_pattern": null,
@@ -213,7 +213,7 @@
       },
       "provenance": {
         "license_spdx": "Apache-2.0",
-        "license_url": "https://github.com/hb9397/ai-agent-harness-docs/blob/main/LICENSE",
+        "license_url": "https://github.com/hb9397/harness-kit/blob/main/LICENSE",
         "license_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
         "notice_path": "NOTICE",
         "classification_evidence_url": "maintainer/upstreams/provenance/current-skills.json",

@@ -13,7 +13,7 @@
 
 ## 1. 플러그인 설치 상태 확인
 
-후속 스킬 사용이 실패하면 `ai-agent-harness` 플러그인 설치 상태와 새 세션 여부를 안내한다.
+후속 스킬 사용이 실패하면 `harness-kit` 플러그인 설치 상태와 새 세션 여부를 안내한다.
 이 스킬은 프로젝트 `.claude/skills/`, `.agents/skills/`, `skills/`에 사용자
 스킬을 생성·복사·동기화하지 않는다.
 
@@ -29,10 +29,10 @@
 - `malformed`: marker가 중복되거나 시작·끝이 맞지 않음
 
 Markdown marker는
-`<!-- ai-agent-harness:managed:start -->` /
-`<!-- ai-agent-harness:managed:end -->`, `.gitignore` marker는
-`# ai-agent-harness:managed:start` /
-`# ai-agent-harness:managed:end`를 사용한다.
+`<!-- harness-kit:managed:start -->` /
+`<!-- harness-kit:managed:end -->`, `.gitignore` marker는
+`# harness-kit:managed:start` /
+`# harness-kit:managed:end`를 사용한다.
 
 각 대상의 현재 내용 hash, 상태, 변경될 관리 블록 diff를 요약하여 사용자에게
 확인받는다. `unmanaged` 또는 `malformed` 파일은 자동 갱신 대상에 넣지 않는다.
