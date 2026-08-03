@@ -329,7 +329,7 @@ browser daemon을 요구하면 local의 보고 전용·승인형 경계와 별�
 - `commands/`
 - `hooks/`
 - `bin/`
-- `example/`, `examples/`
+- `skills/**/example/`, `skills/**/examples/`
 - `evals/`, `tests/`
 - plugin manifest와 MCP/LSP 설정
 - `LICENSE*`, `NOTICE*`

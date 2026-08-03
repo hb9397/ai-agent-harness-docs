@@ -3,22 +3,44 @@
   "captured_at": "2026-08-03",
   "captured_from": {
     "local_root": "C:/Plugin_Workspace/harness-kit",
-    "head": "89181d8f5ac543a99c7b4e84cd621be042476d46",
+    "head": "29a92f800f4e17ece7497c8ede62b89337b80770",
     "plugin_baseline_commit": "a35749249284eadf6369757741ab58bb7668c843",
     "plugin_baseline_tag": "v0.2.2",
     "plugin_baseline_archive": "plugins/ai-agent-harness-0.2.2.zip",
     "plugin_baseline_archive_sha256": "016be105eaebf46f164641946c1705edbf1b70bed7a3bf4aff661a6e0814d27c",
-    "remote_origin_observed": "https://github.com/hb9397/ai-agent-harness-docs.git",
+    "remote_origin_observed": "https://github.com/hb9397/harness-kit.git",
     "remote_origin_target": "https://github.com/hb9397/harness-kit.git"
   },
   "externalization_target": {
-    "repository": "https://github.com/hb9397/ai-agent-harness-examples",
-    "status": "pending_external_repository_verification"
+    "repository": null,
+    "status": "not_required",
+    "decision": "User explicitly selected local root example deletion without an external repository.",
+    "decided_at": "2026-08-03"
+  },
+  "local_mirror_verification": {
+    "status": "historical_local_only",
+    "revision": "b391492eaede34c4238998b766ee27edeef79d2d",
+    "tag": "phase2-source",
+    "file_count": 11,
+    "total_bytes": 225213,
+    "autocrlf": false,
+    "verified_at": "2026-08-03",
+    "note": "A temporary local clone matched every filename and SHA-256 before the scope changed to local deletion. It is retained as historical evidence only."
+  },
+  "local_removal": {
+    "status": "verified",
+    "authorized_by": "user",
+    "authorized_at": "2026-08-03",
+    "path": "example",
+    "removed_file_count": 11,
+    "removed_total_bytes": 225213,
+    "removed_at": "2026-08-03",
+    "internal_protected_roots_preserved": true
   },
   "root_example": {
     "path": "example",
     "file_count": 11,
-    "total_bytes": 225227,
+    "total_bytes": 225213,
     "files": [
       {
         "path": "example/context-doc--AGENTS.md",
@@ -62,9 +84,15 @@
       },
       {
         "path": "example/README.md",
-        "sha256": "ce3e1a60ce2ec19e0a0408675e5b7d9066eadec13f587d07c83edfa764f11ca8"
+        "sha256": "a151bb890f76c49b9e74c1d7267d75b00fb3b9581697551084ac0d03be6986b0"
       }
     ]
+  },
+  "previous_snapshot": {
+    "head": "89181d8f5ac543a99c7b4e84cd621be042476d46",
+    "total_bytes": 225227,
+    "reason": "Phase 1 updated example/README.md to remove the retired pre-commit reference before externalization.",
+    "readme_sha256": "ce3e1a60ce2ec19e0a0408675e5b7d9066eadec13f587d07c83edfa764f11ca8"
   },
   "protected_internal_example_roots": [
     "skills/commit/examples",

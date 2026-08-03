@@ -69,14 +69,15 @@ projection에는 관리자 3종만 있어야 한다.
 - `README.md`
 - `.user-docs/Harness_Engineering.md`
 - `.user-docs/Harness_Engineering_Intro.md`
-- 관련 `.user-docs/**`와 `example/**`
+- 관련 `.user-docs/**`
 
 역사 문서인 `improvement_plan/20260627/**`는 byte-preserve 대상이다. 수정하지 않고 현행 문서에서 새 기준을 설명한다.
 
 ## 보호 자산 규칙
 
 `template.md`, `templates/`, `script/`, `scripts/`, `asset/`, `assets/`,
-`example/`, `examples/`, `evals/`에 있는 산출물은 보호 자산으로 취급한다. 내용
+`skills/**/example/`, `skills/**/examples/`, `evals/`에 있는 산출물은 보호 자산으로
+취급한다. 내용
 보완은 영향 범위를 분리해 기록하고, 삭제·이동·교체는 별도 파괴적 변경 승인
 항목으로 분리한다.
 
