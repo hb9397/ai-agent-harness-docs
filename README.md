@@ -32,6 +32,17 @@
 - 릴리스 상태: `not release-ready` — 공식 CLI 설치 smoke와 별도로 Codex·Claude
   CLI·앱 네 인터페이스의 실제 모델 호출 수동 증적이 모두 필요함
 
+### 함께 사용해볼 만한 플러그인
+
+다음은 Harness Kit에 포함되지 않는 독립 외부 프로젝트다. 함께 설치할 때는 각
+저장소의 설치 범위, hook·MCP·파일 변경, 권한과 보안 정책을 먼저 확인한다.
+
+| 플러그인 | 함께 쓰는 목적 | GitHub |
+|---|---|---|
+| Caveman | 에이전트 응답을 짧고 압축된 형태로 유지 | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) |
+| Ponytail | YAGNI와 최소 변경 중심으로 불필요한 구현을 줄이는 작업 규칙 | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) |
+| Ruflo | 다중 에이전트 조정, swarm workflow와 orchestration이 필요한 작업 | [ruvnet/ruflo](https://github.com/ruvnet/ruflo) |
+
 ---
 
 # 제1부. 사용자용 — 실제 프로젝트 수행
@@ -43,8 +54,10 @@
 - CLI: `codex plugin marketplace add <이 저장소 URL 또는 루트 경로>` 후
   `codex plugin add harness-kit@hb9397`
 - Codex 앱: 왼쪽 메뉴의 **플러그인**에서 설정 아이콘을 누르고
-  **플러그인 마켓플레이스 추가**를 연다. `hb9397/harness-kit` 저장소 또는 Git
-  URL과 `main` ref를 입력하고, 필요한 경우 sparse 경로를 지정한다. 앱에서
+  **플러그인 마켓플레이스 추가**를 연다. GitHub 저장소 화면의
+  **Code → Local → HTTPS**에서 복사한 `.git` 포함 URL
+  `https://github.com/hb9397/harness-kit.git`을 **출처**에 입력하고 `main` ref를
+  사용한다. 필요한 경우 sparse 경로를 지정한다. 앱에서
   local marketplace 등록을 지원하지 않으면 같은 사용자 프로필의 CLI에서
   등록한 뒤 앱을 재시작한다.
 - 설치 후 새 task에서 `$harness-setup`처럼 `$skill-name`으로 명시 호출한다.
@@ -61,10 +74,11 @@
   `claude plugin install harness-kit@hb9397`
 - 설치 후 대화형 session에서 `/reload-plugins`를 실행하고
   `/harness-kit:harness-setup`처럼 namespaced skill을 명시 호출한다.
-- Claude 앱: **설정 → 플러그인 → 추가 → 마켓플레이스 추가**에서 GitHub
-  `owner/repo` 또는 Git 저장소 URL을 선택하고 동기화한다. 목록에 보이지 않으면
-  같은 사용자 프로필의 Claude Code CLI에서 marketplace를 등록한 뒤 앱을 다시
-  열어 설치하고 새 session을 연다.
+- Claude 앱: **설정 → 플러그인 → 추가 → 마켓플레이스 추가**에서 **URL**을
+  선택한다. GitHub 저장소 화면의 **Code → Local → HTTPS**에서 복사한 `.git`
+  포함 URL `https://github.com/hb9397/harness-kit.git`을 입력하고 동기화한다.
+  목록에 보이지 않으면 같은 사용자 프로필의 Claude Code CLI에서 marketplace를
+  등록한 뒤 앱을 다시 열어 설치하고 새 session을 연다.
 - Claude Chat/Cowork는 Code 플러그인과 별도 인터페이스다. 설치·권한·cache는
   별도로 검증한다.
 
