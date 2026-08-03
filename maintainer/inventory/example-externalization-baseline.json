@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "captured_at": "2026-08-03",
+  "captured_from": {
+    "local_root": "C:/Plugin_Workspace/harness-kit",
+    "head": "89181d8f5ac543a99c7b4e84cd621be042476d46",
+    "plugin_baseline_commit": "a35749249284eadf6369757741ab58bb7668c843",
+    "plugin_baseline_tag": "v0.2.2",
+    "plugin_baseline_archive": "plugins/ai-agent-harness-0.2.2.zip",
+    "plugin_baseline_archive_sha256": "016be105eaebf46f164641946c1705edbf1b70bed7a3bf4aff661a6e0814d27c",
+    "remote_origin_observed": "https://github.com/hb9397/ai-agent-harness-docs.git",
+    "remote_origin_target": "https://github.com/hb9397/harness-kit.git"
+  },
+  "externalization_target": {
+    "repository": "https://github.com/hb9397/ai-agent-harness-examples",
+    "status": "pending_external_repository_verification"
+  },
+  "root_example": {
+    "path": "example",
+    "file_count": 11,
+    "total_bytes": 225227,
+    "files": [
+      {
+        "path": "example/context-doc--AGENTS.md",
+        "sha256": "435bf3ab5881245d8e8b8c47ebe86e10ac59b6e3535fc59a8b2c4540b704c62c"
+      },
+      {
+        "path": "example/context-doc--architecture-instruction.md",
+        "sha256": "af01b48717068f291e505673a5defb4832d55f637031e7099c339fa80ccff45e"
+      },
+      {
+        "path": "example/context-doc--CLAUDE.md",
+        "sha256": "093e89fcbeac4c2b9c1b436cdc4fd0c7248f9dedf9873bfbc7cb9a06c5ed6c52"
+      },
+      {
+        "path": "example/design-doc--ACRO-BE.md",
+        "sha256": "d05127d9017299d01109d2e0650c0fa6d0b2cf1c7d7b327eb580978a3768af56"
+      },
+      {
+        "path": "example/design-doc--ACRO-FE.md",
+        "sha256": "93e42af635bbaaace238b9beae29a472121ec554ef9813f577fbdae451855479"
+      },
+      {
+        "path": "example/design-doc--ACRO.md",
+        "sha256": "36aefa084af4fab3bf2ac8cd3b1628ef073fc4a989ab151c257535b6875479b0"
+      },
+      {
+        "path": "example/design-prototype-docs--onboarding.md",
+        "sha256": "e8fdf5778c24efb67c7fdb3d17bc37d3d648ec9a47b49c8426a4dd46656095c5"
+      },
+      {
+        "path": "example/impl-doc--selector-recovery.md",
+        "sha256": "6845e773c26f3596e19b7aaa337d058a50f74e0d9507004ce4de49b95f083409"
+      },
+      {
+        "path": "example/impl-fe-be-doc--ACRO.md",
+        "sha256": "bd49a3a0b17cf2af31e685930861a16edd6937419bfa5b8fb621d85fcef78b3c"
+      },
+      {
+        "path": "example/markdown-refinement-flow.md",
+        "sha256": "f5cdfc272f16f8de7954f822457866e25dd41d4c4b27ef77795e7598142ec5a8"
+      },
+      {
+        "path": "example/README.md",
+        "sha256": "ce3e1a60ce2ec19e0a0408675e5b7d9066eadec13f587d07c83edfa764f11ca8"
+      }
+    ]
+  },
+  "protected_internal_example_roots": [
+    "skills/commit/examples",
+    "skills/create-prototype/examples",
+    "skills/design-prototype-docs/example"
+  ]
+}
