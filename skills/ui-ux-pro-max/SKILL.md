@@ -214,5 +214,5 @@ python "{skill_dir}/scripts/search.py" "<query>" --design-system --variance <1-1
 경로, 적용 범위 확인, 승인형 저장 계약, 공개 스킬 handoff에 맞게 다시 작성했다.
 
 정확한 upstream 커밋, 파일 대응표, 라이선스는
-`.user-docs/Imported_Skill_Provenance.md`와 플러그인의 `THIRD_PARTY_NOTICES.md`에서
-추적한다.
+`.user-docs/Skill_Upstream_Governance.md#direct-import-provenance`와 플러그인의
+`THIRD_PARTY_NOTICES.md`에서 추적한다.

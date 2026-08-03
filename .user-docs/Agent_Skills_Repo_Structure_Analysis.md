@@ -1,14 +1,23 @@
 # 외부 Agent Skills 레포지토리 구성 분석
 
-> **현행 addendum — 2026-07-29**
+> **현행 addendum — 2026-08-03**
 >
 > 이 문서의 본문은 2026-05-27 당시 외부 생태계 조사 기록이다. 현행 운영 기준은 플러그인 전환 이후 문서인 [README.md](../README.md), [Plugin Installation Guide](./Plugin_Installation_Guide.md), [Harness Engineering Guide](./Harness_Engineering.md)를 따른다.
 >
-> 현재 하네스 구성은 사용자 스킬 20종과 관리자 스킬 3종으로 분리되어 있다. 사용자 스킬은 `skills/`에서 관리되어 `ai-agent-harness` 플러그인 payload에 포함되고, 관리자 스킬은 `maintainer/skills/`와 repo-local `.agents/skills`, `.claude/skills` projection에서만 사용한다.
+> 현재 source 구성은 사용자 스킬 19종과 관리자 스킬 3종으로 분리되어 있다.
+> 사용자 정본은 `skills/`에서 관리해 다음 plugin build의 입력으로 사용한다. 마지막
+> immutable `0.2.2` payload는 아직 20종이며 후속 rebuild 전까지 source와 drift가
+> 남는다. 관리자 스킬은 `maintainer/skills/`와 repo-local `.agents/skills`,
+> `.claude/skills` projection에서만 사용한다.
 >
 > `agent-sync`와 `rfp-ingest`는 제거됐다. `custom-skill-design`은 사용자 스킬에서 관리자 스킬로 이동했다. 실제 프로젝트 사용자는 이 저장소를 clone하거나 `.agents/.claude` 스킬을 직접 복사하지 않고, Codex/Claude 플러그인을 설치한 뒤 `harness-setup`을 실행한다.
 >
-> 외부 소스 관계는 참고형과 직접 반입형을 분리한다. 참고형은 [External Skill References](./External_Skill_References.md), 직접 반입형은 [Imported Skill Provenance](./Imported_Skill_Provenance.md), 최신화 정책은 [Skill Upstream Update Policy](./Skill_Upstream_Update_Policy.md)를 따른다.
+> 외부 소스의 직접 반입·개념·행동 참조와 최신화 정책은 단일 정본인 [Skill Upstream Governance](./Skill_Upstream_Governance.md)를 따른다.
+>
+> 아래 본문의 `pre-commit` 언급은 2026-05-27 스냅샷이다. 현행 사용자 스킬에서는
+> 독립 scanner가 제거됐고, 과거 Superpowers reference는 `commit`에 승계되지 않는다.
+> 현재 `commit`은 [commit-workflow 행동 계약](./Skill_Upstream_Governance.md#behavior-contracts)을
+> 따른다.
 >
 > 아래 본문에 등장하는 별 수, 릴리스 버전, 설치 명령, 직접 폴더 설치 방식은 2026-05-27 기준 조사 기록이다. 변동 수치와 현행 설치 방식은 최신 문서와 릴리스 체크리스트를 우선한다.
 

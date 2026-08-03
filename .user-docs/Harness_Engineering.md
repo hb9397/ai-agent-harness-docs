@@ -42,12 +42,17 @@ AI Agent Harness는 Codex, Claude Code처럼 서로 다른 에이전트가 같�
 
 | 영역 | 담당 | 프로젝트에 남는가 |
 |------|------|-------------------|
-| 사용자 스킬 20종 | 설치된 `ai-agent-harness` 플러그인 | local copy를 남기지 않음 |
+| 현행 사용자 스킬 정본 19종 | 관리 저장소 `skills/` | 다음 plugin build의 입력 |
+| 마지막 `0.2.2` runtime 20종 | 설치된 `ai-agent-harness` 플러그인 | local copy를 남기지 않음 |
 | 프로젝트 문서 골격 | 프로젝트 수행자가 `harness-setup`으로 생성 | `.docs/**`, `AGENTS.md`, `CLAUDE.md` |
 | 설계·구현 계획·프로토타입 | 프로젝트 수행자와 사용자 스킬 | `.docs/**` |
 | 코드·테스트 산출물 | 프로젝트 수행자 | 각 앱 repo |
 | 리뷰·검증 보고 | 프로젝트 수행자와 사용자 스킬 | 기본은 대화 보고, 스킬이 별도 파일 생성을 금지하면 repo에 저장하지 않음 |
 | 플러그인 build·upstream 최신화 | 하네스 관리자 | 이 관리 저장소 |
+
+Phase 1에서 `pre-commit`을 제거한 source inventory는 19종이다. 다만 immutable
+`0.2.2` archive와 generated runtime·release evidence는 20종이며, 19종 runtime은
+Phase 5~7의 rebuild·검증 전에는 생성됐다고 단정하지 않는다.
 
 `harness-setup`의 쓰기 allowlist는 `.docs/**`, 루트 `AGENTS.md`,
 `CLAUDE.md`다. `.agents/skills/**`, `.claude/skills/**`, `skills/**`를
@@ -70,7 +75,7 @@ shell 명령은 각 플랫폼의 일반 permission mode를 따르며, 커밋·Gi
 | 설계·컨텍스트는 있고 새 기능을 시작함 | `impl-doc` 또는 `impl-fe-be-doc` |
 | 구현 계획이 있고 Phase를 시작함 | `impl-reuse-scan` 후 구현 |
 | Phase 구현이 끝남 | `impl-verify` |
-| 커밋을 준비함 | `multi-review` → `doc-audit` → 선택 `code-comment` → `pre-commit` → stage → `commit` |
+| 커밋을 준비함 | `multi-review` → `doc-audit` → 선택 `code-comment`·재검증 → 사용자가 `commit` 명시 호출 |
 
 `rfp-ingest`는 제거됐다. RFP는 별도의 중간 스킬을 거치지 않고 명시적으로
 RFP 원문 해석을 지원하는 producer에 직접 입력한다. 단일·소규모 `impl-doc`은
@@ -227,10 +232,8 @@ flowchart TD
     IV --> MR["multi-review"]
     MR --> DA["doc-audit"]
     DA --> CO["선택: code-comment"]
-    DA --> PC["pre-commit"]
-    CO --> PC
-    PC --> ST["의도한 파일 stage"]
-    ST --> CM["commit"]
+    DA --> CM["명시 요청: commit<br/>scope·diff 확인 → 선택 stage → hook → commit"]
+    CO --> CM
 ```
 
 가독성을 위해 흐름도에서는 각 Markdown producer 뒤의 공통 gate를 생략했다.
@@ -379,9 +382,8 @@ impl-verify
 → doc-audit
 → 필요한 수정과 재검증
 → 선택: code-comment
-→ pre-commit
-→ 의도한 파일 stage
-→ commit
+→ 사용자 명시 요청: commit
+  └─ 지침·status·diff·최근 log 확인 → 의도한 파일만 stage → 정상 hook → commit·사후 증거
 ```
 
 - `multi-review`: 보안, 성능, 유지보수, 테스트 네 관점의 위험을 우선순위와 함께
@@ -390,13 +392,13 @@ impl-verify
   승인 전 문서를 쓰지 않는다.
 - `code-comment`: 코드만 봐서는 의도와 제약을 이해하기 어려운 부분에 한글
   주석을 보강한다. 모든 줄에 설명을 붙이지 않는다.
-- `pre-commit`: 변경 파일과 프로젝트 규칙을 기준으로 커밋 전 검사를 수행한다.
-- `pre-commit` 뒤에 주석이나 코드를 다시 바꿨다면 검사를 재실행한다.
-- `commit`: staging 범위와 검증 결과를 확인한 뒤 Conventional Commits 형식으로
-  커밋한다.
+- `commit`: 사용자가 명시 호출했을 때만 지침, staged·unstaged·untracked 범위,
+  diff, 최근 log와 검증 결과를 확인한다. 기존 범위 밖 staged 변경을 보존하고
+  의도한 파일만 stage한 뒤 정상 hook과 Conventional Commit을 실행하며, 완료 후
+  SHA·`git show`·status·남은 변경을 확인한다.
 
-커밋이나 push는 자동 후처리로 숨기지 않는다. 명시적인 사용자 요청과 해당
-스킬의 확인 절차를 거친다.
+리뷰에서 커밋으로 자동 handoff하지 않는다. commit, push, amend, tag, branch 생성은
+각각 필요한 명시적 사용자 요청과 해당 확인 절차를 거친다.
 
 ## 6. Markdown producer와 `humanize-korean`
 
@@ -452,8 +454,7 @@ ledger 자체는 문서 개선 대상에서 제외한다.
 | 구현 전 점검 | `impl-reuse-scan` | 재사용 후보 발견·보고 |
 | 구현 검증 | `impl-verify` | Phase·태스크 검증 매트릭스 |
 | 품질 | `multi-review` | 4관점 코드 리뷰 |
-| 품질 | `pre-commit` | 커밋 전 규칙 검사 |
-| 품질 | `commit` | Conventional Commits 커밋 |
+| 품질 | `commit` | 명시 요청에 한한 범위 확인·선택 stage·정상 hook·Conventional Commit·사후 증거 |
 | 품질 | `code-comment` | 필요한 변경 코드 한글 주석 |
 | 문서 | `doc-audit` | 코드·문서 괴리 분석 |
 | 문서 | `humanize-korean` | Markdown 개선안과 diff |
@@ -462,6 +463,8 @@ ledger 자체는 문서 개선 대상에서 제외한다.
 
 - `rfp-ingest`: RFP 직접 입력으로 대체
 - `agent-sync`: 플러그인 배포로 대체
+- `pre-commit`: 독립 scanner를 제거했다. 과거 Superpowers reference는
+  `commit`에 승계하지 않으며, `commit`은 별도 `commit-workflow` 행동 계약을 따른다.
 
 `custom-skill-design`은 반복 업무를 스킬로 만들기 위한 **관리자 스킬**이다.
 프로젝트 사용자가 local custom skill을 만들도록 배포하지 않는다. 반복되는
@@ -739,9 +742,9 @@ upstream integration mode는 네 가지다.
 | mode | 의미 | 정본 문서 |
 |------|------|-----------|
 | `native` | 외부 upstream 관계가 없는 로컬 스킬 | registry |
-| `reference` | 원칙·workflow·아이디어만 참고하고 원문 자산은 배포하지 않음 | `.user-docs/External_Skill_References.md` |
-| `adapted` | upstream 콘텐츠를 번역·수정·재구성함 | `.user-docs/Imported_Skill_Provenance.md` |
-| `vendored` | upstream 파일을 원문 그대로 복사함 | `.user-docs/Imported_Skill_Provenance.md` |
+| `reference` | 원칙·workflow·아이디어만 참고하고 원문 자산은 배포하지 않음 | [개념·행동 참조](./Skill_Upstream_Governance.md#concept-behavior-references) |
+| `adapted` | upstream 콘텐츠를 번역·수정·재구성함 | [직접 반입·변형 provenance](./Skill_Upstream_Governance.md#direct-import-provenance) |
+| `vendored` | upstream 파일을 원문 그대로 복사함 | [직접 반입·변형 provenance](./Skill_Upstream_Governance.md#direct-import-provenance) |
 
 증거가 부족한 관계는 `unknown` 차단 상태로 두며, 해소 전에는 반입하거나
 릴리스하지 않는다.

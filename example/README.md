@@ -23,4 +23,4 @@
 | [design-prototype-docs--onboarding.md](./design-prototype-docs--onboarding.md) | `design-prototype-docs` | `.docs/prototype/{사용자}/onboarding/design-doc.md` |
 | [markdown-refinement-flow.md](./markdown-refinement-flow.md) | `humanize-korean` | 산출물 개선안·승인·재검증 예시 |
 
-리포트형 스킬(`impl-verify`, `multi-review`, `pre-commit`, `doc-audit`)과 코드/커밋 적용 스킬(`frontend-design`, `code-comment`, `commit`, `create-prototype`, `git-scoped-account`)은 별도 예제 산출물을 두지 않는다. 전체 흐름은 [.user-docs/Harness_Engineering.md](../.user-docs/Harness_Engineering.md)를 따른다.
+리포트형 스킬(`impl-verify`, `multi-review`, `doc-audit`)과 코드/커밋 적용 스킬(`frontend-design`, `code-comment`, `commit`, `create-prototype`, `git-scoped-account`)은 별도 예제 산출물을 두지 않는다. 전체 흐름은 [.user-docs/Harness_Engineering.md](../.user-docs/Harness_Engineering.md)를 따른다.

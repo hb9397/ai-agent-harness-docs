@@ -89,6 +89,7 @@ projection에는 관리자 3종만 있어야 한다.
 ## 참조 문서
 
 - `improvement_plan/20260729/플러그인 전환 및 스킬 거버넌스 리팩토링 작업 계획서.md`
+- `.user-docs/Skill_Upstream_Governance.md`
 - `.user-docs/Harness_Engineering.md`
 - `.user-docs/Harness_Engineering_Intro.md`
 - `.user-docs/Agent_Skills_Repo_Structure_Analysis.md`

@@ -1,12 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "generated_at": "2026-07-31",
+  "generated_at": "2026-08-03",
   "purpose": "Declare which skills must carry an eval runner. run_all_skill_evals.py discovers runners by glob, so a skill without a runner is otherwise skipped silently while the log still reports a full pass. Only entries listed as required fail the build when their runner is missing.",
   "runner_path_template": "{canonical_root}/{skill}/evals/run_evals.py",
   "runner_nature": "Static contract regression checks. They assert that the contract wording a skill must keep is still present, not that a model behaves correctly.",
   "required": {
     "skills": [
       "create-prototype",
+      "commit",
       "design-prototype-docs",
       "frontend-design",
       "git-scoped-account",
@@ -15,7 +16,6 @@
       "humanize-korean",
       "impl-verify",
       "motion-design",
-      "pre-commit",
       "ui-ux-pro-max"
     ],
     "maintainer_skills": [
@@ -28,7 +28,6 @@
   "not_required": {
     "skills": [
       "code-comment",
-      "commit",
       "context-doc",
       "design-doc",
       "doc-audit",

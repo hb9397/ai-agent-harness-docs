@@ -232,5 +232,5 @@ ambient 3계층을 요구하는 서술이 있으나, 이 하네스에서는 STEP
 애니메이션 원칙이 인용되어 있다. 해당 제3자 자료의 권리는 각 원 저작자에게 있다.
 
 정확한 upstream 커밋, 파일 대응표, 라이선스는
-`.user-docs/Imported_Skill_Provenance.md`와 플러그인의 `THIRD_PARTY_NOTICES.md`에서
-추적한다.
+`.user-docs/Skill_Upstream_Governance.md#direct-import-provenance`와 플러그인의
+`THIRD_PARTY_NOTICES.md`에서 추적한다.

@@ -1,6 +1,174 @@
 {
-  "schema_version": "1.0.0",
-  "generated_at": "2026-07-30",
+  "schema_version": "1.1.0",
+  "generated_at": "2026-08-03",
+  "governance": {
+    "canonical_document": ".user-docs/Skill_Upstream_Governance.md",
+    "required_anchors": [
+      "machine-readable-sources",
+      "source-and-evidence-model",
+      "approval-gates",
+      "direct-import-provenance",
+      "concept-behavior-references",
+      "behavior-contracts",
+      "claim-classes",
+      "relationship-groups",
+      "refresh-and-stale-fallback",
+      "equivalence-and-evidence",
+      "protected-assets",
+      "maintainer-responsibilities",
+      "validation-and-rollback",
+      "migration-appendix"
+    ]
+  },
+  "behavior_contracts": [
+    {
+      "id": "commit-workflow",
+      "lifecycle": "active",
+      "consumers": {
+        "skills": [
+          "commit"
+        ],
+        "docs": [
+          ".user-docs/Skill_Upstream_Governance.md#behavior-contracts"
+        ],
+        "validators": [
+          "maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py",
+          "maintainer/skills/skill-portfolio-maintainer/scripts/check_upstreams.py",
+          "skills/commit/evals/run_evals.py"
+        ]
+      },
+      "claims": [
+        {
+          "id": "codex-explicit-commit-request",
+          "claim_class": "official-documented",
+          "summary": "The observed Codex base instructions say not to create a commit or branch unless explicitly requested.",
+          "source_ids": [
+            "openai-codex-commit-behavior"
+          ]
+        },
+        {
+          "id": "claude-staged-commit-example",
+          "claim_class": "official-documented",
+          "summary": "Claude Code documents a headless example that reviews staged changes with git diff, log, status, and commit permissions.",
+          "source_ids": [
+            "anthropic-claude-code-commit-behavior"
+          ]
+        },
+        {
+          "id": "claude-configurable-git-instructions",
+          "claim_class": "official-documented",
+          "summary": "Claude Code documents built-in commit and pull-request instructions, a git status snapshot, configurable attribution, permissions, and hooks.",
+          "source_ids": [
+            "anthropic-claude-code-commit-behavior"
+          ]
+        },
+        {
+          "id": "conventional-message-structure",
+          "claim_class": "official-documented",
+          "summary": "Conventional Commits 1.0.0 defines type, optional scope, description, optional body, and footer structure.",
+          "source_ids": [
+            "conventional-commits"
+          ]
+        },
+        {
+          "id": "explicit-request-local-gate",
+          "claim_class": "local-policy",
+          "summary": "The commit skill does not create a commit until the user explicitly requests one.",
+          "source_ids": []
+        },
+        {
+          "id": "intentional-staging-boundary",
+          "claim_class": "local-policy",
+          "summary": "Only intended paths are staged; unrelated staged, unstaged, and untracked changes are preserved.",
+          "source_ids": []
+        },
+        {
+          "id": "review-hooks-and-no-bypass",
+          "claim_class": "local-policy",
+          "summary": "The staged diff is re-reviewed and existing Git hooks run normally; --no-verify is not used without a separate explicit request.",
+          "source_ids": []
+        },
+        {
+          "id": "no-implicit-history-or-remote-mutation",
+          "claim_class": "local-policy",
+          "summary": "Amend, push, tag, and branch creation require separate explicit requests.",
+          "source_ids": []
+        },
+        {
+          "id": "post-commit-evidence",
+          "claim_class": "local-policy",
+          "summary": "After a commit, the skill reports and verifies the commit SHA, show output, status, and remaining changes.",
+          "source_ids": []
+        },
+        {
+          "id": "runtime-version-observation",
+          "claim_class": "runtime-observation",
+          "observation_kind": "product-version",
+          "summary": "Local --version commands observed codex-cli 0.146.0 and Claude Code 2.1.220 on 2026-08-03. No same-fixture product behavior result is recorded in Phase 1.",
+          "source_ids": [
+            "openai-codex-commit-behavior",
+            "anthropic-claude-code-commit-behavior"
+          ]
+        }
+      ],
+      "unsupported_guarantees": [
+        {
+          "id": "cross-runtime-equivalence",
+          "status": "unsupported",
+          "summary": "Codex and Claude Code are not claimed to use identical internal commit algorithms or to produce identical commits."
+        },
+        {
+          "id": "undocumented-product-algorithm",
+          "status": "unsupported",
+          "summary": "Undocumented staging, message-selection, hook, or attribution algorithms are not product guarantees."
+        },
+        {
+          "id": "local-policy-as-product-guarantee",
+          "status": "unsupported",
+          "summary": "Harness safety policy is not represented as behavior guaranteed by either product."
+        },
+        {
+          "id": "official-skill-import",
+          "status": "unsupported",
+          "summary": "No official or third-party commit skill, prompt, plugin file, or runtime implementation is imported."
+        },
+        {
+          "id": "automatic-upstream-application",
+          "status": "unsupported",
+          "summary": "An observed source change never updates the contract or commit skill automatically."
+        }
+      ],
+      "refresh_policy": {
+        "strategy": "manual-semantic-review",
+        "auto_import": false,
+        "review_triggers": [
+          "watched surface content hash or repository-path commit changes",
+          "observed Codex CLI or Claude Code version changes",
+          "git, commit, attribution, permission, hook, or includeGitInstructions changelog changes",
+          "a source check becomes stale or unverified"
+        ],
+        "stale_fallback": "preserve-last-accepted-mark-stale"
+      },
+      "validation": {
+        "static_evals": [
+          "skills/commit/evals/run_evals.py",
+          "maintainer/skills/skill-portfolio-maintainer/evals/run_evals.py"
+        ],
+        "runtime_fixtures": [
+          {
+            "id": "cross-product-commit-workflow",
+            "status": "planned",
+            "platforms": [
+              "codex",
+              "claude-code"
+            ],
+            "evidence_path": null,
+            "claim_scope": "Phase 7 will run each product separately on the same isolated repository fixture; Phase 1 records no product behavior result and no equivalence guarantee."
+          }
+        ]
+      }
+    }
+  ],
   "sources": [
     {
       "id": "internal-harness-native",
@@ -251,7 +419,6 @@
           "impl-reuse-scan",
           "impl-verify",
           "multi-review",
-          "pre-commit",
           "custom-skill-design"
         ],
         "platform_targets": [
@@ -408,10 +575,272 @@
       }
     },
     {
+      "id": "openai-codex-commit-behavior",
+      "source_class": "official",
+      "integration_mode": "reference",
+      "lifecycle": "active",
+      "refresh_policy": {
+        "strategy": "observe-and-review",
+        "auto_import": false,
+        "review_on_change": true,
+        "stale_after_days": 30,
+        "stale_fallback": "preserve-last-accepted-mark-stale",
+        "observed_ref": "main",
+        "observed_product_version": "codex-cli 0.146.0"
+      },
+      "upstream": {
+        "kind": "repository",
+        "source_url": "https://github.com/openai/codex/blob/2cf2a6a844f1fc2ddd489c8a67fa8bc2f59a6f3d/codex-rs/protocol/src/prompts/base_instructions/default.md",
+        "repository": "https://github.com/openai/codex",
+        "tracking": "branch",
+        "branch": "main",
+        "tag_pattern": null,
+        "allow_prerelease": false,
+        "watched_paths": [
+          "codex-rs/protocol/src/prompts/base_instructions/default.md"
+        ],
+        "watched_surfaces": [
+          {
+            "id": "base-instructions",
+            "kind": "repository-path",
+            "url": "https://raw.githubusercontent.com/openai/codex/2cf2a6a844f1fc2ddd489c8a67fa8bc2f59a6f3d/codex-rs/protocol/src/prompts/base_instructions/default.md",
+            "path": "codex-rs/protocol/src/prompts/base_instructions/default.md",
+            "change_signals": [
+              "git, commit, branch, approval, or sandbox instruction changes"
+            ]
+          },
+          {
+            "id": "agents-md",
+            "kind": "documentation",
+            "url": "https://learn.chatgpt.com/docs/agent-configuration/agents-md.md",
+            "path": null,
+            "change_signals": [
+              "repository instruction precedence or scope changes"
+            ]
+          },
+          {
+            "id": "code-review",
+            "kind": "documentation",
+            "url": "https://learn.chatgpt.com/docs/code-review.md",
+            "path": null,
+            "change_signals": [
+              "review workflow or evidence changes"
+            ]
+          },
+          {
+            "id": "cli-customization",
+            "kind": "documentation",
+            "url": "https://learn.chatgpt.com/docs/cli-customization.md",
+            "path": null,
+            "change_signals": [
+              "CLI customization or instruction-loading changes"
+            ]
+          },
+          {
+            "id": "agent-approvals-security",
+            "kind": "documentation",
+            "url": "https://learn.chatgpt.com/docs/agent-approvals-security.md",
+            "path": null,
+            "change_signals": [
+              "approval, sandbox, or permission boundary changes"
+            ]
+          }
+        ]
+      },
+      "target": {
+        "local_skills": [],
+        "behavior_contracts": [
+          "commit-workflow"
+        ],
+        "platform_targets": [
+          "codex",
+          "docs"
+        ]
+      },
+      "policy": {
+        "channel": "latest-docs",
+        "pin": "commit-sha",
+        "apply": "manual-review-only",
+        "deletion": "not-applicable",
+        "license_change": "review"
+      },
+      "provenance": {
+        "license_spdx": null,
+        "license_url": null,
+        "license_sha256": null,
+        "notice_path": null,
+        "classification_evidence_url": "maintainer/upstreams/candidates/openai-codex-commit-workflow/candidate.json",
+        "classification_checked_at": "2026-08-03",
+        "file_map": [
+          {
+            "upstream_path": null,
+            "local_path": null,
+            "treatment": "reference-only"
+          }
+        ]
+      },
+      "protection": {
+        "protected_globs": [
+          "**/evals/**",
+          "**/scripts/**",
+          "**/templates/**"
+        ]
+      },
+      "validation": {
+        "structure_checks": [
+          "behavior-only source has no target.local_skills or imported file mapping",
+          "pinned base instruction and current watched-path commit remain separately recorded"
+        ],
+        "behavior_fixtures": [
+          "explicit commit request, bounded staging, normal hook execution, and post-commit evidence are observed without claiming undocumented guarantees"
+        ],
+        "codex_smoke_prompts": [
+          "Run the commit-workflow fixture with Codex and record the CLI version and result as runtime-observation only"
+        ],
+        "claude_smoke_prompts": [
+          "Do not use this OpenAI source as evidence for Claude Code behavior"
+        ]
+      }
+    },
+    {
+      "id": "anthropic-claude-code-commit-behavior",
+      "source_class": "official",
+      "integration_mode": "reference",
+      "lifecycle": "active",
+      "refresh_policy": {
+        "strategy": "observe-and-review",
+        "auto_import": false,
+        "review_on_change": true,
+        "stale_after_days": 30,
+        "stale_fallback": "preserve-last-accepted-mark-stale",
+        "observed_ref": "documentation",
+        "observed_product_version": "Claude Code 2.1.220"
+      },
+      "upstream": {
+        "kind": "documentation",
+        "source_url": "https://code.claude.com/docs/en/headless#create-a-commit",
+        "repository": null,
+        "tracking": "documentation",
+        "tag_pattern": null,
+        "allow_prerelease": false,
+        "watched_paths": [],
+        "watched_surfaces": [
+          {
+            "id": "headless-create-a-commit",
+            "kind": "documentation",
+            "url": "https://code.claude.com/docs/en/headless.md",
+            "path": null,
+            "change_signals": [
+              "create-a-commit example or allowed Git command changes"
+            ]
+          },
+          {
+            "id": "configuration",
+            "kind": "documentation",
+            "url": "https://code.claude.com/docs/en/configuration.md",
+            "path": null,
+            "change_signals": [
+              "includeGitInstructions or attribution changes"
+            ]
+          },
+          {
+            "id": "permissions",
+            "kind": "documentation",
+            "url": "https://code.claude.com/docs/en/permissions.md",
+            "path": null,
+            "change_signals": [
+              "Git command permission or sandbox boundary changes"
+            ]
+          },
+          {
+            "id": "hooks",
+            "kind": "documentation",
+            "url": "https://code.claude.com/docs/en/hooks.md",
+            "path": null,
+            "change_signals": [
+              "hook lifecycle or blocking semantics changes"
+            ]
+          },
+          {
+            "id": "changelog",
+            "kind": "changelog",
+            "url": "https://code.claude.com/docs/en/changelog.md",
+            "path": null,
+            "change_signals": [
+              "git, commit, attribution, permission, hook, or includeGitInstructions release changes"
+            ]
+          }
+        ]
+      },
+      "target": {
+        "local_skills": [],
+        "behavior_contracts": [
+          "commit-workflow"
+        ],
+        "platform_targets": [
+          "claude-code",
+          "docs"
+        ]
+      },
+      "policy": {
+        "channel": "latest-docs",
+        "pin": "documentation-date",
+        "apply": "manual-review-only",
+        "deletion": "not-applicable",
+        "license_change": "review"
+      },
+      "provenance": {
+        "license_spdx": null,
+        "license_url": null,
+        "license_sha256": null,
+        "notice_path": null,
+        "classification_evidence_url": "maintainer/upstreams/candidates/claude-code-commit-workflow/candidate.json",
+        "classification_checked_at": "2026-08-03",
+        "file_map": [
+          {
+            "upstream_path": null,
+            "local_path": null,
+            "treatment": "reference-only"
+          }
+        ]
+      },
+      "protection": {
+        "protected_globs": [
+          "**/evals/**",
+          "**/scripts/**",
+          "**/templates/**"
+        ]
+      },
+      "validation": {
+        "structure_checks": [
+          "behavior-only source has no target.local_skills or imported file mapping",
+          "each official documentation surface has a normalized content hash observation"
+        ],
+        "behavior_fixtures": [
+          "staged-change commit example, configurable Git instructions, permissions, attribution, and hooks are kept as separate documented facts"
+        ],
+        "codex_smoke_prompts": [
+          "Do not use this Anthropic source as evidence for Codex behavior"
+        ],
+        "claude_smoke_prompts": [
+          "Run the commit-workflow fixture with Claude Code and record the CLI version and result as runtime-observation only"
+        ]
+      }
+    },
+    {
       "id": "conventional-commits",
       "source_class": "standard",
       "integration_mode": "reference",
       "lifecycle": "active",
+      "refresh_policy": {
+        "strategy": "observe-and-review",
+        "auto_import": false,
+        "review_on_change": true,
+        "stale_after_days": 90,
+        "stale_fallback": "preserve-last-accepted-mark-stale",
+        "observed_ref": "1.0.0",
+        "observed_product_version": null
+      },
       "upstream": {
         "kind": "specification",
         "source_url": "https://www.conventionalcommits.org/en/v1.0.0/",
@@ -419,11 +848,23 @@
         "tracking": "documentation",
         "tag_pattern": null,
         "allow_prerelease": false,
-        "watched_paths": []
+        "watched_paths": [],
+        "watched_surfaces": [
+          {
+            "id": "specification-1.0.0",
+            "kind": "specification",
+            "url": "https://www.conventionalcommits.org/en/v1.0.0/",
+            "path": null,
+            "change_signals": [
+              "published specification version or message grammar changes"
+            ]
+          }
+        ]
       },
       "target": {
-        "local_skills": [
-          "commit"
+        "local_skills": [],
+        "behavior_contracts": [
+          "commit-workflow"
         ],
         "platform_targets": [
           "codex",
@@ -443,11 +884,11 @@
         "license_sha256": null,
         "notice_path": null,
         "classification_evidence_url": "https://www.conventionalcommits.org/en/v1.0.0/",
-        "classification_checked_at": "2026-07-29",
+        "classification_checked_at": "2026-08-03",
         "file_map": [
           {
             "upstream_path": null,
-            "local_path": "skills/commit/SKILL.md",
+            "local_path": null,
             "treatment": "reference-only"
           }
         ]
@@ -462,9 +903,15 @@
         "structure_checks": [
           "commit message format remains compatible with Conventional Commits 1.0.0"
         ],
-        "behavior_fixtures": [],
-        "codex_smoke_prompts": [],
-        "claude_smoke_prompts": []
+        "behavior_fixtures": [
+          "commit messages preserve type, optional scope, description, body, and footer structure"
+        ],
+        "codex_smoke_prompts": [
+          "Observe commit message structure without importing the specification text"
+        ],
+        "claude_smoke_prompts": [
+          "Observe commit message structure without importing the specification text"
+        ]
       }
     },
     {

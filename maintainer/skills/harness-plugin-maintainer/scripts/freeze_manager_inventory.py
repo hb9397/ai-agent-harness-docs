@@ -65,8 +65,8 @@ def build_inventory(root: Path) -> dict:
     out = {
         "schema_version": "1.0.0",
         "generated_by": GENERATED_BY,
-        "generated_at": "2026-07-29",
-        "scope": "Phase 6 manager skill freeze after skill-portfolio-maintainer and harness-plugin-maintainer implementation",
+        "generated_at": "2026-08-03",
+        "scope": "Phase 1 manager skill freeze after commit-workflow and upstream governance validation updates",
         "manager_skill_count": len(MANAGER_SKILLS),
         "skills": inventory,
     }

@@ -8,15 +8,17 @@
 `AGENTS.md`, `CLAUDE.md`를 만든 뒤 설계·구현·검증 흐름을 수행한다. 관리자는
 이 저장소에서 사용자 스킬, 외부 upstream, 플러그인 패키지를 유지한다.
 
-현재 릴리스 후보:
+현재 Phase 1 정본과 마지막 생성 artifact:
 
-- Plugin ID: `ai-agent-harness`
-- Version: `0.2.2`
-- Archive: `plugins/ai-agent-harness-0.2.2.zip`
-- 사용자 스킬: 20종
-- Codex runtime: 20 skills / 0 agents
-- Claude runtime: 20 skills / 0 agents
+- 현행 사용자 스킬 정본: 19종 (`pre-commit` 제거 후 `skills/` 기준)
+- 마지막 생성 Plugin ID: `ai-agent-harness`
+- 마지막 생성 Version: `0.2.2`
+- immutable Archive: `plugins/ai-agent-harness-0.2.2.zip`
+- `0.2.2` Codex runtime: 20 skills / 0 agents
+- `0.2.2` Claude runtime: 20 skills / 0 agents
 - 관리자 스킬: 3종, 이 저장소 안에서만 사용
+- 생성 drift: Phase 1 source는 19종이지만 `0.2.2` generated tree·release evidence는
+  Phase 5~7 재생성·검증 전까지 20종을 보존한다.
 - 릴리스 상태: `not release-ready` — 공식 CLI 설치 smoke와 별도로 Codex·Claude
   CLI·앱 네 표면의 실제 모델 호출 수동 증적이 모두 필요함
 
@@ -83,10 +85,8 @@ flowchart TD
     W --> V["impl-verify"]
     V --> Q["4단계: multi-review + doc-audit"]
     Q --> CC["선택: code-comment"]
-    CC --> PC["pre-commit"]
-    Q --> PC
-    PC --> ST["의도한 파일 stage"]
-    ST --> CM["commit"]
+    CC --> CM["명시 요청: commit<br/>scope·diff 확인 → 선택 stage → hook → commit"]
+    Q --> CM
 ```
 
 여기서 `producer gate`는 **원 producer 구조 검증 → 최외곽 owner의
@@ -155,11 +155,11 @@ flowchart TD
 2. `doc-audit`으로 코드와 `.docs`, `AGENTS.md`의 괴리를 찾는다.
 3. 필요한 문서 변경은 제안을 검토하고 승인한 뒤 반영한다.
 4. 인수인계에 필요한 주석이 부족할 때만 `code-comment`를 사용한다.
-5. 파일이 바뀐 최종 상태에서 `pre-commit`으로 커밋 전 규칙을 검사한다.
-6. 의도한 파일만 stage한다.
-7. 검증을 통과하면 `commit`으로 Conventional Commits 형식의 커밋을 만든다.
-
-`pre-commit` 뒤에 주석이나 코드를 다시 고쳤다면 검사를 재실행한다.
+5. 파일이 바뀐 최종 상태에서 프로젝트 검증을 다시 실행하고 증거를 남긴다.
+6. 사용자가 `commit`을 명시 호출하면 스킬이 지침, status, staged·unstaged·
+   untracked 범위, diff와 최근 log를 확인하고 의도한 파일만 stage한다.
+7. 정상 hook을 통과해 Conventional Commit을 만든 뒤 SHA, `git show`, status와
+   남은 변경을 다시 확인한다. 자동 push·amend·tag·branch 생성은 하지 않는다.
 
 플랫폼별 사용자 스킬을 맞추는 `agent-sync` 단계는 없다. 스킬 버전은 설치된
 플러그인이 제공하고, 프로젝트는 결과 문서와 코드만 관리한다.
@@ -316,7 +316,7 @@ reduced-motion 대체안과 성능 검증 기준도 포함해줘.
 두 스킬 모두 기본은 대화창 보고다. 사용자가 명시적으로 요청할 때만
 `.docs/design-system/**`에 저장한다.
 
-## 7. 사용자 스킬 20종
+## 7. 사용자 스킬 정본 19종
 
 | 계열 | 스킬 | 주 용도 |
 |------|------|---------|
@@ -335,8 +335,7 @@ reduced-motion 대체안과 성능 검증 기준도 포함해줘.
 | 구현 점검 | `impl-reuse-scan` | 구현 전 재사용 후보 보고 |
 | 구현 검증 | `impl-verify` | Phase·태스크 검증 매트릭스 |
 | 품질 | `multi-review` | 보안·성능·유지보수·테스트 리뷰 |
-| 품질 | `pre-commit` | 커밋 전 규칙 검사 |
-| 품질 | `commit` | Conventional Commits 커밋 |
+| 품질 | `commit` | 명시 요청에 한해 범위 확인·선택 stage·정상 hook·Conventional Commit·사후 증거 확인 |
 | 품질 | `code-comment` | 필요한 변경 코드의 한글 주석 보강 |
 | 문서 | `doc-audit` | 코드와 문서의 괴리 분석 |
 | 문서 | `humanize-korean` | Markdown 개선안·diff 제안 |
@@ -401,14 +400,19 @@ python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projecti
 
 - `native`: 외부 upstream 관계가 없는 로컬 스킬
 - `reference`: 원칙·아이디어·workflow만 참고하고 원문 자산은 배포하지 않음 —
-  [External Skill References](./.user-docs/External_Skill_References.md)
+  [개념·행동 참조 관계](./.user-docs/Skill_Upstream_Governance.md#concept-behavior-references)
 - `adapted`: upstream 콘텐츠를 번역·수정·재구성해 사용함 —
-  [Imported Skill Provenance](./.user-docs/Imported_Skill_Provenance.md)
+  [직접 반입·변형 provenance](./.user-docs/Skill_Upstream_Governance.md#direct-import-provenance)
 - `vendored`: upstream 파일을 원문 그대로 포함함 —
-  [Imported Skill Provenance](./.user-docs/Imported_Skill_Provenance.md)
+  [직접 반입·변형 provenance](./.user-docs/Skill_Upstream_Governance.md#direct-import-provenance)
 
 증거가 부족하면 `unknown` 차단 상태로 두며, 해소 전에는 반입하거나
 릴리스하지 않는다.
+
+`commit`은 특정 외부 commit skill을 반입하지 않는다. OpenAI Codex·Anthropic
+Claude Code의 공식 행동 출처와 Conventional Commits를 behavior-only source로 두고
+[commit-workflow 행동 계약](./.user-docs/Skill_Upstream_Governance.md#behavior-contracts)을
+거쳐 소비한다. 과거 `pre-commit`의 Superpowers reference는 승계하지 않는다.
 
 관리자는 하나의 `skill-portfolio-maintainer` workflow에서 후보 탐색, 최신
 upstream 비교, 영향 분석, 승인된 promotion handoff를 수행한다. mode마다
@@ -448,7 +452,8 @@ upstream clone 없이 플러그인 안에서 사용하고, 관리자가 GitHub u
 각 원본 저장소의 안내를 따른다.**
 
 세부 업데이트 기준은
-[Skill Upstream Update Policy](./.user-docs/Skill_Upstream_Update_Policy.md)를 따른다.
+[Skill Upstream Governance](./.user-docs/Skill_Upstream_Governance.md#approval-gates)를
+따른다.
 
 ## 12. 플러그인 빌드와 릴리스
 
@@ -491,10 +496,8 @@ python maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py
 - [Harness Engineering Intro](./.user-docs/Harness_Engineering_Intro.md) — 도입 배경,
   선택 가이드, 프롬프트 예시
 - [Docs Index](./.user-docs/README.md) — 문서 역할 인덱스
-- [External Skill References](./.user-docs/External_Skill_References.md) — 외부 `reference` 관계
-- [Imported Skill Provenance](./.user-docs/Imported_Skill_Provenance.md) — `adapted`·`vendored` provenance
-- [Skill Upstream Update Policy](./.user-docs/Skill_Upstream_Update_Policy.md) — 관리자
-  최신화 정책
+- [Skill Upstream Governance](./.user-docs/Skill_Upstream_Governance.md) — 외부
+  `reference`·`adapted`·`vendored` 관계, 행동 contract, provenance와 최신화 정책
 
 ## 14. 라이선스
 
@@ -509,7 +512,8 @@ python maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py
 
 `reference` 관계로만 참고한 외부 프로젝트는 파일을 반입하지 않으므로 라이선스
 배포 대상이 아니다. 해당 관계는
-[External Skill References](./.user-docs/External_Skill_References.md)에서 추적한다.
+[개념·행동 참조 관계](./.user-docs/Skill_Upstream_Governance.md#concept-behavior-references)에서
+추적한다.
 
 ---
 

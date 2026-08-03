@@ -2,7 +2,16 @@
   "id": "planning-and-review-reference-candidate",
   "checked_at": "2026-07-30",
   "status": "candidate-reference",
-  "internal_skill_group": ["create-prototype", "design-doc", "design-prototype-docs", "impl-doc", "impl-fe-be-doc", "impl-reuse-scan", "impl-verify", "multi-review", "pre-commit", "custom-skill-design"],
+  "internal_skill_group": ["create-prototype", "design-doc", "design-prototype-docs", "impl-doc", "impl-fe-be-doc", "impl-reuse-scan", "impl-verify", "multi-review", "custom-skill-design"],
+  "historical_relationships": [
+    {
+      "skill": "pre-commit",
+      "source_id": "superpowers",
+      "status": "removed",
+      "removed_at": "2026-08-03",
+      "note": "The former limited reference ended when the standalone scanner was removed. It is not inherited by commit."
+    }
+  ],
   "candidate_sources": [
     {
       "source_id": "superpowers",
@@ -11,10 +20,10 @@
       "observed_activity": "Registry check resolved the latest observed stable release to v6.2.0 at commit 3dcbd5c4b48e02263fbf4a3c01e3fe4f81d584d9 on 2026-07-30. No accepted or embedded state is implied for this reference source.",
       "license": "MIT per GitHub repository page; verify hash before import.",
       "security_surface": "Contains skills, hooks, tests, scripts, plugin manifests, and optional telemetry references. Reference-only avoids importing runtime surface.",
-      "fit": "Strong reference for design-doc, impl-doc, impl-fe-be-doc, impl-verify, multi-review, and custom-skill-design; limited reference for impl-reuse-scan and pre-commit.",
+      "fit": "Strong reference for design-doc, impl-doc, impl-fe-be-doc, impl-verify, multi-review, and custom-skill-design; limited reference for impl-reuse-scan.",
       "local_mapping": {
         "strong": ["design-doc", "impl-doc", "impl-fe-be-doc", "impl-verify", "multi-review", "custom-skill-design"],
-        "limited": ["impl-reuse-scan", "pre-commit"],
+        "limited": ["impl-reuse-scan"],
         "excluded": ["create-prototype", "design-prototype-docs", "frontend-design"]
       },
       "decision": "reference-only now; direct import blocked until G2-G7."
@@ -30,7 +39,7 @@
       "local_mapping": {
         "strong": ["design-doc", "design-prototype-docs", "impl-doc", "impl-fe-be-doc", "impl-verify", "multi-review"],
         "limited": ["create-prototype", "impl-reuse-scan"],
-        "excluded": ["frontend-design", "pre-commit", "custom-skill-design"]
+        "excluded": ["frontend-design", "custom-skill-design"]
       },
       "decision": "reference-only now."
     }

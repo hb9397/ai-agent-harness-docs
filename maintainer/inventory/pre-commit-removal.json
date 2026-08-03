@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-08-03",
+  "phase": 1,
+  "baseline_commit": "809465b2bd6cbd5bb77d69813b026590f277fd85",
+  "release_baseline": {
+    "tag": "v0.2.2",
+    "commit": "a35749249284eadf6369757741ab58bb7668c843",
+    "archive": "plugins/ai-agent-harness-0.2.2.zip",
+    "preservation": "immutable historical release evidence"
+  },
+  "scope": "Canonical skills/pre-commit removal before the harness-kit 0.3.0 build. Generated 0.2.2 plugin trees and historical audits remain unchanged until their planned regeneration or as immutable evidence.",
+  "file_count": 6,
+  "total_bytes": 29587,
+  "files": [
+    {
+      "path": "skills/pre-commit/SKILL.md",
+      "bytes": 2524,
+      "sha256": "53fd2d74727b0722745421e334fa87a6746e21d21c02e100fab510d7ca8d7739"
+    },
+    {
+      "path": "skills/pre-commit/evals/run_evals.py",
+      "bytes": 8476,
+      "sha256": "8b8106b9db79ec76d8a399609502c140a9774c80c827825808401c27d0ee9795"
+    },
+    {
+      "path": "skills/pre-commit/prompts/check-rules.md",
+      "bytes": 917,
+      "sha256": "b4519f55602d01c9c12a2ddaabe47cce2d41017f36e1f8a1b7783812c4a22132"
+    },
+    {
+      "path": "skills/pre-commit/scripts/scan.py",
+      "bytes": 10528,
+      "sha256": "c3f4dd26994ad7d808ff1167ba41bf34655d0c3085428ef49bc3c1b6eee0c113"
+    },
+    {
+      "path": "skills/pre-commit/scripts/scan.sh",
+      "bytes": 6096,
+      "sha256": "3841e5435ce969fe6c8a5cc2f4c0c8e56dffc7251366920f39e91dc41d6a20d3"
+    },
+    {
+      "path": "skills/pre-commit/template.md",
+      "bytes": 1046,
+      "sha256": "d6cadd7a6263e5ec1aef63a943c42904dbcba810dbae4e0c1459fe6ccf2c36c1"
+    }
+  ],
+  "removal_policy": {
+    "canonical_source": "remove",
+    "generated_plugin_tree": "regenerate in plugin identity phase",
+    "release_archives_and_tags": "preserve byte-for-byte",
+    "historical_plans_and_audits": "preserve"
+  }
+}

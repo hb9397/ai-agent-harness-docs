@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0.0",
   "generated_by": "harness-plugin-maintainer",
-  "generated_at": "2026-07-29",
-  "scope": "Phase 6 manager skill freeze after skill-portfolio-maintainer and harness-plugin-maintainer implementation",
+  "generated_at": "2026-08-03",
+  "scope": "Phase 1 manager skill freeze after commit-workflow and upstream governance validation updates",
   "manager_skill_count": 3,
   "skills": [
     {
@@ -77,7 +77,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/freeze_manager_inventory.py",
-          "sha256": "c36a3e8061666ba7288459b53d46459f59570673652e6606ff94963fff4ed505"
+          "sha256": "b1d807ed148ce790a9ed41aac07bb647b111a25e1d321b1c7401de0e76dc391b"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/plugin_common.py",
@@ -101,7 +101,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/validate_plugin.py",
-          "sha256": "6e3caf4228c1b03bec994b13fb995658a6cd4f68766f6a6c7e4e620b6ff6a048"
+          "sha256": "98d0548be7ecbeea272f385e43d0f08313c7632c649f149eda294cbcd61ea094"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/verify_install_surfaces.py",
@@ -127,7 +127,7 @@
       "files": [
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/evals/fixtures/check_upstreams.json",
-          "sha256": "5ed85d0e94acedd3f9d219f06edb184b55bd186630eb467c5dbaf0b68f20aff4"
+          "sha256": "e36507c6b89ed45de7877d4883035bb3d6702ca81e1e89c2354ddbade5a9abf7"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/evals/fixtures/destructive-candidate.json",
@@ -159,7 +159,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/evals/run_evals.py",
-          "sha256": "8a6edc826acac4b31c80f481d1af133a300b4c9198bd4ed9bab85d6bddae32ec"
+          "sha256": "ee859ec0a53963a74979e5c0e9d6354fa7cae4d49b7fd08f39fe28e803c7ba03"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/references/adapted-mode.md",
@@ -175,7 +175,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/check_upstreams.py",
-          "sha256": "05d1d903fc94e5f8b6fa9d8919ca58af59a090b9502f4487b21ebaa8bfeb1e18"
+          "sha256": "4e3888539d98d8407701defb012840bf8d8c5657dc13094d9f1d212135bc644a"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/discover_upstreams.py",
@@ -199,7 +199,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py",
-          "sha256": "4e450bb6cf03459dd8a63acf0d4be314703459bdba3b58528352d53ffd080a88"
+          "sha256": "d7536eb2e1f6b934d64e8354c893d03af5bc8e50712e72d0a57f35ec9fdb30df"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/SKILL.md",

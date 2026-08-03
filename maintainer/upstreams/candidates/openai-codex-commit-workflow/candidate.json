@@ -1,0 +1,65 @@
+{
+  "id": "openai-codex-commit-workflow",
+  "checked_at": "2026-08-03",
+  "status": "accepted-reference-observation",
+  "relationship_group": null,
+  "auto_import": false,
+  "file_import_allowed": false,
+  "candidate_sources": [
+    {
+      "source_id": "openai-codex-commit-behavior",
+      "source_url": "https://github.com/openai/codex/blob/2cf2a6a844f1fc2ddd489c8a67fa8bc2f59a6f3d/codex-rs/protocol/src/prompts/base_instructions/default.md",
+      "repository_url": "https://github.com/openai/codex",
+      "officiality": "OpenAI Codex official repository and documentation",
+      "integration_mode": "reference",
+      "target_behavior_contract": "commit-workflow",
+      "observed_activity": "Repository main bb5054fe47abe73ecbbd454751066a28c89f4bb9; commit-instruction watched path last changed at 2cf2a6a844f1fc2ddd489c8a67fa8bc2f59a6f3d.",
+      "observed_product_version": "codex-cli 0.146.0",
+      "runtime_observation_scope": "Local codex --version output only; the Phase 7 same-fixture product smoke is planned and has no Phase 1 evidence.",
+      "claim_classes": [
+        "official-documented",
+        "runtime-observation"
+      ],
+      "license": "Reference-only behavior evidence; no repository or documentation file is imported.",
+      "security_surface": "Read-only official documentation and repository observations; no script, hook, plugin, or prompt is executed or copied.",
+      "fit": "Documents the explicit-request commit gate, repository instruction scope, review, and approval/sandbox context without claiming an undisclosed algorithm.",
+      "decision": "Reference-only behavior evidence. Any observed change requires manual semantic review; never auto-import."
+    }
+  ],
+  "watched_surfaces": [
+    {
+      "id": "base-instructions",
+      "url": "https://raw.githubusercontent.com/openai/codex/2cf2a6a844f1fc2ddd489c8a67fa8bc2f59a6f3d/codex-rs/protocol/src/prompts/base_instructions/default.md",
+      "normalized_sha256": "ac8ae107a0d72fe3476b430afb161ea4e67da2e446d778aefc44828160559807"
+    },
+    {
+      "id": "agents-md",
+      "url": "https://learn.chatgpt.com/docs/agent-configuration/agents-md.md",
+      "normalized_sha256": "9d1f87a2d1cb55b4782b95abe710692b35b9659789c2db31a22c7074a3383e8e"
+    },
+    {
+      "id": "code-review",
+      "url": "https://learn.chatgpt.com/docs/code-review.md",
+      "normalized_sha256": "2fbdecf95f49cf19905ebed1752eadc9a7878b7de3ab94037fa0d7622fe9450f"
+    },
+    {
+      "id": "cli-customization",
+      "url": "https://learn.chatgpt.com/docs/cli-customization.md",
+      "normalized_sha256": "7f59bf08264c63061b59a6a0050376c4633d22c9e96915ec1d565e85a032b382"
+    },
+    {
+      "id": "agent-approvals-security",
+      "url": "https://learn.chatgpt.com/docs/agent-approvals-security.md",
+      "normalized_sha256": "23fada5ed8b7d1d40e809b3cb7d4363a61386d8ffa1eb31414bfc2d7521426cd"
+    }
+  ],
+  "unsupported_guarantees": [
+    "No identical Codex/Claude algorithm or output guarantee.",
+    "No local policy is represented as an OpenAI product guarantee.",
+    "No official prompt, skill, plugin, or runtime file is imported."
+  ],
+  "stale_fallback": "preserve-last-accepted-mark-stale",
+  "runtime_fixture_status": "planned",
+  "runtime_fixture_evidence": null,
+  "pending_approvals": []
+}

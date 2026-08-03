@@ -70,7 +70,8 @@ def test_permissions_and_source_notice_stay_bounded() -> None:
 
     # Source lists live in the central provenance docs. Duplicating them here
     # only creates drift between the skill text and the registry.
-    assert ".user-docs/External_Skill_References.md" in skill
+    assert ".user-docs/Skill_Upstream_Governance.md#direct-import-provenance" in skill
+    assert ".user-docs/Skill_Upstream_Governance.md#concept-behavior-references" in skill
     assert "이 파일에 출처 목록을 중복해" in skill
     for pattern in (r"\$\{CLAUDE_PLUGIN_ROOT\}", r"\.claude/skills", r"\.agents/skills"):
         assert not re.search(pattern, skill), f"platform-specific path leaked: {pattern}"

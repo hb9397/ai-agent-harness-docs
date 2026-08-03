@@ -1,0 +1,65 @@
+{
+  "id": "claude-code-commit-workflow",
+  "checked_at": "2026-08-03",
+  "status": "accepted-reference-observation",
+  "relationship_group": null,
+  "auto_import": false,
+  "file_import_allowed": false,
+  "candidate_sources": [
+    {
+      "source_id": "anthropic-claude-code-commit-behavior",
+      "source_url": "https://code.claude.com/docs/en/headless#create-a-commit",
+      "repository_url": null,
+      "officiality": "Anthropic Claude Code official documentation",
+      "integration_mode": "reference",
+      "target_behavior_contract": "commit-workflow",
+      "observed_activity": "Headless, configuration, permissions, hooks, and changelog Markdown surfaces checked and normalized independently on 2026-08-03.",
+      "observed_product_version": "Claude Code 2.1.220",
+      "runtime_observation_scope": "Local claude --version output only; the Phase 7 same-fixture product smoke is planned and has no Phase 1 evidence.",
+      "claim_classes": [
+        "official-documented",
+        "runtime-observation"
+      ],
+      "license": "Reference-only behavior evidence; no documentation or built-in Git instruction file is imported.",
+      "security_surface": "Read-only official documentation observations; no hook, permission rule, prompt, plugin, or command implementation is executed or copied.",
+      "fit": "Documents the staged-change commit example, built-in Git instruction toggle, permissions, hooks, and attribution without claiming a hidden implementation algorithm.",
+      "decision": "Reference-only behavior evidence. Any observed change requires manual semantic review; never auto-import."
+    }
+  ],
+  "watched_surfaces": [
+    {
+      "id": "headless-create-a-commit",
+      "url": "https://code.claude.com/docs/en/headless.md",
+      "normalized_sha256": "94bdf2c41c2cc85eaecfb0c6e03f4839a8a3121b5a020a0e0f0d7be27ec4ebaa"
+    },
+    {
+      "id": "configuration",
+      "url": "https://code.claude.com/docs/en/configuration.md",
+      "normalized_sha256": "c4fce2f04af815c24442bf77515d66eff75051ac41c9bccae92819fa9e0c63c3"
+    },
+    {
+      "id": "permissions",
+      "url": "https://code.claude.com/docs/en/permissions.md",
+      "normalized_sha256": "f43c04fd9342606bea2be41ce863a4f6d4c499333a4245801042d8ed54c4c4b3"
+    },
+    {
+      "id": "hooks",
+      "url": "https://code.claude.com/docs/en/hooks.md",
+      "normalized_sha256": "eb0207ab2cf7e88e9667d3a0fb424db5a2938b721c65fbebbe28b16110e55346"
+    },
+    {
+      "id": "changelog",
+      "url": "https://code.claude.com/docs/en/changelog.md",
+      "normalized_sha256": "31d84f0e990ed6875ccf6ba1947e7d7382d8ecff717a28ff8ac9af75127fc94e"
+    }
+  ],
+  "unsupported_guarantees": [
+    "No identical Claude/Codex algorithm or output guarantee.",
+    "No local policy is represented as an Anthropic product guarantee.",
+    "No built-in Git instruction, official skill, prompt, plugin, or runtime file is imported."
+  ],
+  "stale_fallback": "preserve-last-accepted-mark-stale",
+  "runtime_fixture_status": "planned",
+  "runtime_fixture_evidence": null,
+  "pending_approvals": []
+}

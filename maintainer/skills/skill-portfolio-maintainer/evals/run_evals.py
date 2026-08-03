@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import os
 import shutil
@@ -64,6 +65,7 @@ def test_check_is_observed_only() -> None:
     report = parse_json(completed.stdout)
     assert report["mode"] == "check"
     assert report["write_observed"] is False
+    assert report["behavior_contract_validation"] == "passed"
     assert any(item["observed"]["status"] == "error" for item in report["results"])
 
 
@@ -420,6 +422,264 @@ def test_external_relationships_and_behavior_contracts_are_consistent() -> None:
     assert errors == [], "\n".join(errors)
 
 
+def _behavior_fixture() -> tuple[dict, dict, dict]:
+    registry = json.loads((ROOT / "maintainer" / "upstreams" / "registry.json").read_text(encoding="utf-8"))
+    lock = json.loads((ROOT / "maintainer" / "upstreams" / "lock.json").read_text(encoding="utf-8"))
+    current = json.loads((ROOT / "maintainer" / "upstreams" / "provenance" / "current-skills.json").read_text(encoding="utf-8"))
+    return registry, lock, current
+
+
+def test_behavior_sources_route_only_through_contracts() -> None:
+    registry, lock, current = _behavior_fixture()
+    source = next(
+        item for item in registry["sources"]
+        if item["id"] == "openai-codex-commit-behavior"
+    )
+    source["target"]["local_skills"] = ["commit"]
+    errors: list[str] = []
+    validate_registry.validate_behavior_contracts(ROOT, registry, lock, current, errors)
+    assert any("must not map through target.local_skills" in item for item in errors), errors
+
+
+def test_behavior_claim_classes_cannot_be_collapsed() -> None:
+    registry, lock, current = _behavior_fixture()
+    contract = next(item for item in registry["behavior_contracts"] if item["id"] == "commit-workflow")
+    contract["claims"] = [
+        claim for claim in contract["claims"]
+        if claim["claim_class"] != "runtime-observation"
+    ]
+    errors: list[str] = []
+    validate_registry.validate_behavior_contracts(ROOT, registry, lock, current, errors)
+    assert any("claims must cover exactly" in item for item in errors), errors
+
+
+def test_unsupported_product_guarantee_is_blocked() -> None:
+    registry, lock, current = _behavior_fixture()
+    contract = next(item for item in registry["behavior_contracts"] if item["id"] == "commit-workflow")
+    contract["unsupported_guarantees"][0]["status"] = "guaranteed"
+    errors: list[str] = []
+    validate_registry.validate_behavior_contracts(ROOT, registry, lock, current, errors)
+    assert any("must stay explicitly unsupported" in item for item in errors), errors
+
+
+def test_planned_fixture_cannot_support_a_runtime_result_claim() -> None:
+    registry, lock, current = _behavior_fixture()
+    contract = next(item for item in registry["behavior_contracts"] if item["id"] == "commit-workflow")
+    claim = next(item for item in contract["claims"] if item["claim_class"] == "runtime-observation")
+    claim["observation_kind"] = "fixture-result"
+    errors: list[str] = []
+    validate_registry.validate_behavior_contracts(ROOT, registry, lock, current, errors)
+    assert any("fixture-result claim requires observed fixture evidence" in item for item in errors), errors
+
+
+def test_stale_behavior_evidence_requires_accepted_fallback() -> None:
+    registry, lock, current = _behavior_fixture()
+    state = next(item for item in lock["states"] if item["id"] == "anthropic-claude-code-commit-behavior")
+    state["observed"]["evidence_status"] = "stale"
+    state["observed"].pop("stale_fallback", None)
+    state["observed"].pop("last_check_attempt_at", None)
+    errors: list[str] = []
+    validate_registry.validate_behavior_contracts(ROOT, registry, lock, current, errors)
+    assert any("stale evidence must preserve accepted state" in item for item in errors), errors
+
+
+def test_refresh_failure_preserves_accepted_and_marks_stale() -> None:
+    registry, lock, _current = _behavior_fixture()
+    source = next(
+        item for item in registry["sources"]
+        if item["id"] == "anthropic-claude-code-commit-behavior"
+    )
+    state = next(item for item in lock["states"] if item["id"] == source["id"])
+    accepted_before = copy.deepcopy(state["accepted"])
+    stale = check_upstreams.apply_behavior_refresh_policy(
+        source,
+        {"status": "error", "error": "fixture timeout"},
+        state,
+    )
+    assert stale["evidence_status"] == "stale"
+    assert stale["stale_fallback"]["strategy"] == "preserve-last-accepted-mark-stale"
+    check_upstreams.update_observed(lock, source["id"], stale)
+    assert state["accepted"] == accepted_before
+    assert state["observed"]["evidence_status"] == "stale"
+    assert state["observed"]["ref"]
+    assert state["observed"]["last_check_attempt_at"]
+
+
+def test_unchanged_behavior_surfaces_do_not_require_review() -> None:
+    registry, lock, _current = _behavior_fixture()
+    source = next(
+        item for item in registry["sources"]
+        if item["id"] == "openai-codex-commit-behavior"
+    )
+    state = next(item for item in lock["states"] if item["id"] == source["id"])
+    observed = copy.deepcopy(state["observed"])
+    observed["status"] = "ok"
+    result = check_upstreams.apply_behavior_refresh_policy(source, observed, state)
+    assert result["evidence_status"] == "fresh"
+    assert result["auto_import"] is False
+    assert result["semantic_review_required"] is False
+
+
+def test_behavior_candidates_are_vendor_separated_and_non_importing() -> None:
+    registry, _lock, _current = _behavior_fixture()
+    errors: list[str] = []
+    validate_registry.validate_behavior_candidates(ROOT, registry, errors)
+    assert errors == [], "\n".join(errors)
+    candidate_paths = []
+    for source_id in ("openai-codex-commit-behavior", "anthropic-claude-code-commit-behavior"):
+        source = next(item for item in registry["sources"] if item["id"] == source_id)
+        path = ROOT / source["provenance"]["classification_evidence_url"]
+        candidate = json.loads(path.read_text(encoding="utf-8"))
+        candidate_paths.append(path)
+        assert candidate["auto_import"] is False
+        assert candidate["file_import_allowed"] is False
+        assert candidate["runtime_fixture_status"] == "planned"
+        assert candidate["runtime_fixture_evidence"] is None
+        assert [item["source_id"] for item in candidate["candidate_sources"]] == [source_id]
+    assert candidate_paths[0] != candidate_paths[1]
+
+
+def test_current_commit_consumes_contract_not_behavior_sources() -> None:
+    registry, _lock, current = _behavior_fixture()
+    commit = next(item for item in current["skills"] if item["name"] == "commit")
+    behavior_source_ids = {
+        source["id"] for source in registry["sources"]
+        if source.get("target", {}).get("behavior_contracts")
+    }
+    assert commit["behaviors"] == ["commit-workflow"]
+    assert behavior_source_ids.isdisjoint(commit.get("sources", []))
+    contract = next(item for item in registry["behavior_contracts"] if item["id"] == "commit-workflow")
+    runtime_claim = next(item for item in contract["claims"] if item["claim_class"] == "runtime-observation")
+    assert runtime_claim["id"] == "runtime-version-observation"
+    assert runtime_claim["observation_kind"] == "product-version"
+    assert contract["validation"]["runtime_fixtures"][0]["status"] == "planned"
+    assert contract["validation"]["runtime_fixtures"][0]["evidence_path"] is None
+
+
+def test_registry_schema_exposes_behavior_v11() -> None:
+    schema = json.loads((ROOT / "maintainer" / "upstreams" / "schema.json").read_text(encoding="utf-8"))
+    assert schema["properties"]["schema_version"]["pattern"] == r"^1\.1\.0$"
+    assert "behavior_contracts" in schema["properties"]
+    assert "behavior_contracts" in schema["$defs"]["source"]["properties"]["target"]["properties"]
+    claim_classes = set(schema["$defs"]["behavior_claim"]["properties"]["claim_class"]["enum"])
+    assert claim_classes == {"official-documented", "local-policy", "runtime-observation"}
+
+
+def test_governance_merge_manifest_is_semantically_complete() -> None:
+    errors: list[str] = []
+    validate_registry.validate_governance_merge_manifest(ROOT, errors)
+    assert errors == [], "\n".join(errors)
+
+
+def test_governance_merge_manifest_rejects_coverage_and_metadata_drift() -> None:
+    manifest_path = ROOT / validate_registry.GOVERNANCE_MERGE_MANIFEST
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["coverage_summary"]["source_units"] -= 1
+    manifest["coverage"][0]["destination_anchor"] = "missing-governance-anchor"
+    manifest["source_documents"][0]["byte_count"] += 1
+    errors: list[str] = []
+    validate_registry.validate_governance_merge_data(
+        ROOT,
+        manifest,
+        errors,
+        verify_source_bytes=False,
+        check_live_referrers=False,
+    )
+    assert any("source_units must equal len(coverage)" in item for item in errors), errors
+    assert any("destination anchor #missing-governance-anchor does not exist" in item for item in errors), errors
+    assert any("byte_count must be" in item for item in errors), errors
+    assert any("unmapped_units must be zero" in item for item in errors), errors
+
+
+def test_governance_merge_manifest_rejects_placeholder_heading_and_missing_table_header() -> None:
+    manifest_path = ROOT / validate_registry.GOVERNANCE_MERGE_MANIFEST
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    heading = next(unit for unit in manifest["coverage"] if unit["unit_type"] == "heading")
+    heading["source_excerpt"] = heading["source_row_or_rule_id"]
+    table_row = next(unit for unit in manifest["coverage"] if unit["unit_type"] == "table_row")
+    table_row["source_heading"] = "wrong containing heading"
+    command = next(unit for unit in manifest["coverage"] if unit["unit_type"] == "command_block")
+    command["source_excerpt"] = "command summary placeholder"
+    list_rule = next(unit for unit in manifest["coverage"] if unit["unit_type"] == "list_rule")
+    evidence_path = next(
+        unit
+        for unit in manifest["coverage"]
+        if unit["source_row_or_rule_id"] == "evidence-path-L015-capabilities"
+    )
+    manifest["coverage"] = [
+        unit
+        for unit in manifest["coverage"]
+        if unit["source_row_or_rule_id"]
+        not in {
+            "table-header-L007-mode",
+            list_rule["source_row_or_rule_id"],
+            evidence_path["source_row_or_rule_id"],
+        }
+    ]
+    manifest["coverage_summary"]["source_units"] = len(manifest["coverage"])
+    errors: list[str] = []
+    validate_registry.validate_governance_merge_data(
+        ROOT,
+        manifest,
+        errors,
+        verify_source_bytes=False,
+        check_live_referrers=False,
+    )
+    assert any("heading source_excerpt must equal the baseline heading" in item for item in errors), errors
+    assert any("source_heading must equal the containing baseline heading" in item for item in errors), errors
+    assert any("command_block source_excerpt must equal the baseline block" in item for item in errors), errors
+    source_path = manifest["source_documents"][0]["source_path"]
+    assert any(
+        f"{source_path}:7 must have exactly one table_row coverage unit; found 0" in item
+        for item in errors
+    ), errors
+    assert any(
+        f"{list_rule['source_path']}:{list_rule['source_line']} must have exactly one list_rule coverage unit; found 0"
+        in item
+        for item in errors
+    ), errors
+    assert any(
+        f"{evidence_path['source_path']}:{evidence_path['source_line']} evidence path " in item
+        and "must have exactly one coverage unit; found 0" in item
+        for item in errors
+    ), errors
+
+
+def test_generated_governance_hits_are_allowed_but_canonical_hits_fail() -> None:
+    source_path = next(iter(validate_registry.EXPECTED_GOVERNANCE_SOURCE_DOCUMENTS))
+    source_name = Path(source_path).name
+    with tempfile.TemporaryDirectory() as temporary:
+        root = Path(temporary)
+        (root / ".user-docs").mkdir()
+        destination_path = ".user-docs/Skill_Upstream_Governance.md"
+        (root / destination_path).write_text(
+            '<a id="migration-appendix"></a>\n',
+            encoding="utf-8",
+        )
+        generated = root / ".agents" / "skills" / "generated.md"
+        generated.parent.mkdir(parents=True)
+        generated.write_text(f"historical input: {source_name}\n", encoding="utf-8")
+
+        clean_errors: list[str] = []
+        validate_registry._validate_live_governance_referrers(
+            root,
+            {source_path},
+            destination_path,
+            clean_errors,
+        )
+        assert clean_errors == [], clean_errors
+
+        (root / "README.md").write_text(f"live policy: {source_name}\n", encoding="utf-8")
+        live_errors: list[str] = []
+        validate_registry._validate_live_governance_referrers(
+            root,
+            {source_path},
+            destination_path,
+            live_errors,
+        )
+        assert any("live referrer still names" in item for item in live_errors), live_errors
+
+
 def _group_fixture() -> tuple[dict, dict]:
     """Minimal registry/lock pair for one upstream tracked twice."""
     registry = {
@@ -683,6 +943,20 @@ def main() -> int:
         test_public_scripts_have_real_help,
         test_imported_status_check_is_prose_language_neutral,
         test_external_relationships_and_behavior_contracts_are_consistent,
+        test_behavior_sources_route_only_through_contracts,
+        test_behavior_claim_classes_cannot_be_collapsed,
+        test_unsupported_product_guarantee_is_blocked,
+        test_planned_fixture_cannot_support_a_runtime_result_claim,
+        test_stale_behavior_evidence_requires_accepted_fallback,
+        test_refresh_failure_preserves_accepted_and_marks_stale,
+        test_unchanged_behavior_surfaces_do_not_require_review,
+        test_behavior_candidates_are_vendor_separated_and_non_importing,
+        test_current_commit_consumes_contract_not_behavior_sources,
+        test_registry_schema_exposes_behavior_v11,
+        test_governance_merge_manifest_is_semantically_complete,
+        test_governance_merge_manifest_rejects_coverage_and_metadata_drift,
+        test_governance_merge_manifest_rejects_placeholder_heading_and_missing_table_header,
+        test_generated_governance_hits_are_allowed_but_canonical_hits_fail,
         test_relationship_group_accepts_matched_pair,
         test_relationship_group_blocks_sha_drift,
         test_relationship_group_blocks_partial_promotion,

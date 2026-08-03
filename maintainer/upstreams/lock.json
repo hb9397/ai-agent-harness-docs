@@ -1,6 +1,30 @@
 {
-  "schema_version": "1.0.0",
-  "generated_at": "2026-07-31",
+  "schema_version": "1.1.0",
+  "generated_at": "2026-08-03",
+  "behavior_contracts": [
+    {
+      "id": "commit-workflow",
+      "lifecycle": "active",
+      "accepted_at": "2026-08-03",
+      "evidence_status": "fresh",
+      "source_ids": [
+        "openai-codex-commit-behavior",
+        "anthropic-claude-code-commit-behavior",
+        "conventional-commits"
+      ],
+      "consumer_skills": [
+        "commit"
+      ],
+      "runtime_fixtures": [
+        {
+          "id": "cross-product-commit-workflow",
+          "status": "planned",
+          "evidence_path": null
+        }
+      ],
+      "unsupported_guarantees_verified": true
+    }
+  ],
   "states": [
     {
       "id": "anthropic-frontend-design",
@@ -134,15 +158,224 @@
       "released": null
     },
     {
+      "id": "openai-codex-commit-behavior",
+      "observed": {
+        "source_url": "https://github.com/openai/codex/tree/main",
+        "checked_at": "2026-08-03",
+        "ref": "main",
+        "sha": "bb5054fe47abe73ecbbd454751066a28c89f4bb9",
+        "evidence_status": "fresh",
+        "product_version": "codex-cli 0.146.0",
+        "note": "Official repository and documentation surfaces observed independently; changes require manual semantic review and never auto-import.",
+        "watched_paths": [
+          {
+            "path": "codex-rs/protocol/src/prompts/base_instructions/default.md",
+            "status": "ok",
+            "latest_commit_sha": "2cf2a6a844f1fc2ddd489c8a67fa8bc2f59a6f3d",
+            "latest_commit_url": "https://github.com/openai/codex/commit/2cf2a6a844f1fc2ddd489c8a67fa8bc2f59a6f3d"
+          }
+        ],
+        "watched_surfaces": [
+          {
+            "id": "base-instructions",
+            "url": "https://raw.githubusercontent.com/openai/codex/2cf2a6a844f1fc2ddd489c8a67fa8bc2f59a6f3d/codex-rs/protocol/src/prompts/base_instructions/default.md",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "ac8ae107a0d72fe3476b430afb161ea4e67da2e446d778aefc44828160559807"
+          },
+          {
+            "id": "agents-md",
+            "url": "https://learn.chatgpt.com/docs/agent-configuration/agents-md.md",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "9d1f87a2d1cb55b4782b95abe710692b35b9659789c2db31a22c7074a3383e8e"
+          },
+          {
+            "id": "code-review",
+            "url": "https://learn.chatgpt.com/docs/code-review.md",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "2fbdecf95f49cf19905ebed1752eadc9a7878b7de3ab94037fa0d7622fe9450f"
+          },
+          {
+            "id": "cli-customization",
+            "url": "https://learn.chatgpt.com/docs/cli-customization.md",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "7f59bf08264c63061b59a6a0050376c4633d22c9e96915ec1d565e85a032b382"
+          },
+          {
+            "id": "agent-approvals-security",
+            "url": "https://learn.chatgpt.com/docs/agent-approvals-security.md",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "23fada5ed8b7d1d40e809b3cb7d4363a61386d8ffa1eb31414bfc2d7521426cd"
+          }
+        ]
+      },
+      "accepted": {
+        "source_url": "https://github.com/openai/codex/blob/2cf2a6a844f1fc2ddd489c8a67fa8bc2f59a6f3d/codex-rs/protocol/src/prompts/base_instructions/default.md",
+        "checked_at": "2026-08-03",
+        "ref": "base-instructions@2cf2a6a",
+        "sha": "2cf2a6a844f1fc2ddd489c8a67fa8bc2f59a6f3d",
+        "accepted_at": "2026-08-03",
+        "mode": "reference",
+        "evidence_status": "fresh",
+        "product_version": "codex-cli 0.146.0",
+        "evidence": "maintainer/upstreams/candidates/openai-codex-commit-workflow/candidate.json",
+        "watched_paths": [
+          {
+            "path": "codex-rs/protocol/src/prompts/base_instructions/default.md",
+            "latest_commit_sha": "2cf2a6a844f1fc2ddd489c8a67fa8bc2f59a6f3d"
+          }
+        ],
+        "watched_surfaces": [
+          {
+            "id": "base-instructions",
+            "content_sha256": "ac8ae107a0d72fe3476b430afb161ea4e67da2e446d778aefc44828160559807"
+          },
+          {
+            "id": "agents-md",
+            "content_sha256": "9d1f87a2d1cb55b4782b95abe710692b35b9659789c2db31a22c7074a3383e8e"
+          },
+          {
+            "id": "code-review",
+            "content_sha256": "2fbdecf95f49cf19905ebed1752eadc9a7878b7de3ab94037fa0d7622fe9450f"
+          },
+          {
+            "id": "cli-customization",
+            "content_sha256": "7f59bf08264c63061b59a6a0050376c4633d22c9e96915ec1d565e85a032b382"
+          },
+          {
+            "id": "agent-approvals-security",
+            "content_sha256": "23fada5ed8b7d1d40e809b3cb7d4363a61386d8ffa1eb31414bfc2d7521426cd"
+          }
+        ]
+      },
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
+      "id": "anthropic-claude-code-commit-behavior",
+      "observed": {
+        "source_url": "https://code.claude.com/docs/en/headless#create-a-commit",
+        "checked_at": "2026-08-03",
+        "ref": "documentation",
+        "sha": null,
+        "evidence_status": "fresh",
+        "product_version": "Claude Code 2.1.220",
+        "note": "Official Markdown surfaces normalized and hashed independently; changes require manual semantic review and never auto-import.",
+        "watched_surfaces": [
+          {
+            "id": "headless-create-a-commit",
+            "url": "https://code.claude.com/docs/en/headless.md",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "94bdf2c41c2cc85eaecfb0c6e03f4839a8a3121b5a020a0e0f0d7be27ec4ebaa"
+          },
+          {
+            "id": "configuration",
+            "url": "https://code.claude.com/docs/en/configuration.md",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "c4fce2f04af815c24442bf77515d66eff75051ac41c9bccae92819fa9e0c63c3"
+          },
+          {
+            "id": "permissions",
+            "url": "https://code.claude.com/docs/en/permissions.md",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "f43c04fd9342606bea2be41ce863a4f6d4c499333a4245801042d8ed54c4c4b3"
+          },
+          {
+            "id": "hooks",
+            "url": "https://code.claude.com/docs/en/hooks.md",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "eb0207ab2cf7e88e9667d3a0fb424db5a2938b721c65fbebbe28b16110e55346"
+          },
+          {
+            "id": "changelog",
+            "url": "https://code.claude.com/docs/en/changelog.md",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "31d84f0e990ed6875ccf6ba1947e7d7382d8ecff717a28ff8ac9af75127fc94e"
+          }
+        ]
+      },
+      "accepted": {
+        "source_url": "https://code.claude.com/docs/en/headless#create-a-commit",
+        "checked_at": "2026-08-03",
+        "ref": "documentation@2026-08-03",
+        "sha": null,
+        "accepted_at": "2026-08-03",
+        "mode": "reference",
+        "evidence_status": "fresh",
+        "product_version": "Claude Code 2.1.220",
+        "evidence": "maintainer/upstreams/candidates/claude-code-commit-workflow/candidate.json",
+        "watched_surfaces": [
+          {
+            "id": "headless-create-a-commit",
+            "content_sha256": "94bdf2c41c2cc85eaecfb0c6e03f4839a8a3121b5a020a0e0f0d7be27ec4ebaa"
+          },
+          {
+            "id": "configuration",
+            "content_sha256": "c4fce2f04af815c24442bf77515d66eff75051ac41c9bccae92819fa9e0c63c3"
+          },
+          {
+            "id": "permissions",
+            "content_sha256": "f43c04fd9342606bea2be41ce863a4f6d4c499333a4245801042d8ed54c4c4b3"
+          },
+          {
+            "id": "hooks",
+            "content_sha256": "eb0207ab2cf7e88e9667d3a0fb424db5a2938b721c65fbebbe28b16110e55346"
+          },
+          {
+            "id": "changelog",
+            "content_sha256": "31d84f0e990ed6875ccf6ba1947e7d7382d8ecff717a28ff8ac9af75127fc94e"
+          }
+        ]
+      },
+      "embedded": null,
+      "packaged": null,
+      "released": null
+    },
+    {
       "id": "conventional-commits",
       "observed": {
         "source_url": "https://www.conventionalcommits.org/en/v1.0.0/",
-        "checked_at": "2026-07-29",
+        "checked_at": "2026-08-03",
         "ref": "1.0.0",
         "sha": null,
-        "note": "Specification reference only."
+        "evidence_status": "fresh",
+        "note": "Specification reference only; no specification text is imported.",
+        "watched_surfaces": [
+          {
+            "id": "specification-1.0.0",
+            "url": "https://www.conventionalcommits.org/en/v1.0.0/",
+            "checked_at": "2026-08-03",
+            "status": "ok",
+            "content_sha256": "1f02d0f99e4a830daafa4cc75d92e1fe4aef50984c6c398aabd50d7c1214091f"
+          }
+        ]
       },
-      "accepted": null,
+      "accepted": {
+        "source_url": "https://www.conventionalcommits.org/en/v1.0.0/",
+        "checked_at": "2026-08-03",
+        "ref": "1.0.0",
+        "sha": null,
+        "accepted_at": "2026-08-03",
+        "mode": "reference",
+        "evidence_status": "fresh",
+        "evidence": "https://www.conventionalcommits.org/en/v1.0.0/",
+        "watched_surfaces": [
+          {
+            "id": "specification-1.0.0",
+            "content_sha256": "1f02d0f99e4a830daafa4cc75d92e1fe4aef50984c6c398aabd50d7c1214091f"
+          }
+        ]
+      },
       "embedded": null,
       "packaged": null,
       "released": null

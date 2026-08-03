@@ -11,18 +11,16 @@
 | 문서 | 역할 |
 |------|------|
 | [Plugin_Installation_Guide.md](./Plugin_Installation_Guide.md) | Codex CLI/App, Claude Code CLI/Desktop 설치·확인·업데이트·제거 기준 |
-| [Harness_Engineering.md](./Harness_Engineering.md) | 사용자 20종·관리자 3종, 플러그인 흐름, `.docs`/컨텍스트/Markdown 후처리 운영 정본 |
+| [Harness_Engineering.md](./Harness_Engineering.md) | 사용자 source 19종·마지막 `0.2.2` runtime 20종 drift, 관리자 3종, 플러그인 흐름, `.docs`/컨텍스트/Markdown 후처리 운영 정본 |
 | [Harness_Engineering_Intro.md](./Harness_Engineering_Intro.md) | 플러그인 기반 하네스 도입 배경과 실제 프로젝트 사용 예시 |
 
 ---
 
-## 외부 스킬 관계 문서
+## 외부 스킬 관계·거버넌스 문서
 
 | 문서 | 역할 |
 |------|------|
-| [External_Skill_References.md](./External_Skill_References.md) | 외부 공식·유명 스킬을 참고만 한 경우의 관계와 링크 |
-| [Imported_Skill_Provenance.md](./Imported_Skill_Provenance.md) | 직접 반입·변형·배포한 스킬의 provenance와 license/NOTICE |
-| [Skill_Upstream_Update_Policy.md](./Skill_Upstream_Update_Policy.md) | 관리자가 upstream 최신화 후보를 탐색·검토·승인·반영하는 정책 |
+| [Skill_Upstream_Governance.md](./Skill_Upstream_Governance.md) | 직접 반입·개념·행동 참조, provenance, license/NOTICE, 최신화·승인·동등성 정책의 사람용 단일 정본 |
 
 ---
 

@@ -54,7 +54,7 @@ CLAUDE_MANIFEST_FIELDS = {
     "skills",
 }
 EXPLICIT_ONLY_SKILLS = {"commit", "git-scoped-account", "impl-verify"}
-MODEL_ROUTABLE_SKILLS = {"multi-review", "pre-commit"}
+MODEL_ROUTABLE_SKILLS = {"multi-review"}
 
 
 def error(errors: list[str], message: str) -> None:
@@ -207,10 +207,6 @@ def validate_skill_files(root: Path, errors: list[str]) -> None:
                 error(errors, f"Claude direct invocation example missing: {path}")
         if skill_name in MODEL_ROUTABLE_SKILLS and explicit_only:
             error(errors, f"review/check skill must remain model-routable: {path}")
-        if skill_name == "pre-commit" and "bash scripts/scan.sh" in text:
-            error(errors, f"pre-commit script path must be bundle-relative: {path}")
-
-
 def validate_source_permission_policy(root: Path, errors: list[str]) -> None:
     for base in (root / "skills", root / "maintainer" / "skills"):
         for path in sorted(base.glob("*/SKILL.md")):

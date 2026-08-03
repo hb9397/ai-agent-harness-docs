@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "generated_at": "2026-07-31",
+  "generated_at": "2026-08-03",
   "purpose": "Declare the execution surface every packaged user skill is allowed to have. runtime-allowlist.json governs Claude agent and alias entries only; this file governs executable assets shipped inside skills.",
   "audit_method": "Python modules are parsed and their imports and call names are compared against the denied sets below. Declaring a capability here does not grant it at runtime; the platform permission mode still applies.",
   "denied_everywhere": {
@@ -22,18 +22,6 @@
       "subprocess": false,
       "writes": "Only files the user explicitly approves. Proposal-only by default.",
       "note": "Deterministic guard for protected tokens and change rate."
-    },
-    {
-      "skill": "pre-commit",
-      "executables": ["scripts/scan.py", "scripts/scan.sh"],
-      "interpreter": "python3 or POSIX shell",
-      "third_party_dependencies": [],
-      "network": false,
-      "subprocess": true,
-      "subprocess_allowlist": ["git"],
-      "subprocess_justification": "Reads the staged diff through git. stdout is captured and stderr is discarded; no shell string is interpolated from user input.",
-      "writes": "none",
-      "note": "Read-only scan that reports findings."
     },
     {
       "skill": "ui-ux-pro-max",

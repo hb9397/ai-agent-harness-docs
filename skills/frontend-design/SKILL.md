@@ -123,7 +123,9 @@ Apache License 2.0으로 제공되며, 이 파일은 원문을 그대로 배포�
 선행 입력 계약은 외부 참고 관계에서 도출한 개념을 로컬 문장으로 표현한 것이다.
 외부 파일, 번역문, 요약문을 반입하지 않는다.
 
-이 스킬에 연결된 전체 출처 목록과 관계 유형, 정확한 upstream ref, 라이선스는
-`.user-docs/Imported_Skill_Provenance.md`, `.user-docs/External_Skill_References.md`,
-plugin의 `THIRD_PARTY_NOTICES.md`에서 추적한다. 이 파일에 출처 목록을 중복해
-적지 않는다.
+이 스킬의 Anthropic `adapted` 관계는
+`.user-docs/Skill_Upstream_Governance.md#direct-import-provenance`, OpenAI
+Product Design·UI/UX Pro Max·Motion Design의 개념 `reference` 관계는
+`.user-docs/Skill_Upstream_Governance.md#concept-behavior-references`에서 추적한다.
+정확한 upstream ref·라이선스와 plugin 고지는 `THIRD_PARTY_NOTICES.md`에서 확인한다.
+이 파일에 출처 목록을 중복해 적지 않는다.

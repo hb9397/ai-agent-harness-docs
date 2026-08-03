@@ -203,8 +203,7 @@ Markdown producer 뒤에는 `humanize-korean` 개선안이 연결된다. 다만 
 | `multi-review` | 보안·성능·유지보수·테스트 4관점 리뷰 | 구현·검증 직후 |
 | `doc-audit` | 코드와 프로젝트 문서의 괴리 분석 | 구조나 동작이 바뀌었을 때 |
 | `code-comment` | 필요한 변경 코드의 한글 주석 보강 | 인수인계 맥락이 코드만으로 부족할 때 |
-| `pre-commit` | 최종 변경 파일의 기계적 규칙 검사 | stage·commit 직전 |
-| `commit` | staging 범위를 Conventional Commits로 커밋 | 사용자가 커밋을 명시 요청할 때 |
+| `commit` | 범위·diff·검증을 확인하고 의도한 파일만 stage해 정상 hook과 Conventional Commit을 실행한 뒤 사후 증거 확인 | 사용자가 커밋을 명시 요청할 때 |
 | `humanize-korean` | 한국어 Markdown 개선안과 diff | producer 후처리 또는 명시적 문체 개선 |
 
 `rfp-ingest`와 `agent-sync`는 제거됐다. RFP는 `design-doc`,
@@ -241,9 +240,7 @@ flowchart LR
     F2 --> F3["doc-audit"]
 
     G --> G1["선택: code-comment"]
-    G1 --> G2["pre-commit"]
-    G2 --> G3["stage"]
-    G3 --> G4["commit"]
+    G1 --> G4["명시 요청: commit<br/>범위 확인 → 선택 stage → hook → commit"]
 ```
 
 빠른 선택:
@@ -257,7 +254,7 @@ flowchart LR
 - 다중 화면·FE/BE 페어 계획을 만든다 → `impl-fe-be-doc`
 - 구현을 시작한다 → `impl-reuse-scan`
 - Phase가 끝났다 → `impl-verify`
-- 커밋을 준비한다 → 리뷰·문서 감사·최종 검사·stage·`commit`
+- 커밋을 준비한다 → 리뷰·문서 감사·재검증 뒤 사용자가 `commit` 명시 호출
 
 ## 6. 전체 사용자 흐름
 
@@ -279,9 +276,8 @@ flowchart LR
 → doc-audit
 → 필요한 수정·재검증
 → 선택: code-comment
-→ pre-commit
-→ 의도한 파일 stage
-→ commit
+→ 사용자 명시 요청: commit
+  └─ 지침·status·diff·최근 log → 의도한 파일만 stage → 정상 hook → 사후 증거
 ```
 
 ### 문서 없는 기존 코드
@@ -477,9 +473,10 @@ $doc-audit
 승인 전에는 문서를 수정하지 말아줘.
 ```
 
-필요한 코드 주석을 승인해 반영했다면 마지막 변경 상태에서
-`$pre-commit`을 실행한다. 통과 후 의도한 파일만 stage하고 `$commit`을
-명시 호출한다.
+필요한 코드 주석을 승인해 반영했다면 마지막 변경 상태를 재검증한 뒤 범위를 적어
+`$commit <범위>` 또는 `/ai-agent-harness:commit <범위>`를 명시 호출한다.
+`commit`은 기존·범위 밖 staged 변경을 보존하며, message-only 요청은 index,
+worktree, HEAD를 바꾸지 않는다. 리뷰에서 commit으로 자동 handoff하지 않는다.
 
 ## 9. 권장 사용 습관
 
@@ -600,7 +597,9 @@ ID를 다시 준다. 오래된 대화 전체를 끌고 가는 것보다 고정 �
 
 ## 10. 추천하는 최초 도입 순서
 
-처음부터 20개 스킬을 모두 쓰려고 하지 않아도 된다.
+Phase 1의 현행 source inventory 19개를 처음부터 모두 쓰려고 하지 않아도 된다.
+마지막 immutable `0.2.2` artifact는 20개 runtime을 담고 있으며, source와 generated
+tree의 이 drift는 후속 rebuild·검증 전까지 남는다.
 
 ### 0단계 — 설치와 문서 골격
 
@@ -621,7 +620,6 @@ ID를 다시 준다. 오래된 대화 전체를 끌고 가는 것보다 고정 �
 - `impl-reuse-scan`
 - `multi-review`
 - `doc-audit`
-- `pre-commit`
 - `commit`
 
 ### 3단계 — 화면·문서 품질 확장
@@ -704,7 +702,8 @@ flowchart LR
 trigger 원칙 같은 개념이 여기에 해당한다.
 
 참고 관계는
-[External Skill References](./External_Skill_References.md)에 기록한다.
+[Skill Upstream Governance의 개념·행동 참조](./Skill_Upstream_Governance.md#concept-behavior-references)에
+기록한다.
 
 ### `adapted`
 
@@ -724,7 +723,8 @@ NOTICE, 원본 테스트와 양 플랫폼 설치 재현성을 검증해야 한�
 `vendored` 관계는 없다.
 
 `adapted`와 `vendored` provenance는
-[Imported Skill Provenance](./Imported_Skill_Provenance.md)에 기록한다.
+[Skill Upstream Governance의 직접 반입·변형 관계](./Skill_Upstream_Governance.md#direct-import-provenance)에
+기록한다.
 
 증거가 부족한 관계는 `unknown` 차단 상태로 두고, 해소 전에는 반입하거나
 릴리스하지 않는다.

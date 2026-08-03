@@ -1,9 +1,9 @@
 {
-  "schema_version": "1.0.0",
-  "generated_at": "2026-07-31",
-  "scope": "Post-refactor audit: 20 user skills plus 3 maintainer skills",
+  "schema_version": "1.1.0",
+  "generated_at": "2026-08-03",
+  "scope": "Phase 1 audit: 19 user skills plus 3 maintainer skills",
   "counts": {
-    "user_skills": 20,
+    "user_skills": 19,
     "maintainer_skills": 3,
     "candidate_skills": 0
   },
@@ -29,11 +29,12 @@
       "name": "commit",
       "area": "user",
       "mode": "reference",
-      "sources": [
-        "conventional-commits"
+      "sources": [],
+      "behaviors": [
+        "commit-workflow"
       ],
       "direct_import": false,
-      "evidence": "SKILL.md explicitly uses Conventional Commits rules, but no specification text is vendored."
+      "evidence": "The local commit workflow consumes the commit-workflow behavior contract. Official product facts, local policy, and local CLI version observations remain separate; behavior-only source files are not imported or mapped directly to this skill. The cross-product fixture smoke is planned for Phase 7 and has no Phase 1 behavior-result evidence."
     },
     {
       "name": "context-doc",
@@ -215,16 +216,6 @@
       ],
       "direct_import": false,
       "evidence": "Multi-perspective review concepts are reference-only."
-    },
-    {
-      "name": "pre-commit",
-      "area": "user",
-      "mode": "reference",
-      "sources": [
-        "superpowers"
-      ],
-      "direct_import": false,
-      "evidence": "Pre-completion verification/checking workflow is reference-only; local scan.sh is not marked imported."
     },
     {
       "name": "ui-ux-pro-max",
