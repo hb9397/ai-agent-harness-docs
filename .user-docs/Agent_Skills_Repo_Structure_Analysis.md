@@ -84,7 +84,7 @@ Agent Skills 계열 레포는 여러 방식으로 설치/사용된다.
 | Claude Code subagent | `.claude/agents`, `~/.claude/agents` | skill이 아니라 subagent persona/tool 권한을 추가할 때 | VoltAgent 계열은 이 방식이 중심이다. |
 | Cursor/Gemini 기타 호스트 | `.cursor-plugin`, `.cursor/rules`, `gemini-extension.json` | Codex/Claude 외 환경에도 같은 지침을 배포할 때 | 레포별 지원 여부가 다르다. |
 
-Claude Code와 Codex는 각각 인앱과 CLI 표면이 있지만, skill/plugin의 핵심 배치 원칙은 동일하게 잡는다. 인앱은 plugin directory나 UI 선택 흐름을 제공하고, CLI는 slash command나 명령어로 같은 설치 흐름을 수행한다.
+Claude Code와 Codex는 각각 앱과 CLI 인터페이스가 있지만, skill/plugin의 핵심 배치 원칙은 동일하게 잡는다. 앱은 plugin directory나 UI 선택 흐름을 제공하고, CLI는 slash command나 명령어로 같은 설치 흐름을 수행한다.
 
 | 호스트 | 전역 설치 경로 | 프로젝트 단위 설치 경로 | plugin marketplace 추가/설치 | 호출 방식 |
 |--------|----------------|-------------------------|------------------------------|-----------|

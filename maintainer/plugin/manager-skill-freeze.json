@@ -11,7 +11,7 @@
       "files": [
         {
           "path": "maintainer/skills/custom-skill-design/evals/run_evals.py",
-          "sha256": "43b0390fe078a03cfac0f3531b705e7453d2b92146ad00a84d7d2c3ebbc67cc6"
+          "sha256": "d5086194c4c5ef5f1fd7b83bcfe33bd31dccfa2bdde7b3866ac7f292e2e6f0ff"
         },
         {
           "path": "maintainer/skills/custom-skill-design/prompts/checklist.md",
@@ -19,7 +19,7 @@
         },
         {
           "path": "maintainer/skills/custom-skill-design/prompts/description-optimizer.md",
-          "sha256": "cf4591c52d8e6ead38360d041854a54f4983c63db0894ea9383b1a9c2969db7d"
+          "sha256": "72cfb06def1bf50f63ed3441447bf49f1379569a97516ea58f2a4bdaa4d372ed"
         },
         {
           "path": "maintainer/skills/custom-skill-design/prompts/design-principles.md",
@@ -27,7 +27,7 @@
         },
         {
           "path": "maintainer/skills/custom-skill-design/prompts/eval-loop.md",
-          "sha256": "d91bac083ba2c05b2d40a21b97a35328aaeb679b66a418bfb680b5339b236e33"
+          "sha256": "50c2faacdd4a2a11f3a2e0f74aa6b52bdb1fe66b4663359e10a09a0e6c77391d"
         },
         {
           "path": "maintainer/skills/custom-skill-design/prompts/interview.md",
@@ -35,7 +35,7 @@
         },
         {
           "path": "maintainer/skills/custom-skill-design/SKILL.md",
-          "sha256": "87f7289763e25bd6816af84d65d1760c78ad61ae75b28fc7999134674c6f01f6"
+          "sha256": "70fce0f4e9c7c4f067a2c7a5a2542019092360dec3f542886c5cd92e54c071fd"
         },
         {
           "path": "maintainer/skills/custom-skill-design/templates/skill-summary.md",
@@ -77,7 +77,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/references/plugin-structure.md",
-          "sha256": "ce02f9b47492f5001f50189c9e6aea29ac57ea69bfb48af507505be5d4b68648"
+          "sha256": "49c94d9bca62a34c8245eddf4ffdb72ce46c94708c09965e67d339471609f08e"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py",
@@ -109,15 +109,15 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/validate_plugin.py",
-          "sha256": "50dab82e68a6497add57e754d79c5893379a9e53695984928d7d2243efb1f715"
+          "sha256": "b20b999400cb0701a5563e444cb19b3f735bddc01e3847cbbc5a9c7f90bf8604"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/verify_install_surfaces.py",
-          "sha256": "d59269d88a8830dfc2382d08eb083ccf6ed20499f82e93e8167a130cd18a86a1"
+          "sha256": "5808426d8386d3d43becb2029ca4f1e26df0bbe0d225bd08023a64ac51a72d20"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/SKILL.md",
-          "sha256": "776cfc947f1b63068c62f9ca7aab51d249b6110d1d8d1c814157eaaec7728d55"
+          "sha256": "71bf1ec06e879a158901f2c199e6a8f9df30e16ff1806f2dcb55474108c405d5"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/templates/claude-agent.md",
@@ -219,7 +219,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/SKILL.md",
-          "sha256": "289b361f1f0bf593f1b193ec5773a9fd40f103593e4055eca2211bc49d023067"
+          "sha256": "fecb5a13f7ecfec83786210950b532f6d8cd751ccb2edfa17eda97ba461a72c3"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/templates/asset-impact-report.md",
@@ -227,7 +227,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/templates/upstream-review-report.md",
-          "sha256": "f633b88c13f099890092c2791625318598604a32f8277d170bd44d56ac521395"
+          "sha256": "b4dcf29881e0ffc804d9bcf9f0d8f13ceac12dd940dcf775c21b337c51b02b33"
         }
       ]
     }

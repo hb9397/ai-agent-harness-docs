@@ -10,7 +10,7 @@
 
 | 문서 | 역할 |
 |------|------|
-| [Plugin_Installation_Guide.md](./Plugin_Installation_Guide.md) | Codex CLI/App, Claude Code CLI/Desktop 설치·확인·업데이트·제거 기준 |
+| [Plugin_Installation_Guide.md](./Plugin_Installation_Guide.md) | Codex CLI·앱, Claude Code CLI·앱 설치·확인·업데이트·제거 기준과 예시 화면 |
 | [Harness_Engineering.md](./Harness_Engineering.md) | 사용자 source·`0.3.0` runtime 19종, 관리자 3종, 플러그인 흐름, `.docs`/컨텍스트/Markdown 후처리 운영 정본 |
 | [Harness_Engineering_Intro.md](./Harness_Engineering_Intro.md) | 플러그인 기반 하네스 도입 배경과 실제 프로젝트 사용 예시 |
 
@@ -32,11 +32,12 @@
 
 ---
 
-## 발표·개념 자료
+## 이미지 자료
 
 | 자료 | 비고 |
 |------|------|
-| `AI_Agent_활용을 위한 개념.pptx` | 일반 AI Agent 개념 소개용 발표 자료. 현행 운영 규칙이 아니다 |
+| [Codex 앱 플러그인 추가 화면](./assets/plugin-install/codex-app-add-marketplace.png) | Codex 앱의 플러그인 마켓플레이스 추가 예시 |
+| [Claude 앱 플러그인 추가 화면](./assets/plugin-install/claude-app-add-marketplace.png) | Claude 앱의 마켓플레이스 추가 예시 |
 
 ---
 

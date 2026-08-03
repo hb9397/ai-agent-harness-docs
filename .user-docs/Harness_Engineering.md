@@ -134,10 +134,10 @@ FE/BE 페어 다중 기능을 함께 끝내거나 여러 화면의 흐름을 다
 
 ### 4.1 플랫폼별 명시 호출
 
-| 표면 | 설치 후 첫 호출 |
+| 인터페이스 | 설치 후 첫 호출 |
 |------|----------------|
 | Codex CLI·앱 | `$harness-setup` |
-| Claude Code CLI·Desktop Code | `/harness-kit:harness-setup` |
+| Claude Code CLI·Claude 앱 | `/harness-kit:harness-setup` |
 
 Codex는 설치 후 새 task를 열고 필요하면 앱을 재시작한다. Claude Code는
 `/reload-plugins` 후 새 session에서 확인한다. 스킬이 보인다는 사실은 설치
@@ -596,7 +596,7 @@ budget은 문서 개선 단계의 보호 토큰이며 개선으로 값이 바뀌
 
 - 대화형 설계·정책 합의: 충분한 문맥을 볼 수 있는 task/session
 - 저장소 분석·구현·검증: 실제 프로젝트 파일과 명령에 접근하는 coding agent
-- 앱 표면 검증: 실제 설치된 Codex/Claude 앱의 새 session
+- 앱 인터페이스 검증: 실제 설치된 Codex/Claude 앱의 새 session
 
 웹 대화에서 합의한 내용도 최종적으로 프로젝트 문서에 고정하지 않으면 다음
 session의 기준이 되지 않는다.
@@ -717,7 +717,7 @@ session의 기준이 되지 않는다.
 |------|------|
 | `custom-skill-design` | Anthropic `skill-creator`를 `adapted` 원본으로, OpenAI Codex 공식 `skill-creator`를 직접 `reference`로 사용해 새 스킬 설계·생성·검증. portfolio provenance는 선택한 Superpowers 스킬 작성 원칙도 별도 `reference`로 추적 |
 | `skill-portfolio-maintainer` | 외부 공식·유명 스킬 탐색, integration mode 분류, provenance와 보호 자산 영향 관리 |
-| `harness-plugin-maintainer` | 플러그인 build, validate, install surface evidence, release gate |
+| `harness-plugin-maintainer` | 플러그인 build, validate, 설치 인터페이스 증적, release gate |
 
 별도의 관리자 플러그인은 만들지 않는다. 관리자는 repo-local projection을
 사용하고, 사용자 경험을 검증할 때 일반 사용자 플러그인을 격리 설치한다.
@@ -850,7 +850,7 @@ skills/ 사용자 정본 수정
 - Codex CLI에서 `$harness-setup` 명시 호출
 - Codex 앱에서 `$harness-setup` 명시 호출
 - Claude Code CLI에서 `/harness-kit:harness-setup` 명시 호출
-- Claude Desktop Code에서 같은 namespaced 호출
+- Claude 앱에서 같은 namespaced 호출
 - 실제 fixture 산출물과 금지 경로 확인
 - 재시작·새 session discovery
 - 같은 fingerprint에 대한 문서 개선 중복 제안 방지
@@ -927,7 +927,7 @@ cache에 선언된 수의 스킬이 존재함, 실제 모델이 산출물 계약
 - [ ] source와 Codex·Claude runtime inventory가 일치한다.
 - [ ] 관리자 스킬과 agents가 사용자 payload에 없다.
 - [ ] CLI 설치 smoke가 격리 설정에서 통과한다.
-- [ ] 네 표면의 수동 호출 증적이 있다.
+- [ ] 네 인터페이스의 수동 호출 증적이 있다.
 - [ ] release checklist의 미검증 항목이 없다.
 
 ---

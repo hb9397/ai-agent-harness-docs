@@ -235,7 +235,7 @@ def render_release_checklist(evidence: dict) -> str:
     if cli_smoke_verified:
         gate_reason = (
             "격리된 Codex 및 Claude Code CLI 설치 스모크 검사는 통과했지만 설치/캐시 "
-            "스모크 검사는 모델 호출이 아니다. Codex와 Claude의 모든 CLI/App 표면에는 "
+            "스모크 검사는 모델 호출이 아니다. Codex와 Claude의 모든 CLI/앱 인터페이스에는 "
             "직접 호출, 출력, 재시작 및 새 세션 수동 증적이 여전히 필요하다."
         )
         # 스킬 수는 실제 설치 증적에서 읽는다. 리터럴을 두면 체크리스트가 실제와
@@ -259,7 +259,7 @@ def render_release_checklist(evidence: dict) -> str:
         pending_cli = ""
     else:
         gate_reason = (
-            "격리된 CLI 설치 증적이 불완전하며, 네 가지 CLI/App 표면 모두 직접 모델 호출 "
+            "격리된 CLI 설치 증적이 불완전하며, 네 가지 CLI/앱 인터페이스 모두 직접 모델 호출 "
             "증적이 필요하다."
         )
         completed_cli = "- CLI 설치 스모크: 불완전."
@@ -309,14 +309,14 @@ def render_release_checklist(evidence: dict) -> str:
 | `humanize-korean`이 원본 파일을 변경하지 않음 | {check_result(evidence["humanize_korean"]["file_unchanged"])} |
 | 보호 토큰 보존 | {check_result(evidence["humanize_korean"]["protected_tokens_preserved"])} |
 
-## 표면별 증적
+## 인터페이스별 증적
 
-| 표면 | 상태 | 증적 |
+| 인터페이스 | 상태 | 증적 |
 |---|---|---|
 | Codex CLI | `{evidence["surfaces"]["codex-cli"]["status"]}` | {cli_summary} |
-| Codex Desktop/App | `{evidence["surfaces"]["codex-desktop-app"]["status"]}` | 대화형 Plugins UI 설치/업데이트에는 앱 표면이 필요하므로 이 셸에서 완료할 수 없음 |
+| Codex 앱 | `{evidence["surfaces"]["codex-desktop-app"]["status"]}` | 앱의 Plugins UI에서 직접 설치·업데이트한 증적이 필요하므로 이 셸에서 완료할 수 없음 |
 | Claude Code CLI | `{evidence["surfaces"]["claude-code-cli"]["status"]}` | {cli_summary} |
-| Claude Desktop Code | `{evidence["surfaces"]["claude-desktop-code"]["status"]}` | Desktop Code 로컬/SSH 캐시 검증에는 Claude Desktop 앱 표면이 필요함 |
+| Claude 앱 | `{evidence["surfaces"]["claude-desktop-code"]["status"]}` | 앱에서 직접 설치·호출하고 local/SSH cache를 확인한 증적이 필요함 |
 
 ## 릴리스 게이트
 
@@ -330,13 +330,13 @@ def render_release_checklist(evidence: dict) -> str:
 
 ## `release-ready` 전 필수 작업
 
-{pending_cli}- 직접 테스트 기록: `{MANUAL_SURFACE_TEMPLATE_REL.as_posix()}`를 `maintainer/plugin/manual-evidence/YYYYMMDD/{{surface}}.md`로 복사하고 표면마다 새로운 픽스처 하나를 보존한다.
-- 네 표면 모두: `harness-setup`과 `humanize-korean`을 호출하고, 제안 전용 동작과 생성된 허용 목록을 검증하며, `.agents/skills`, `.claude/skills`, `skills`가 생성되지 않았는지 확인하고 관리 블록 확장을 보존한다.
-- 네 표면 모두: 새 작업/세션을 다시 열어 같은 산출물 지문을 다시 제안하지 않는지 확인하고 `.docs/.harness/humanize-handoffs.json` 이벤트를 보존한다.
-- 네 표면 모두: 제안된 쓰기 전에 취소하고 원본 해시와 사용자 감시 토큰이 보존되는지 확인한다.
+{pending_cli}- 직접 테스트 기록: `{MANUAL_SURFACE_TEMPLATE_REL.as_posix()}`를 `maintainer/plugin/manual-evidence/YYYYMMDD/{{surface}}.md`로 복사하고 인터페이스마다 새로운 픽스처 하나를 보존한다.
+- 네 인터페이스 모두: `harness-setup`과 `humanize-korean`을 호출하고, 제안 전용 동작과 생성된 허용 목록을 검증하며, `.agents/skills`, `.claude/skills`, `skills`가 생성되지 않았는지 확인하고 관리 블록 확장을 보존한다.
+- 네 인터페이스 모두: 새 작업/세션을 다시 열어 같은 산출물 지문을 다시 제안하지 않는지 확인하고 `.docs/.harness/humanize-handoffs.json` 이벤트를 보존한다.
+- 네 인터페이스 모두: 제안된 쓰기 전에 취소하고 원본 해시와 사용자 감시 토큰이 보존되는지 확인한다.
 - Codex 앱: 후보 마켓플레이스를 설치하고 재시작/새 작업에서 표식/버전을 확인한 뒤 vN+1로 업데이트한다.
-- Claude Desktop Code: 로컬 호스트의 캐시/버전을 확인하고 앱을 재시작해 새 세션을 연다. SSH를 지원 표면으로 선언한 경우에만 SSH에서도 반복한다. 지원하지 않는 클라우드/WSL 경로를 문서화한다.
-- 표면 상태를 `verified`로 변경하기 전에 검토자가 승인한 직접 테스트 기록을 이 체크리스트에 연결한다.
+- Claude 앱: 로컬 호스트의 캐시/버전을 확인하고 앱을 재시작해 새 세션을 연다. SSH를 지원 인터페이스로 선언한 경우에만 SSH에서도 반복한다. 지원하지 않는 클라우드/WSL 경로를 문서화한다.
+- 인터페이스 상태를 `verified`로 변경하기 전에 검토자가 승인한 직접 테스트 기록을 이 체크리스트에 연결한다.
 - 레거시 이전: 읽기 전용 목록 조사를 수행하고, 명시적 승인이 있을 때만 백업/제거를 실행한 뒤 플러그인이 한 번만 탐색되는지 확인한다.
 """
 

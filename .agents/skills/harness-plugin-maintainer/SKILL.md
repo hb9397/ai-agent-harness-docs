@@ -43,12 +43,12 @@ breaking 변경을 어느 자리로 올릴지는 규격이 정해주지 않는�
 
 | 변경 성격 | `0.x` | `1.0` 이후 |
 |---|---|---|
-| 스킬 이름·호출 계약·필수 입력·설치 표면·산출물 경로의 제거·변경 | 다음 MINOR로 올리고 changelog에 breaking 명시 | MAJOR |
+| 스킬 이름·호출 계약·필수 입력·설치 인터페이스·산출물 경로의 제거·변경 | 다음 MINOR로 올리고 changelog에 breaking 명시 | MAJOR |
 | 사용자 스킬 추가, 공개 capability 추가, 선택적 산출물 추가 | 다음 MINOR | MINOR |
 | 공개 동작을 바꾸지 않는 버그·문서·증적 수정 | PATCH | PATCH |
 
 `1.0.0`은 배포를 한 번 수행했다는 사실로 정하지 않는다. 공개 스킬 이름, 호출
-계약, 필수 입력, 산출물 경로, 설치 표면이 안정되어 이후 변경을 BREAKING으로
+계약, 필수 입력, 산출물 경로, 설치 인터페이스가 안정되어 이후 변경을 BREAKING으로
 관리할 준비가 됐을 때 정한다.
 
 이미 감사 산출물에 archive hash가 기록된 버전 번호로 내용이 다른 산출물을
@@ -128,7 +128,7 @@ plugins/harness-kit/
 
 검증된 release candidate 정보를 `maintainer/plugin/release.json`에 기록한다. release-ready 판단과 실제 설치 검증은 Phase 7에서 수행한다.
 
-### 6. install surface verification
+### 6. 설치 인터페이스 검증
 
 `scripts/smoke_cli_install.py`로 Codex와 Claude Code의 실제 CLI 설치 흐름을 격리
 검증하고, `scripts/verify_install_surfaces.py`로 릴리스 게이트 증적을 갱신한다.
@@ -141,9 +141,9 @@ plugins/harness-kit/
   관리자가 기본 모드로 명시 실행할 때만 수행한다.
 - 양쪽 모두 marketplace 등록 → plugin 설치 → 목록과 설치 cache의 inventory 기준 skill 수 /
   0 agents 확인 → uninstall/remove까지 수행한다.
-- desktop/app/SSH 등 interactive surface는 release checklist에 수동 검증 항목으로 남긴다.
+- desktop/app/SSH 등 대화형 인터페이스는 release checklist에 수동 검증 항목으로 남긴다.
 - local에서 가능한 release candidate metadata, archive checksum, `humanize-korean` proposal-only, legacy local skill copy migration fixture를 검증한다.
-- 네 가지 핵심 surface(Codex CLI·Codex App·Claude Code CLI·Claude Desktop Code) 증적이 모두 없으면 `release-ready`로 표시하지 않는다.
+- 네 가지 핵심 인터페이스(Codex CLI·Codex 앱·Claude Code CLI·Claude 앱) 증적이 모두 없으면 `release-ready`로 표시하지 않는다.
 
 ### 7. release regression
 

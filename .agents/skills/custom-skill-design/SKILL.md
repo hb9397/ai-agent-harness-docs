@@ -1,6 +1,6 @@
 ---
 name: custom-skill-design
-description: "관리자가 사용자용 또는 관리자용 AI Agent Skill을 설계·생성·테스트·고도화할 때 사용한다. '스킬 만들어줘', '스킬 설계', '스킬 개선', 'SKILL.md 작성', '워크플로우를 스킬로', '스킬 테스트', '스킬 트리거 최적화' 요청을 사용자/관리자 정본 경계와 Codex·Claude 실행 표면에 맞게 처리한다."
+description: "관리자가 사용자용 또는 관리자용 AI Agent Skill을 설계·생성·테스트·고도화할 때 사용한다. '스킬 만들어줘', '스킬 설계', '스킬 개선', 'SKILL.md 작성', '워크플로우를 스킬로', '스킬 테스트', '스킬 트리거 최적화' 요청을 사용자/관리자 정본 경계와 Codex·Claude 실행 환경에 맞게 처리한다."
 allowed-tools: Read, Write, Glob, Grep
 ---
 
@@ -15,7 +15,7 @@ custom-skill-design  ← 지금 여기
     ↓  ← eval 루프로 품질 검증
     ↓  ← description 최적화로 트리거 정확도 향상
     ↓
-Codex CLI/App / Claude Code/Desktop Code에서 사용 가능한 완성 스킬
+Codex CLI·앱 / Claude Code CLI·앱에서 사용 가능한 완성 스킬
 ```
 
 ---
@@ -216,7 +216,7 @@ assertions 초안 작성 (실행 중 병행)
 | 환경 | 방식 |
 |------|------|
 | Codex CLI/App | 별도 task에서 with-skill / baseline 실행, 파일·트리거 결과 기록 |
-| Claude Code/Desktop Code | with-skill / baseline 실행, 지원 시 sub-agent 병렬화 |
+| Claude Code CLI·앱 | with-skill / baseline 실행, 지원 시 sub-agent 병렬화 |
 | Claude.ai | 순차 실행, 결과를 대화창에 직접 출력 |
 | Cowork | `eval-loop.md`의 [Cowork] 섹션 참조 |
 
@@ -245,7 +245,7 @@ assertions 초안 작성 (실행 중 병행)
 | 환경 | 가용 여부 |
 |------|----------|
 | Codex CLI/App | 수동 trigger matrix 또는 관리자가 별도로 제공한 runner |
-| Claude Code/Desktop Code | 수동 trigger matrix 또는 관리자가 별도로 제공한 runner |
+| Claude Code CLI·앱 | 수동 trigger matrix 또는 관리자가 별도로 제공한 runner |
 | Claude.ai | 수동으로 description 개선 제안만 |
 
 이 스킬 번들에는 description 자동 최적화 runner가 포함되어 있지 않다. 존재하지 않는

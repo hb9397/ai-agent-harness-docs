@@ -65,7 +65,7 @@ inventory
 `scripts/discover_upstreams.py`를 사용한다.
 
 - 새 공식·유명 source 후보를 보고서로만 생성한다.
-- 후보마다 provenance URL, 확인일, maintainer, 활성도, 라이선스, 보안 표면, 기능 적합성, 중복도를 기록한다.
+- 후보마다 provenance URL, 확인일, maintainer, 활성도, 라이선스, 보안 영향 범위, 기능 적합성, 중복도를 기록한다.
 - candidate 등록과 파일 반입은 승인 전 수행하지 않는다.
 
 ### 3. check

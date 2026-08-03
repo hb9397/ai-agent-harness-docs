@@ -8,7 +8,7 @@
 | 환경 | 읽을 섹션 |
 |------|----------|
 | Codex CLI/App | [격리 실행] + [평가] + [개선] |
-| Claude Code/Desktop Code | [격리 실행] + [평가] + [개선] |
+| Claude Code CLI·앱 | [격리 실행] + [평가] + [개선] |
 | Claude.ai | [순차 실행] + [평가] + [개선] |
 | Cowork / headless | [Cowork] + [평가] + [개선] |
 
@@ -68,8 +68,8 @@ Save outputs to: {workspace}/iteration-N/eval-{name}/baseline/outputs/
 
 ### 타이밍 데이터 캡처
 
-실행 표면에서 `total_tokens`와 `duration_ms`를 제공할 때만 즉시 저장한다.
-제공하지 않는 표면에서는 `null`로 기록하고 추정값을 만들지 않는다.
+실행 환경에서 `total_tokens`와 `duration_ms`를 제공할 때만 즉시 저장한다.
+제공하지 않는 환경에서는 `null`로 기록하고 추정값을 만들지 않는다.
 
 ```json
 {

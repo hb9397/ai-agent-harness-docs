@@ -41,8 +41,8 @@ def main() -> None:
         "audit-only entry must remain read-only",
     )
     require(
-        "Codex CLI/App" in skill and "Claude Code/Desktop Code" in skill,
-        "both platform execution surfaces must be documented",
+        "Codex CLI·앱" in skill and "Claude Code CLI·앱" in skill,
+        "both platform execution interfaces must be documented",
     )
     require(
         "cat [경로]/SKILL.md" not in skill and "2>/dev/null" not in skill,
@@ -82,7 +82,7 @@ def main() -> None:
         "runner availability must be stated truthfully",
     )
     require(
-        "제공하지 않는 표면에서는 `null`" in eval_loop,
+        "제공하지 않는 환경에서는 `null`" in eval_loop,
         "missing telemetry must not be fabricated",
     )
     require(

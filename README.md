@@ -8,6 +8,18 @@
 `AGENTS.md`, `CLAUDE.md`를 만든 뒤 설계·구현·검증 흐름을 수행한다. 관리자는
 이 저장소에서 사용자 스킬, 외부 upstream, 플러그인 패키지를 유지한다.
 
+## 문서 안내
+
+현재 사용 방법과 운영 구조를 설명하는 정보 제공 문서만 정리한다.
+
+| 문서 | 소개 |
+|---|---|
+| [Plugin Installation Guide](./.user-docs/Plugin_Installation_Guide.md) | Codex CLI·앱과 Claude Code CLI·앱의 설치·업데이트·제거 및 첫 호출 방법 |
+| [Harness Engineering](./.user-docs/Harness_Engineering.md) | 플러그인 운영, `.docs` 구조, 설계·구현·검증, 관리자 경계를 정의한 현행 정본 |
+| [Harness Engineering Intro](./.user-docs/Harness_Engineering_Intro.md) | 하네스 도입 배경과 실제 프로젝트 사용 흐름을 처음 보는 사람을 위한 안내서 |
+| [Skill Upstream Governance](./.user-docs/Skill_Upstream_Governance.md) | 외부 출처의 직접 반영·변형 반영·개념/행동 참조, provenance와 최신화 정책 |
+| [maintainer/README.md](./maintainer/README.md) | 관리자 스킬, projection, 사용자 플러그인의 책임 경계와 유지보수 방법 |
+
 현재 정본과 마지막 생성 artifact:
 
 - 현행 사용자 스킬 정본: 19종 (`pre-commit` 제거 후 `skills/` 기준)
@@ -18,12 +30,7 @@
 - `0.3.0` Claude runtime: 19 skills / 0 agents
 - 관리자 스킬: 3종, 이 저장소 안에서만 사용
 - 릴리스 상태: `not release-ready` — 공식 CLI 설치 smoke와 별도로 Codex·Claude
-  CLI·앱 네 표면의 실제 모델 호출 수동 증적이 모두 필요함
-
-설치 명령과 앱별 확인 절차는
-[Plugin Installation Guide](./.user-docs/Plugin_Installation_Guide.md)를 먼저 본다.
-하네스의 상세 운영 계약은
-[Harness Engineering](./.user-docs/Harness_Engineering.md)이 정본이다.
+  CLI·앱 네 인터페이스의 실제 모델 호출 수동 증적이 모두 필요함
 
 ---
 
@@ -35,13 +42,17 @@
 
 - CLI: `codex plugin marketplace add <이 저장소 URL 또는 루트 경로>` 후
   `codex plugin add harness-kit@hb9397`
-- Codex Desktop/App: Codex의 Plugins 화면에서 marketplace와 플러그인을
-  추가한다. 앱 UI가 local marketplace 등록을 지원하지 않으면 같은 사용자
-  프로필의 CLI에서 등록한 뒤 앱을 재시작한다.
+- Codex 앱: 왼쪽 메뉴의 **플러그인**에서 설정 아이콘을 누르고
+  **플러그인 마켓플레이스 추가**를 연다. `hb9397/harness-kit` 저장소 또는 Git
+  URL과 `main` ref를 입력하고, 필요한 경우 sparse 경로를 지정한다. 앱에서
+  local marketplace 등록을 지원하지 않으면 같은 사용자 프로필의 CLI에서
+  등록한 뒤 앱을 재시작한다.
 - 설치 후 새 task에서 `$harness-setup`처럼 `$skill-name`으로 명시 호출한다.
   ChatGPT Work의 `@` 호출과 혼동하지 않는다.
-- IDE extension은 별도의 플러그인 설치 표면으로 보지 않는다. Codex CLI/App
+- IDE extension은 별도의 플러그인 설치 인터페이스로 보지 않는다. Codex CLI/앱
   설치를 우선한다.
+
+![Codex 앱의 플러그인 마켓플레이스 추가 화면](./.user-docs/assets/plugin-install/codex-app-add-marketplace.png)
 
 ### Claude
 
@@ -50,16 +61,52 @@
   `claude plugin install harness-kit@hb9397`
 - 설치 후 대화형 session에서 `/reload-plugins`를 실행하고
   `/harness-kit:harness-setup`처럼 namespaced skill을 명시 호출한다.
-- Claude Desktop Code 탭은 Plugins UI에서 설치한다. local marketplace가
-  보이지 않으면 같은 사용자 프로필의 CLI에서 marketplace를 등록한 뒤 앱에서
-  설치하고 새 session을 연다.
-- Claude Chat/Cowork는 Code 플러그인과 별도 표면이다. 설치·권한·cache는
+- Claude 앱: **설정 → 플러그인 → 추가 → 마켓플레이스 추가**에서 GitHub
+  `owner/repo` 또는 Git 저장소 URL을 선택하고 동기화한다. 목록에 보이지 않으면
+  같은 사용자 프로필의 Claude Code CLI에서 marketplace를 등록한 뒤 앱을 다시
+  열어 설치하고 새 session을 연다.
+- Claude Chat/Cowork는 Code 플러그인과 별도 인터페이스다. 설치·권한·cache는
   별도로 검증한다.
+
+![Claude 앱의 마켓플레이스 추가 화면](./.user-docs/assets/plugin-install/claude-app-add-marketplace.png)
 
 CLI 설치 smoke는 `0.3.0`에서 Codex CLI `0.146.0`과 Claude Code `2.1.220` 기준으로
 통과했다. 격리된 설정 디렉터리에서 marketplace 등록, 설치, 19 skills / 0 agents
 확인, 제거까지 수행했다. 설치 smoke는 cache 검사이며 실제 모델이 스킬을 올바르게
-수행했다는 증적이 아니다. 네 표면의 수동 행동 증적은 아직 남아 있다.
+수행했다는 증적이 아니다. 네 인터페이스의 수동 행동 증적은 아직 남아 있다.
+
+### 사용자 스킬 정본 19종
+
+아래 목록은 `maintainer/plugin/CAPABILITIES.json`과
+`maintainer/upstreams/provenance/current-skills.json`을 기준으로 한다.
+`변형 반영(adapted)`은 외부 원본을 번역·재구성하거나 핵심 자료를 포함한 관계이고,
+`참조(reference)`는 개념·행동만 참고하며 외부 파일을 직접 포함하지 않는 관계다.
+
+| 계열 | 스킬 정본 | 주 용도 | upstream 관계·출처 |
+|---|---|---|---|
+| 설치·기반 | [harness-setup](./skills/harness-setup/SKILL.md) | `.docs`와 루트 컨텍스트 초기화·복구 | 참조: [OpenAI AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md), [Claude Code memory](https://code.claude.com/docs/en/memory) |
+| 설치·기반 | [harness-bootstrap](./skills/harness-bootstrap/SKILL.md) | 기존 코드에서 설계·컨텍스트 역추출 | 참조: [OpenAI AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md), [Claude Code memory](https://code.claude.com/docs/en/memory) |
+| 설치·기반 | [git-scoped-account](./skills/git-scoped-account/SKILL.md) | 프로젝트 트리 하위 repo Git 계정 설정 | 로컬 정본: [harness-kit](https://github.com/hb9397/harness-kit) |
+| 설계·컨텍스트 | [design-doc](./skills/design-doc/SKILL.md) | 요구사항·아이디어·RFP를 구조화한 설계 | 참조: [Superpowers](https://github.com/obra/superpowers), [gstack](https://github.com/garrytan/gstack) |
+| 설계·컨텍스트 | [context-doc](./skills/context-doc/SKILL.md) | `AGENTS.md` 정본, Claude bridge, instruction 생성 | 참조: [OpenAI AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md), [Claude Code memory](https://code.claude.com/docs/en/memory) |
+| UI/UX 설계 | [ui-ux-pro-max](./skills/ui-ux-pro-max/SKILL.md) | 제품 유형·스타일·색·타이포그래피·레이아웃 결정 | 변형 반영: [UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) |
+| 모션 설계 | [motion-design](./skills/motion-design/SKILL.md) | 모션 목적·타이밍·이징·접근성·성능 결정 | 변형 반영: [LottieFiles Motion Design](https://github.com/LottieFiles/motion-design-skill) |
+| 프로토타입 | [design-prototype-docs](./skills/design-prototype-docs/SKILL.md) | 화면 설계 문서 생성 | 참조: [OpenAI Product Design](https://github.com/openai/role-specific-plugins/tree/main/plugins/product-design), [gstack](https://github.com/garrytan/gstack), [UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill), [LottieFiles Motion Design](https://github.com/LottieFiles/motion-design-skill) |
+| 프로토타입 | [create-prototype](./skills/create-prototype/SKILL.md) | HTML/CSS/JS 기반 검증 시안 생성 | 참조: [OpenAI Product Design](https://github.com/openai/role-specific-plugins/tree/main/plugins/product-design), [gstack](https://github.com/garrytan/gstack), [UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill), [LottieFiles Motion Design](https://github.com/LottieFiles/motion-design-skill) |
+| UI | [frontend-design](./skills/frontend-design/SKILL.md) | 실제 제품 UI 구현 품질 기준 | 변형 반영: [Anthropic frontend-design](https://github.com/anthropics/skills/tree/main/skills/frontend-design)<br>참조: [OpenAI Product Design](https://github.com/openai/role-specific-plugins/tree/main/plugins/product-design), [UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill), [LottieFiles Motion Design](https://github.com/LottieFiles/motion-design-skill) |
+| 구현 계획 | [impl-doc](./skills/impl-doc/SKILL.md) | 단일·소규모 기능 구현 계획 | 참조: [Superpowers](https://github.com/obra/superpowers), [gstack](https://github.com/garrytan/gstack) |
+| 구현 계획 | [impl-fe-be-doc](./skills/impl-fe-be-doc/SKILL.md) | FE/BE 페어·다중 화면 구현 계획 | 참조: [Superpowers](https://github.com/obra/superpowers), [gstack](https://github.com/garrytan/gstack) |
+| 구현 점검 | [impl-reuse-scan](./skills/impl-reuse-scan/SKILL.md) | 구현 전 재사용 후보 보고 | 참조: [Superpowers](https://github.com/obra/superpowers), [gstack](https://github.com/garrytan/gstack) |
+| 구현 검증 | [impl-verify](./skills/impl-verify/SKILL.md) | Phase·태스크 검증 매트릭스 | 참조: [Superpowers](https://github.com/obra/superpowers), [gstack](https://github.com/garrytan/gstack), [UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill), [LottieFiles Motion Design](https://github.com/LottieFiles/motion-design-skill) |
+| 품질 | [multi-review](./skills/multi-review/SKILL.md) | 보안·성능·유지보수·테스트 리뷰 | 참조: [Superpowers](https://github.com/obra/superpowers), [gstack](https://github.com/garrytan/gstack) |
+| 품질 | [commit](./skills/commit/SKILL.md) | 범위·diff·hook·Conventional Commit·사후 증거 확인 | 행동 참조: [Codex 기본 지침](https://github.com/openai/codex/blob/2cf2a6a844f1fc2ddd489c8a67fa8bc2f59a6f3d/codex-rs/protocol/src/prompts/base_instructions/default.md), [Claude Code commit](https://code.claude.com/docs/en/headless#create-a-commit), [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/) |
+| 품질 | [code-comment](./skills/code-comment/SKILL.md) | 필요한 변경 코드의 한글 주석 보강 | 로컬 정본: [harness-kit](https://github.com/hb9397/harness-kit) |
+| 문서 | [doc-audit](./skills/doc-audit/SKILL.md) | 코드와 문서의 괴리 분석 | 참조: [OpenAI AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md), [Claude Code memory](https://code.claude.com/docs/en/memory) |
+| 문서 | [humanize-korean](./skills/humanize-korean/SKILL.md) | Markdown 개선안·diff 제안 | 변형 반영: [im-not-ai](https://github.com/epoko77-ai/im-not-ai) |
+
+`rfp-ingest`와 `agent-sync`는 제거됐다. `custom-skill-design`은 사용자 스킬이
+아니라 이 관리 저장소에서만 쓰는 관리자 스킬이다. 관계별 적용 범위와 라이선스는
+[Skill Upstream Governance](./.user-docs/Skill_Upstream_Governance.md)를 따른다.
 
 ## 2. 기본 작업 흐름 한눈에 보기
 
@@ -320,34 +367,7 @@ reduced-motion 대체안과 성능 검증 기준도 포함해줘.
 두 스킬 모두 기본은 대화창 보고다. 사용자가 명시적으로 요청할 때만
 `.docs/design-system/**`에 저장한다.
 
-## 7. 사용자 스킬 정본 19종
-
-| 계열 | 스킬 | 주 용도 |
-|------|------|---------|
-| 설치·기반 | `harness-setup` | `.docs`와 루트 컨텍스트 초기화·복구 |
-| 설치·기반 | `harness-bootstrap` | 기존 코드에서 설계·컨텍스트 역추출 |
-| 설치·기반 | `git-scoped-account` | 프로젝트 트리 하위 repo Git 계정 설정 |
-| 설계·컨텍스트 | `design-doc` | 요구사항·아이디어·RFP를 구조화한 설계 |
-| 설계·컨텍스트 | `context-doc` | `AGENTS.md` 정본, Claude bridge, instruction 생성 |
-| UI/UX 설계 | `ui-ux-pro-max` | 제품 유형·스타일·색·타이포그래피·레이아웃 결정 |
-| 모션 설계 | `motion-design` | 모션 목적·타이밍·이징·접근성·성능 결정 |
-| 프로토타입 | `design-prototype-docs` | 화면 설계 문서 생성 |
-| 프로토타입 | `create-prototype` | HTML/CSS/JS 기반 검증 시안 생성 |
-| UI | `frontend-design` | 실제 제품 UI 구현 품질 기준 |
-| 구현 계획 | `impl-doc` | 단일·소규모 기능 구현 계획 |
-| 구현 계획 | `impl-fe-be-doc` | FE/BE 페어·다중 화면 구현 계획 |
-| 구현 점검 | `impl-reuse-scan` | 구현 전 재사용 후보 보고 |
-| 구현 검증 | `impl-verify` | Phase·태스크 검증 매트릭스 |
-| 품질 | `multi-review` | 보안·성능·유지보수·테스트 리뷰 |
-| 품질 | `commit` | 명시 요청에 한해 범위 확인·선택 stage·정상 hook·Conventional Commit·사후 증거 확인 |
-| 품질 | `code-comment` | 필요한 변경 코드의 한글 주석 보강 |
-| 문서 | `doc-audit` | 코드와 문서의 괴리 분석 |
-| 문서 | `humanize-korean` | Markdown 개선안·diff 제안 |
-
-`rfp-ingest`와 `agent-sync`는 제거됐다. `custom-skill-design`은 사용자 스킬이
-아니라 이 관리 저장소에서만 쓰는 관리자 스킬이다.
-
-## 8. 기존 프로젝트의 local skill copy 전환
+## 7. 기존 프로젝트의 local skill copy 전환
 
 기존 `.agents/skills`, `.claude/skills` 또는 `skills/*/SKILL.md` 복사본은
 바로 삭제하지 않는다.
@@ -365,7 +385,7 @@ reduced-motion 대체안과 성능 검증 기준도 포함해줘.
 
 # 제2부. 관리자용 — 하네스 개발·배포
 
-## 9. 정본과 책임 경계
+## 8. 정본과 책임 경계
 
 | 영역 | 정본 또는 산출물 | 사용 주체 |
 |------|------------------|-----------|
@@ -388,17 +408,17 @@ python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projecti
 python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projections.py --check
 ```
 
-## 10. 관리자 스킬 3종
+## 9. 관리자 스킬 3종
 
 | 스킬 | 역할 |
 |------|------|
 | `custom-skill-design` | Anthropic `skill-creator`를 `adapted` 원본으로, OpenAI Codex 공식 `skill-creator`를 직접 `reference`로 사용해 스킬을 설계·생성·검증. portfolio provenance는 선택한 Superpowers 스킬 작성 원칙도 별도 `reference`로 추적 |
 | `skill-portfolio-maintainer` | 외부 공식·유명 스킬 후보 탐색, integration mode 분류, provenance와 보호 자산 영향 관리 |
-| `harness-plugin-maintainer` | 사용자 플러그인 build, validate, 설치 표면 증적, release gate 관리 |
+| `harness-plugin-maintainer` | 사용자 플러그인 build, validate, 설치 인터페이스 증적, release gate 관리 |
 
 관리자 스킬은 사용자 플러그인 payload에 포함하지 않는다.
 
-## 11. 외부 스킬과 upstream 관리
+## 10. 외부 스킬과 upstream 관리
 
 외부 관계는 다음 integration mode로 구분한다.
 
@@ -459,7 +479,7 @@ upstream clone 없이 플러그인 안에서 사용하고, 관리자가 GitHub u
 [Skill Upstream Governance](./.user-docs/Skill_Upstream_Governance.md#approval-gates)를
 따른다.
 
-## 12. 플러그인 빌드와 릴리스
+## 11. 플러그인 빌드와 릴리스
 
 ```text
 skills/ 사용자 정본 수정
@@ -472,7 +492,7 @@ skills/ 사용자 정본 수정
 → 별도 승인 후 tag/push/release
 ```
 
-설치 smoke는 실제 모델 호출 성공을 뜻하지 않는다. 네 표면의 설치·명시 호출·
+설치 smoke는 실제 모델 호출 성공을 뜻하지 않는다. 네 인터페이스의 설치·명시 호출·
 산출물·재시작·새 session 증적이 부족하면 릴리스 후보는
 `not-release-ready`로 유지한다.
 
@@ -491,7 +511,7 @@ python maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py
 현재 릴리스 게이트는
 [Plugin Release Checklist](./maintainer/plugin/release-checklist.md)에서 관리한다.
 
-## 13. 상세 문서
+## 12. 상세 문서
 
 - [Plugin Installation Guide](./.user-docs/Plugin_Installation_Guide.md) — Codex·Claude
   CLI/App 설치·업데이트·제거·수동 증적
@@ -503,7 +523,7 @@ python maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py
 - [Skill Upstream Governance](./.user-docs/Skill_Upstream_Governance.md) — 외부
   `reference`·`adapted`·`vendored` 관계, 행동 contract, provenance와 최신화 정책
 
-## 14. 라이선스
+## 13. 라이선스
 
 이 저장소가 직접 저작한 부분은 Apache License 2.0을 따른다. 전문은
 [LICENSE](./LICENSE)에 있고 저작권 표기는 [NOTICE](./NOTICE)에 있다.

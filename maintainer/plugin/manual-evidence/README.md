@@ -1,6 +1,6 @@
-# 수동 표면 증적 보관소
+# 수동 인터페이스 증적 보관소
 
-완료한 표면 증적을 `YYYYMMDD/{surface}.md`로 저장한다. 양식은
+완료한 인터페이스 증적을 `YYYYMMDD/{surface}.md`로 저장한다. 양식은
 `maintainer/plugin/manual-surface-test-template.md`를 복사해서 쓴다.
 
 ```text
@@ -16,26 +16,26 @@ manual-evidence/
 
 - 자동 설치 smoke를 실제 모델 동작 성공으로 대신하지 않는다.
 - CLI 성공을 앱 성공으로 대신하지 않는다.
-- 지원되지 않는 앱 표면은 `SKIP`이 아니라 근거가 있는 `미지원`으로 기록한다.
+- 지원되지 않는 앱 인터페이스는 `SKIP`이 아니라 근거가 있는 `미지원`으로 기록한다.
 - 증적은 **설치한 payload 버전과 함께** 기록한다. 버전이 다르면 이전 결과를
   이어받지 않는다. `verify_install_surfaces.py`가 이 불일치를 검사한다.
-- 네 표면의 수동 증적이 모두 충족되기 전에는 release-ready로 표시하지 않는다.
+- 네 인터페이스의 수동 증적이 모두 충족되기 전에는 release-ready로 표시하지 않는다.
 
 ## 현재 상태 — `0.3.0`
 
-| 표면 | 상태 | 근거 |
+| 인터페이스 | 상태 | 근거 |
 |---|---|---|
 | Codex CLI | `install-smoke-verified` | Codex CLI `0.146.0`, `harness-kit@hb9397` payload `0.3.0` / 19 skills / 0 agents. 모델 호출은 미검증. |
-| Codex Desktop/App | `manual-required` | 대화형 앱 표면이 필요하다. |
+| Codex 앱 | `manual-required` | 앱에서 직접 설치·호출한 증적이 필요하다. |
 | Claude Code CLI | `install-smoke-verified` | Claude Code `2.1.220`, `harness-kit@hb9397` payload `0.3.0` / 19 skills / 0 agents. 모델 호출은 미검증. |
-| Claude Desktop Code | `manual-required` | Desktop 앱 표면이 필요하다. |
+| Claude 앱 | `manual-required` | 앱에서 직접 설치·호출한 증적이 필요하다. |
 
 `0.3.0` 설치 smoke는 2026-08-03에 재실행해 통과했다. 격리된 `CODEX_HOME`과
 `CLAUDE_CONFIG_DIR`에서 marketplace 등록, 설치, 목록 확인, cache 검사, 제거까지
 수행했다.
 
 **설치 smoke는 cache에 파일이 놓였다는 증적일 뿐이다.** 실제 모델이 스킬 계약을
-수행했다는 증적은 아니며, 네 표면 모두 시나리오 A~H 수동 검증이 남아 있다.
+수행했다는 증적은 아니며, 네 인터페이스 모두 시나리오 A~H 수동 검증이 남아 있다.
 
 ## 재실행 절차
 

@@ -3,7 +3,7 @@
 > 기준일: 2026-08-03
 > 대상 플러그인: `harness-kit` `0.3.0`
 > 현재 상태: 공식 manifest·marketplace와 격리 CLI 설치 smoke를 자동 검증한다.
-> Codex와 Claude의 CLI·앱 네 표면에서 실제 모델 호출·산출물·새 세션 증적까지
+> Codex와 Claude의 CLI·앱 네 인터페이스에서 실제 모델 호출·산출물·새 세션 증적까지
 > 확보되기 전에는 `not release-ready`다.
 
 이 문서는 실제 프로젝트 사용자가 하네스 저장소를 clone하거나 스킬을 복사하지 않고 플러그인으로 시작하기 위한 설치·확인·업데이트·제거 기준이다.
@@ -83,39 +83,50 @@ codex plugin remove harness-kit@hb9397
 `$humanize-korean`이 동작하는지 확인한다. 자연어 요청은 별도 대조 항목으로
 기록하며 명시 호출 성공을 대신하지 않는다.
 
-### 3-3. 대화형 설치
+### 3-3. Codex 앱의 대화형 설치
 
-Codex 대화형 표면에서는 `/plugins` UI로 설치·활성화·비활성화를 확인한다. CLI 설치와 UI 설치는 캐시·활성 session이 다를 수 있으므로 둘을 별도 증적으로 남긴다.
+Codex 앱에서는 왼쪽 메뉴의 **플러그인**과 `/plugins` UI에서 설치·활성화·
+비활성화를 확인한다. CLI 설치와 앱 설치는 cache·활성 session이 다를 수 있으므로
+둘을 별도 증적으로 남긴다.
 
 ### 3-4. Codex IDE extension
 
-Phase 8 기준 Codex IDE extension은 별도 공식 플러그인 설치 표면으로 보지 않는다. 프로젝트에서 확장이 Codex CLI/App 플러그인 상태를 공유하지 않으면 `AGENTS.md`와 `.docs` 산출물만 일반 프로젝트 문서로 참조한다.
+Phase 8 기준 Codex IDE extension은 별도 공식 플러그인 설치 인터페이스로 보지
+않는다. 프로젝트에서 확장이 Codex CLI/앱 플러그인 상태를 공유하지 않으면
+`AGENTS.md`와 `.docs` 산출물만 일반 프로젝트 문서로 참조한다.
 
 ---
 
-## 4. ChatGPT Desktop/App의 Codex 표면
+## 4. Codex 앱
 
-Desktop/App에서는 다음을 수동으로 확인한다.
+아래 화면은 Codex 앱에서 **플러그인 → 설정 → 플러그인 마켓플레이스 추가**를
+연 예시다. 화면 이름은 앱 버전에 따라 달라질 수 있지만 저장소 source, Git ref,
+선택적 sparse 경로를 입력한다는 흐름은 같다.
 
-1. 앱 전환기에서 **Codex**를 선택하고 Plugins Directory를 연다.
-2. configured marketplace에 `hb9397`의 `harness-kit`이 보이면 상세 화면의 설치
-   버튼으로 직접 설치한다.
-3. local marketplace가 앱에 보이지 않는 버전이면 앱과 같은 사용자 프로필의
+![Codex 앱의 플러그인 마켓플레이스 추가 화면](./assets/plugin-install/codex-app-add-marketplace.png)
+
+Codex 앱에서는 다음을 수동으로 확인한다.
+
+1. 왼쪽 메뉴에서 **플러그인**을 열고 설치 목록의 설정 아이콘을 누른다.
+2. **플러그인 마켓플레이스 추가**에서 `hb9397/harness-kit` 저장소 또는 Git URL,
+   `main` ref를 입력한다. monorepo 일부만 사용할 때만 sparse 경로를 지정한다.
+3. 추가한 marketplace에서 `harness-kit`을 찾아 설치한다.
+4. local marketplace가 앱에 보이지 않는 버전이면 앱과 같은 사용자 프로필의
    Codex CLI에서 marketplace와 플러그인을 등록하고 앱을 완전히 종료했다가 다시
    연다.
-4. Plugins Directory 또는 `/plugins`에서 `harness-kit` `0.3.0`이
+5. 플러그인 화면 또는 `/plugins`에서 `harness-kit` `0.3.0`이
    설치·활성 상태인지 확인한다.
-5. 새 fixture 프로젝트에서 새 task/session을 연다.
-6. `$harness-setup`과 `$humanize-korean`을 명시 호출한다.
-7. 새 버전 후보를 설치하거나 stale cache를 비운 뒤 version marker가 갱신되는지 확인한다.
+6. 새 fixture 프로젝트에서 새 task/session을 연다.
+7. `$harness-setup`과 `$humanize-korean`을 명시 호출한다.
+8. 새 버전 후보를 설치하거나 stale cache를 비운 뒤 version marker가 갱신되는지 확인한다.
 
 앱 버전에 local marketplace를 직접 추가하는 UI가 없다면 위 CLI fallback을
 사용하고, UI 직접 설치인지 CLI 설치 후 앱 사용인지 수동 증적에 구분해 기록한다.
 
-자동 검증은 package와 CLI까지만 수행하며 Desktop/App 결과는 `manual-required`다.
-Codex 표면은 `$skill-name`, ChatGPT Work 표면은 `@` mention을 사용하므로 이
+자동 검증은 package와 CLI까지만 수행하며 Codex 앱 결과는 `manual-required`다.
+Codex 앱에서는 `$skill-name`, ChatGPT Work에서는 `@` mention을 사용하므로 이
 릴리스의 Codex 앱 증적은 `$harness-setup`으로 남긴다. ChatGPT Work를 추가
-지원 범위로 검증하면 `@` 호출 결과를 별도 표면 증적으로 기록한다.
+지원 범위로 검증하면 `@` 호출 결과를 별도 인터페이스 증적으로 기록한다.
 
 ---
 
@@ -153,23 +164,29 @@ claude plugin uninstall harness-kit@hb9397
 
 ---
 
-## 6. Claude Desktop Code 탭
+## 6. Claude 앱
 
-Claude Desktop Code 탭과 CLI는 설정을 공유하지만 host별 plugin cache와 활성 세션을
-따로 확인해야 한다.
+아래 화면은 Claude 앱의 **설정 → 플러그인 → 추가 → 마켓플레이스 추가** 예시다.
+GitHub `owner/repo` 또는 Git 저장소 URL을 선택하고 동기화한다.
 
-1. local Code session에서 prompt 옆 `+` → Plugins → Add plugin을 열고
-   `harness-kit`를 설치한다.
-2. local marketplace가 브라우저에 보이지 않으면 같은 사용자 설정의 Claude Code
-   CLI에서 marketplace만 등록한 뒤 앱을 다시 열어 Add plugin에서 설치한다.
-3. SSH host를 공식 지원 범위로 선언하는 릴리스라면 해당 remote host에서도
+![Claude 앱의 마켓플레이스 추가 화면](./assets/plugin-install/claude-app-add-marketplace.png)
+
+Claude 앱과 Claude Code CLI는 일부 설정을 공유할 수 있지만 host별 plugin cache와
+활성 session을 따로 확인해야 한다.
+
+1. **설정 → 플러그인**에서 **추가 → 마켓플레이스 추가**를 연다.
+2. `hb9397/harness-kit` 또는 Git 저장소 URL을 선택하고 **동기화**한다.
+3. 동기화된 marketplace에서 `harness-kit`을 설치한다.
+4. local marketplace가 목록에 보이지 않으면 같은 사용자 설정의 Claude Code
+   CLI에서 marketplace만 등록한 뒤 앱을 다시 열어 설치한다.
+5. SSH host를 공식 지원 범위로 선언하는 릴리스라면 해당 remote host에서도
    plugin cache와 설치를 별도로 확인한다.
-4. 앱 재시작
-5. 새 Code session
-6. `/harness-kit:harness-setup`,
+6. 앱 재시작
+7. 새 Code session
+8. `/harness-kit:harness-setup`,
    `/harness-kit:humanize-korean` 명시 호출 확인
-7. cloud Code 세션은 plugin browser가 없어 프로젝트 `enabledPlugins` 정책을 별도 적용
-8. WSL session은 Desktop plugin 설치 표면으로 지원하지 않음을 명시
+9. cloud Code session은 plugin browser가 없어 프로젝트 `enabledPlugins` 정책을 별도 적용
+10. WSL session은 Desktop plugin 설치 인터페이스로 지원하지 않음을 명시
 
 Phase 7 자동 검증 결과: `manual-required`.
 
@@ -177,7 +194,7 @@ Phase 7 자동 검증 결과: `manual-required`.
 
 ## 7. Claude Chat/Cowork
 
-Claude Chat/Cowork는 Claude Code 플러그인과 같은 설치 표면으로 취급하지 않는다.
+Claude Chat/Cowork는 Claude Code 플러그인과 같은 설치 인터페이스로 취급하지 않는다.
 
 - Code 탭에서 검증된 플러그인이 Chat/Cowork에서 자동 활성화된다고 가정하지 않는다.
 - Chat/Cowork에서 같은 스킬을 쓰려면 별도 프로젝트/워크스페이스 지침, 권한, 파일 접근 범위를 문서화한다.
@@ -229,7 +246,7 @@ harness-setup 명시 호출
 | 플랫폼 | 호출 예 |
 |---|---|
 | Codex CLI·앱 | `$harness-setup` |
-| Claude Code CLI·Desktop Code | `/harness-kit:harness-setup` |
+| Claude Code CLI·Claude 앱 | `/harness-kit:harness-setup` |
 
 ---
 
@@ -302,7 +319,7 @@ harness-setup 명시 호출
 ## 13. CLI·앱 직접 테스트 예시와 증적
 
 자동 CLI smoke는 설치 cache와 payload 수를 검증하지만 실제 agent가
-`harness-setup`을 수행한 결과까지 대신하지 않는다. 릴리스 판단 전에는 각 표면의
+`harness-setup`을 수행한 결과까지 대신하지 않는다. 릴리스 판단 전에는 각 인터페이스의
 서로 다른 새 fixture 프로젝트에서 다음을 직접 확인한다.
 
 1. 실제 플러그인 설치·활성 버전
@@ -313,7 +330,7 @@ harness-setup 명시 호출
 6. 새 task/session에서 같은 artifact fingerprint의 문서 개선안 재제안 없음
 7. 실패·중단 시 기존 파일 보존
 
-정확한 Codex CLI·앱, Claude Code CLI·Desktop Code 명령 예와 표면별 증적 양식은
+정확한 Codex CLI·앱, Claude Code CLI·Claude 앱 명령 예와 인터페이스별 증적 양식은
 [Direct Plugin Surface Test Record](../maintainer/plugin/manual-surface-test-template.md)를
 복사해 사용한다. 스크린샷만 남기지 말고 CLI/app 버전, plugin version, fixture
 경로, 명시 호출, 생성 파일, 금지 경로 검사 출력과 검토자를 함께 기록한다.

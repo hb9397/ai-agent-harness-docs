@@ -1,26 +1,26 @@
-# Direct Plugin Surface Test Record
+# 플러그인 인터페이스 직접 검증 기록
 
 > 목적: 로컬 릴리스 후보를 실제 Codex CLI, Codex 앱, Claude Code CLI,
-> Claude Desktop Code에서 설치하고 스킬을 호출한 증적을 남긴다.
+> Claude 앱에서 설치하고 스킬을 호출한 증적을 남긴다.
 > 이 문서는 실행 예시 겸 기록 양식이다. 테스트할 때 사본을 만들고
 > `<...>` placeholder를 실제 값으로 바꾼다.
 
 ## 공통 원칙
 
-- 네 표면은 서로 다른 새 fixture 프로젝트에서 검사한다. 한 표면의 산출물을 다른
-  표면이 재사용하면 discovery와 최초 설정 검증이 무효가 된다.
+- 네 인터페이스는 서로 다른 새 fixture 프로젝트에서 검사한다. 한 인터페이스의
+  산출물을 다른 인터페이스가 재사용하면 discovery와 최초 설정 검증이 무효가 된다.
 - fixture에는 최소한의 앱 manifest 하나만 둔다. 예:
   `{"name":"harness-surface-fixture","private":true}`인 `package.json`.
 - 설치 source는 테스트한 관리 저장소의 절대 경로를 기록한다.
 - 인증 토큰, 사용자 홈 경로의 비밀값, private URL query는 증적에서 마스킹한다.
-- 각 표면에서 초기 설정과 갱신을 모두 실행한다.
+- 각 인터페이스에서 초기 설정과 갱신을 모두 실행한다.
 - 성공 판정에는 설치 목록뿐 아니라 실제 `harness-setup` 호출, 생성 파일,
   금지 디렉터리 미생성, 사용자 확장 보존이 모두 필요하다.
 - 자동 설치 smoke와 실제 모델 호출은 별도 증적이다. CLI도 설치 smoke만으로
   `verified`로 기록하지 않는다.
 - 완료한 사본은
   `maintainer/plugin/manual-evidence/YYYYMMDD/{surface}.md`에 저장하고,
-  `maintainer/plugin/release-checklist.md`의 해당 표면에 링크한다. 검토자 확인
+  `maintainer/plugin/release-checklist.md`의 해당 인터페이스에 링크한다. 검토자 확인
   전에는 릴리스 상태를 `verified`로 바꾸지 않는다.
 
 ## 공통 시나리오
@@ -28,7 +28,7 @@
 ### A. 최초 설정
 
 1. 비어 있는 fixture 프로젝트에 앱 manifest 하나를 만든다.
-2. 해당 표면에서 플러그인을 설치·활성화하고 새 task/session을 연다.
+2. 해당 인터페이스에서 플러그인을 설치·활성화하고 새 task/session을 연다.
 3. `harness-setup`을 명시 호출한다.
 4. 단일 애플리케이션 판정과 fixture 루트를 승인한다.
 5. 다음 파일을 확인한다.
@@ -81,7 +81,7 @@ done
    추가한다.
 2. `AGENTS.md`의 관리 블록 뒤에 `TEAM-AGENT-SENTINEL`을 추가한다.
 3. `CLAUDE.md`의 관리 블록 뒤에 `TEAM-CLAUDE-SENTINEL`을 추가한다.
-4. 같은 표면에서 `harness-setup`을 다시 실행하고 관리 블록 diff를 승인한다.
+4. 같은 인터페이스에서 `harness-setup`을 다시 실행하고 관리 블록 diff를 승인한다.
 5. 세 sentinel이 그대로 남고 관리 블록만 갱신됐는지 확인한다.
 6. 쓰기 전후에 `.agents/skills`, `.claude/skills`, `skills`가 계속 없음을
    다시 확인한다.
@@ -225,6 +225,8 @@ codex plugin marketplace remove hb9397
 
 ## Codex 앱 예시
 
+![Codex 앱의 플러그인 마켓플레이스 추가 화면](../../.user-docs/assets/plugin-install/codex-app-add-marketplace.png)
+
 1. ChatGPT 데스크톱 앱 전환기에서 **Codex**를 선택하고 Plugins Directory를
    연다.
 2. configured marketplace에 `harness-kit`가 보이면 상세 화면의 설치
@@ -243,8 +245,8 @@ codex plugin marketplace remove hb9397
 
 앱 UI가 local marketplace 자체를 추가하지 못하는 버전에서는 CLI 등록 후 앱을
 재시작하는 흐름을 사용하고 그 사실을 증적에 기록한다.
-Codex 표면의 스킬 명시 호출은 `$skill-name`이다. ChatGPT Work에서 확인하는
-`@` plugin/skill mention은 별도 보조 표면으로 기록하고 이 Codex 앱 항목을
+Codex 앱의 스킬 명시 호출은 `$skill-name`이다. ChatGPT Work에서 확인하는
+`@` plugin/skill mention은 별도 보조 인터페이스로 기록하고 이 Codex 앱 항목을
 대체하지 않는다.
 
 ## Claude Code CLI 예시
@@ -300,13 +302,15 @@ claude plugin uninstall harness-kit@hb9397
 claude plugin marketplace remove hb9397
 ```
 
-## Claude Desktop Code 예시
+## Claude 앱 예시
 
-1. Desktop Code의 local session에서 prompt 옆 `+` → Plugins → Add plugin을
-   열고 configured marketplace의 `harness-kit`를 설치한다.
+![Claude 앱의 마켓플레이스 추가 화면](../../.user-docs/assets/plugin-install/claude-app-add-marketplace.png)
+
+1. Claude 앱의 **설정 → 플러그인 → 추가 → 마켓플레이스 추가**에서
+   `hb9397/harness-kit` 또는 Git 저장소 URL을 선택하고 동기화한다.
 2. local marketplace가 보이지 않으면 같은 사용자 설정을 쓰는 Claude Code CLI로
    marketplace만 등록한 뒤 앱을 다시 열고, 앱의 Add plugin에서 설치한다.
-3. Claude Desktop을 완전히 종료했다가 다시 열고 Code 탭에서 새 local session을
+3. Claude 앱을 완전히 종료했다가 다시 열고 Code 탭에서 새 local session을
    만든다.
 4. `<claude-desktop-fixture>`를 열고
    `/harness-kit:harness-setup`과
@@ -319,9 +323,9 @@ claude plugin marketplace remove hb9397
 7. cloud Code 또는 WSL처럼 검증하지 않은 host는 `verified`로 합치지 않고
    별도 `not-tested` 또는 `unsupported`로 기록한다.
 
-## 표면별 증적 기록
+## 인터페이스별 증적 기록
 
-아래 블록을 표면마다 복사해 작성한다.
+아래 블록을 인터페이스마다 복사해 작성한다.
 
 ```text
 Surface: <codex-cli | codex-desktop-app | claude-code-cli | claude-desktop-code>
@@ -362,7 +366,7 @@ Final decision:
 
 ## 완료 판정표
 
-| 확인 항목 | Codex CLI | Codex 앱 | Claude Code CLI | Claude Desktop Code |
+| 확인 항목 | Codex CLI | Codex 앱 | Claude Code CLI | Claude 앱 |
 |---|---|---|---|---|
 | 설치·활성 버전 확인 | ☐ | ☐ | ☐ | ☐ |
 | 새 task/session에서 스킬 발견 | ☐ | ☐ | ☐ | ☐ |
@@ -382,5 +386,5 @@ Final decision:
 | 실패 시 원본·fixture 복구 확인 | ☐ | ☐ | ☐ | ☐ |
 | 증적 검토자 확인 | ☐ | ☐ | ☐ | ☐ |
 
-네 표면의 필수 항목이 모두 확인되기 전에는 앱을 포함한 전체 설치 검증을
+네 인터페이스의 필수 항목이 모두 확인되기 전에는 앱을 포함한 전체 설치 검증을
 `verified`로 기록하지 않는다.

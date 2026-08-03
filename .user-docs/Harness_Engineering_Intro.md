@@ -43,9 +43,9 @@ AI를 팀에서 쓰기 시작하면 처음에는 생산성이 크게 올라가�
 ```mermaid
 flowchart LR
     A["사용자 A<br/>Codex CLI"] --> X["서로 다른 결과"]
-    B["사용자 B<br/>Codex App"] --> X
+    B["사용자 B<br/>Codex 앱"] --> X
     C["사용자 C<br/>Claude Code CLI"] --> X
-    D["사용자 D<br/>Claude Desktop Code"] --> X
+    D["사용자 D<br/>Claude 앱"] --> X
     X --> E["컨벤션 불일치"]
     X --> F["아키텍처 분산"]
     X --> G["중복 구현"]
@@ -343,7 +343,7 @@ Claude Code:
 /harness-kit:impl-verify
 ```
 
-파일 첨부와 경로 참조 문법은 플랫폼 표면에 따라 다를 수 있다. 중요한 것은
+파일 첨부와 경로 참조 문법은 플랫폼 인터페이스에 따라 다를 수 있다. 중요한 것은
 호출 문자를 억지로 통일하는 것이 아니라 다음 네 가지를 요청에 함께 넣는 것이다.
 
 - 어떤 스킬을 사용할지
@@ -646,7 +646,7 @@ flowchart LR
 
 기대 효과:
 
-- 모델과 표면이 달라도 작업 순서가 유지된다.
+- 모델과 실행 환경이 달라도 작업 순서가 유지된다.
 - 신규 인원이 프로젝트 문맥을 빠르게 복원한다.
 - 왜 그렇게 구현했는지가 설계와 계획에 남는다.
 - 중복 구현을 시작 전에 발견한다.
@@ -683,7 +683,7 @@ flowchart LR
 |------|------|
 | `custom-skill-design` | Anthropic `skill-creator`를 `adapted` 원본으로, OpenAI Codex 공식 `skill-creator`를 직접 `reference`로 사용. portfolio provenance는 선택한 Superpowers 스킬 작성 원칙도 별도 `reference`로 추적 |
 | `skill-portfolio-maintainer` | 외부 공식·유명 스킬 탐색, integration mode 분류, 최신화와 보호 자산 영향 관리 |
-| `harness-plugin-maintainer` | 양 플랫폼 plugin build, validate, 설치 표면 증적, release gate |
+| `harness-plugin-maintainer` | 양 플랫폼 plugin build, validate, 설치 인터페이스 증적, release gate |
 
 관리자 스킬은 `maintainer/skills/`가 정본이며 `.agents/skills/`,
 `.claude/skills/`는 생성된 repo-local projection이다. 사용자 플러그인에는
@@ -782,7 +782,7 @@ inventory
 관리자에게 하네스는 다음 흐름이다.
 
 > 사용자 스킬 정본 → 외부 근거와 보호 자산 관리 → 양 플랫폼 build·검증
-> → 실제 설치 표면 증적 → 안전한 release
+> → 실제 설치 인터페이스 증적 → 안전한 release
 
-하네스의 목적은 AI를 더 많이 쓰는 것이 아니다. 누가 어떤 모델과 표면을
+하네스의 목적은 AI를 더 많이 쓰는 것이 아니다. 누가 어떤 모델과 실행 환경을
 쓰더라도 팀의 공통 규칙 위에서 비슷한 품질의 결과를 반복해서 만드는 것이다.

@@ -384,7 +384,7 @@ def validate_manual_surface_contract(root: Path, errors: list[str]) -> None:
         "## Codex CLI 예시",
         "## Codex 앱 예시",
         "## Claude Code CLI 예시",
-        "## Claude Desktop Code 예시",
+        "## Claude 앱 예시",
         "$harness-setup",
         "$humanize-korean",
         "/harness-kit:harness-setup",
