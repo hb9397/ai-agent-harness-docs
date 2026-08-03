@@ -11,6 +11,10 @@ allowed-tools: Read, Write, Glob, Grep
 
 이 스킬은 **디자인 결정**을 담당한다. 제품 소스코드 구현은 하지 않는다.
 
+디자인 시스템 저장 경로·소유권·인계는 단일 앱의
+`@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
+`@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를 따른다.
+
 ## 적용 범위
 
 사용한다.
@@ -155,8 +159,13 @@ python "{skill_dir}/scripts/search.py" "<query>" --design-system --variance <1-1
 사용자가 명시적으로 저장을 요청하면 다음 경로에만 저장한다.
 
 ```text
+# 단일 앱
 .docs/design-system/{project-slug}/MASTER.md
 .docs/design-system/{project-slug}/pages/{page-slug}.md
+
+# 복수 앱 — {앱}은 Step 0에서 확인한 대상 앱
+.docs/{앱}/design-system/{project-slug}/MASTER.md
+.docs/{앱}/design-system/{project-slug}/pages/{page-slug}.md
 ```
 
 저장 규칙:
@@ -171,6 +180,7 @@ python "{skill_dir}/scripts/search.py" "<query>" --design-system --variance <1-1
 스크립트의 `--persist`는 `--output-dir` 기준 `design-system/` 아래에 쓴다.
 `--output-dir`를 `.docs`로 지정해 위 계약 경로에 맞춘다. `--output-dir` 없이
 `--persist`를 실행하지 않는다. 실행 디렉터리에 따라 위치가 달라진다.
+복수 앱에서는 `--output-dir`를 해당 앱의 `.docs/{앱}` 루트로 지정한다.
 
 ### 문서 개선 handoff
 

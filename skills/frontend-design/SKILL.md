@@ -14,6 +14,11 @@ allowed-tools: Read, Write, Glob, Grep
 이 스킬은 클리셰 UI를 피하고, 맥락에 맞는 개성 있는 프론트엔드 구현을 목표로 한다.
 결과물은 실제로 동작하는 프로덕션급 코드여야 한다.
 
+제품 소스 변경 범위와 앱 소유권은 단일 앱의
+`@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
+`@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를 확인한 뒤
+승인된 앱 소스에만 반영한다.
+
 ---
 
 ## 진입 라우팅

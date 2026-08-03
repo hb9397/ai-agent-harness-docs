@@ -109,6 +109,7 @@ def main() -> int:
     # Cross-skill properties that no single skill runner can observe.
     run([str(Path(__file__).parent / "design_workflow.py")])
     run([str(Path(__file__).parent / "markdown_producers.py")])
+    run([str(Path(__file__).parent / "impl_workflow.py")])
 
     with tempfile.TemporaryDirectory(prefix="harness-plugin-text-eval-") as tmp:
         payload_root = Path(tmp)

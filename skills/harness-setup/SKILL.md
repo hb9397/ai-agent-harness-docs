@@ -61,6 +61,9 @@ design-doc, context-doc 등 후속 스킬 사용 가능
 실행 전 변경 계획과 실행 후 실제 변경 목록을 모두 검사한다.
 
 - 허용되는 생성·갱신 범위는 `.docs/**`, 루트 `AGENTS.md`, 루트 `CLAUDE.md`뿐이다.
+  `@.docs/instruction/artifact-output-routing-instruction.md`(복수 앱은
+  `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`)는 산출물 위치·
+  소유권·인계를 위한 공용 instruction으로 항상 포함한다.
 - `.agents/skills/**`, `.claude/skills/**`, `skills/**`에 사용자 플러그인 스킬을
   생성·복사·동기화하지 않는다.
 - 기존 local skill copy는 탐지와 읽기 전용 report만 허용한다. 삭제·이동·백업도
@@ -145,7 +148,7 @@ Step 2 확인 결과에 따라 분기한다.
 `prompts/single-app-setup.md` 참조.
 
 핵심 작업:
-1. `.docs/` 안내·정책 파일 생성: `.docs/README.md`(구조·산출물 안내), `.docs/.gitignore`(로컬 전용 영역 지정), `.docs/_inbox/`(에이전트 임시 입력 공간, 내용 git 미추적)
+1. `.docs/` 안내·정책 파일 생성: `.docs/README.md`(구조·산출물 안내), `.docs/.gitignore`(로컬 전용 영역 지정), `.docs/_inbox/`(에이전트 임시 입력 공간, 내용 git 미추적), `.docs/instruction/artifact-output-routing-instruction.md` 참조 위치 예약
 2. 루트 `AGENTS.md`가 없으면 공통 컨텍스트 정본 뼈대 생성
 3. 루트 `CLAUDE.md`가 없으면 `@AGENTS.md` bridge 생성
 4. 기존 local skill copy가 있으면 읽기 전용 migration report만 출력
@@ -163,7 +166,7 @@ Step 2 확인 결과에 따라 분기한다.
 6. 루트 `AGENTS.md` 생성 (git 미관리, 이 스킬이 단독 관리)
 7. 루트 `CLAUDE.md` bridge 생성 (git 미관리, 이 스킬이 단독 관리)
 8. `.docs/root-context/AGENTS.md`, `.docs/root-context/CLAUDE.md` 복사본 생성
-9. `.docs/` 안내·정책 파일 생성: `.docs/README.md`(구조·산출물 안내), `.docs/.gitignore`(로컬 전용 영역 지정), `.docs/_inbox/`(에이전트 임시 입력 공간, 내용 git 미추적)
+9. `.docs/` 안내·정책 파일 생성: `.docs/README.md`(구조·산출물 안내), `.docs/.gitignore`(로컬 전용 영역 지정), `.docs/_inbox/`(에이전트 임시 입력 공간, 내용 git 미추적), 앱별 `artifact-output-routing-instruction.md` 참조 위치 예약
 
 루트 `CLAUDE.md`/`AGENTS.md` 작성 시 `templates/root-context.template` 참조.
 

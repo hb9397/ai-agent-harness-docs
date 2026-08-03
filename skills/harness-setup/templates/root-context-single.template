@@ -17,6 +17,7 @@
 
 - 설계 문서: `@.docs/context-base/DESIGN.md`
 - 주제별 instruction: `@.docs/instruction/*-instruction.md`
+- 산출물 위치·소유권·인계: `@.docs/instruction/artifact-output-routing-instruction.md`
 - 구현 계획: `.docs/impl-doc/{사용자}/{기능}.md`
 - 프로토타입: `.docs/prototype/{사용자}/{id}/`
 

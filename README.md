@@ -137,6 +137,8 @@ flowchart TD
 구현 계획을 만든 다음 각 Phase 또는 태스크 시작 직전에
 `impl-reuse-scan`으로 기존 공통 모듈·컴포넌트·패턴을 찾는다. 이 스킬은 후보를
 보고할 뿐 자동으로 코드를 바꾸지 않는다.
+계획 전에는 `design-roadmap`과 `*-roadmap-impl-index.md`를 먼저 식별하고,
+각 Phase/태스크 종료 시 `impl-verify`를 명시적으로 호출한다.
 
 ### 3단계 — 구현과 검증
 
@@ -148,6 +150,10 @@ flowchart TD
 
 `create-prototype`은 `.docs/prototype/` 아래 검증 시안을 만드는 스킬이고,
 `frontend-design`은 실제 제품 UI를 구현하는 스킬이다.
+복수 앱의 문서·프로토타입·디자인 시스템 산출물은 항상 `.docs/{앱}/` 아래로
+분리한다. 모든 producer는 `@.docs/instruction/artifact-output-routing-instruction.md`
+(복수 앱은 `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`)을
+따라 위치·소유권·인계를 결정한다.
 
 ### 4단계 — 품질·문서·커밋
 
@@ -248,8 +254,8 @@ my-project/
 |--------|-----------|-----------|
 | 설계 문서 | 단일 `.docs/context-base/DESIGN.md`, 복수 `.docs/{앱}/context-base/DESIGN.md` | 프로젝트 문서로 commit |
 | 에이전트 규칙 | `AGENTS.md`, `CLAUDE.md`, `.docs/**/instruction/` | `AGENTS.md` 정본, `CLAUDE.md` bridge |
-| 화면 설계 | `.docs/prototype/{사용자}/{식별자}/design-doc.md` | 프로젝트 문서로 commit |
-| 프로토타입 | `.docs/prototype/{사용자}/{식별자}/` | 검증용 산출물, 프로젝트 정책에 따라 commit |
+| 화면 설계 | 단일 `.docs/prototype/{사용자}/{식별자}/design-doc.md`, 복수 `.docs/{앱}/prototype/{사용자}/{식별자}/design-doc.md` | 프로젝트 문서로 commit |
+| 프로토타입 | 단일 `.docs/prototype/{사용자}/{식별자}/`, 복수 `.docs/{앱}/prototype/{사용자}/{식별자}/` | 검증용 산출물, 프로젝트 정책에 따라 commit |
 | 구현 계획 | 단일 `.docs/impl-doc/{사용자}/`, 복수 `.docs/{앱}/impl-doc/{사용자}/` | 계획서와 공용 roadmap index를 함께 관리 |
 | 문서 개선 ledger | `.docs/.harness/humanize-handoffs.json` | 최종 Markdown fingerprint와 결정 상태 관리 |
 | 사용자 스킬 | 설치된 `ai-agent-harness` 플러그인 | 프로젝트에 복사하지 않음 |

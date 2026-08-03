@@ -15,6 +15,10 @@ allowed-tools: Read, Write, Glob, Grep, Agent
 요구사항 번호(기본 PREFIX: `SFR`, 커스텀 PREFIX 허용)를 기반으로 인터랙티브 UI 프로토타입을 생성하는 스킬이다.
 Tailwind CSS CDN과 Noto Sans KR 폰트를 사용하며, `file://` 직접 열기로 확인 가능하다.
 
+프로토타입 저장 경로·소유권·인계는 단일 앱의
+`@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
+`@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를 따른다.
+
 > **산출물 구조 원칙**: 모든 HTML은 `display/`, CSS는 `css/`, JSON은 `data/`, JS는 `script/`, 문서는 `docs/`에만 존재한다.
 > 각 HTML은 반드시 CSS 1개 + JS 1개 + JSON 1개와 짝을 이룬다.
 > `<style>` 블록과 HTML 내부 `<script>` 블록(JSON embed 제외)은 사용하지 않는다.
@@ -28,7 +32,7 @@ Tailwind CSS CDN과 Noto Sans KR 폰트를 사용하며, `file://` 직접 열기
 | 최종 산출물 | 담당 스킬 |
 |---|---|
 | 화면 요구사항·흐름·컴포넌트 배치를 설명하는 Markdown | `design-prototype-docs` |
-| `.docs/prototype/` 아래 검증용 HTML/CSS/JS/JSON | `create-prototype` |
+| 단일 `.docs/prototype/` 또는 복수 `.docs/{앱}/prototype/` 아래 검증용 HTML/CSS/JS/JSON | `create-prototype` |
 | 실제 앱 디렉터리에 반영할 제품 코드 | `frontend-design` |
 
 프로토타입은 요구사항 검증을 위한 폐기 가능한 산출물이다. 사용자가 실제 앱 적용을
@@ -39,7 +43,8 @@ handoff한다.
 
 이 스킬의 산출물은 **폐기 가능한 검증 자료**다. 제품 소스로 승격하지 않는다.
 
-- `.docs/prototype/**`의 HTML·CSS·JS를 제품 디렉터리로 복사하지 않는다.
+- 단일 앱 `.docs/prototype/**` 또는 복수 앱 `.docs/{앱}/prototype/**`의 HTML·CSS·JS를
+  제품 디렉터리로 복사하지 않는다.
 - 프로토타입 승인 후 실제 구현으로 넘어갈 때는 **승인된 디자인 결정과 화면
   명세만** 전달한다. 코드는 전달하지 않는다.
 - 사용자가 처음부터 실제 화면 구현을 요청하면 이 스킬을 강제하지 않고 바로
@@ -389,7 +394,7 @@ function renderData(data) {
 프로젝트 유형(STEP 0-B)과 사용자(STEP 0-C)에 따라 산출물 디렉토리 위치를 결정한다:
 
 - **단일 앱**: `.docs/prototype/{사용자}/{PREFIX}-{번호}/` 하위에 생성
-- **복수 앱**: `.docs/prototype/{사용자}/{PREFIX}-{번호}/` 하위에 생성 (앱 구분 없이 프로젝트 공통)
+- **복수 앱**: `.docs/{앱}/prototype/{사용자}/{PREFIX}-{번호}/` 하위에 생성
 
 예시 (단일앱):
 ```
@@ -399,6 +404,12 @@ function renderData(data) {
 ├── css/
 ├── script/
 └── docs/
+```
+
+복수 앱 예시는 대상 앱을 경로에 반드시 포함한다:
+
+```
+.docs/portal/prototype/developer/SFR-019/
 ```
 
 - 같은 경로에 디렉토리가 이미 존재하면 **갱신 여부를 사용자에게 확인**한다.

@@ -15,6 +15,10 @@ allowed-tools: Read, Write, Glob, Agent
 `create-prototype` 스킬의 입력으로 사용할 수 있는 **목업 디자인 문서(.md)** 를
 생성하는 스킬이다.
 
+저장 경로·소유권·인계는 단일 앱의
+`@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
+`@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를 따른다.
+
 직접 호출할 때는 Codex에서 `$design-prototype-docs`, Claude Code에서
 `/ai-agent-harness:design-prototype-docs`를 사용한다.
 
@@ -61,7 +65,8 @@ design-prototype-docs OUTPUT (.md)
 화면을 명세하기 전에 참조할 디자인 시스템이 있는지 확인한다.
 
 1. 기존 제품의 디자인 토큰, 테마, 컴포넌트 라이브러리를 찾는다.
-2. `.docs/design-system/**`에 이미 정해진 결정이 있으면 읽고 그대로 따른다.
+2. 단일 앱은 `.docs/design-system/**`, 복수 앱은 `.docs/{앱}/design-system/**`에
+   이미 정해진 결정이 있으면 읽고 그대로 따른다.
 3. 둘 다 없고 디자인 방향부터 정해야 하면 `ui-ux-pro-max` 결과를 입력으로
    받는다. 이 문서에서 색·타이포그래피·간격 체계를 새로 발명하지 않는다.
 4. 확인한 입력의 출처를 문서에 명시한다. 어떤 값이 기존 제품에서 왔고 어떤
@@ -365,11 +370,11 @@ STEP 0-C에서 확인한 식별자를 폴더명에 사용한다.
 프로젝트 유형(STEP 0-B)과 사용자(STEP 0-D)에 따라 분기한다:
 
 - **단일 앱**: `.docs/prototype/{사용자}/{식별자}/design-doc.md`
-- **복수 앱**: `.docs/prototype/{사용자}/{식별자}/design-doc.md` (앱 구분 없이 프로젝트 공통)
+- **복수 앱**: `.docs/{앱}/prototype/{사용자}/{식별자}/design-doc.md`
 
 예시:
 - 단일앱: `.docs/prototype/developer/SFR-019/design-doc.md`
-- 복수앱: `.docs/prototype/developer/SFR-019/design-doc.md` (앱 구분 없이 프로젝트 공통)
+- 복수앱: `.docs/portal/prototype/developer/SFR-019/design-doc.md`
 
 ### 저장 시 규칙
 

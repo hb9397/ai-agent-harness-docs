@@ -926,6 +926,17 @@ def test_im_not_ai_dogfood_stages_and_dry_run_promotes() -> None:
 
 
 def main() -> int:
+    contract_eval = subprocess.run(
+        [sys.executable, str(SKILL / "evals" / "artifact_output_contract.py")],
+        cwd=ROOT,
+        text=True,
+        encoding="utf-8",
+        capture_output=True,
+    )
+    if contract_eval.returncode != 0:
+        raise AssertionError(
+            f"artifact output contract eval failed\nSTDOUT:\n{contract_eval.stdout}\nSTDERR:\n{contract_eval.stderr}"
+        )
     tests = [
         test_check_is_observed_only,
         test_discovery_is_report_only,

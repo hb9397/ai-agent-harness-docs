@@ -25,6 +25,10 @@ FE/BE 페어 다중 기능 또는 화면 다중 RFP가 아니면 이 스킬을 �
 
 생성 전 반드시 사용자 확인을 거친다. 파일을 무단으로 생성하지 않는다.
 
+계획서·roadmap index 저장 경로·소유권·인계는 단일 앱의
+`@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
+`@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를 따른다.
+
 > impl-fe-be-doc은 **FE/BE 페어 다중 기능** 또는
 > **RFP/SFR 기반 다중 화면** 구현에 특화된 스킬이다.
 > 이 스킬(impl-doc)은 그 외 모든 단일·소규모 범용 작업을 받는다.
@@ -115,6 +119,27 @@ impl-doc  ← 지금 여기
 > - 적용 대상 애플리케이션(폴더): `{폴더명}`
 >
 > 맞습니까? **(승인 / 수정 / 취소)**
+
+---
+
+### Step 0-C — design-roadmap·roadmap index preflight
+
+구현계획서 초안을 만들기 전에 반드시 수행한다. Step 8의 사후 갱신만으로는 계획서가
+인덱스 없이 저장될 수 있으므로, 이 단계에서 scope를 확정하고 index를 예약한다.
+
+1. 사용자 식별자, 단일/복수 앱 유형, 앱 식별자·source root, repository root, `.docs`
+   root를 확인한다.
+2. `../impl-doc/{사용자 식별}/` 아래의 실제 `design-roadmap` 위치와 접근 가능한
+   `*-roadmap-impl-index.md`를 탐색한다. 단일 앱은 `.docs/impl-doc/{사용자}/`,
+   복수 앱은 `.docs/{앱}/impl-doc/{사용자}/`를 계획서 scope로 사용한다.
+3. 대상 scope에 index가 없으면 계획서를 쓰기 **전에**
+   `{YYMMDD}-0.{앱이름}-roadmap-impl-index.md`를 만들고 `implementation plan pending`,
+   사용자·앱·예정 slug/kind·design-roadmap 경로·preflight 시각을 예약 행으로 기록한다.
+4. index가 둘 이상이면 임의 선택하지 않고 후보 scope·hash·최근 상태를 사용자에게
+   보여준 뒤 선택 전까지 파일을 만들지 않는다. 기존 impl 문서가 index 없이 있으면
+   기존 문서를 backfill한 뒤 진행한다.
+5. 이 단계에서는 구현·reuse scan·verify 명령을 실행하지 않는다. 경로가 없거나
+   앱 식별자가 모호하면 `handoff=blocked`로 보고하고 사용자 확인을 기다린다.
 
 ---
 
@@ -331,6 +356,36 @@ Step 7에서 방금 저장한 문서와 같은 자리에 인덱스 문서를 새
 인덱스 파일 자체가 없으면 ②의 규칙으로 새로 만들되, 디렉토리를 스캔해 기존 impl 문서들을 분할 구조 표에 **소급 반영**한다.
 
 **⑤ 저장 전 확인** — 인덱스 문서의 신규 생성/갱신 내용을 요약해 사용자에게 보여주고 저장한다. 별도 승인 게이트 없이 Step 7 승인에 포함된 것으로 간주하되, 인덱스 문서만 크게 구조가 바뀌는 경우(최초 생성, 스테이지 경계 변경 등)에는 저장 직전 한 번 더 확인한다.
+
+## downstream 구현·검증 handoff
+
+계획서와 index를 저장한 뒤 실제 구현 흐름은 모든 Phase/태스크에서 다음 블록을 따른다.
+이 route는 자동 하위 스킬 실행이 아니라 사용자가 실행할 명시적 handoff다.
+
+```yaml
+downstream:
+  roadmap_index: <verified index path>
+  phase: <phase id>
+  reuse_scan:
+    skill: impl-reuse-scan
+    trigger: phase-start
+    status: required | not-applicable | passed | pending
+    input: <plan path + task/asset scope + source root>
+    decision: reuse | extend | new | deferred | pending
+    evidence: <report reference or reason>
+  verify:
+    skill: impl-verify
+    trigger: phase-end
+    invocation: explicit-only
+    status: required | passed | failed | skipped | pending
+    input: <plan path + task/phase/full scope + implementation root>
+    evidence: <verification report reference>
+```
+
+Phase 시작에는 `$impl-reuse-scan`을 호출해 후보를 보고하고 사용자 결정 전에는 패치하지
+않는다. Phase 종료에는 `$impl-verify`를 명시 호출한다. `impl-verify`는
+`disable-model-invocation: true`를 유지하므로 route가 자동 실행을 의미하지 않는다.
+FAIL은 다음 Phase 진입 불가 권고로 index/evidence에 전달한다.
 
 ---
 

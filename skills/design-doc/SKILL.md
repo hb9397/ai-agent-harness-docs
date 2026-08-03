@@ -16,6 +16,11 @@ allowed-tools: Read, Glob, Write, Agent
 이 스킬이 호출되면 아래 워크플로우를 순서대로 실행한다.
 결과 문서는 대화창에 바로 출력한다. (별도 .md 파일 생성 금지 — 사용자가 요청할 때만 저장)
 
+파일 저장이 승인되면 산출물 위치·소유권·인계는
+`@.docs/instruction/artifact-output-routing-instruction.md`를 따른다.
+복수 앱은 `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를
+읽고 대상 앱 범위를 유지한다.
+
 > 이 스킬의 OUTPUT은 AI Agent가 개발에 활용하는 Context 문서 / Instruction / Rule / PRD가 될 수 있음을 항상 염두에 두고 작성한다.
 > 따라서 모호한 표현, 미결 항목 방치, 중복 서술을 피하고 Agent가 오해 없이 읽을 수 있는 정밀한 문서를 목표로 한다.
 

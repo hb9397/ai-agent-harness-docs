@@ -18,6 +18,10 @@ AI Agent 및 개발자가 참조하는 FE/BE 페어 기능 단위 또는 화면 
 
 생성 전 반드시 사용자 확인을 거친다. 파일을 무단으로 수정하지 않는다.
 
+계획서·roadmap index 저장 경로·소유권·인계는 단일 앱의
+`@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
+`@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를 따른다.
+
 > 이 문서는 AI Agent가 코드를 작성하는 순서와 기준이 된다.
 > Phase 경계, 태스크 의존 관계, 검증 시나리오가 불명확하면
 > Agent가 잘못된 순서로 구현하거나 검증 없이 다음 단계로 넘어가는 문제가 생긴다.
@@ -33,7 +37,12 @@ design-doc (설계 인터뷰 → OUTPUT 문서)
     ↓ OUTPUT 문서를 그대로 이 스킬에 입력
 impl-fe-be-doc → FE/BE 페어 또는 화면 중심 작업지침서
     └─→ 같은 디렉토리의 로드맵 인덱스 문서
-        {YYMMDD}-0.{앱이름}-roadmap-impl-index.md 생성/갱신 (Step 8)
+        {YYMMDD}-0.{앱이름}-roadmap-impl-index.md 생성/갱신 (Step 0-C, Step 8)
+            ├─→ impl-reuse-scan → Phase/태스크 시작 preflight (필수 또는 not-applicable)
+            ├─→ 실제 구현
+            ├─→ impl-verify → Phase/태스크 종료 명시적 게이트
+            ├─→ multi-review
+            └─→ doc-audit
 ```
 
 design-doc OUTPUT의 각 섹션은 아래와 같이 매핑된다.
@@ -76,6 +85,23 @@ design-doc OUTPUT의 각 섹션은 아래와 같이 매핑된다.
 > - 적용 대상 애플리케이션(폴더): `{폴더명}`
 >
 > 맞습니까? **(승인 / 수정 / 취소)**
+
+---
+
+### Step 0-C — design-roadmap·roadmap index preflight
+
+계획서를 쓰기 전에 설계 로드맵의 기준 위치와 기존 인덱스를 먼저 식별한다.
+이 단계는 문서를 생성하지 않으며, reuse/verify를 실행하지 않는다.
+
+1. 현재 프로젝트 루트와 대상 앱을 확정한 뒤 `design-roadmap` 디렉토리를 탐색한다.
+2. 사용자 식별자 `{사용자}`를 정하고 `../impl-doc/{사용자}/` 후보와 앱별
+   `.docs/{앱}/impl-doc/{사용자}/`를 모두 스캔한다.
+3. 기존 `*-roadmap-impl-index.md`를 검색한다. 정확히 하나면 기준으로 채택하고,
+   없으면 계획서 저장 전에 `{YYMMDD}-0.{앱이름}-roadmap-impl-index.md`를
+   먼저 만든다. 둘 이상이거나 경로가 모호하면 저장을 중단하고 사용자에게
+   선택을 요청한다.
+4. 인덱스에는 대상 앱, 사용자, 설계 로드맵 경로, 현재 Phase/태스크 경계를
+   기록하고 이후 Step 8에서 계획서 링크와 상태를 갱신한다.
 
 ---
 
@@ -327,3 +353,32 @@ ledger 자체는 개선 대상에서 제외하며 기록할 수 없으면 현재
 승인된 변경을 반영한 경우 FE↔API↔BE↔DB 추적, 태스크 ID, 파일 경로, 검증
 시나리오와 Step 8 인덱스 링크를 다시 검증한다. 재검증된 계획서와 인덱스만
 downstream 구현·검증 스킬의 입력으로 사용한다.
+
+## downstream 구현·검증 handoff
+
+계획서가 완료되면 다음 계약을 문서 머리말 또는 인덱스에 남긴다.
+
+```yaml
+downstream:
+  roadmap_index: "{정규화 상대경로}"
+  phase: "{phase-id}"
+  reuse_scan:
+    skill: "impl-reuse-scan"
+    trigger: "phase-or-task-start"
+    status: "required-or-not-applicable"
+    input: "approved-plan-and-roadmap-index"
+    decision: "reuse|extend|new"
+    evidence: "{scan-result-or-not-applicable-reason}"
+  verify:
+    skill: "impl-verify"
+    trigger: "phase-or-task-end"
+    invocation: "explicit-only"
+    status: "pass|fail|not-run"
+    input: "implementation-diff-and-acceptance-criteria"
+    evidence: "{verification-report-or-not-run-reason}"
+```
+
+각 Phase/태스크 시작 시 `$impl-reuse-scan`을 호출해 기존 구현·산출물을
+확인하고, 종료 시 `$impl-verify`를 명시적으로 호출한다. 두 호출은 자동
+모델 invocation이 아니며, reuse scan은 not-applicable 사유를 남길 수 있다.
+`impl-verify`가 FAIL이면 다음 Phase 추천이나 완료 보고를 진행하지 않는다.

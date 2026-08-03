@@ -6,6 +6,9 @@ description: >
   '.docs/instruction 생성', '규칙 문서 생성', '프로젝트 규칙 파일',
   '에이전트 가이드 만들어줘' 요청이 오면 반드시 이 스킬을 쓴다.
   설계 문서 → 얇은 AGENTS.md 정본(프로젝트 팩트 + 인덱스) + CLAUDE.md bridge + 주제별 .docs/instruction/*-instruction.md 자동 생성.
+  산출물 위치·소유권·인계 기준인 `@.docs/instruction/artifact-output-routing-instruction.md`
+  (복수 앱은 `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`)를 단일 앱·복수 앱
+  모두에서 항상 생성한다.
   프레임워크 종속성이 없으며, 설계 문서에 등장한 주제만 분할 파일로 생성한다.
 allowed-tools: Read, Glob, Grep, Write, Agent
 ---
@@ -75,6 +78,7 @@ handoff_completed = false
 | 5 | `comm-instruction.md` | WebSocket·메시지큐 등 통신 규약이 있을 때 |
 | 6 | `file-convention-instruction.md` | 파일 위치·네이밍 규칙이 있을 때 |
 | 7 | `agent-instruction.md` | 항상 생성 |
+| 8 | `artifact-output-routing-instruction.md` | 항상 생성; 산출물 경로·owner·handoff 정본 |
 
 순차 선택 시 Step 1로 직접 진행한다.
 
@@ -86,6 +90,7 @@ AI Agent가 개발에 활용할 수 있는 Context 문서 세트를 생성한다
 - `AGENTS.md` — 프로젝트 루트에 위치하는 **얇은 프로젝트 팩트 + 지침 인덱스** 정본
 - `CLAUDE.md` — `@AGENTS.md` bridge와 Claude 전용 차이만 담는 파일
 - `.docs/instruction/*-instruction.md` — 주제별로 분리된 코딩 지침 (설계 문서에 등장한 주제만 생성)
+- `artifact-output-routing-instruction.md` — 단일/복수 앱 산출물 위치·소유권·승인·인계 정본 (항상 생성)
 
 생성 전 반드시 사용자 확인을 거친다. 파일을 무단으로 수정하지 않는다.
 
@@ -109,7 +114,9 @@ AI Agent가 개발에 활용할 수 있는 Context 문서 세트를 생성한다
 2. **CLAUDE.md는 bridge로 유지한다.** 공통 본문을 복제하지 않고 `@AGENTS.md`와 Claude 전용 차이만 둔다.
 3. **규칙은 주제별로 분리한다.** Agent가 필요한 주제만 찾아 참조할 수 있게 한다.
 4. **프레임워크를 하드코딩하지 않는다.** 설계 문서에 등장한 라이브러리·주제를 그대로 반영한다.
-5. **설계 문서에 없는 주제는 파일을 만들지 않는다.** 빈 파일·추측 규칙은 금지.
+5. **설계 문서에 없는 주제는 파일을 만들지 않는다.** 단,
+   `artifact-output-routing-instruction.md`는 산출물 경계 정본이므로 이 원칙의
+   유일한 항상 생성 예외다. 빈 주제 파일·추측 규칙은 금지한다.
 6. **금지 항목은 삼위일체(패턴·이유·대안)로 작성한다.**
 
 ## 스킬 연계
@@ -242,6 +249,7 @@ STEP 0에서 병렬을 선택한 경우, Step 3-B에서 확정된 생성 파일 
 - `templates/comm-instruction.md.template`
 - `templates/file-convention-instruction.md.template`
 - `templates/agent-instruction.md.template`
+- `templates/artifact-output-routing-instruction.md.template` — 산출물 routing·owner·handoff 템플릿 (항상 사용)
 
 작성 원칙:
 - 확실하지 않은 항목은 `미정 — [이유]` 로 표시하고 생략하지 않는다.
@@ -249,6 +257,7 @@ STEP 0에서 병렬을 선택한 경우, Step 3-B에서 확정된 생성 파일 
 - `OUTPUT_V2`의 `11 부가 정보`에 있는 실행/배포/env 정보는 `AGENTS.md`의 `5. 실행 방법`, `6. 환경 변수`에 우선 반영한다.
 - 코드 예시는 핵심 패턴만, 완성 코드는 포함하지 않는다.
 - **AGENTS.md의 인덱스와 실제 생성 파일 목록이 1:1로 일치**해야 한다.
+- `artifact-output-routing-instruction.md`는 AGENTS/앱 context의 `@` 참조와 실제 경로가 1:1로 일치해야 한다.
 - **CLAUDE.md는 `@AGENTS.md` bridge 구조여야 한다.**
 - 각 instruction 파일은 자신의 주제에만 집중한다. 주제 간 중복 금지.
 
@@ -284,7 +293,8 @@ STEP 0에서 확정한 프로젝트 유형에 따라 저장 경로와 검증 범
 
 1. `.docs/instruction/` 디렉토리가 없으면 생성한다.
 2. `AGENTS.md`, `CLAUDE.md`, `.docs/instruction/*-instruction.md` 파일을 저장한다.
-3. 검증:
+3. `artifact-output-routing-instruction.md`를 설계 주제 유무와 관계없이 저장한다.
+4. 검증:
    - `AGENTS.md` 인덱스의 `@.docs/instruction/*-instruction.md` 참조가 실제 파일과 1:1 일치
    - `CLAUDE.md`가 `@AGENTS.md` bridge인지 확인
    - 불일치 시 사용자에게 보고하고 수정
@@ -295,7 +305,7 @@ STEP 0에서 확정한 프로젝트 유형에 따라 저장 경로와 검증 범
 2. `.docs/root-context/` 디렉토리가 없으면 생성한다.
 3. 아래 파일을 저장한다:
    - `.docs/{앱}-context.md`
-   - `.docs/{앱}/instruction/*-instruction.md`
+   - `.docs/{앱}/instruction/*-instruction.md` (artifact-output-routing 포함)
    - `.docs/root-context/AGENTS.md`, `.docs/root-context/CLAUDE.md`
 4. 검증:
    - `.docs/{앱}-context.md`의 instruction 참조가 `.docs/{앱}/instruction/` 내 실제 파일과 1:1 일치

@@ -11,6 +11,10 @@ allowed-tools: Read, Write, Glob, Grep
 
 이 스킬은 **모션 명세**를 만든다. 제품 소스코드 구현은 하지 않는다.
 
+모션 명세 저장 경로·소유권·인계는 단일 앱의
+`@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
+`@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를 따른다.
+
 ## STEP 0 — 모션이 필요한지 먼저 판단
 
 모션을 설계하기 전에 **모션이 필요한지** 판단한다. 이 단계를 건너뛰지 않는다.
@@ -151,7 +155,11 @@ Design 3와 Apple HIG의 공개 easing 값이 비교 목적으로 인용되어 �
 사용자가 명시적으로 저장을 요청하면 다음 경로에만 저장한다.
 
 ```text
+# 단일 앱
 .docs/design-system/{project-slug}/motion/{screen-or-component}.md
+
+# 복수 앱 — {앱}은 Step 0에서 확인한 대상 앱
+.docs/{앱}/design-system/{project-slug}/motion/{screen-or-component}.md
 ```
 
 `{project-slug}`와 `{screen-or-component}`는 소문자, 숫자, 하이픈만 쓴다. `..`,

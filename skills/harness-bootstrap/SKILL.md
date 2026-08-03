@@ -126,8 +126,8 @@ harness-bootstrap 스킬
 - 설계 변경 시 → `design-doc`로 OUTPUT 갱신 후 → `context-doc`로 하네스 갱신
 - 문서-코드 괴리 검증 → `doc-audit`
 - 구현 지침이 필요하면 → `impl-fe-be-doc` / `impl-doc`
-- 구현 직전 공통 자산 확인 → `impl-reuse-scan` (선택)
-- 단계/페이즈 종료 검증 → `impl-verify` (선택)
+- 구현 직전 공통 자산 확인 → `impl-reuse-scan` (재사용 불가 판정 포함 필수 preflight)
+- 단계/페이즈 종료 검증 → `impl-verify` (명시 호출 전용 종료 게이트)
 
 ## 중간 산출물 재사용
 
@@ -348,15 +348,18 @@ suppress_child_handoff = true
 1. `.docs/context-base/DESIGN.md` (또는 사용자 지정 경로)
 2. `AGENTS.md`
 3. `CLAUDE.md` (`@AGENTS.md` bridge)
-4. `.docs/instruction/*-instruction.md` (해당 주제만)
+4. `.docs/instruction/*-instruction.md` (해당 주제와 항상 생성되는
+   `@.docs/instruction/artifact-output-routing-instruction.md` 포함)
 
 **복수 애플리케이션:**
 1. `.docs/{앱}/context-base/DESIGN.md`
 2. `.docs/{앱}-context.md` (단일앱의 CLAUDE.md/AGENTS.md에 해당하는 내용)
-3. `.docs/{앱}/instruction/*-instruction.md` (해당 주제만)
+3. `.docs/{앱}/instruction/*-instruction.md` (해당 주제와 항상 생성되는
+   `@.docs/{앱}/instruction/artifact-output-routing-instruction.md` 포함)
 4. `.docs/root-context/AGENTS.md`, `.docs/root-context/CLAUDE.md` (루트 통합 인덱스 복사본)
 
-(단, 설계 문서에 해당 주제가 없으면 instruction 파일은 생성하지 않는다 — context-doc 원칙 그대로)
+(단, 설계 문서에 해당 주제가 없으면 일반 주제 instruction 파일은 생성하지 않는다.
+artifact-output-routing-instruction은 산출물 경계 정본이므로 항상 생성한다.)
 
 > "위 파일들을 검토해 주세요.
 > 이상 없으면 한꺼번에 저장하겠습니다. 수정 사항이 있으면 알려주세요."

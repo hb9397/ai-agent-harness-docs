@@ -49,6 +49,11 @@
       "path": "maintainer/skills/harness-plugin-maintainer/evals/design_workflow.py",
       "scope": "design workflow across ui-ux-pro-max, motion-design, design-prototype-docs, create-prototype, frontend-design and impl-verify",
       "rationale": "Cross-skill properties such as public-name handoff, prototype/product boundary and single humanize owner cannot be observed from inside any one skill runner."
+    },
+    {
+      "path": "maintainer/skills/harness-plugin-maintainer/evals/impl_workflow.py",
+      "scope": "impl-doc and impl-fe-be-doc roadmap index preflight, impl-reuse-scan/impl-verify handoff, and artifact routing instruction",
+      "rationale": "Roadmap discovery and downstream reuse/verify gates span multiple implementation-document skills and must be checked as one contract."
     }
   ]
 }

@@ -30,6 +30,8 @@
 
 {{APP_INSTRUCTION_ENTRIES}}
 
+- 공용 산출물 위치·소유권·인계: `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`
+
 ---
 
 ## 산출물 위치
@@ -40,6 +42,7 @@
 | context-doc | `.docs/{앱}-context.md` + `.docs/{앱}/instruction/*-instruction.md` |
 | impl-doc / impl-fe-be-doc | `.docs/{앱}/impl-doc/{사용자}/{기능}.md` |
 | design-prototype-docs / create-prototype | `.docs/prototype/{사용자}/{id}/` |
+| artifact-output-routing | `.docs/{앱}/instruction/artifact-output-routing-instruction.md` |
 
 > `.docs/` 구조·산출물 규칙은 `.docs/README.md`에 정리되어 있다.
 > `.docs/_inbox/`는 에이전트에게 읽힐 파일을 잠시 올려두는 **로컬 전용 공간**으로, 내용은 git에 올라가지 않는다 (`.docs/.gitignore`가 지정).
