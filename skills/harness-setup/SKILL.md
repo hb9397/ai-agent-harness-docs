@@ -347,3 +347,14 @@ settings merge와 Codex hooks.json merge는 서로 다른 adapter이며 기존 �
 증적 전까지 `pending-trust`이며 active로 보고하지 않는다. 생성된 project-owned
 bundle과 활성화된 host hook이 모두 남은 범위에서만 setup manifest에
 `harness-kit-runtime-required=false`를 기록한다.
+
+host adapter가 활성화된 경우 공통 write guard는 absolute/relative, separator, case,
+traversal을 정규화해 project containment를 확인한다. 기존 canonical file, 승인된 app
+source, `.docs/_inbox/**`, manifest exception은 허용한다. 새 managed `.docs` 또는 root
+context 파일은 target path·operation·content SHA-256·TTL에 정확히 묶인 one-shot marker가
+있을 때만 통과하며 성공 후 원자적으로 소비한다. Codex는
+`hookSpecificOutput.permissionDecision=deny`, Claude는 exit 2/stderr로 차단한다.
+
+동적 Bash target, hosted tool, opt-out tool path, command 이후 redirect, 외부 process는
+완전 판정할 수 없으므로 bypass evidence로 남긴다. 이를 전면 보안 sandbox나 Codex trust
+자동 승인으로 설명하지 않는다.

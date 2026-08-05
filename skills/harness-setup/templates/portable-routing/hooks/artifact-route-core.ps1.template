@@ -2,7 +2,7 @@
 param(
     [Parameter(Mandatory)]
     [ValidateSet('claude', 'codex')]
-    [string]$Host,
+    [string]$RuntimeHost,
     [Parameter(Mandatory)]
     [string]$ProjectRoot,
     [Parameter(Mandatory)]
@@ -14,22 +14,127 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-$routingPath = Join-Path $ProjectRoot '.docs/harness/artifact-routing.json'
-if (-not (Test-Path -LiteralPath $routingPath -PathType Leaf)) {
-    throw "portable routing contract is missing: $routingPath"
+function New-Decision([string]$Decision, [string]$Reason, [object[]]$Targets = @()) {
+    [ordered]@{
+        schema_version = '1.0.0'
+        host = $RuntimeHost
+        tool_name = $ToolName
+        decision = $Decision
+        reason = $Reason
+        targets = @($Targets)
+    } | ConvertTo-Json -Depth 8 -Compress
 }
 
+function Get-NormalizedPath([string]$PathValue, [string]$BasePath) {
+    if ([string]::IsNullOrWhiteSpace($PathValue)) { return $null }
+    $candidate = $PathValue.Trim().Replace('/', [IO.Path]::DirectorySeparatorChar)
+    if (-not [IO.Path]::IsPathRooted($candidate)) { $candidate = Join-Path $BasePath $candidate }
+    try { return [IO.Path]::GetFullPath($candidate) } catch { return $null }
+}
+
+function Test-Contained([string]$Candidate, [string]$Root) {
+    $normalizedRoot = [IO.Path]::GetFullPath($Root).TrimEnd([char]92, [char]47)
+    $normalizedCandidate = [IO.Path]::GetFullPath($Candidate)
+    return $normalizedCandidate.Equals($normalizedRoot, [StringComparison]::OrdinalIgnoreCase) -or
+        $normalizedCandidate.StartsWith($normalizedRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)
+}
+
+function Get-InputProperty([object]$InputObject, [string[]]$Names) {
+    foreach ($name in $Names) {
+        $property = $InputObject.PSObject.Properties[$name]
+        if ($null -ne $property -and $null -ne $property.Value) { return [string]$property.Value }
+    }
+    return $null
+}
+
+function Get-WriteRequests() {
+    $requests = @()
+    $content = Get-InputProperty $ToolInput @('content', 'new_string', 'patch')
+    $directPath = Get-InputProperty $ToolInput @('file_path', 'path', 'target_path')
+    if (-not [string]::IsNullOrWhiteSpace($directPath)) {
+        $requests += [pscustomobject]@{ path = $directPath; operation = 'write'; content_hash = (Get-StringHash $content) }
+    }
+
+    if ($RuntimeHost -eq 'codex' -and $ToolName -in @('apply_patch', 'Bash')) {
+        $command = Get-InputProperty $ToolInput @('command')
+        if ([string]::IsNullOrWhiteSpace($command)) { return $requests }
+        if ($ToolName -eq 'apply_patch') {
+            foreach ($match in [regex]::Matches($command, '(?m)^\*\*\*\s+(?:Add|Update|Delete) File:\s*(.+?)\s*$')) {
+                $requests += [pscustomobject]@{ path = $match.Groups[1].Value.Trim(); operation = 'write'; content_hash = (Get-StringHash $command) }
+            }
+        } elseif ($command -match '[`$][({]') {
+            $requests += [pscustomobject]@{ path = $null; operation = 'bypass'; content_hash = (Get-StringHash $command) }
+        } else {
+            foreach ($match in [regex]::Matches($command, '(?m)(?:^|\s)(?:>|>>|Out-File\s+)(?:\s*["'']?)([^\s"'';|&]+)')) {
+                $requests += [pscustomobject]@{ path = $match.Groups[1].Value.Trim(); operation = 'write'; content_hash = (Get-StringHash $command) }
+            }
+        }
+    }
+    return @($requests)
+}
+
+function Get-StringHash([string]$Value) {
+    if ($null -eq $Value) { $Value = '' }
+    $bytes = [Text.Encoding]::UTF8.GetBytes($Value)
+    return ([Security.Cryptography.SHA256]::HashData($bytes) | ForEach-Object { $_.ToString('x2') }) -join ''
+}
+
+function Test-Approval([string]$RelativePath, [string]$Operation, [string]$ContentHash, [string]$MarkerDirectory) {
+    if (-not (Test-Path -LiteralPath $MarkerDirectory -PathType Container)) { return $null }
+    foreach ($markerPath in Get-ChildItem -LiteralPath $MarkerDirectory -Filter '*.json' -File) {
+        try { $marker = Get-Content -LiteralPath $markerPath.FullName -Raw | ConvertFrom-Json } catch { continue }
+        if ($marker.operation -ne $Operation -or $marker.target_path -cne $RelativePath -or $marker.content_sha256 -cne $ContentHash) { continue }
+        $expires = [DateTimeOffset]::Parse([string]$marker.expires_at)
+        if ($expires -le [DateTimeOffset]::UtcNow) { continue }
+        return [pscustomobject]@{ path = $markerPath.FullName; nonce = $marker.nonce }
+    }
+    return $null
+}
+
+$project = Get-NormalizedPath $ProjectRoot $ProjectRoot
+if ($null -eq $project) { throw 'project root cannot be normalized' }
+$routingPath = Join-Path $project '.docs/harness/artifact-routing.json'
+if (-not (Test-Path -LiteralPath $routingPath -PathType Leaf)) { throw "portable routing contract is missing: $routingPath" }
 $routing = Get-Content -LiteralPath $routingPath -Raw | ConvertFrom-Json
-if ($routing.hosts.$Host.status -ne 'pending-trust') {
-    throw "unsupported host routing state: $($routing.hosts.$Host.status)"
+if ($routing.hosts.$RuntimeHost.status -notin @('pending-trust', 'active')) { throw "unsupported host routing state: $($routing.hosts.$RuntimeHost.status)" }
+
+$docsRoot = Join-Path $project '.docs'
+$inboxRoot = Join-Path $docsRoot '_inbox'
+$markerDirectory = Join-Path $docsRoot '.harness/artifact-approvals'
+$sourceRoots = @($routing.apps | ForEach-Object { Get-NormalizedPath ([string]$_.source_root) $project })
+$exceptionRoots = @($routing.write_exceptions | ForEach-Object { Get-NormalizedPath ([string]$_) $project })
+$allowedRootFiles = @((Join-Path $project 'AGENTS.md'), (Join-Path $project 'CLAUDE.md'))
+$approvedMarkers = @()
+
+foreach ($request in Get-WriteRequests) {
+    if ($request.operation -eq 'bypass') { Write-Output (New-Decision 'bypass' 'dynamic shell target is outside reliable local-hook extraction; record bypass evidence' @()); exit 0 }
+    $target = Get-NormalizedPath $request.path $project
+    if ($null -eq $target -or -not (Test-Contained $target $project)) { Write-Output (New-Decision 'deny' "target is outside project containment: $($request.path)" @()); exit 0 }
+    $relative = $target.Substring($project.Length).TrimStart([char]92, [char]47).Replace([char]92, [char]47)
+    $exists = Test-Path -LiteralPath $target -PathType Leaf
+    $isRootContext = $allowedRootFiles | Where-Object { $_.Equals($target, [StringComparison]::OrdinalIgnoreCase) }
+    $isSource = $sourceRoots | Where-Object { $_ -and (Test-Contained $target $_) }
+    $isInbox = Test-Contained $target $inboxRoot
+    $isDocs = Test-Contained $target $docsRoot
+    $isException = $exceptionRoots | Where-Object { $_ -and (Test-Contained $target $_) }
+
+    if ($isInbox -or $isException) { continue }
+    if (($isDocs -or $isRootContext) -and $exists) { continue }
+    if ($isDocs -or $isRootContext) {
+        $approval = Test-Approval $relative 'write' $request.content_hash $markerDirectory
+        if ($null -eq $approval) {
+            Write-Output (New-Decision 'deny' "new managed artifact requires an exact one-shot approval marker: $relative" @($relative))
+            exit 0
+        }
+        $approvedMarkers += $approval
+        continue
+    }
+    if ($isSource) { continue }
+    Write-Output (New-Decision 'deny' "target is not an approved app source, canonical document, inbox, or declared exception: $relative" @($relative))
+    exit 0
 }
 
-# B1 intentionally reports only. Enforcement and one-time approvals are added
-# after the host-install and trust gates, never by this shared core alone.
-[ordered]@{
-    schema_version = '1.0.0'
-    host = $Host
-    tool_name = $ToolName
-    decision = 'allow'
-    reason = 'portable routing is defined but pending host trust'
-} | ConvertTo-Json -Compress
+foreach ($marker in $approvedMarkers) {
+    Remove-Item -LiteralPath $marker.path -Force
+}
+Write-Output (New-Decision 'allow' 'all observable write targets satisfy project routing and approval rules' @())

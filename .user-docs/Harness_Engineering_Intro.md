@@ -167,7 +167,7 @@ Markdown producer 뒤에는 `humanize-korean` 개선안이 연결된다. 다만 
 
 | 스킬 | 역할 | 언제 쓰는가 |
 |------|------|-------------|
-| `harness-setup` | `.docs` 골격, `AGENTS.md` 정본, `CLAUDE.md` bridge와 `.docs/harness/` portable routing bundle 생성·복구 | 새 프로젝트 도입 또는 문서 골격 갱신 |
+| `harness-setup` | `.docs` 골격, `AGENTS.md` 정본, `CLAUDE.md` bridge와 `.docs/harness/` portable routing bundle 생성·복구; 별도 승인 시 Claude·Codex write guard 설치 | 새 프로젝트 도입 또는 문서 골격 갱신 |
 | `harness-bootstrap` | 기존 코드를 스캔해 설계·컨텍스트 역추출 | 하네스 문서가 없는 기존 코드 |
 | `git-scoped-account` | 하위 앱 repo의 Git 작성자 계정을 범위 지정 | 사용자가 계정 적용·확인을 명시 요청할 때 |
 

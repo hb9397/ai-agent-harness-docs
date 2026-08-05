@@ -231,6 +231,18 @@ def check_portable_routing_bundle() -> None:
         raise AssertionError("Codex adapter must use the shared project-owned core")
     if "$env:CLAUDE_PROJECT_DIR" in codex_adapter:
         raise AssertionError("Codex adapter incorrectly accepts Claude project input")
+    core = render_portable("hooks/artifact-route-core.ps1.template", replacements)
+    for token in (
+        "[IO.Path]::GetFullPath",
+        "Test-Contained",
+        "content_sha256",
+        "one-shot approval marker",
+        "dynamic shell target is outside reliable local-hook extraction",
+    ):
+        if token not in core:
+            raise AssertionError(f"portable routing core is missing write-guard contract: {token}")
+    if "hookSpecificOutput" not in codex_adapter or "permissionDecision" not in codex_adapter:
+        raise AssertionError("Codex adapter must emit the documented deny response")
 
     with tempfile.TemporaryDirectory(prefix="portable-routing-bundle-") as tmp:
         bundle = Path(tmp) / "bundle"
@@ -315,6 +327,92 @@ def check_portable_routing_bundle() -> None:
             raise AssertionError("approved Apply did not materialize both host adapters")
         if "Read" not in read(claude_settings):
             raise AssertionError("approved Apply did not preserve unrelated Claude settings")
+
+        codex_adapter_path = project / ".codex" / "hooks" / "codex-pre-tool-use.ps1"
+
+        def invoke_codex(payload: dict) -> tuple[int, dict, str]:
+            result = subprocess.run(
+                ["pwsh", "-NoProfile", "-File", str(codex_adapter_path)],
+                input=json.dumps(payload),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                check=False,
+            )
+            try:
+                parsed = json.loads(result.stdout)
+            except json.JSONDecodeError as exc:
+                raise AssertionError(f"Codex adapter did not emit JSON: {result.stdout} / {result.stderr}") from exc
+            return result.returncode, parsed, result.stderr
+
+        outside_code, outside, outside_stderr = invoke_codex(
+            {"tool_name": "Write", "tool_input": {"file_path": "../escape.md", "content": "blocked"}}
+        )
+        if outside_code != 0 or outside.get("hookSpecificOutput", {}).get("permissionDecision") != "deny":
+            raise AssertionError(f"Codex traversal write was not denied: {outside} / {outside_stderr}")
+
+        existing = project / ".docs" / "instruction" / "existing.md"
+        existing.parent.mkdir(parents=True, exist_ok=True)
+        existing.write_text("existing\n", encoding="utf-8")
+        existing_code, existing_result, existing_stderr = invoke_codex(
+            {"tool_name": "Write", "tool_input": {"file_path": ".docs/instruction/existing.md", "content": "revised"}}
+        )
+        if existing_code != 0 or existing_result.get("decision") != "allow":
+            raise AssertionError(f"existing canonical edit was not allowed: {existing_result} / {existing_stderr}")
+
+        proposed_content = "approved new instruction"
+        new_payload = {"tool_name": "Write", "tool_input": {"file_path": ".docs/instruction/new.md", "content": proposed_content}}
+        new_code, new_result, new_stderr = invoke_codex(new_payload)
+        if new_code != 0 or new_result.get("hookSpecificOutput", {}).get("permissionDecision") != "deny":
+            raise AssertionError(f"new managed artifact without marker was not denied: {new_result} / {new_stderr}")
+        approval = subprocess.run(
+            [
+                "pwsh", "-NoProfile", "-File", str(bundle / "hooks" / "approve-artifact.ps1"),
+                "-ArtifactPath", ".docs/instruction/new.md",
+                "-ContentSha256", hashlib.sha256(proposed_content.encode("utf-8")).hexdigest(),
+                "-Approve",
+            ],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            check=False,
+        )
+        if approval.returncode != 0:
+            raise AssertionError(f"one-shot approval marker could not be created: {approval.stderr}")
+        approved_code, approved_result, approved_stderr = invoke_codex(new_payload)
+        if approved_code != 0 or approved_result.get("decision") != "allow":
+            raise AssertionError(f"exact approved write was not allowed: {approved_result} / {approved_stderr}")
+        replay_code, replay_result, replay_stderr = invoke_codex(new_payload)
+        if replay_code != 0 or replay_result.get("hookSpecificOutput", {}).get("permissionDecision") != "deny":
+            raise AssertionError(f"approval marker replay was not denied: {replay_result} / {replay_stderr}")
+
+        claude_adapter_path = project / ".claude" / "hooks" / "claude-pre-tool-use.ps1"
+        claude_denied = subprocess.run(
+            ["pwsh", "-NoProfile", "-File", str(claude_adapter_path)],
+            input=json.dumps({"tool_name": "Write", "tool_input": {"file_path": "../claude-escape.md", "content": "blocked"}}),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            env={**os.environ, "CLAUDE_PROJECT_DIR": str(project)},
+            check=False,
+        )
+        if claude_denied.returncode != 2 or "Claude routing guard denied" not in claude_denied.stderr:
+            raise AssertionError(f"Claude traversal write was not denied with exit 2: {claude_denied.stdout} / {claude_denied.stderr}")
+        claude_allowed = subprocess.run(
+            ["pwsh", "-NoProfile", "-File", str(claude_adapter_path)],
+            input=json.dumps({"tool_name": "Edit", "tool_input": {"file_path": ".docs/instruction/existing.md", "content": "revised again"}}),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            env={**os.environ, "CLAUDE_PROJECT_DIR": str(project)},
+            check=False,
+        )
+        if claude_allowed.returncode != 0 or json.loads(claude_allowed.stdout).get("decision") != "allow":
+            raise AssertionError(f"Claude existing canonical edit was not allowed: {claude_allowed.stdout} / {claude_allowed.stderr}")
         after_first_apply = snapshot_files(project)
         applied_again = subprocess.run(
             ["pwsh", "-NoProfile", "-File", str(bundle / "install-routing.ps1"), "-Apply", "-ApproveHostInstall"],

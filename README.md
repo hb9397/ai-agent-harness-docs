@@ -214,6 +214,12 @@ flowchart TD
 (복수 앱은 `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`)을
 따라 위치·소유권·인계를 결정한다.
 
+선택적으로 host-local write guard를 설치하면 Claude·Codex의 관찰 가능한 쓰기 요청은
+같은 project-owned routing contract로 점검한다. 기존 canonical 문서·승인된 앱 source·
+`.docs/_inbox/**`는 허용하고, 새 관리 문서는 경로·내용 hash에 묶인 1회성 승인 marker가
+필요하다. 동적 shell 경로·hosted tool·외부 process는 완전 차단 대상이 아닌 bypass
+evidence로 기록하는 한계가 있다.
+
 ### 4단계 — 품질·문서·커밋
 
 1. `multi-review`로 보안·성능·유지보수·테스트 관점을 점검한다.

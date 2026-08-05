@@ -22,5 +22,15 @@ if (($payload.tool_name -in @('Bash', 'apply_patch')) -and [string]::IsNullOrWhi
 
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\\..')).Path
 $corePath = Join-Path $projectRoot '.docs/harness/hooks/artifact-route-core.ps1'
-& $corePath -Host codex -ProjectRoot $projectRoot -ToolName $payload.tool_name -ToolInput $payload.tool_input
-exit $LASTEXITCODE
+try {
+    $decision = (& $corePath -RuntimeHost codex -ProjectRoot $projectRoot -ToolName $payload.tool_name -ToolInput $payload.tool_input | ConvertFrom-Json)
+} catch {
+    [ordered]@{ hookSpecificOutput = [ordered]@{ permissionDecision = 'deny'; permissionDecisionReason = "Codex routing guard failed: $($_.Exception.Message)" } } | ConvertTo-Json -Depth 8 -Compress
+    exit 2
+}
+if ($decision.decision -eq 'deny') {
+    [ordered]@{ hookSpecificOutput = [ordered]@{ permissionDecision = 'deny'; permissionDecisionReason = [string]$decision.reason } } | ConvertTo-Json -Depth 8 -Compress
+    exit 0
+}
+$decision | ConvertTo-Json -Depth 8 -Compress
+exit 0

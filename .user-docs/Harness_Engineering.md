@@ -941,6 +941,16 @@ cache에 선언된 수의 스킬이 존재함, 실제 모델이 산출물 계약
 않는다. 따라서 이후 다른 플러그인이나 일반 AI 도구를 사용해도 bundle과 앱별 routing
 instruction만으로 산출물 위치를 해석할 수 있다.
 
+G10 뒤 선택 host에 설치하는 `PreToolUse` adapter는 공통 write guard를 호출한다. guard는
+경로를 project containment 기준으로 정규화하고, 기존 canonical 문서·승인된 앱 source·
+`.docs/_inbox/**`·manifest exception만 통과시킨다. 새 관리 문서는 target path, operation,
+content SHA-256, TTL을 함께 묶은 1회성 approval marker가 정확히 일치할 때만 통과하며
+성공 뒤 marker를 소비한다. Codex는 deny JSON을, Claude는 exit 2/stderr를 사용한다.
+
+이는 관찰 가능한 local write surface의 best-effort guard다. 동적 shell target, hosted
+tool, opt-out path, 명령 실행 후의 redirect, 외부 process는 완전 차단을 주장하지 않고
+bypass evidence로 남긴다. 실제 Codex `/hooks` trust는 여전히 별도의 사용자 증적이다.
+
 ## 결론
 
 사용자 관점의 하네스는 **설치 → 문서 골격 → 설계·컨텍스트 → 구현 계획 →

@@ -19,6 +19,12 @@
       "routing_instruction": "{{ROUTING_INSTRUCTION}}"
     }
   ],
+  "write_guard": {
+    "approval_marker_directory": ".docs/.harness/artifact-approvals",
+    "one_shot_marker_ttl_seconds": 900,
+    "dynamic_shell_target": "bypass-with-evidence"
+  },
+  "write_exceptions": [],
   "hosts": {
     "claude": {
       "layer": 3,
