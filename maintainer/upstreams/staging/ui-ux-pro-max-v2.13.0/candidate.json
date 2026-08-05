@@ -1,0 +1,242 @@
+{
+  "schema_version": "1.0.0",
+  "id": "ui-ux-pro-max-v2.13.0",
+  "checked_at": "2026-08-05",
+  "status": "review-ready",
+  "relationship_group": "ui-ux-pro-max",
+  "candidate_sources": [
+    {
+      "source_id": "ui-ux-pro-max-runtime",
+      "integration_mode": "adapted",
+      "ref": "v2.13.0",
+      "sha": "4d140cf8ff6842de13213c7214eff3810371beb2"
+    },
+    {
+      "source_id": "ui-ux-pro-max-principles",
+      "integration_mode": "reference",
+      "ref": "v2.13.0",
+      "sha": "4d140cf8ff6842de13213c7214eff3810371beb2"
+    }
+  ],
+  "upstream": {
+    "repository": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+    "baseline": {
+      "ref": "v2.11.3",
+      "sha": "4857a2c5ef989794751a0f66b8545a4a49566286"
+    },
+    "target": {
+      "ref": "v2.13.0",
+      "sha": "4d140cf8ff6842de13213c7214eff3810371beb2"
+    }
+  },
+  "trees": {
+    "source": "maintainer/upstreams/candidates/ui-ux-pro-max-v2.13.0/source-tree",
+    "runtime": "maintainer/upstreams/candidates/ui-ux-pro-max-v2.13.0/runtime-preview"
+  },
+  "diffs": {
+    "upstream_v2_11_3_to_v2_13_0": "maintainer/upstreams/candidates/ui-ux-pro-max-v2.13.0/diffs/upstream-v2.11.3-to-v2.13.0.diff",
+    "canonical_to_source": "maintainer/upstreams/candidates/ui-ux-pro-max-v2.13.0/diffs/canonical-v2.11.3-to-v2.13.0-source.diff",
+    "source_to_runtime_preview": "maintainer/upstreams/candidates/ui-ux-pro-max-v2.13.0/diffs/source-to-runtime-preview.diff"
+  },
+  "three_way_merge": {
+    "upstream_skill_path": ".claude/skills/ui-ux-pro-max/SKILL.md",
+    "local_skill_path": "skills/ui-ux-pro-max/SKILL.md",
+    "upstream_v2_11_3_sha256": "04e3332c3f82b3dfc60962477b834db1b0d1e2150cc4c96d7139150df612ad1f",
+    "upstream_v2_13_0_sha256": "04e3332c3f82b3dfc60962477b834db1b0d1e2150cc4c96d7139150df612ad1f",
+    "local_sha256": "92e3eb2b9f6cb8411ce97fc7f10a483a87e237789d3d34628f28b3b045068ed1",
+    "outcome": "clean: upstream SKILL.md is unchanged, so the existing platform-neutral local adaptation is preserved without a merge conflict"
+  },
+  "file_classification": [
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/SKILL.md",
+      "local_path": "skills/ui-ux-pro-max/SKILL.md",
+      "treatment": "modified",
+      "change": "unchanged-upstream-preserve-local-adaptation",
+      "file_count": 1
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/**",
+      "local_path": "skills/ui-ux-pro-max/data/**",
+      "treatment": "verbatim",
+      "change": "unchanged",
+      "file_count": 35
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/references/**",
+      "local_path": "skills/ui-ux-pro-max/references/**",
+      "treatment": "verbatim",
+      "change": "unchanged",
+      "file_count": 2
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/scripts/core.py",
+      "local_path": "skills/ui-ux-pro-max/scripts/core.py",
+      "treatment": "verbatim",
+      "change": "unchanged",
+      "file_count": 1
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/scripts/search.py",
+      "local_path": "skills/ui-ux-pro-max/scripts/search.py",
+      "treatment": "verbatim",
+      "change": "unchanged",
+      "file_count": 1
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/scripts/validate_data.py",
+      "local_path": "skills/ui-ux-pro-max/scripts/validate_data.py",
+      "treatment": "verbatim",
+      "change": "unchanged",
+      "file_count": 1
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/scripts/tests/test_core.py",
+      "local_path": "skills/ui-ux-pro-max/scripts/tests/test_core.py",
+      "treatment": "verbatim",
+      "change": "unchanged",
+      "file_count": 1
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/scripts/design_system.py",
+      "local_path": "skills/ui-ux-pro-max/scripts/design_system.py",
+      "treatment": "verbatim",
+      "change": "modified",
+      "file_count": 1
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/scripts/tests/test_design_system_mode.py",
+      "local_path": "skills/ui-ux-pro-max/scripts/tests/test_design_system_mode.py",
+      "treatment": "verbatim",
+      "change": "added",
+      "file_count": 1
+    },
+    {
+      "upstream_path": "LICENSE",
+      "local_path": "maintainer/upstreams/provenance/ui-ux-pro-max/LICENSE",
+      "treatment": "notice-preserved",
+      "change": "unchanged-upstream; raw archive bytes match preserved provenance",
+      "file_count": 1
+    },
+    {
+      "upstream_path": null,
+      "local_path": "skills/ui-ux-pro-max/evals/run_evals.py",
+      "treatment": "local-only",
+      "change": "preserve",
+      "file_count": 1
+    }
+  ],
+  "file_map": [
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/SKILL.md",
+      "local_path": "skills/ui-ux-pro-max/SKILL.md",
+      "treatment": "modified"
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/data/**",
+      "local_path": "skills/ui-ux-pro-max/data/**",
+      "treatment": "verbatim"
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/references/**",
+      "local_path": "skills/ui-ux-pro-max/references/**",
+      "treatment": "verbatim"
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/scripts/**",
+      "local_path": "skills/ui-ux-pro-max/scripts/**",
+      "treatment": "verbatim"
+    },
+    {
+      "upstream_path": "LICENSE",
+      "local_path": "maintainer/upstreams/provenance/ui-ux-pro-max/LICENSE",
+      "treatment": "notice-preserved"
+    }
+  ],
+  "inventory": {
+    "source_tree_files": 45,
+    "generated_skill_files": 44,
+    "runtime_preview_files": 45,
+    "unclassified_source_files": 0,
+    "unclassified_runtime_files": 0
+  },
+  "destructive_changes": [],
+  "excluded_upstream_paths": [
+    ".claude/skills/banner-design/**",
+    ".claude/skills/brand/**",
+    ".claude/skills/design/**",
+    ".claude/skills/design-system/**",
+    ".claude/skills/slides/**",
+    ".claude/skills/ui-styling/**",
+    "src/**",
+    "cli/**",
+    "stack/**",
+    "projects/**",
+    "scripts/**",
+    "docs/**",
+    "preview/**",
+    "screenshots/**",
+    ".github/**",
+    ".claude-plugin/**"
+  ],
+  "reference_consumers": [
+    {
+      "local_skill": "design-prototype-docs",
+      "effect": "keeps the existing input priority that can consume an approved ui-ux-pro-max decision",
+      "upstream_files_copied": false
+    },
+    {
+      "local_skill": "create-prototype",
+      "effect": "keeps approved ui-ux-pro-max decisions as a design-system input",
+      "upstream_files_copied": false
+    },
+    {
+      "local_skill": "frontend-design",
+      "effect": "keeps approved ui-ux-pro-max decisions below the existing product design system and tokens",
+      "upstream_files_copied": false
+    },
+    {
+      "local_skill": "impl-verify",
+      "effect": "no direct upstream dependency or source import; Phase 3 will assess only any resulting runtime behavior",
+      "upstream_files_copied": false
+    }
+  ],
+  "license": {
+    "spdx": "MIT",
+    "upstream_v2_11_3_sha256": "738f69dfa83db5c347c678fb9d90e560877059f0de93a327c39001bff92dc014",
+    "upstream_v2_13_0_sha256": "738f69dfa83db5c347c678fb9d90e560877059f0de93a327c39001bff92dc014",
+    "preserved_provenance_sha256": "738f69dfa83db5c347c678fb9d90e560877059f0de93a327c39001bff92dc014",
+    "status": "upstream-unchanged; raw target bytes match the existing accepted provenance evidence"
+  },
+  "security": {
+    "status": "passed",
+    "reviewed_at": "2026-08-05",
+    "scope": {
+      "imports": "Python standard library and local modules only; no third-party runtime dependency",
+      "network": "none",
+      "subprocess_or_shell": "none",
+      "dynamic_execution": "none",
+      "filesystem_write": "pre-existing persist_design_system path only; runtime-preview SKILL.md requires explicit user approval and a project .docs output directory"
+    },
+    "changed_surface": "dark-mode palette helper update and its unittest; no new execution, network, subprocess, or filesystem-write mechanism",
+    "runtime_test": "python -m unittest discover -s scripts/tests -v: 36 passed"
+  },
+  "validation": {
+    "source_tree": "exact Git archive target tree; 45 target blob hashes verified before commit",
+    "runtime_preview": "local adaptation and eval preserved; changed upstream scripts reflected verbatim",
+    "registry": "passed",
+    "portfolio_evals": "passed"
+  },
+  "required_approvals": {
+    "general": null,
+    "asset_impact": null,
+    "destructive": null
+  },
+  "gate_state": {
+    "G2_license_security": "passed",
+    "G3_general_application": "not required until promotion handoff",
+    "G4_protected_asset": "required before promotion; explicit approval ID not yet issued",
+    "G5_destructive": "not required; destructive_changes=[]"
+  },
+  "decision": "accept-for-staging",
+  "pending_approvals": []
+}
