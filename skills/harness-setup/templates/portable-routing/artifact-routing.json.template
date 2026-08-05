@@ -3,6 +3,12 @@
   "kind": "portable-artifact-routing",
   "project_root": "{{PROJECT_ROOT}}",
   "mode": "{{PROJECT_MODE}}",
+  "setup": {
+    "project_owned_bundle": true,
+    "host_installation": "not-installed",
+    "harness_kit_runtime_required": true,
+    "runtime_independence_condition": "Set false only after project-owned bundle remains and every selected host hook is active after its trust workflow."
+  },
   "apps": [
     {
       "id": "{{APP_ID}}",

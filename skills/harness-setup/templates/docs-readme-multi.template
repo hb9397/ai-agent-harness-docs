@@ -25,6 +25,9 @@
 ├── _inbox/                         ← 에이전트가 읽을 파일을 잠시 올려두는 로컬 전용 공간 (git 미추적)
 ├── .harness/
 │   └── humanize-handoffs.json      ← 문서 개선 중복 제안 방지 ledger
+├── harness/                         ← plugin-neutral artifact routing bundle
+│   ├── artifact-routing.json        ← app·host 상태 정본
+│   └── install-routing.ps1          ← Plan/Check/승인형 Apply·Uninstall
 ├── root-context/
 │   ├── AGENTS.md                   ← 루트 컨텍스트 정본 복사본
 │   └── CLAUDE.md                   ← @AGENTS.md bridge 복사본
@@ -48,6 +51,7 @@
 | 스킬 | 산출물 | 위치 |
 |------|--------|------|
 | `harness-setup` | 이 README, `.gitignore`, `_inbox/`, 루트 컨텍스트 | `.docs/README.md`, `.docs/.gitignore`, `.docs/_inbox/`, `.docs/root-context/` |
+| portable routing | 경로·format·host 설치 상태 | `.docs/harness/` |
 | `design-doc` | 설계 문서 | `.docs/{앱}/context-base/DESIGN.md` |
 | `context-doc` | 앱별 컨텍스트 + instruction | `.docs/{앱}-context.md`, `.docs/{앱}/instruction/*-instruction.md`, 루트 `AGENTS.md` 정본과 `CLAUDE.md` bridge |
 | `impl-doc` / `impl-fe-be-doc` | 구현 지침 | `.docs/{앱}/impl-doc/{사용자}/{기능}.md` |

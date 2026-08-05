@@ -196,6 +196,8 @@ def check_portable_routing_bundle() -> None:
         "codex": "pending-trust",
     }:
         raise AssertionError("host hook states must remain pending-trust before G13")
+    if routing.get("setup", {}).get("harness_kit_runtime_required") is not True:
+        raise AssertionError("routing manifest must not claim runtime independence before host trust")
     if "C:\\Users\\" in json.dumps(routing):
         raise AssertionError("portable routing schema stores a user-specific path")
 
@@ -270,6 +272,8 @@ def check_portable_routing_bundle() -> None:
             ["pwsh", "-NoProfile", "-File", str(bundle / "install-routing.ps1"), "-Plan"],
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             check=False,
         )
         if result.returncode != 0:
@@ -282,6 +286,78 @@ def check_portable_routing_bundle() -> None:
             raise AssertionError("portable installer plan does not contain both host targets")
         if targets["claude"]["trust"] != "pending-trust" or targets["codex"]["trust"] != "pending-trust":
             raise AssertionError("portable installer plan must not activate host trust")
+
+        claude_settings = project / ".claude" / "settings.json"
+        claude_settings.parent.mkdir(parents=True, exist_ok=True)
+        claude_settings.write_text('{"permissions":{"allow":["Read"]}}\n', encoding="utf-8")
+        before_apply = snapshot_files(project)
+        denied = subprocess.run(
+            ["pwsh", "-NoProfile", "-File", str(bundle / "install-routing.ps1"), "-Apply"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            check=False,
+        )
+        if denied.returncode == 0 or snapshot_files(project) != before_apply:
+            raise AssertionError("unapproved host Apply must fail without writing")
+        applied = subprocess.run(
+            ["pwsh", "-NoProfile", "-File", str(bundle / "install-routing.ps1"), "-Apply", "-ApproveHostInstall"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            check=False,
+        )
+        if applied.returncode != 0:
+            raise AssertionError(f"approved portable installer apply failed: {applied.stderr}")
+        if not (project / ".claude" / "hooks" / "claude-pre-tool-use.ps1").is_file() or not (project / ".codex" / "hooks" / "codex-pre-tool-use.ps1").is_file():
+            raise AssertionError("approved Apply did not materialize both host adapters")
+        if "Read" not in read(claude_settings):
+            raise AssertionError("approved Apply did not preserve unrelated Claude settings")
+        after_first_apply = snapshot_files(project)
+        applied_again = subprocess.run(
+            ["pwsh", "-NoProfile", "-File", str(bundle / "install-routing.ps1"), "-Apply", "-ApproveHostInstall"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            check=False,
+        )
+        if applied_again.returncode != 0 or snapshot_files(project) != after_first_apply:
+            raise AssertionError("second approved Apply must be idempotent")
+        checked = subprocess.run(
+            ["pwsh", "-NoProfile", "-File", str(bundle / "install-routing.ps1"), "-Check"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            check=False,
+        )
+        if checked.returncode != 0 or {item["state"] for item in json.loads(checked.stdout)["hosts"]} != {"pending-trust"}:
+            raise AssertionError("Check did not report both installed hosts as pending-trust")
+        removed = subprocess.run(
+            ["pwsh", "-NoProfile", "-File", str(bundle / "install-routing.ps1"), "-Uninstall", "-ApproveHostInstall"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if removed.returncode != 0 or (project / ".claude" / "hooks" / "claude-pre-tool-use.ps1").exists() or (project / ".codex" / "hooks" / "codex-pre-tool-use.ps1").exists():
+            raise AssertionError("approved Uninstall did not remove only both host adapters")
+        if "Read" not in read(claude_settings):
+            raise AssertionError("Uninstall did not preserve unrelated Claude settings")
+
+
+def check_portable_routing_lifecycle_contract() -> None:
+    """B2 contract: lifecycle operations stay host-scoped and approval-gated."""
+    installer = read(PORTABLE_ROUTING_TEMPLATE_ROOT / "install-routing.ps1.template")
+    for token in ("-Plan", "-Apply", "-Check", "-Uninstall", "[ValidateSet('claude', 'codex', 'all')]", "ApproveHostInstall"):
+        if token not in installer:
+            raise AssertionError(f"portable installer lifecycle operation missing: {token}")
+    for template_name in ("root-context-single.template", "root-context.template", "claude-bridge.template"):
+        template = read(SETUP_ROOT / "templates" / template_name)
+        if ".docs/harness/artifact-routing.json" not in template:
+            raise AssertionError(f"{template_name}: missing portable routing Layer 1 summary")
 
 
 def assert_allowed_outputs(project: Path, before: dict[str, str]) -> None:
@@ -401,12 +477,24 @@ def check_setup_contract() -> None:
         "ledger는 Markdown이 아니며",
         "correlation 용도",
         "`harness-kit:managed:start/end` marker",
+        "manual portable adoption",
+        "G10",
+        "`.codex/hooks.json`",
     ):
         require(skill_text, needle, SETUP_ROOT / "SKILL.md")
 
     detection = read(SETUP_ROOT / "prompts" / "detection.md")
     require(detection, "`.docs/` 또는 `AGENTS.md`가 존재", SETUP_ROOT / "prompts" / "detection.md")
     require(detection, "위 조건 불충족", SETUP_ROOT / "prompts" / "detection.md")
+    require(detection, "manual portable adoption", SETUP_ROOT / "prompts" / "detection.md")
+
+    for path, needle in (
+        (SETUP_ROOT / "prompts" / "single-app-setup.md", ".docs/harness/"),
+        (SETUP_ROOT / "prompts" / "multi-app-setup.md", ".docs/harness/"),
+        (SETUP_ROOT / "prompts" / "update-mode.md", "current/proposed diff"),
+        (SETUP_ROOT / "prompts" / "update-mode.md", "G10"),
+    ):
+        require(read(path), needle, path)
 
     update = setup_texts[SETUP_ROOT / "prompts" / "update-mode.md"]
     for needle in (
@@ -704,6 +792,7 @@ def main() -> int:
     check_nested_handoff_contract()
     check_portable_routing_baseline()
     check_portable_routing_bundle()
+    check_portable_routing_lifecycle_contract()
     check_filesystem_fixtures()
     print("harness setup contract and filesystem fixture evals passed")
     return 0

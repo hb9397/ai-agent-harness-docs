@@ -182,3 +182,11 @@ Step 2에서 확인된 각 `{앱}` 폴더에 대해 현재 플랫폼의 파일 �
 - 루트와 `.docs/root-context/CLAUDE.md`가 모두 `@AGENTS.md` bridge인지 확인
 
 금지 경로 변경이나 미치환 placeholder가 있으면 세팅 성공으로 보고하지 않는다.
+
+## 7. Portable routing bundle
+
+`.docs/harness/`는 project-owned shared bundle이며, app id·source/docs root·prototype
+owner는 감지 결과를 사용하고 hardcoded BE/FE 정규식으로 만들지 않는다. 각 앱의
+`.docs/{앱}/instruction/artifact-output-routing-instruction.md`가 Layer 2 정본이다.
+host-local Claude/Codex file은 `-Plan`으로만 current/proposed diff를 제시하고 G10
+승인 전에는 생성하지 않는다.

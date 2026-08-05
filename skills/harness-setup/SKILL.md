@@ -322,3 +322,28 @@ fingerprint를 연결한 새 record에도 `applied`를 기록한다. 원 produce
 개선안 제안만 수행하며 사용자 승인 전에는 산출물 파일을 덮어쓰지 않는다. 제목,
 표, 경로, 명령어, ID, 숫자, 날짜, 의무 수준 표현과
 `harness-kit:managed:start/end` marker는 원문 그대로 보존한다.
+
+---
+
+## Portable routing lifecycle (Track B)
+
+`harness-setup`은 `.docs/harness/artifact-routing.json`이 있으면 Layer 1의
+`AGENTS.md`/`CLAUDE.md`에서 routing manifest와 앱별 routing instruction을 참조한다.
+기존 bundle은 있으나 host adapter/config가 없거나 `uninstalled`이면 **manual portable
+adoption**으로 분류한다. initial, update, recovery, manual portable adoption 결과는
+host별 current/proposed diff, created/modified/unchanged, local-only/shared 파일과 trust
+상태를 나누어 사용자에게 보인다.
+
+기본 생성·갱신 범위는 `.docs/**`, 루트 `AGENTS.md`, 루트 `CLAUDE.md`다. G10으로
+host 설치가 별도 승인된 실행에서만 `.claude/settings.json`,
+`.claude/hooks/claude-pre-tool-use.ps1`, `.codex/hooks.json`,
+`.codex/hooks/codex-pre-tool-use.ps1`의 관리 hook entry와 adapter를 다룬다. Claude
+settings merge와 Codex hooks.json merge는 서로 다른 adapter이며 기존 사용자 설정은
+보존한다.
+
+`.docs/harness/install-routing.ps1`의 `-Plan`과 `-Check`은 읽기 전용이다. `-Apply`와
+`-Uninstall`은 host별 diff를 확인한 별도 G10 승인 뒤에만
+`-ApproveHostInstall`과 함께 실행한다. Codex 신규·변경 hook은 `/hooks` 검토·신뢰
+증적 전까지 `pending-trust`이며 active로 보고하지 않는다. 생성된 project-owned
+bundle과 활성화된 host hook이 모두 남은 범위에서만 setup manifest에
+`harness-kit-runtime-required=false`를 기록한다.

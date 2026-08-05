@@ -99,3 +99,10 @@ legacy/custom local skill 후보로만 기록하고, 실행 컨텍스트 판정�
 > `.claude/skills/`, `.agents/skills/` 또는 `skills/*/SKILL.md`만 있는 경우:
 > legacy/custom local skill 후보로 보고하되, 문서 하네스가 없으면 **초기 세팅**으로
 > 분류한다. 이 경로들은 세팅 모드와 관계없이 생성·수정·동기화하지 않는다.
+
+### Portable routing 상태 판별
+
+`.docs/harness/artifact-routing.json`이 있으면 manifest의 mode, app id와 host별
+status를 읽는다. bundle은 있으나 host adapter/config가 없거나 `uninstalled`이면
+**manual portable adoption**으로 분류한다. 이 분류는 `-Plan`/`-Check`만으로는
+바뀌지 않으며 host-local 적용은 G10 승인 뒤에만 제안한다.

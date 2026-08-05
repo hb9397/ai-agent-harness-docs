@@ -932,6 +932,15 @@ cache에 선언된 수의 스킬이 존재함, 실제 모델이 산출물 계약
 
 ---
 
+## Portable routing lifecycle
+
+`harness-setup`은 `.docs/harness/`에 경로·형식·host 상태 정본을 남긴다.
+`-Plan`/`-Check`은 읽기 전용이며, Claude/Codex host-local hook의
+`-Apply`/`-Uninstall`은 host별 diff와 별도 승인 뒤에만 수행한다. Codex hook은
+`/hooks` 신뢰 증적 전까지 `pending-trust`이며 plugin runtime 비종속 상태로 기록하지
+않는다. 따라서 이후 다른 플러그인이나 일반 AI 도구를 사용해도 bundle과 앱별 routing
+instruction만으로 산출물 위치를 해석할 수 있다.
+
 ## 결론
 
 사용자 관점의 하네스는 **설치 → 문서 골격 → 설계·컨텍스트 → 구현 계획 →
