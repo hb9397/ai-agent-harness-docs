@@ -1,0 +1,52 @@
+# Portable artifact routing bundle
+
+This directory is the project-owned source of truth for artifact location and
+format. It remains readable after any setup tool or plugin has been removed.
+
+## Read in this order
+
+1. `artifact-routing.json` identifies the project mode, applications, ownership
+   roots and the two host-local adapter states.
+2. `artifact-format-contract.json` defines the required metadata and path rules
+   for a generated artifact.
+3. The application routing instruction at `{{ROUTING_INSTRUCTION}}` is the
+   detailed, app-scoped routing authority.
+
+## Host-local adapters
+
+The shared bundle is under `.docs/harness/`; host-local files are intentionally
+separate:
+
+- Claude: `.claude/settings.json` and `.claude/hooks/claude-pre-tool-use.ps1`
+- Codex: `.codex/hooks.json` and `.codex/hooks/codex-pre-tool-use.ps1`
+
+Both remain `pending-trust` until an administrator approves host installation
+and the host-specific trust step. `install-routing.ps1 -Plan` is safe to run:
+it emits the identical proposed local targets and does not write files.
+
+## Write guard boundary
+
+The adapters share a project-owned path guard. It permits existing canonical
+documents, approved app source, `.docs/_inbox/**`, and declared exceptions. A
+new managed document requires a path-bound, content-hash-bound, one-shot marker
+created with `approve-artifact.ps1 -Approve`; it expires and is consumed after
+one exact write. Dynamic shell targets are recorded as bypass evidence, not
+claimed as fully enforced. Hosted tools, opt-out tool paths, shell redirects
+created after command execution, and processes outside this project are also
+best-effort limits rather than a complete security boundary.
+
+## External artifact normalization
+
+`normalize-artifact.ps1 -Plan` previews a G12 proposal. With explicit
+`-Promote -ApprovePromotion`, text formats (`.md`, `.mdx`, `.txt`, `.rst`,
+`.adoc`, `.asciidoc`) are UTF-8 normalized and use a marker-aware merge that
+preserves existing unmanaged text. JSON/YAML, images, and PDF stay in
+`.docs/_inbox/{artifact-bundle-id}/artifact-manifest.json`; the tool refuses a
+lossy automatic conversion or canonical promotion for those fixed formats.
+
+## Recovery and review
+
+Do not copy an adapter or configuration from one host to the other. Inspect the
+host-specific input contract in its adapter, review the plan, then apply the
+approved host-specific merge workflow. A proposal from `.docs/_inbox/` remains
+non-canonical until its provenance and target path are explicitly approved.

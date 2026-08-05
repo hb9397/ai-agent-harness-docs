@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "purpose": "Phase B1 clean-fixture rendering values for the self-contained portable routing bundle. These values are fixture data, not a project installation.",
+  "replacements": {
+    "{{PROJECT_ROOT}}": "D:/fixture/portable-routing-project",
+    "{{PROJECT_MODE}}": "single",
+    "{{APP_ID}}": "application",
+    "{{APP_SOURCE_ROOT}}": ".",
+    "{{APP_DOCS_ROOT}}": ".docs",
+    "{{PROTOTYPE_OWNER}}": ".docs/prototype",
+    "{{CANONICAL_CONTEXT}}": ".docs/context-base/DESIGN.md",
+    "{{ROUTING_INSTRUCTION}}": ".docs/instruction/artifact-output-routing-instruction.md",
+    "{{CODEX_HOOK_PATH}}": "D:/fixture/portable-routing-project/.codex/hooks/codex-pre-tool-use.ps1"
+  }
+}

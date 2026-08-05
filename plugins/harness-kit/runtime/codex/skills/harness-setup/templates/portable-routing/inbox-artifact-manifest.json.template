@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "artifact-inbox-manifest",
+  "status": "proposal-only",
+  "items": [],
+  "required_item_fields": [
+    "artifact_id",
+    "artifact_type",
+    "proposed_target_path",
+    "producer",
+    "input_fingerprint",
+    "source_context"
+  ],
+  "canonicalization": "An inbox item must not overwrite a canonical artifact without explicit approval."
+}

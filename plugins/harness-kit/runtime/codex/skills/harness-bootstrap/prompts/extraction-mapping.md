@@ -150,3 +150,10 @@ TODO/FIXME 주석 + 인터뷰 답변에서 언급된 미결 항목.
 | 미정 표시 | 추출 불가 항목은 `미정 — [이유]` |
 | 중복 제거 | 같은 정보는 가장 적합한 한 섹션에만 |
 | 간결함 유지 | 각 섹션은 핵심만, 파일 덤프 금지 |
+
+## 산출물 라우팅 판정
+
+관찰 결과를 문서로 옮길 때도 producer 이름이 아니라 **artifact 의미**와 **대상 앱**을
+먼저 확정한다. 경로·형식의 정본은 project-owned routing manifest이며, 관찰로 확정할 수
+없는 app ownership이나 외부 bundle은 `_inbox` proposal로만 남기고 canonical 파일을
+추정 생성하지 않는다.

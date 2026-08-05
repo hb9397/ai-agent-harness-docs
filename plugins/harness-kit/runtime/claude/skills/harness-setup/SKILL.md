@@ -322,3 +322,46 @@ fingerprint를 연결한 새 record에도 `applied`를 기록한다. 원 produce
 개선안 제안만 수행하며 사용자 승인 전에는 산출물 파일을 덮어쓰지 않는다. 제목,
 표, 경로, 명령어, ID, 숫자, 날짜, 의무 수준 표현과
 `harness-kit:managed:start/end` marker는 원문 그대로 보존한다.
+
+---
+
+## Portable routing lifecycle (Track B)
+
+`harness-setup`은 `.docs/harness/artifact-routing.json`이 있으면 Layer 1의
+`AGENTS.md`/`CLAUDE.md`에서 routing manifest와 앱별 routing instruction을 참조한다.
+기존 bundle은 있으나 host adapter/config가 없거나 `uninstalled`이면 **manual portable
+adoption**으로 분류한다. initial, update, recovery, manual portable adoption 결과는
+host별 current/proposed diff, created/modified/unchanged, local-only/shared 파일과 trust
+상태를 나누어 사용자에게 보인다.
+
+기본 생성·갱신 범위는 `.docs/**`, 루트 `AGENTS.md`, 루트 `CLAUDE.md`다. G10으로
+host 설치가 별도 승인된 실행에서만 `.claude/settings.json`,
+`.claude/hooks/claude-pre-tool-use.ps1`, `.codex/hooks.json`,
+`.codex/hooks/codex-pre-tool-use.ps1`의 관리 hook entry와 adapter를 다룬다. Claude
+settings merge와 Codex hooks.json merge는 서로 다른 adapter이며 기존 사용자 설정은
+보존한다.
+
+`.docs/harness/install-routing.ps1`의 `-Plan`과 `-Check`은 읽기 전용이다. `-Apply`와
+`-Uninstall`은 host별 diff를 확인한 별도 G10 승인 뒤에만
+`-ApproveHostInstall`과 함께 실행한다. Codex 신규·변경 hook은 `/hooks` 검토·신뢰
+증적 전까지 `pending-trust`이며 active로 보고하지 않는다. 생성된 project-owned
+bundle과 활성화된 host hook이 모두 남은 범위에서만 setup manifest에
+`harness-kit-runtime-required=false`를 기록한다.
+
+사용자가 host의 실제 신뢰 검토를 마친 증적을 제시할 때만 `-ActivateTrust`와
+`-ApproveTrustEvidence`로 해당 host의 manifest 상태를 `active`로 기록한다. 이 명령은
+`/hooks`를 대신 실행하거나 신뢰를 자동 추론하지 않는다. 외부 text artifact는
+`normalize-artifact.ps1 -Plan`으로 UTF-8·marker-aware merge proposal을 만들고 G12 승인 뒤
+`-Promote -ApprovePromotion`으로 반영한다. JSON/YAML·이미지·PDF는 `_inbox` manifest만
+갱신하며 lossless 여부를 알 수 없는 자동 canonical promotion은 금지한다.
+
+host adapter가 활성화된 경우 공통 write guard는 absolute/relative, separator, case,
+traversal을 정규화해 project containment를 확인한다. 기존 canonical file, 승인된 app
+source, `.docs/_inbox/**`, manifest exception은 허용한다. 새 managed `.docs` 또는 root
+context 파일은 target path·operation·content SHA-256·TTL에 정확히 묶인 one-shot marker가
+있을 때만 통과하며 성공 후 원자적으로 소비한다. Codex는
+`hookSpecificOutput.permissionDecision=deny`, Claude는 exit 2/stderr로 차단한다.
+
+동적 Bash target, hosted tool, opt-out tool path, command 이후 redirect, 외부 process는
+완전 판정할 수 없으므로 bypass evidence로 남긴다. 이를 전면 보안 sandbox나 Codex trust
+자동 승인으로 설명하지 않는다.

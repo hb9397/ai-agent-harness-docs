@@ -176,3 +176,14 @@ Step 2 감지 결과에서 `.docs/{앱}-context.md`가 없는 새 앱 폴더가 
 `CLAUDE.md` bridge도 함께 검증한다. 갱신 전후 사용자 관리 블록 밖 내용과
 legacy local skill copy의 hash가 동일한지 확인하고, backup을 만든 경우 대상
 목록과 복구 경로를 결과에 포함한다.
+
+## 9. Portable routing update·manual adoption
+
+`.docs/harness/artifact-routing.json`을 current 상태로 읽고, shared bundle과 각
+host-local file을 `created`/`modified`/`unchanged`, `local-only`/`shared`로 나눈
+**current/proposed diff**를 먼저 출력한다. root non-Git, `.docs` Git, 각 app Git은
+각각 status만 읽어 별도 변경을 보존한다.
+
+`-Plan`/`-Check`은 읽기 전용이고, manual portable adoption의 `-Apply`/`-Uninstall`은
+G10 승인 뒤 `-ApproveHostInstall`과 함께만 실행한다. Codex hook은 `/hooks` 신뢰
+증적 전까지 `pending-trust`이며 active로 변경하지 않는다.

@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "recorded_at": "2026-08-05",
+  "purpose": "Read-only Phase B0 baseline for portable artifact routing. It captures host facts and known failure modes without installing, trusting, or enabling hooks.",
+  "case_study": {
+    "id": "keai-e-life-check",
+    "inspection_mode": "read-only",
+    "external_project_mutations": 0,
+    "topology": {
+      "root_is_git": false,
+      "docs_git": true,
+      "applications": [
+        {"path": "be-keai-e-life-check", "is_git": true},
+        {"path": "fe-keai-e-life-check", "is_git": true}
+      ]
+    },
+    "managed_bridge": {
+      "agents_marker": "harness-kit:managed:start/end",
+      "claude_bridge": "@AGENTS.md",
+      "preserve_outside_managed_block": true
+    },
+    "claude_installation": {
+      "status": "installed-case-specific",
+      "settings_path": ".claude/settings.json",
+      "event": "PreToolUse",
+      "matcher": "Write|Edit",
+      "guard_sha256": "f663140d2a80c327d0ae5047bdf34903304d31bcbec5f97979462d631be939fa",
+      "approval_helper_sha256": "cc72d6e832b56a7e89c2c1bce069f20290c03e2734fc8b5b7b61d6b65ddd3484",
+      "shared_copy_matches": true
+    },
+    "codex_installation": {
+      "status": "not-installed",
+      "expected_project_path": ".codex/hooks.json",
+      "reason": "the current Claude-only case is evidence for topology and failure modes, not a portable dual-host implementation"
+    }
+  },
+  "host_capabilities": {
+    "claude": {
+      "status": "supported",
+      "source": "https://code.claude.com/docs/en/hooks",
+      "event": "PreToolUse",
+      "matcher": "Write|Edit",
+      "input": "JSON stdin",
+      "deny": "exit code 2 with stderr blocks PreToolUse",
+      "project_scope": ".claude/settings.json",
+      "project_root_variable": "CLAUDE_PROJECT_DIR"
+    },
+    "codex": {
+      "status": "supported",
+      "source": "https://learn.chatgpt.com/docs/hooks",
+      "event": "PreToolUse",
+      "matcher": "apply_patch; Edit|Write alias; Bash; MCP and other local function tool names",
+      "input": "JSON stdin; Bash and apply_patch use tool_input.command",
+      "deny": "exit code 2 with stderr or hookSpecificOutput.permissionDecision=deny",
+      "project_scope": ".codex/hooks.json",
+      "trust": "/hooks review and hash trust required for new or changed non-managed definitions",
+      "plugin_hook_support": "supported but rejected as canonical installer because a project-owned configuration must remain after plugin removal"
+    }
+  },
+  "reuse_scan": [
+    {"asset": "maintainer/inventory/artifact-output-contract.json", "decision": "extend", "reason": "existing canonical ownership contract needs host capability and bypass baseline"},
+    {"asset": "skills/harness-setup/templates and prompts", "decision": "extend", "reason": "existing project setup/update and managed-block contracts are the portable bundle input"},
+    {"asset": "skills/harness-setup/evals/run_evals.py", "decision": "extend", "reason": "existing deterministic setup fixture runner can validate the baseline without external project writes"},
+    {"asset": "skills/harness-bootstrap", "decision": "reuse", "reason": "existing instruction and routing handoff contract remains the initial-project input"},
+    {"asset": "keai-e-life-check Claude hooks", "decision": "reuse", "reason": "read-only topology and failure-mode specimen only; do not copy its case-specific implementation"},
+    {"asset": "project-owned Codex hook adapter", "decision": "new", "reason": "no canonical adapter or trust workflow exists in this repository; defer to Phase B1/B4"}
+  ],
+  "failure_fixtures": [
+    {"id": "path-unbound-marker", "expected": "fail", "reason": "approval marker must bind exactly one normalized target path and be consumed once"},
+    {"id": "sibling-prefix-containment", "expected": "fail", "reason": "path containment must reject a sibling such as project-evil when project is the root"},
+    {"id": "hardcoded-app-regex", "expected": "fail", "reason": "application ownership must come from discovered topology, not a case-specific BE/FE regex"}
+  ],
+  "bypass_boundaries": [
+    "hosted tools and remote services outside the local hook path",
+    "specialized opt-out tool paths",
+    "shell-internal dynamic paths after command acceptance",
+    "external processes and writes outside the project root"
+  ]
+}

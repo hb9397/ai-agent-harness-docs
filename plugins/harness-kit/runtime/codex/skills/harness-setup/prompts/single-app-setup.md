@@ -127,3 +127,11 @@
 - 모든 템플릿 placeholder가 치환됐고 `CLAUDE.md`가 `@AGENTS.md` bridge인지 확인
 
 금지 경로가 변경됐거나 placeholder가 남아 있으면 세팅 성공으로 보고하지 않는다.
+
+## 7. Portable routing bundle
+
+`.docs/harness/`에 routing/format contract, README, installer와 shared hook core를
+생성한다. Layer 1은 routing manifest를 참조하고 Layer 2의
+`.docs/instruction/artifact-output-routing-instruction.md`를 상세 정본으로 둔다.
+Claude·Codex host-local config와 adapter는 `install-routing.ps1 -Plan`에만 제안하며,
+G10 승인 전에는 생성하지 않는다.

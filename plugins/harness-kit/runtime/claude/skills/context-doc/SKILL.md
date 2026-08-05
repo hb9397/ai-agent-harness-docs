@@ -53,6 +53,9 @@ handoff_completed = false
 3. 판정 결과 + 적용 대상 애플리케이션(폴더)을 사용자에게 **반드시 재확인**한다.
 4. 설계 문서(`.docs/context-base/DESIGN.md` 또는 `.docs/{앱}/context-base/DESIGN.md`) 위치를 확인하여 참조 설정을 명시한다.
 5. 확인된 범위 밖은 건드리지 않는다.
+6. `.docs/harness/artifact-routing.json`과 `artifact-format-contract.json`이 있으면 함께
+   읽어 artifact 의미·대상 앱·필수 형식을 결정한다. 없으면 경로를 추정 생성하지 않고
+   `harness-setup` 실행을 안내한다.
 
 > ✋ **확인 게이트**
 >
@@ -258,6 +261,10 @@ STEP 0에서 병렬을 선택한 경우, Step 3-B에서 확정된 생성 파일 
 - 코드 예시는 핵심 패턴만, 완성 코드는 포함하지 않는다.
 - **AGENTS.md의 인덱스와 실제 생성 파일 목록이 1:1로 일치**해야 한다.
 - `artifact-output-routing-instruction.md`는 AGENTS/앱 context의 `@` 참조와 실제 경로가 1:1로 일치해야 한다.
+- existing instruction의 `harness-kit:managed:start/end` marker 밖 규칙은 보존한다. 갱신은
+  managed block diff만 보여주고 사용자 승인 뒤에 적용한다.
+- 외부 fixed-format bundle은 `.docs/_inbox/{artifact-bundle-id}/artifact-manifest.json`에
+  proposal로 기록하며 G12 승인 전 canonical instruction에 병합하지 않는다.
 - **CLAUDE.md는 `@AGENTS.md` bridge 구조여야 한다.**
 - 각 instruction 파일은 자신의 주제에만 집중한다. 주제 간 중복 금지.
 

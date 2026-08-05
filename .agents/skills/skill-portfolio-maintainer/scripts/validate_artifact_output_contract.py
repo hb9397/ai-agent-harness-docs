@@ -27,6 +27,7 @@ REQUIRED_FIELDS = {
     "owner",
     "approval",
     "handoff",
+    "routing_profile",
     "evidence",
 }
 ROUTING_REQUIRED = {
@@ -52,6 +53,7 @@ def live_skills(root_name: str) -> set[str]:
 def main() -> int:
     data = json.loads(MANIFEST.read_text(encoding="utf-8"))
     entries = data["skills"]
+    routing_profiles = data["routing_profiles"]
     names = [entry.get("skill") for entry in entries]
     assert len(names) == len(set(names)), "duplicate skill in artifact-output contract"
     assert set(names) == live_skills("skills") | live_skills("maintainer/skills"), "manifest/live skill set mismatch"
@@ -73,6 +75,14 @@ def main() -> int:
         assert set(entry) >= REQUIRED_FIELDS, f"{entry.get('skill')} missing manifest fields"
         assert entry["artifact_class"] in ALLOWED_CLASSES, f"invalid artifact class: {entry['skill']}"
         assert all(str(entry[field]).strip() for field in REQUIRED_FIELDS), f"blank manifest field: {entry['skill']}"
+        profile = routing_profiles.get(entry["routing_profile"])
+        assert profile is not None, f"unknown routing profile: {entry['skill']}"
+        assert set(profile) >= {"media_type", "required_format", "unknown_write_capability"}, (
+            f"incomplete routing profile: {entry['routing_profile']}"
+        )
+        assert profile["unknown_write_capability"] is False, (
+            f"unknown write capability is not allowed: {entry['skill']}"
+        )
         if entry["skill"] in {"impl-doc", "impl-fe-be-doc"}:
             assert "roadmap" in entry["evidence"] and "{사용자}" in entry["single_app_path"]
             assert ".docs/{앱}/" in entry["multi_app_path"]

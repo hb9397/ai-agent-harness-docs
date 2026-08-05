@@ -353,14 +353,21 @@ def failure_rollback_isolated(root: Path) -> dict[str, Any]:
 def release_gate(root: Path) -> dict[str, Any]:
     install = load_json(root / "maintainer" / "plugin" / "install-verification.json")
     missing = install["release_gate"]["missing_required_surfaces"]
+    cli_smoke = install.get("cli_smoke", {})
+    smoke_current = cli_smoke.get("evidence_applies_to_current_version") is True
     return {
         "status": install["release_gate"]["status"],
         "missing_required_surfaces": missing,
         "push_tag_release_created": False,
         "released_lock_updated": False,
         "reason": (
-            "Phase 10 does not publish. Isolated Codex and Claude CLI installs passed; "
-            f"manual evidence remains for: {', '.join(missing)}."
+            "Phase 10은 publish하지 않는다. "
+            + (
+                "현재 후보의 격리 Codex·Claude CLI 설치 smoke는 통과했다; "
+                if smoke_current
+                else "현재 후보의 CLI 설치 smoke는 검증되지 않아 이전 버전 증적을 승계하지 않는다; "
+            )
+            + f"다음 수동 증적이 남아 있다: {', '.join(missing)}."
         ),
         "passed": install["release_gate"]["status"] == "not-release-ready" and not install["release_gate"]["push_tag_release_created"],
     }
@@ -404,8 +411,8 @@ def write_report(root: Path, evidence: dict[str, Any]) -> None:
             "",
             (
                 f"`{', '.join(checks['release_gate']['missing_required_surfaces'])}`에 대한 대화형 "
-                "증적이 아직 필요하므로 이 후보는 `not-release-ready` 상태를 유지한다. 격리된 "
-                "Codex 및 Claude CLI 설치 스모크 검사는 통과했다. 이 스크립트는 `released` "
+                "증적이 아직 필요하므로 이 후보는 `not-release-ready` 상태를 유지한다. "
+                f"{checks['release_gate']['reason']} 이 스크립트는 `released` "
                 "잠금 상태를 갱신하지 않으며 태그 또는 릴리스를 생성하지 않는다."
             ),
             "",

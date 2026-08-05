@@ -21,18 +21,19 @@ manual-evidence/
   이어받지 않는다. `verify_install_surfaces.py`가 이 불일치를 검사한다.
 - 네 인터페이스의 수동 증적이 모두 충족되기 전에는 release-ready로 표시하지 않는다.
 
-## 현재 상태 — `0.3.1`
+## 현재 상태 — `0.4.0`
 
 | 인터페이스 | 상태 | 근거 |
 |---|---|---|
-| Codex CLI | `install-smoke-verified` | Codex CLI `0.146.0`, `harness-kit@hb9397` payload `0.3.1` / 19 skills / 0 agents. 모델 호출은 미검증. |
+| Codex CLI | `manual-required` | `0.4.0` payload의 설치·직접 호출 증적이 필요하다. `0.3.1` CLI smoke는 역사적 참고이며 승계하지 않는다. |
 | Codex 앱 | `manual-required` | 앱에서 직접 설치·호출한 증적이 필요하다. |
-| Claude Code CLI | `install-smoke-verified` | Claude Code `2.1.220`, `harness-kit@hb9397` payload `0.3.1` / 19 skills / 0 agents. 모델 호출은 미검증. |
+| Claude Code CLI | `manual-required` | `0.4.0` payload의 설치·직접 호출 증적이 필요하다. `0.3.1` CLI smoke는 역사적 참고이며 승계하지 않는다. |
 | Claude 앱 | `manual-required` | 앱에서 직접 설치·호출한 증적이 필요하다. |
 
-`0.3.1` 설치 smoke는 2026-08-05에 재실행해 통과했다. 격리된 `CODEX_HOME`과
+`0.3.1` 설치 smoke는 2026-08-05에 재실행해 통과한 역사적 증적이다. 격리된 `CODEX_HOME`과
 `CLAUDE_CONFIG_DIR`에서 marketplace 등록, 설치, 목록 확인, cache 검사, 제거까지
-수행했다.
+수행했다. `0.4.0`은 새 public routing contract 후보이므로 Phase B7에서 동일 검사를
+새 payload 버전으로 다시 실행해야 한다.
 
 **설치 smoke는 cache에 파일이 놓였다는 증적일 뿐이다.** 실제 모델이 스킬 계약을
 수행했다는 증적은 아니며, 네 인터페이스 모두 시나리오 A~H 수동 검증이 남아 있다.

@@ -89,7 +89,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/plugin_common.py",
-          "sha256": "543557e26b0411b29755076fb2ffdcd1850fd6a524a6c651fb0db72d77a5ee5a"
+          "sha256": "7e96123ad80c2e174832bc4645bd24a9d59af7b89fda543a57c9bcb422062fee"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/run_all_skill_evals.py",
@@ -97,7 +97,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/run_release_regression.py",
-          "sha256": "241adca9c8b53aae995f4d816e4d6d886bf306cdd621153d528a25b92226c5c5"
+          "sha256": "6e699c3c5d2c4f99bef35ea1ef8827e7666a8e4185598d28e9ee05d28abc9213"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/smoke_cli_install.py",

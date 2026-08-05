@@ -361,6 +361,13 @@ suppress_child_handoff = true
 (단, 설계 문서에 해당 주제가 없으면 일반 주제 instruction 파일은 생성하지 않는다.
 artifact-output-routing-instruction은 산출물 경계 정본이므로 항상 생성한다.)
 
+bootstrap이 `DESIGN.md`와 context 초안을 만든 뒤에는 installer나 host 설정을 복제하지
+않는다. `.docs/harness/artifact-routing.json`이 있으면 이를 읽고, 없으면 공개 스킬 이름
+`harness-setup`에 portable bundle 생성·갱신을 명시 handoff한다. 이후 `context-doc`도
+같은 routing manifest·format contract와 앱별 instruction을 소비하며 prototype 기본 경로를
+별도로 만들지 않는다. 외부 fixed-format bundle은 `.docs/_inbox/{artifact-bundle-id}/`에
+proposal만 기록하고 G12 승인 전 canonical artifact를 만들지 않는다.
+
 > "위 파일들을 검토해 주세요.
 > 이상 없으면 한꺼번에 저장하겠습니다. 수정 사항이 있으면 알려주세요."
 

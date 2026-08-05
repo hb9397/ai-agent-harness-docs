@@ -10,6 +10,8 @@ SKILL_ROOT = Path(__file__).resolve().parents[1]
 SKILL_FILE = SKILL_ROOT / "SKILL.md"
 EVALS_FILE = Path(__file__).with_name("evals.json")
 INTERVIEW_FILE = SKILL_ROOT / "prompts" / "interview.md"
+CODE_SCAN_FILE = SKILL_ROOT / "prompts" / "code-scan.md"
+EXTRACTION_FILE = SKILL_ROOT / "prompts" / "extraction-mapping.md"
 
 
 def require(text: str, needle: str) -> None:
@@ -47,6 +49,11 @@ def main() -> int:
     for needle in ("최대 2회", "질문 1 (필수)", "질문 2 (선택)", "묻지 않는 것"):
         if needle not in interview:
             raise AssertionError(f"{INTERVIEW_FILE}: missing contract: {needle}")
+
+    for prompt_file in (CODE_SCAN_FILE, EXTRACTION_FILE, INTERVIEW_FILE):
+        text = prompt_file.read_text(encoding="utf-8")
+        if "artifact 의미" not in text or "대상 앱" not in text:
+            raise AssertionError(f"{prompt_file}: missing portable routing decision rule")
 
     if "../harness-setup/" in skill:
         raise AssertionError("bootstrap must not couple to harness-setup private paths")

@@ -602,7 +602,7 @@ ID를 다시 준다. 오래된 대화 전체를 끌고 가는 것보다 고정 �
 ## 10. 추천하는 최초 도입 순서
 
 현재 source inventory 19개를 처음부터 모두 쓰려고 하지 않아도 된다. 이전 immutable
-`0.2.2` artifact는 20개 runtime을 담은 historical 기록이며, 현재 `0.3.1` source와
+`0.2.2` artifact는 20개 runtime을 담은 historical 기록이며, 현재 `0.4.0` source와
 generated tree는 서로 일치한다.
 
 ### 0단계 — 설치와 문서 골격

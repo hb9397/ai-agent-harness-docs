@@ -1,0 +1,76 @@
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory)]
+    [string]$InputPath,
+    [Parameter(Mandatory)]
+    [ValidatePattern('^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$')]
+    [string]$ArtifactBundleId,
+    [Parameter(Mandatory)]
+    [string]$TargetPath,
+    [switch]$Plan,
+    [switch]$Promote,
+    [switch]$ApprovePromotion
+)
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
+if ($Plan -and $Promote) { throw 'Choose either -Plan or -Promote.' }
+if (-not $Plan -and -not $Promote) { $Plan = $true }
+if ($Promote -and -not $ApprovePromotion) { throw 'Promotion requires explicit -ApprovePromotion after G12 approval.' }
+if (-not (Test-Path -LiteralPath $InputPath -PathType Leaf)) { throw "Input artifact does not exist: $InputPath" }
+
+$projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\\..')).Path
+$target = [IO.Path]::GetFullPath((Join-Path $projectRoot $TargetPath))
+$projectPrefix = $projectRoot.TrimEnd([char]92) + [IO.Path]::DirectorySeparatorChar
+if (-not $target.StartsWith($projectPrefix, [StringComparison]::OrdinalIgnoreCase)) { throw 'TargetPath must stay inside the project root.' }
+$relativeTarget = $target.Substring($projectRoot.Length).TrimStart([char]92, [char]47).Replace([char]92, [char]47)
+$extension = [IO.Path]::GetExtension($InputPath).ToLowerInvariant()
+$textExtensions = @('.md', '.mdx', '.txt', '.rst', '.adoc', '.asciidoc')
+$fixedExtensions = @('.json', '.yaml', '.yml', '.png', '.jpg', '.jpeg', '.gif', '.webp', '.pdf')
+if ($extension -notin ($textExtensions + $fixedExtensions)) { throw "Unsupported artifact format: $extension" }
+$bytes = [IO.File]::ReadAllBytes((Resolve-Path -LiteralPath $InputPath))
+$sourceHash = ([Security.Cryptography.SHA256]::HashData($bytes) | ForEach-Object { $_.ToString('x2') }) -join ''
+$inbox = Join-Path $projectRoot ".docs/_inbox/$ArtifactBundleId"
+$manifestPath = Join-Path $inbox 'artifact-manifest.json'
+$isText = $extension -in $textExtensions
+
+function Normalize-Text([string]$Value) {
+    return $Value.Replace("`r`n", "`n").Replace("`r", "`n")
+}
+function Merge-ManagedBlock([string]$Current, [string]$Incoming) {
+    $start = '<!-- harness-kit:managed:start -->'; $end = '<!-- harness-kit:managed:end -->'
+    if ($Current.Contains($start) -and $Current.Contains($end) -and $Incoming.Contains($start) -and $Incoming.Contains($end)) {
+        $currentStart = $Current.IndexOf($start); $currentEnd = $Current.IndexOf($end, $currentStart) + $end.Length
+        $incomingStart = $Incoming.IndexOf($start); $incomingEnd = $Incoming.IndexOf($end, $incomingStart) + $end.Length
+        return $Current.Substring(0, $currentStart) + $Incoming.Substring($incomingStart, $incomingEnd - $incomingStart) + $Current.Substring($currentEnd)
+    }
+    return $Incoming
+}
+
+$proposal = [ordered]@{
+    schema_version = '1.0.0'; artifact_bundle_id = $ArtifactBundleId; producer = 'external'; source_hash = $sourceHash
+    media_type = if ($isText) { 'text' } else { 'fixed-format' }; source_path = (Resolve-Path -LiteralPath $InputPath).Path
+    proposed_target_path = $relativeTarget; required_format = if ($isText) { 'UTF-8 normalized text; marker-aware merge proposal' } else { 'inbox-only; no lossy automatic conversion' }
+    approval_gate = 'G12'; status = if ($Promote) { 'promotion-requested' } else { 'proposal-only' }
+}
+if ($Plan) { $proposal | ConvertTo-Json -Depth 6; exit 0 }
+
+New-Item -ItemType Directory -Force -Path $inbox | Out-Null
+if (-not $isText) {
+    $proposal.status = 'fixed-format-inbox-only'
+    $proposal | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $manifestPath -Encoding utf8NoBOM
+    $proposal | ConvertTo-Json -Depth 6
+    exit 0
+}
+
+$incoming = Normalize-Text ([Text.Encoding]::UTF8.GetString($bytes))
+$merged = if (Test-Path -LiteralPath $target -PathType Leaf) { Merge-ManagedBlock (Get-Content -LiteralPath $target -Raw -Encoding utf8) $incoming } else { $incoming }
+$targetDirectory = Split-Path -Parent $target
+New-Item -ItemType Directory -Force -Path $targetDirectory | Out-Null
+$temporary = Join-Path $targetDirectory ('.' + [IO.Path]::GetFileName($target) + '.tmp')
+[IO.File]::WriteAllText($temporary, $merged, [Text.UTF8Encoding]::new($false))
+Move-Item -LiteralPath $temporary -Destination $target -Force
+$proposal.status = 'promoted'; $proposal.target_sha256 = (Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash.ToLowerInvariant()
+$proposal | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $manifestPath -Encoding utf8NoBOM
+$proposal | ConvertTo-Json -Depth 6

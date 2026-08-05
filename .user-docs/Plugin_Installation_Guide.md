@@ -1,7 +1,7 @@
 # Plugin Installation Guide
 
 > 기준일: 2026-08-03
-> 대상 플러그인: `harness-kit` `0.3.1`
+> 대상 플러그인: `harness-kit` `0.4.0`
 > 현재 상태: 공식 manifest·marketplace와 격리 CLI 설치 smoke를 자동 검증한다.
 > Codex와 Claude의 CLI·앱 네 인터페이스에서 실제 모델 호출·산출물·새 세션 증적까지
 > 확보되기 전에는 `not release-ready`다.
@@ -26,9 +26,9 @@
 | 항목 | 값 |
 |------|----|
 | Plugin ID | `harness-kit` |
-| Version | `0.3.1` |
+| Version | `0.4.0` |
 | Local plugin root | `plugins/harness-kit` |
-| Archive | `plugins/harness-kit-0.3.1.zip` |
+| Archive | `plugins/harness-kit-0.4.0.zip` |
 | Archive SHA-256 | `maintainer/plugin/release.json`의 현재 생성값 |
 | Codex physical skills | 19 |
 | Codex agents | 0 |
@@ -42,9 +42,8 @@
 
 ## 3. Codex CLI
 
-> CLI 설치 smoke는 `0.3.1` 기준으로 Codex CLI와 Claude Code 양쪽에서 통과했다.
-> 격리된 설정 디렉터리에서 설치 payload와 cache를 확인했으며, 실제 모델 호출은
-> 별도 수동 증적으로 남긴다.
+> CLI 설치 smoke는 `0.3.1` 기준으로 Codex CLI와 Claude Code 양쪽에서 통과한 역사적
+> 증적이다. `0.4.0`의 설치와 실제 모델 호출은 별도 수동 증적으로 남긴다.
 
 공식 Codex CLI `0.146.0`을 임시 `CODEX_HOME`에서 실행해 아래 marketplace
 등록·설치·목록·제거 흐름과 설치 cache의 skills / 0 agents를 확인했다. CI도
@@ -114,7 +113,7 @@ Codex 앱에서는 다음을 수동으로 확인한다.
 4. local marketplace가 앱에 보이지 않는 버전이면 앱과 같은 사용자 프로필의
    Codex CLI에서 marketplace와 플러그인을 등록하고 앱을 완전히 종료했다가 다시
    연다.
-5. 플러그인 화면 또는 `/plugins`에서 `harness-kit` `0.3.1`이
+5. 플러그인 화면 또는 `/plugins`에서 `harness-kit` `0.4.0`이
    설치·활성 상태인지 확인한다.
 6. 새 fixture 프로젝트에서 새 task/session을 연다.
 7. `$harness-setup`과 `$humanize-korean`을 명시 호출한다.

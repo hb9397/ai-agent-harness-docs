@@ -52,9 +52,9 @@
       },
       "packaged": {
         "plugin_id": "harness-kit",
-        "version": "0.3.1",
+        "version": "0.4.0",
         "packaged_at": "2026-08-01",
-        "artifact_manifest_sha256": "bba11acdf42e7b4513b327e85f5b13b15bcc76c9cbe1571965512310fa32fdfc"
+        "artifact_manifest_sha256": "8c26dfb58a04f224ec7f79a2bbe17c1a3ab13688cb7c024c74b380e03a387d5d"
       },
       "released": null
     },
@@ -512,9 +512,9 @@
       },
       "packaged": {
         "plugin_id": "harness-kit",
-        "version": "0.3.1",
+        "version": "0.4.0",
         "packaged_at": "2026-08-01",
-        "artifact_manifest_sha256": "bba11acdf42e7b4513b327e85f5b13b15bcc76c9cbe1571965512310fa32fdfc"
+        "artifact_manifest_sha256": "8c26dfb58a04f224ec7f79a2bbe17c1a3ab13688cb7c024c74b380e03a387d5d"
       },
       "released": null
     },
@@ -554,9 +554,9 @@
       },
       "packaged": {
         "plugin_id": "harness-kit",
-        "version": "0.3.1",
+        "version": "0.4.0",
         "packaged_at": "2026-08-01",
-        "artifact_manifest_sha256": "bba11acdf42e7b4513b327e85f5b13b15bcc76c9cbe1571965512310fa32fdfc"
+        "artifact_manifest_sha256": "8c26dfb58a04f224ec7f79a2bbe17c1a3ab13688cb7c024c74b380e03a387d5d"
       },
       "released": null
     },
@@ -626,9 +626,9 @@
       },
       "packaged": {
         "plugin_id": "harness-kit",
-        "version": "0.3.1",
+        "version": "0.4.0",
         "packaged_at": "2026-08-01",
-        "artifact_manifest_sha256": "bba11acdf42e7b4513b327e85f5b13b15bcc76c9cbe1571965512310fa32fdfc"
+        "artifact_manifest_sha256": "8c26dfb58a04f224ec7f79a2bbe17c1a3ab13688cb7c024c74b380e03a387d5d"
       },
       "released": null
     },

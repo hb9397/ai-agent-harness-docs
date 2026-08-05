@@ -1,0 +1,36 @@
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory)]
+    [string]$ArtifactPath,
+    [Parameter(Mandatory)]
+    [string]$ContentSha256,
+    [ValidateSet('write')]
+    [string]$Operation = 'write',
+    [ValidateRange(60, 3600)]
+    [int]$TtlSeconds = 900,
+    [switch]$Approve
+)
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
+if (-not $Approve) { throw 'Creating a one-shot marker requires explicit -Approve after the user approval gate.' }
+if ($ContentSha256 -notmatch '^[a-fA-F0-9]{64}$') { throw 'ContentSha256 must be a SHA-256 hex digest.' }
+
+$projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\\..\\..')).Path
+$target = [IO.Path]::GetFullPath((Join-Path $projectRoot $ArtifactPath))
+if (-not $target.StartsWith($projectRoot.TrimEnd([char]92) + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw 'ArtifactPath must stay inside the project root.' }
+$relative = $target.Substring($projectRoot.Length).TrimStart([char]92, [char]47).Replace([char]92, [char]47)
+$markerDir = Join-Path $projectRoot '.docs/.harness/artifact-approvals'
+New-Item -ItemType Directory -Force -Path $markerDir | Out-Null
+$nonce = [guid]::NewGuid().ToString('N')
+$marker = [ordered]@{
+    schema_version = '1.0.0'; nonce = $nonce; target_path = $relative; operation = $Operation
+    content_sha256 = $ContentSha256.ToLowerInvariant(); expires_at = [DateTimeOffset]::UtcNow.AddSeconds($TtlSeconds).ToString('o')
+}
+$destination = Join-Path $markerDir "$nonce.json"
+$temporary = Join-Path $markerDir ".$nonce.tmp"
+$marker | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $temporary -Encoding utf8NoBOM
+Move-Item -LiteralPath $temporary -Destination $destination -Force
+$marker | Add-Member -NotePropertyName marker_path -NotePropertyValue $destination -Force
+$marker | ConvertTo-Json -Depth 4

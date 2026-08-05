@@ -4,10 +4,10 @@
   "plugin": {
     "plugin_root": "plugins/harness-kit",
     "plugin_id": "harness-kit",
-    "version": "0.3.1",
+    "version": "0.4.0",
     "codex_manifest_matches_claude": true,
-    "archive": "plugins/harness-kit-0.3.1.zip",
-    "archive_sha256": "5a3f7fa8d9ecc73af469a142ba5a13a8865cfe18eef2fc29af70203206542889",
+    "archive": "plugins/harness-kit-0.4.0.zip",
+    "archive_sha256": "5a87eee7ad75e7ffbf0b8b4e7fb2fc9b6285c2ed21fc3364925fbdf3c32cfe02",
     "archive_sha256_matches_release": true,
     "logical_user_skills": 19,
     "codex_physical_skills": 19,
@@ -160,22 +160,22 @@
         "cleanup": "passed"
       }
     },
-    "status": "passed",
-    "evidence_applies_to_current_version": true,
-    "summary": "isolated marketplace add/install/list/uninstall/remove and cache inspection passed; model invocation not tested"
+    "status": "failed",
+    "evidence_applies_to_current_version": false,
+    "summary": "CLI smoke evidence covers plugin version(s) ['0.3.1'], not the current candidate 0.4.0; re-run smoke_cli_install.py"
   },
   "surfaces": {
     "codex-cli": {
-      "status": "install-smoke-verified",
-      "summary": "isolated marketplace add/install/list/uninstall/remove and cache inspection passed; model invocation not tested"
+      "status": "blocked",
+      "summary": "CLI smoke evidence covers plugin version(s) ['0.3.1'], not the current candidate 0.4.0; re-run smoke_cli_install.py"
     },
     "codex-desktop-app": {
       "status": "manual-required",
       "summary": "Interactive Plugins UI install/update requires app surface and cannot be completed from this shell."
     },
     "claude-code-cli": {
-      "status": "install-smoke-verified",
-      "summary": "isolated marketplace add/install/list/uninstall/remove and cache inspection passed; model invocation not tested"
+      "status": "blocked",
+      "summary": "CLI smoke evidence covers plugin version(s) ['0.3.1'], not the current candidate 0.4.0; re-run smoke_cli_install.py"
     },
     "claude-desktop-code": {
       "status": "manual-required",

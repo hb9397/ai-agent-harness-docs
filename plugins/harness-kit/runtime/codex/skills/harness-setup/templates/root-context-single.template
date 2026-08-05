@@ -18,6 +18,7 @@
 - 설계 문서: `@.docs/context-base/DESIGN.md`
 - 주제별 instruction: `@.docs/instruction/*-instruction.md`
 - 산출물 위치·소유권·인계: `@.docs/instruction/artifact-output-routing-instruction.md`
+- portable routing 상태·host별 설치 경계: `@.docs/harness/artifact-routing.json`
 - 구현 계획: `.docs/impl-doc/{사용자}/{기능}.md`
 - 프로토타입: `.docs/prototype/{사용자}/{id}/`
 
@@ -31,5 +32,7 @@
 - 프로젝트에 `.agents/skills/`, `.claude/skills/`, `skills/` 사용자 스킬
   projection을 만들거나 동기화하지 않는다.
 - 공통 규칙은 이 파일에 두고 `CLAUDE.md`에는 Claude 전용 차이만 둔다.
+- Claude/Codex host hook은 routing manifest가 `pending-trust`이면 활성화하지 않으며,
+  각 host의 별도 신뢰 절차가 끝난 뒤에만 사용한다.
 - 기존 파일과 사용자 코드를 변경하기 전에 적용 범위를 확인한다.
 <!-- harness-kit:managed:end -->
