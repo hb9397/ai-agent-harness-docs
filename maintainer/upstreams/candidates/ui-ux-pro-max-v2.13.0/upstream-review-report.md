@@ -48,5 +48,17 @@ Git `core.autocrlf`를 끈 archive raw bytes 기준으로 upstream v2.11.3과 v2
 
 ## 결론
 
-후보는 review-ready다. script/test 변경의 security·권한·보호 자산 영향을 아직
-판정하지 않았으므로 `accept-for-staging` 결론이나 승인 ID를 만들지 않는다.
+Phase 3 검토 결과 후보는 `accept-for-staging`이다. LICENSE는 MIT이며 raw archive
+SHA-256, 저작권 표기와 전문이 baseline·기존 accepted provenance와 모두 같다. 변경된
+script/test는 Python 표준 라이브러리와 local module만 import하고, network, subprocess,
+shell, dynamic execution을 사용하지 않는다. runtime preview test는 36 passed다.
+
+Codex와 Claude Code는 plugin runtime의 물리 경로와 호출 표면만 다르다
+(`runtime/codex/skills/**`의 `$ui-ux-pro-max`, `runtime/claude/skills/**`의
+`/harness-kit:ui-ux-pro-max`). 빌더는 같은 canonical skill payload를 두 runtime으로
+복사하므로 이번 candidate에는 host별 의존성이나 동작 차이가 없다. 실제 CLI·앱 모델 호출
+증적은 release gate에서 별도로 남긴다.
+
+보호 자산은 수정 script 1개와 추가 test 1개이므로 G4 명시 승인 없이는 promotion하지
+않는다. 삭제·이동은 없어서 G5는 불필요하며, G3 일반 적용 승인은 promotion handoff 전에만
+받는다.

@@ -114,7 +114,7 @@
       "upstream_path": "LICENSE",
       "local_path": "maintainer/upstreams/provenance/ui-ux-pro-max/LICENSE",
       "treatment": "notice-preserved",
-      "change": "unchanged-upstream; provenance-byte-mismatch-detected",
+      "change": "unchanged-upstream; raw archive bytes match preserved provenance",
       "file_count": 1
     },
     {
@@ -208,8 +208,17 @@
     "status": "upstream-unchanged; raw target bytes match the existing accepted provenance evidence"
   },
   "security": {
-    "status": "not-reviewed",
-    "next_phase": "Phase 3 must inspect changed scripts and tests before any staging decision"
+    "status": "passed",
+    "reviewed_at": "2026-08-05",
+    "scope": {
+      "imports": "Python standard library and local modules only; no third-party runtime dependency",
+      "network": "none",
+      "subprocess_or_shell": "none",
+      "dynamic_execution": "none",
+      "filesystem_write": "pre-existing persist_design_system path only; runtime-preview SKILL.md requires explicit user approval and a project .docs output directory"
+    },
+    "changed_surface": "dark-mode palette helper update and its unittest; no new execution, network, subprocess, or filesystem-write mechanism",
+    "runtime_test": "python -m unittest discover -s scripts/tests -v: 36 passed"
   },
   "validation": {
     "source_tree": "exact Git archive target tree; 45 target blob hashes verified before commit",
@@ -222,5 +231,12 @@
     "asset_impact": null,
     "destructive": null
   },
+  "gate_state": {
+    "G2_license_security": "passed",
+    "G3_general_application": "not required until promotion handoff",
+    "G4_protected_asset": "required before promotion; explicit approval ID not yet issued",
+    "G5_destructive": "not required; destructive_changes=[]"
+  },
+  "decision": "accept-for-staging",
   "pending_approvals": []
 }
