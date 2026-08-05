@@ -101,3 +101,7 @@
 | 산출물 위치·소유권·인계 | @.docs/instruction/artifact-output-routing-instruction.md |
 
 <!-- 설계 문서에 해당 주제가 없어서 생성하지 않은 파일은 이 표에서 제거한다. -->
+
+산출물 생성 전에는 `.docs/harness/artifact-routing.json`과
+`.docs/harness/artifact-format-contract.json`을 읽는다. producer/plugin 이름이 아닌
+artifact 의미와 대상 앱으로 위치를 결정하며, 기존 managed marker 밖 규칙은 보존한다.

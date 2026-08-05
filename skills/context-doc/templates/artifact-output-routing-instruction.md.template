@@ -61,3 +61,23 @@
 5. 앱 A에서 앱 B, manager repository, `.docs` 밖에 쓰는 경로는 금지한다.
 6. 경로가 존재하지 않거나 `@` 참조가 실제 파일과 1:1로 맞지 않으면 저장하지 않고
    경로를 먼저 고친다.
+
+## 5. Portable bundle·외부 producer 처리
+
+- `.docs/harness/artifact-routing.json`과 `.docs/harness/artifact-format-contract.json`을
+  함께 읽어 app ownership, required field, host 상태를 확인한다. producer 이름이나
+  plugin 이름이 아니라 artifact 의미와 대상 app으로 경로를 결정한다.
+- 외부 fixed-format bundle(JSON/YAML/이미지/PDF 등)은
+  `.docs/_inbox/{artifact-bundle-id}/artifact-manifest.json`에 원본 hash·producer·제안
+  target을 기록한다. G12 승인 전에는 canonical artifact를 만들거나 덮어쓰지 않는다.
+- 기존 instruction의 managed marker 밖 규칙이 routing contract와 충돌하면 기존 규칙을
+  보존하고 차이와 migration proposal만 사용자에게 제시한다.
+- 이 instruction을 갱신할 때도 `harness-kit:managed:start/end` marker 안의 managed
+  block만 diff로 제안하고, 사용자 승인 전에는 overwrite하지 않는다.
+
+### 외부 bundle manifest의 최소 필드
+
+`artifact_bundle_id`, `producer`, `source_hash`, `media_type`, `required_format`,
+`target_app`, `proposed_canonical_path`, `owner`, `approval_gate`를 기록한다. normalize
+재실행은 같은 bundle ID와 source hash에서 새 canonical artifact를 만들지 않으며, G12
+승인 후에만 promotion 결과를 manifest에 추가한다.

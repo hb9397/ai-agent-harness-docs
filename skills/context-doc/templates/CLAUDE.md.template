@@ -4,3 +4,5 @@
 
 - 공통 프로젝트 컨텍스트와 작업 규칙은 `AGENTS.md`를 따른다.
 - 이 파일에는 Claude Code에서만 필요한 차이만 추가한다.
+- 산출물 라우팅도 `@AGENTS.md`가 참조하는 project-owned contract를 사용한다. Claude
+  전용 별도 경로나 plugin 이름 기반 경로를 만들지 않는다.
