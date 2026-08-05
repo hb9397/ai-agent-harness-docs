@@ -594,6 +594,15 @@ def test_governance_merge_manifest_rejects_coverage_and_metadata_drift() -> None
 def test_governance_merge_manifest_rejects_placeholder_heading_and_missing_table_header() -> None:
     manifest_path = ROOT / validate_registry.GOVERNANCE_MERGE_MANIFEST
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    source_baselines_available = all(
+        validate_registry._source_document_bytes_from_worktree_or_history(
+            ROOT,
+            document["source_path"],
+            document["source_sha256"],
+        )
+        is not None
+        for document in manifest["source_documents"]
+    )
     heading = next(unit for unit in manifest["coverage"] if unit["unit_type"] == "heading")
     heading["source_excerpt"] = heading["source_row_or_rule_id"]
     table_row = next(unit for unit in manifest["coverage"] if unit["unit_type"] == "table_row")
@@ -625,6 +634,9 @@ def test_governance_merge_manifest_rejects_placeholder_heading_and_missing_table
         verify_source_bytes=False,
         check_live_referrers=False,
     )
+    assert any("coverage_summary.by_source does not match coverage" in item for item in errors), errors
+    if not source_baselines_available:
+        return
     assert any("heading source_excerpt must equal the baseline heading" in item for item in errors), errors
     assert any("source_heading must equal the containing baseline heading" in item for item in errors), errors
     assert any("command_block source_excerpt must equal the baseline block" in item for item in errors), errors
@@ -643,6 +655,26 @@ def test_governance_merge_manifest_rejects_placeholder_heading_and_missing_table
         and "must have exactly one coverage unit; found 0" in item
         for item in errors
     ), errors
+
+
+def test_governance_placeholder_rejection_accepts_historyless_source_archive() -> None:
+    """The negative validator test must also run from a shallow CI checkout.
+
+    The three merged source documents are intentionally deleted from the live
+    tree. A source archive without their Git history may therefore validate
+    only summary-level corruption; it must not make the eval runner fail just
+    because source-line diagnostics are unavailable.
+    """
+    global ROOT
+    with tempfile.TemporaryDirectory() as temporary:
+        historyless_root = Path(temporary) / "historyless-archive"
+        shutil.copytree(ROOT, historyless_root, ignore=shutil.ignore_patterns(".git", "__pycache__"))
+        original_root = ROOT
+        ROOT = historyless_root
+        try:
+            test_governance_merge_manifest_rejects_placeholder_heading_and_missing_table_header()
+        finally:
+            ROOT = original_root
 
 
 def test_generated_governance_hits_are_allowed_but_canonical_hits_fail() -> None:
@@ -967,6 +999,7 @@ def main() -> int:
         test_governance_merge_manifest_is_semantically_complete,
         test_governance_merge_manifest_rejects_coverage_and_metadata_drift,
         test_governance_merge_manifest_rejects_placeholder_heading_and_missing_table_header,
+        test_governance_placeholder_rejection_accepts_historyless_source_archive,
         test_generated_governance_hits_are_allowed_but_canonical_hits_fail,
         test_relationship_group_accepts_matched_pair,
         test_relationship_group_blocks_sha_drift,
