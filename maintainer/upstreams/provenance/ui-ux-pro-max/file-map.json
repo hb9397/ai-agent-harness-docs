@@ -1,11 +1,11 @@
 {
   "schema_version": "1.0.0",
-  "generated_at": "2026-07-31",
+  "generated_at": "2026-08-05",
   "source": {
     "id": "ui-ux-pro-max-runtime",
     "repository": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
-    "tag": "v2.11.3",
-    "commit_sha": "4857a2c5ef989794751a0f66b8545a4a49566286"
+    "tag": "v2.13.0",
+    "commit_sha": "4d140cf8ff6842de13213c7214eff3810371beb2"
   },
   "relationship_group": "ui-ux-pro-max",
   "reference_relationship": {
@@ -291,8 +291,8 @@
       "upstream_path": ".claude/skills/ui-ux-pro-max/scripts/design_system.py",
       "local_path": "skills/ui-ux-pro-max/scripts/design_system.py",
       "treatment": "verbatim",
-      "upstream_sha256": "fcdb279eb9691dffd6c80c333d29a4e5567368e38d724520c60013c8b1aaf242",
-      "note": "Imported unchanged from the pinned upstream commit."
+      "upstream_sha256": "5612e607f3d4fded1aa83e5bf62d54a137a7087efbb70b72c91c30680b4d2dfd",
+      "note": "Imported unchanged from v2.13.0; resolves dark-mode palette and anti-pattern coherence."
     },
     {
       "upstream_path": ".claude/skills/ui-ux-pro-max/scripts/search.py",
@@ -307,6 +307,13 @@
       "treatment": "verbatim",
       "upstream_sha256": "ce60ac571164cf35e8c866550ad989fa686706a56fa48df4fdf76444b94fdd8d",
       "note": "Imported unchanged from the pinned upstream commit."
+    },
+    {
+      "upstream_path": ".claude/skills/ui-ux-pro-max/scripts/tests/test_design_system_mode.py",
+      "local_path": "skills/ui-ux-pro-max/scripts/tests/test_design_system_mode.py",
+      "treatment": "verbatim",
+      "upstream_sha256": "c38424e0f575f498c10564844338abce9363cd0b002ba8bd35c9d2762c2674ae",
+      "note": "Added verbatim from v2.13.0 to protect dark-mode coherence regression coverage."
     },
     {
       "upstream_path": ".claude/skills/ui-ux-pro-max/scripts/validate_data.py",

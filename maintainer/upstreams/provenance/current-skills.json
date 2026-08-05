@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "generated_at": "2026-08-03",
+  "generated_at": "2026-08-05",
   "scope": "Phase 1 audit: 19 user skills plus 3 maintainer skills",
   "counts": {
     "user_skills": 19,
@@ -58,7 +58,7 @@
         "ui-ux-pro-max-principles"
       ],
       "direct_import": false,
-      "evidence": "Prototype generation uses local workflow contracts while referencing OpenAI product-design and gstack design-html concepts; no upstream file import is recorded. Phase 4 added the prototype/real-screen boundary and a preceding-input contract that realises only approved motion. Concepts only."
+      "evidence": "Prototype generation uses local workflow contracts while referencing OpenAI product-design and gstack design-html concepts; no upstream file import is recorded. Phase 4 added the prototype/real-screen boundary and a preceding-input contract that realises only approved motion. UI/UX Pro Max v2.13.0 keeps this abstract input contract unchanged; its dark-mode runtime correction is consumed only through an approved decision. Concepts only."
     },
     {
       "name": "design-doc",
@@ -82,7 +82,7 @@
         "ui-ux-pro-max-principles"
       ],
       "direct_import": false,
-      "evidence": "Screen/prototype planning concepts reference OpenAI product-design and gstack design planning only; no upstream file is imported. Phase 4 added a design-system input step and a motion-candidate section. Concepts only; no upstream file, translation or summary is imported."
+      "evidence": "Screen/prototype planning concepts reference OpenAI product-design and gstack design planning only; no upstream file is imported. Phase 4 added a design-system input step and a motion-candidate section. UI/UX Pro Max v2.13.0 keeps the public design-system input contract unchanged; no upstream file, translation or summary is imported."
     },
     {
       "name": "doc-audit",
@@ -106,7 +106,7 @@
         "ui-ux-pro-max-principles"
       ],
       "direct_import": true,
-      "evidence": "The local production-UI workflow is a translated and substantially restructured derivative of Anthropic Skills frontend-design, with additional harness routing, validation, and platform-neutral rules. OpenAI product-design remains reference-only. Phase 4 added a two-axis preceding-input contract and made motion conditional on an approved motion-design spec. Concepts only."
+      "evidence": "The local production-UI workflow is a translated and substantially restructured derivative of Anthropic Skills frontend-design, with additional harness routing, validation, and platform-neutral rules. OpenAI product-design remains reference-only. Phase 4 added a two-axis preceding-input contract and made motion conditional on an approved motion-design spec. UI/UX Pro Max v2.13.0 continues to supply only approved public design decisions, so no internal upstream path is coupled. Concepts only."
     },
     {
       "name": "git-scoped-account",
@@ -194,7 +194,7 @@
         "ui-ux-pro-max-principles"
       ],
       "direct_import": false,
-      "evidence": "Fresh-evidence verification references Superpowers completion discipline and gstack qa-only report semantics without importing auto-fix runtime. Phase 4 added design-token, contrast, focus, touch-target, responsive, state, reduced-motion, motion-purpose, performance and prototype-boundary checks. Concepts only."
+      "evidence": "Fresh-evidence verification references Superpowers completion discipline and gstack qa-only report semantics without importing auto-fix runtime. Phase 4 added design-token, contrast, focus, touch-target, responsive, state, reduced-motion, motion-purpose, performance and prototype-boundary checks. UI/UX Pro Max v2.13.0 changes dark-mode recommendation coherence only; the existing public decision and verification contract stays file-free. Concepts only."
     },
     {
       "name": "motion-design",
@@ -225,7 +225,7 @@
         "ui-ux-pro-max-runtime"
       ],
       "direct_import": true,
-      "evidence": "Phase 2 imported the generated upstream skill tree at v2.11.3 (4857a2c5ef989794751a0f66b8545a4a49566286). data/, references/ and scripts/ are preserved verbatim; SKILL.md is rewritten for platform-neutral paths, scope confirmation, approval-gated persistence and public skill handoff. Phase 4 promoted the relationship group to active together with its reference relationship."
+      "evidence": "Phase 6 applied the approved generated upstream skill tree at v2.13.0 (4d140cf8ff6842de13213c7214eff3810371beb2). data/, references/ and scripts/ are preserved verbatim; SKILL.md remains rewritten for platform-neutral paths, scope confirmation, approval-gated persistence and public skill handoff. v2.13.0 updates dark-mode palette/anti-pattern coherence and adds its upstream regression test. The relationship group remains active together with its reference relationship."
     },
     {
       "name": "custom-skill-design",

@@ -1244,11 +1244,11 @@
       },
       "provenance": {
         "license_spdx": "MIT",
-        "license_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/v2.11.3/LICENSE",
+        "license_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/v2.13.0/LICENSE",
         "license_sha256": "738f69dfa83db5c347c678fb9d90e560877059f0de93a327c39001bff92dc014",
         "notice_path": "maintainer/upstreams/provenance/ui-ux-pro-max/NOTICE.md",
         "classification_evidence_url": "maintainer/upstreams/provenance/ui-ux-pro-max/file-map.json",
-        "classification_checked_at": "2026-07-31",
+        "classification_checked_at": "2026-08-05",
         "file_map": [
           {
             "upstream_path": ".claude/skills/ui-ux-pro-max/SKILL.md",
@@ -1348,11 +1348,11 @@
       },
       "provenance": {
         "license_spdx": "MIT",
-        "license_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/v2.11.3/LICENSE",
+        "license_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/blob/v2.13.0/LICENSE",
         "license_sha256": null,
         "notice_path": null,
-        "classification_evidence_url": "maintainer/upstreams/candidates/ui-ux-pro-max/candidate.json",
-        "classification_checked_at": "2026-07-31",
+        "classification_evidence_url": "maintainer/upstreams/candidates/ui-ux-pro-max-v2.13.0/candidate.json",
+        "classification_checked_at": "2026-08-05",
         "file_map": [
           {
             "upstream_path": ".claude/skills/ui-ux-pro-max/**",

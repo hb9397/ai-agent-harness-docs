@@ -528,16 +528,16 @@
         ]
       },
       "accepted": {
-        "ref": "v2.11.3",
-        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
-        "accepted_at": "2026-07-31",
+        "ref": "v2.13.0",
+        "sha": "4d140cf8ff6842de13213c7214eff3810371beb2",
+        "accepted_at": "2026-08-05",
         "mode": "adapted",
-        "evidence": "maintainer/upstreams/candidates/ui-ux-pro-max/candidate.json"
+        "evidence": "maintainer/upstreams/promotions/ui-ux-pro-max-v2.13.0.json"
       },
       "embedded": {
-        "ref": "v2.11.3",
-        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
-        "embedded_at": "2026-07-31",
+        "ref": "v2.13.0",
+        "sha": "4d140cf8ff6842de13213c7214eff3810371beb2",
+        "embedded_at": "2026-08-05",
         "targets": [
           "skills/ui-ux-pro-max"
         ]
@@ -565,16 +565,16 @@
         ]
       },
       "accepted": {
-        "ref": "v2.11.3",
-        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
-        "accepted_at": "2026-07-31",
+        "ref": "v2.13.0",
+        "sha": "4d140cf8ff6842de13213c7214eff3810371beb2",
+        "accepted_at": "2026-08-05",
         "mode": "reference",
-        "evidence": "maintainer/upstreams/candidates/ui-ux-pro-max/candidate.json"
+        "evidence": "maintainer/upstreams/promotions/ui-ux-pro-max-v2.13.0.json"
       },
       "embedded": {
-        "ref": "v2.11.3",
-        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
-        "embedded_at": "2026-07-31",
+        "ref": "v2.13.0",
+        "sha": "4d140cf8ff6842de13213c7214eff3810371beb2",
+        "embedded_at": "2026-08-05",
         "targets": [
           "skills/design-prototype-docs",
           "skills/create-prototype",

@@ -1,8 +1,8 @@
 # NOTICE — UI/UX Pro Max
 
 - Upstream: https://github.com/nextlevelbuilder/ui-ux-pro-max-skill
-- Accepted ref: `v2.11.3`
-- Accepted commit: `4857a2c5ef989794751a0f66b8545a4a49566286`
+- Accepted ref: `v2.13.0`
+- Accepted commit: `4d140cf8ff6842de13213c7214eff3810371beb2`
 - License: MIT
 - Copyright: Copyright (c) 2024 Next Level Builder
 - License text: `maintainer/upstreams/provenance/ui-ux-pro-max/LICENSE`
@@ -25,7 +25,7 @@ and contains no `SKILL.md`. `.claude/skills/ui-ux-pro-max/` is the generated,
 complete skill. The local import target is the generated tree.
 
 Imported: `SKILL.md`, `data/**` (35 CSV files), `references/**` (2 files),
-`scripts/**` (4 modules and 1 test module).
+`scripts/**` (4 modules and 2 test modules).
 
 Not imported: the sibling skills `banner-design`, `brand`, `design`,
 `design-system`, `slides` and `ui-styling`; the TypeScript install-and-sync CLI
