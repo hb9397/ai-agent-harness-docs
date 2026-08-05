@@ -1,0 +1,32 @@
+# Portable artifact routing bundle
+
+This directory is the project-owned source of truth for artifact location and
+format. It remains readable after any setup tool or plugin has been removed.
+
+## Read in this order
+
+1. `artifact-routing.json` identifies the project mode, applications, ownership
+   roots and the two host-local adapter states.
+2. `artifact-format-contract.json` defines the required metadata and path rules
+   for a generated artifact.
+3. The application routing instruction at `{{ROUTING_INSTRUCTION}}` is the
+   detailed, app-scoped routing authority.
+
+## Host-local adapters
+
+The shared bundle is under `.docs/harness/`; host-local files are intentionally
+separate:
+
+- Claude: `.claude/settings.json` and `.claude/hooks/claude-pre-tool-use.ps1`
+- Codex: `.codex/hooks.json` and `.codex/hooks/codex-pre-tool-use.ps1`
+
+Both remain `pending-trust` until an administrator approves host installation
+and the host-specific trust step. `install-routing.ps1 -Plan` is safe to run:
+it emits the identical proposed local targets and does not write files.
+
+## Recovery and review
+
+Do not copy an adapter or configuration from one host to the other. Inspect the
+host-specific input contract in its adapter, review the plan, then apply the
+approved host-specific merge workflow. A proposal from `.docs/_inbox/` remains
+non-canonical until its provenance and target path are explicitly approved.

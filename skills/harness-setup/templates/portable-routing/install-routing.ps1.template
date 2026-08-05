@@ -1,0 +1,46 @@
+[CmdletBinding()]
+param(
+    [switch]$Plan
+)
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
+# Run `install-routing.ps1 -Plan` to inspect only; B1 never writes host files.
+if (-not $Plan) {
+    throw 'This B1 installer is plan-only. Host-local installation requires the separate G10 approval.'
+}
+
+$projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\\..')).Path
+$routingPath = Join-Path $PSScriptRoot 'artifact-routing.json'
+$routing = Get-Content -LiteralPath $routingPath -Raw | ConvertFrom-Json
+if ($routing.project_root -ne '{{PROJECT_ROOT}}') {
+    throw 'artifact-routing.json was not rendered for this installation.'
+}
+
+$targets = @(
+    [ordered]@{
+        host = 'claude'
+        config = '.claude/settings.json'
+        adapter = '.claude/hooks/claude-pre-tool-use.ps1'
+        action = 'managed PreToolUse merge proposal'
+        diff = 'create missing files or merge only the owned hook entry; preserve unrelated settings'
+        trust = 'pending-trust'
+    },
+    [ordered]@{
+        host = 'codex'
+        config = '.codex/hooks.json'
+        adapter = '.codex/hooks/codex-pre-tool-use.ps1'
+        action = 'managed PreToolUse merge proposal'
+        diff = 'create missing files or merge only the owned hooks.json entry; do not modify .codex/config.toml'
+        trust = 'pending-trust'
+    }
+)
+
+[ordered]@{
+    schema_version = '1.0.0'
+    mode = 'plan'
+    project_root = $projectRoot
+    routing_mode = $routing.mode
+    targets = $targets
+} | ConvertTo-Json -Depth 5

@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "artifact-format-contract",
+  "routing_schema": ".docs/harness/artifact-routing.json",
+  "required_fields": [
+    "artifact_id",
+    "artifact_type",
+    "owner",
+    "app_id",
+    "target_path",
+    "source_context",
+    "created_at"
+  ],
+  "path_rules": {
+    "target_path": "must be a normalized project-relative path under the app source or docs root declared in artifact-routing.json",
+    "prototype": "must remain under the declared prototype_owner",
+    "context": "must cite the declared canonical_context or routing_instruction"
+  },
+  "provenance": {
+    "required": true,
+    "fields": ["producer", "input_fingerprint", "source_context"]
+  },
+  "inbox": {
+    "manifest_path": ".docs/_inbox/artifact-manifest.json",
+    "canonicalization": "proposal only; do not replace a canonical artifact without explicit approval"
+  }
+}

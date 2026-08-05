@@ -1,0 +1,26 @@
+[CmdletBinding()]
+param()
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
+$raw = [Console]::In.ReadToEnd()
+if ([string]::IsNullOrWhiteSpace($raw)) {
+    Write-Error 'Codex PreToolUse payload is required.'
+    exit 2
+}
+
+$payload = $raw | ConvertFrom-Json
+if ([string]::IsNullOrWhiteSpace([string]$payload.tool_name) -or $null -eq $payload.tool_input) {
+    Write-Error 'Codex PreToolUse requires tool_name and tool_input.'
+    exit 2
+}
+if (($payload.tool_name -in @('Bash', 'apply_patch')) -and [string]::IsNullOrWhiteSpace([string]$payload.tool_input.command)) {
+    Write-Error 'Codex Bash and apply_patch require tool_input.command.'
+    exit 2
+}
+
+$projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\\..')).Path
+$corePath = Join-Path $projectRoot '.docs/harness/hooks/artifact-route-core.ps1'
+& $corePath -Host codex -ProjectRoot $projectRoot -ToolName $payload.tool_name -ToolInput $payload.tool_input
+exit $LASTEXITCODE

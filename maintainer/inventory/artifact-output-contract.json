@@ -62,6 +62,53 @@
     ],
     "reuse_decision": "extend artifact-output-contract and harness-setup eval; reuse existing setup/bootstrap/context templates and the read-only Claude case; create Codex adapter and portable bundle only in later approved phases."
   },
+  "portable_routing_bundle": {
+    "status": "phase-b1-defined",
+    "scope": "A project-owned, plugin-neutral bundle definition. It defines schemas, adapters and a no-write planning installer; it does not install host hooks or activate trust.",
+    "template_root": "skills/harness-setup/templates/portable-routing",
+    "shared_bundle_root": ".docs/harness",
+    "single_app_instruction": ".docs/instruction/artifact-output-routing-instruction.md",
+    "multi_app_instruction": ".docs/{app}/instruction/artifact-output-routing-instruction.md",
+    "project_owned_outputs": [
+      "AGENTS.md",
+      "CLAUDE.md",
+      ".docs/harness/artifact-routing.json",
+      ".docs/harness/artifact-format-contract.json",
+      ".docs/harness/README.md",
+      ".docs/harness/install-routing.ps1",
+      ".docs/harness/hooks/artifact-route-core.ps1",
+      ".docs/harness/hooks/claude-pre-tool-use.ps1",
+      ".docs/harness/hooks/codex-pre-tool-use.ps1",
+      ".docs/harness/hooks/approve-artifact.ps1",
+      ".claude/settings.json",
+      ".claude/hooks/claude-pre-tool-use.ps1",
+      ".codex/hooks.json",
+      ".codex/hooks/codex-pre-tool-use.ps1"
+    ],
+    "host_adapters": {
+      "claude": {
+        "config": ".claude/settings.json",
+        "adapter": ".claude/hooks/claude-pre-tool-use.ps1",
+        "input_contract": "PreToolUse JSON stdin with tool_name and tool_input; project root from CLAUDE_PROJECT_DIR",
+        "merge_rule": "merge only the managed PreToolUse entry; preserve unrelated settings"
+      },
+      "codex": {
+        "config": ".codex/hooks.json",
+        "adapter": ".codex/hooks/codex-pre-tool-use.ps1",
+        "input_contract": "PreToolUse JSON stdin; Bash and apply_patch inspect tool_input.command",
+        "merge_rule": "merge only the managed hooks.json entry; never add inline [hooks] to .codex/config.toml"
+      }
+    },
+    "installation": {
+      "plan_command": ".docs/harness/install-routing.ps1 -Plan",
+      "absolute_path_rule": "Render the absolute project root and Codex hook command only in installed project files. Templates and shared bundle sources contain no user-specific absolute path.",
+      "trust_state_before_g13": "pending-trust",
+      "gates": {
+        "G10": "required before writing host-local hook files or merging host config",
+        "G13": "required before Claude hook activation or Codex /hooks trust"
+      }
+    }
+  },
   "skills": [
     {
       "skill": "code-comment",

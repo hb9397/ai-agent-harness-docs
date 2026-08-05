@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 import re
+import subprocess
 import tempfile
 from pathlib import Path
 
@@ -16,6 +17,8 @@ BOOTSTRAP_SKILL = SKILLS_ROOT / "harness-bootstrap" / "SKILL.md"
 CONTEXT_SKILL = SKILLS_ROOT / "context-doc" / "SKILL.md"
 REPO_ROOT = SKILLS_ROOT.parent
 PORTABLE_BASELINE_FIXTURE = SETUP_ROOT / "evals" / "fixtures" / "portable-routing-baseline.json"
+PORTABLE_ROUTING_TEMPLATE_ROOT = SETUP_ROOT / "templates" / "portable-routing"
+PORTABLE_ROUTING_FIXTURE = SETUP_ROOT / "evals" / "fixtures" / "portable-routing-bundle.json"
 
 FORBIDDEN_LOCAL_SKILL_PATHS = (
     ".agents/skills",
@@ -147,6 +150,138 @@ def render(template_name: str, replacements: dict[str, str] | None = None) -> st
     if re.search(r"\{\{[A-Z0-9_]+\}\}", text):
         raise AssertionError(f"unresolved placeholder in {template_name}")
     return text
+
+
+def render_portable(template_name: str, replacements: dict[str, str]) -> str:
+    """Render an approved portable-routing template without host installation."""
+    template = PORTABLE_ROUTING_TEMPLATE_ROOT / template_name
+    text = read(template)
+    for key, value in replacements.items():
+        text = text.replace(key, value)
+    if re.search(r"\{\{[A-Z0-9_]+\}\}", text):
+        raise AssertionError(f"unresolved portable-routing placeholder in {template}")
+    return text
+
+
+def check_portable_routing_bundle() -> None:
+    """B1 contract: a copied project-owned bundle remains interpretable offline."""
+    fixture = json.loads(read(PORTABLE_ROUTING_FIXTURE))
+    replacements = fixture["replacements"]
+    required_templates = (
+        "artifact-routing.json.template",
+        "artifact-format-contract.json.template",
+        "README.md.template",
+        "install-routing.ps1.template",
+        "hooks/artifact-route-core.ps1.template",
+        "hooks/claude-pre-tool-use.ps1.template",
+        "hooks/codex-pre-tool-use.ps1.template",
+        "hooks/approve-artifact.ps1.template",
+        "claude-settings-hook.json.template",
+        "codex-hooks.json.template",
+        "inbox-artifact-manifest.json.template",
+    )
+    for template_name in required_templates:
+        if not (PORTABLE_ROUTING_TEMPLATE_ROOT / template_name).is_file():
+            raise AssertionError(f"missing portable-routing template: {template_name}")
+
+    routing = json.loads(render_portable("artifact-routing.json.template", replacements))
+    if routing["schema_version"] != "1.0.0":
+        raise AssertionError("portable routing schema version drifted")
+    if routing["mode"] not in {"single", "multi"}:
+        raise AssertionError("portable routing mode must be single or multi")
+    if routing["project_root"] != replacements["{{PROJECT_ROOT}}"]:
+        raise AssertionError("project root was not rendered at installation time")
+    if {host: item["status"] for host, item in routing["hosts"].items()} != {
+        "claude": "pending-trust",
+        "codex": "pending-trust",
+    }:
+        raise AssertionError("host hook states must remain pending-trust before G13")
+    if "C:\\Users\\" in json.dumps(routing):
+        raise AssertionError("portable routing schema stores a user-specific path")
+
+    for template_name in ("artifact-format-contract.json.template", "inbox-artifact-manifest.json.template"):
+        json.loads(render_portable(template_name, replacements))
+
+    claude_hook_config = json.loads(render_portable("claude-settings-hook.json.template", replacements))
+    claude_handler = claude_hook_config["hooks"]["PreToolUse"][0]["hooks"][0]
+    if claude_handler.get("command") != "powershell.exe" or "${CLAUDE_PROJECT_DIR}/.claude/hooks/claude-pre-tool-use.ps1" not in claude_handler.get("args", []):
+        raise AssertionError("Claude Windows hook config must use the documented exec form")
+
+    codex_hook_template = read(PORTABLE_ROUTING_TEMPLATE_ROOT / "codex-hooks.json.template")
+    if "{{CODEX_HOOK_PATH}}" not in codex_hook_template:
+        raise AssertionError("Codex hook command must be rendered with an installation-time stable path")
+    codex_hook_config = json.loads(render_portable("codex-hooks.json.template", replacements))
+    codex_handler = codex_hook_config["hooks"]["PreToolUse"][0]["hooks"][0]
+    if replacements["{{CODEX_HOOK_PATH}}"] not in codex_handler.get("commandWindows", ""):
+        raise AssertionError("Codex Windows hook config did not receive the resolved hook path")
+
+    claude_adapter = render_portable("hooks/claude-pre-tool-use.ps1.template", replacements)
+    codex_adapter = render_portable("hooks/codex-pre-tool-use.ps1.template", replacements)
+    if "$env:CLAUDE_PROJECT_DIR" not in claude_adapter or "tool_name" not in claude_adapter:
+        raise AssertionError("Claude adapter no longer validates Claude PreToolUse input")
+    if "Join-Path $env:CLAUDE_PROJECT_DIR '.docs/harness/hooks/artifact-route-core.ps1'" not in claude_adapter:
+        raise AssertionError("Claude adapter must use the shared project-owned core")
+    if "Codex tool_input.command payload cannot be used" not in claude_adapter or "exit 2" not in claude_adapter:
+        raise AssertionError("Claude adapter no longer rejects the Codex command input")
+    if "tool_input.command" not in codex_adapter or "apply_patch" not in codex_adapter:
+        raise AssertionError("Codex adapter no longer validates Codex PreToolUse input")
+    if "Join-Path $projectRoot '.docs/harness/hooks/artifact-route-core.ps1'" not in codex_adapter:
+        raise AssertionError("Codex adapter must use the shared project-owned core")
+    if "$env:CLAUDE_PROJECT_DIR" in codex_adapter:
+        raise AssertionError("Codex adapter incorrectly accepts Claude project input")
+
+    with tempfile.TemporaryDirectory(prefix="portable-routing-bundle-") as tmp:
+        bundle = Path(tmp) / "bundle"
+        bundle.mkdir()
+        for template_name in required_templates:
+            destination = bundle / template_name.removesuffix(".template")
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_text(
+                render_portable(template_name, replacements),
+                encoding="utf-8",
+                newline="\n",
+            )
+        readme = read(bundle / "README.md")
+        if "harness-kit" in readme.lower():
+            raise AssertionError("portable bundle documentation still requires Harness Kit")
+        installer = read(bundle / "install-routing.ps1")
+        for host in ("claude", "codex"):
+            if f"{host}" not in installer.lower():
+                raise AssertionError(f"portable installer does not plan {host} targets")
+        if "-Plan" not in installer:
+            raise AssertionError("portable installer has no no-write plan mode")
+
+    with tempfile.TemporaryDirectory(prefix="portable-routing-plan-") as tmp:
+        project = Path(tmp) / "clean-project"
+        bundle = project / ".docs" / "harness"
+        bundle.mkdir(parents=True)
+        install_replacements = dict(replacements)
+        install_replacements["{{PROJECT_ROOT}}"] = project.resolve().as_posix()
+        install_replacements["{{CODEX_HOOK_PATH}}"] = (project / ".codex" / "hooks" / "codex-pre-tool-use.ps1").resolve().as_posix()
+        for template_name in required_templates:
+            destination = bundle / template_name.removesuffix(".template")
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_text(
+                render_portable(template_name, install_replacements),
+                encoding="utf-8",
+                newline="\n",
+            )
+        result = subprocess.run(
+            ["pwsh", "-NoProfile", "-File", str(bundle / "install-routing.ps1"), "-Plan"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if result.returncode != 0:
+            raise AssertionError(f"portable installer plan failed: {result.stderr}")
+        plan = json.loads(result.stdout)
+        if Path(plan["project_root"]).resolve() != project.resolve():
+            raise AssertionError("portable installer plan is not bound to the routing project root")
+        targets = {item["host"]: item for item in plan["targets"]}
+        if set(targets) != {"claude", "codex"}:
+            raise AssertionError("portable installer plan does not contain both host targets")
+        if targets["claude"]["trust"] != "pending-trust" or targets["codex"]["trust"] != "pending-trust":
+            raise AssertionError("portable installer plan must not activate host trust")
 
 
 def assert_allowed_outputs(project: Path, before: dict[str, str]) -> None:
@@ -568,6 +703,7 @@ def main() -> int:
     check_setup_contract()
     check_nested_handoff_contract()
     check_portable_routing_baseline()
+    check_portable_routing_bundle()
     check_filesystem_fixtures()
     print("harness setup contract and filesystem fixture evals passed")
     return 0

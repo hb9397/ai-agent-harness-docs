@@ -1,0 +1,29 @@
+[CmdletBinding()]
+param()
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
+$raw = [Console]::In.ReadToEnd()
+if ([string]::IsNullOrWhiteSpace($raw)) {
+    Write-Error 'Claude PreToolUse payload is required.'
+    exit 2
+}
+
+$payload = $raw | ConvertFrom-Json
+if ([string]::IsNullOrWhiteSpace([string]$payload.tool_name) -or $null -eq $payload.tool_input) {
+    Write-Error 'Claude PreToolUse requires tool_name and tool_input.'
+    exit 2
+}
+if ($null -ne $payload.tool_input.command) {
+    Write-Error 'Codex tool_input.command payload cannot be used by the Claude adapter.'
+    exit 2
+}
+if ([string]::IsNullOrWhiteSpace($env:CLAUDE_PROJECT_DIR)) {
+    Write-Error 'CLAUDE_PROJECT_DIR is required by the Claude project adapter.'
+    exit 2
+}
+
+$corePath = Join-Path $env:CLAUDE_PROJECT_DIR '.docs/harness/hooks/artifact-route-core.ps1'
+& $corePath -Host claude -ProjectRoot $env:CLAUDE_PROJECT_DIR -ToolName $payload.tool_name -ToolInput $payload.tool_input
+exit $LASTEXITCODE

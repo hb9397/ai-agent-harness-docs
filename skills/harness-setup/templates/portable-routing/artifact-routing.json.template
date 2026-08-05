@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0.0",
+  "kind": "portable-artifact-routing",
+  "project_root": "{{PROJECT_ROOT}}",
+  "mode": "{{PROJECT_MODE}}",
+  "apps": [
+    {
+      "id": "{{APP_ID}}",
+      "source_root": "{{APP_SOURCE_ROOT}}",
+      "docs_root": "{{APP_DOCS_ROOT}}",
+      "prototype_owner": "{{PROTOTYPE_OWNER}}",
+      "canonical_context": "{{CANONICAL_CONTEXT}}",
+      "routing_instruction": "{{ROUTING_INSTRUCTION}}"
+    }
+  ],
+  "hosts": {
+    "claude": {
+      "layer": 3,
+      "status": "pending-trust",
+      "config_path": ".claude/settings.json",
+      "adapter_path": ".claude/hooks/claude-pre-tool-use.ps1",
+      "config_sha256": null,
+      "trust": "pending"
+    },
+    "codex": {
+      "layer": 3,
+      "status": "pending-trust",
+      "config_path": ".codex/hooks.json",
+      "adapter_path": ".codex/hooks/codex-pre-tool-use.ps1",
+      "config_sha256": null,
+      "trust": "pending"
+    }
+  },
+  "managed_files": [
+    ".docs/harness/artifact-routing.json",
+    ".docs/harness/artifact-format-contract.json",
+    ".docs/harness/README.md",
+    ".docs/harness/install-routing.ps1",
+    ".docs/harness/hooks/artifact-route-core.ps1",
+    ".docs/harness/hooks/claude-pre-tool-use.ps1",
+    ".docs/harness/hooks/codex-pre-tool-use.ps1",
+    ".docs/harness/hooks/approve-artifact.ps1",
+    ".claude/settings.json",
+    ".claude/hooks/claude-pre-tool-use.ps1",
+    ".codex/hooks.json",
+    ".codex/hooks/codex-pre-tool-use.ps1"
+  ]
+}

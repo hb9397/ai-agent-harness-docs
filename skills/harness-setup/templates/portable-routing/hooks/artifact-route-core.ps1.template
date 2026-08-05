@@ -1,0 +1,35 @@
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory)]
+    [ValidateSet('claude', 'codex')]
+    [string]$Host,
+    [Parameter(Mandatory)]
+    [string]$ProjectRoot,
+    [Parameter(Mandatory)]
+    [string]$ToolName,
+    [Parameter(Mandatory)]
+    [object]$ToolInput
+)
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
+$routingPath = Join-Path $ProjectRoot '.docs/harness/artifact-routing.json'
+if (-not (Test-Path -LiteralPath $routingPath -PathType Leaf)) {
+    throw "portable routing contract is missing: $routingPath"
+}
+
+$routing = Get-Content -LiteralPath $routingPath -Raw | ConvertFrom-Json
+if ($routing.hosts.$Host.status -ne 'pending-trust') {
+    throw "unsupported host routing state: $($routing.hosts.$Host.status)"
+}
+
+# B1 intentionally reports only. Enforcement and one-time approvals are added
+# after the host-install and trust gates, never by this shared core alone.
+[ordered]@{
+    schema_version = '1.0.0'
+    host = $Host
+    tool_name = $ToolName
+    decision = 'allow'
+    reason = 'portable routing is defined but pending host trust'
+} | ConvertTo-Json -Compress
