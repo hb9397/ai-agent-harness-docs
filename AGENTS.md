@@ -7,7 +7,7 @@
 ## 현재 전환 상태
 
 - 기준 계획서: `improvement_plan/20260729/플러그인 전환 및 스킬 거버넌스 리팩토링 작업 계획서.md`
-- `harness-kit` `0.3.0` 릴리스 후보와 최종 감사 보완을 진행 중이다.
+- `harness-kit` `0.4.0` 릴리스 후보의 수동 인터페이스 증적과 최종 감사를 진행 중이다.
 - inventory, upstream provenance, license/NOTICE, plugin build, 설치 인터페이스와 회귀검증 기준선은 `maintainer/` 아래에서 관리한다.
 - CLI 자동 설치 검증과 Codex·Claude 앱 수동 증적이 모두 충족되기 전에는 `release-ready`로 표시하지 않는다.
 

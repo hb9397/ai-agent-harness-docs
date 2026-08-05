@@ -926,7 +926,7 @@ cache에 선언된 수의 스킬이 존재함, 실제 모델이 산출물 계약
 - [ ] build가 clean source에서 재현된다.
 - [ ] source와 Codex·Claude runtime inventory가 일치한다.
 - [ ] 관리자 스킬과 agents가 사용자 payload에 없다.
-- [ ] CLI 설치 smoke가 격리 설정에서 통과한다.
+- [x] `0.4.0` CLI 설치 smoke가 격리 설정에서 통과한다.
 - [ ] 네 인터페이스의 수동 호출 증적이 있다.
 - [ ] release checklist의 미검증 항목이 없다.
 

@@ -29,8 +29,8 @@
 - `0.4.0` Codex runtime: 19 skills / 0 agents
 - `0.4.0` Claude runtime: 19 skills / 0 agents
 - 관리자 스킬: 3종, 이 저장소 안에서만 사용
-- 릴리스 상태: `not release-ready` — 공식 CLI 설치 smoke와 별도로 Codex·Claude
-  CLI·앱 네 인터페이스의 실제 모델 호출 수동 증적이 모두 필요함
+- 릴리스 상태: `not release-ready` — `0.4.0` 공식 Codex·Claude CLI 설치 smoke는
+  통과했지만, Codex·Claude CLI·앱 네 인터페이스의 실제 모델 호출 수동 증적이 모두 필요함
 
 ### 함께 사용해볼 만한 플러그인
 
@@ -84,10 +84,10 @@
 
 ![Claude 앱의 마켓플레이스 추가 화면](./.user-docs/assets/plugin-install/claude-app-add-marketplace.png)
 
-CLI 설치 smoke는 `0.3.1`에서 Codex CLI `0.146.0`과 Claude Code `2.1.220` 기준으로
-통과했다. 격리된 설정 디렉터리에서 marketplace 등록, 설치, 19 skills / 0 agents
-확인, 제거까지 수행했다. 이는 `0.3.1`의 역사적 smoke이며 `0.4.0` 설치나 실제 모델이
-스킬을 올바르게 수행했다는 증적이 아니다. 네 인터페이스의 수동 행동 증적은 아직 남아 있다.
+`0.4.0` CLI 설치 smoke는 2026-08-05에 Codex CLI `0.146.0`과 Claude Code `2.1.220`
+기준으로 통과했다. 격리된 설정 디렉터리에서 marketplace 등록, 설치, 19 skills / 0 agents
+확인, 제거까지 수행했다. 이는 설치·cache 증적일 뿐 실제 모델이 스킬 계약을 수행했다는
+증적은 아니다. 네 인터페이스의 직접 모델 호출과 앱 설치·trust 증적은 아직 남아 있다.
 
 ### 사용자 스킬 정본 19종
 

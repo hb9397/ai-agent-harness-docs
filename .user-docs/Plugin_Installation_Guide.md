@@ -42,8 +42,8 @@
 
 ## 3. Codex CLI
 
-> CLI 설치 smoke는 `0.3.1` 기준으로 Codex CLI와 Claude Code 양쪽에서 통과한 역사적
-> 증적이다. `0.4.0`의 설치와 실제 모델 호출은 별도 수동 증적으로 남긴다.
+> `0.4.0` CLI 설치 smoke는 Codex CLI와 Claude Code 양쪽에서 통과했다. 다만 이는
+> 격리 설치·cache 증적이며, 실제 모델 호출과 앱 설치·trust는 별도 수동 증적으로 남긴다.
 
 공식 Codex CLI `0.146.0`을 임시 `CODEX_HOME`에서 실행해 아래 marketplace
 등록·설치·목록·제거 흐름과 설치 cache의 skills / 0 agents를 확인했다. CI도
@@ -187,7 +187,8 @@ Claude 앱과 Claude Code CLI는 일부 설정을 공유할 수 있지만 host�
 9. cloud Code session은 plugin browser가 없어 프로젝트 `enabledPlugins` 정책을 별도 적용
 10. WSL session은 Desktop plugin 설치 인터페이스로 지원하지 않음을 명시
 
-Phase 7 자동 검증 결과: `manual-required`.
+`0.4.0` CLI 설치 smoke 결과: `install-smoke-verified`. 앱 설치와 직접 모델 호출은
+`manual-required`다.
 
 ---
 
