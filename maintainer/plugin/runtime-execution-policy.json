@@ -30,7 +30,8 @@
         "scripts/design_system.py",
         "scripts/search.py",
         "scripts/validate_data.py",
-        "scripts/tests/test_core.py"
+        "scripts/tests/test_core.py",
+        "scripts/tests/test_design_system_mode.py"
       ],
       "interpreter": "python3",
       "third_party_dependencies": [],

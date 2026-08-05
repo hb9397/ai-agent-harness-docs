@@ -3,15 +3,15 @@
   "files": [
     {
       "path": ".claude-plugin/plugin.json",
-      "sha256": "b63f5d0019d5548cf2dff64d5b53ab694a6cf7ab7c7d40a6bb491392d2624ead"
+      "sha256": "13a71d0c6a23ad0405ce5185caba71ce55d10f03d2300e2d23c9e811dfcd3e3c"
     },
     {
       "path": ".codex-plugin/plugin.json",
-      "sha256": "ee5f128d9dbe5a0c7edc2c0fda3fa913676cd5c2484d9b7fe8ad6d66a943ee71"
+      "sha256": "69db6f8e6e033d0317e52c1cde691684efbeeb8fdfd695145134025ad7a18129"
     },
     {
       "path": "CAPABILITIES.json",
-      "sha256": "619339f9fd686a2b3d59fdc54bebbeaa6c1cc1623f8ba91e97a5d5ed652f9122"
+      "sha256": "bba11acdf42e7b4513b327e85f5b13b15bcc76c9cbe1571965512310fa32fdfc"
     },
     {
       "path": "LICENSE",
@@ -23,11 +23,11 @@
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
-      "sha256": "50526435539d4659ff9cbb26f19d7f3d1e2a890942b7234c105d12a4a703d5af"
+      "sha256": "283cd8cbacf9a34c108ffd9909c9945d38d1c21ecc74321118ab3f796e53249c"
     },
     {
       "path": "UPSTREAMS.lock.json",
-      "sha256": "6aa515aaf64953d47db37c2ed5d0e003327900180da6b07e5abc58c171f26775"
+      "sha256": "1cfd037415e89ed71f398244e7232d3479c76d82a9cf97d85f5aa2004a418029"
     },
     {
       "path": "licenses/anthropic-frontend-design-LICENSE",
@@ -775,7 +775,7 @@
     },
     {
       "path": "runtime/claude/skills/ui-ux-pro-max/scripts/design_system.py",
-      "sha256": "fcdb279eb9691dffd6c80c333d29a4e5567368e38d724520c60013c8b1aaf242"
+      "sha256": "5612e607f3d4fded1aa83e5bf62d54a137a7087efbb70b72c91c30680b4d2dfd"
     },
     {
       "path": "runtime/claude/skills/ui-ux-pro-max/scripts/search.py",
@@ -784,6 +784,10 @@
     {
       "path": "runtime/claude/skills/ui-ux-pro-max/scripts/tests/test_core.py",
       "sha256": "ce60ac571164cf35e8c866550ad989fa686706a56fa48df4fdf76444b94fdd8d"
+    },
+    {
+      "path": "runtime/claude/skills/ui-ux-pro-max/scripts/tests/test_design_system_mode.py",
+      "sha256": "c38424e0f575f498c10564844338abce9363cd0b002ba8bd35c9d2762c2674ae"
     },
     {
       "path": "runtime/claude/skills/ui-ux-pro-max/scripts/validate_data.py",
@@ -1519,7 +1523,7 @@
     },
     {
       "path": "runtime/codex/skills/ui-ux-pro-max/scripts/design_system.py",
-      "sha256": "fcdb279eb9691dffd6c80c333d29a4e5567368e38d724520c60013c8b1aaf242"
+      "sha256": "5612e607f3d4fded1aa83e5bf62d54a137a7087efbb70b72c91c30680b4d2dfd"
     },
     {
       "path": "runtime/codex/skills/ui-ux-pro-max/scripts/search.py",
@@ -1528,6 +1532,10 @@
     {
       "path": "runtime/codex/skills/ui-ux-pro-max/scripts/tests/test_core.py",
       "sha256": "ce60ac571164cf35e8c866550ad989fa686706a56fa48df4fdf76444b94fdd8d"
+    },
+    {
+      "path": "runtime/codex/skills/ui-ux-pro-max/scripts/tests/test_design_system_mode.py",
+      "sha256": "c38424e0f575f498c10564844338abce9363cd0b002ba8bd35c9d2762c2674ae"
     },
     {
       "path": "runtime/codex/skills/ui-ux-pro-max/scripts/validate_data.py",

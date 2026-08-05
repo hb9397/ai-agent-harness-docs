@@ -89,7 +89,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/plugin_common.py",
-          "sha256": "a7270bd9f7a802031a8530b71103e4e035d498870ceab37eb1afba59a44e85ce"
+          "sha256": "543557e26b0411b29755076fb2ffdcd1850fd6a524a6c651fb0db72d77a5ee5a"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/run_all_skill_evals.py",

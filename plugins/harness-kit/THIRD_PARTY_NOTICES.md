@@ -10,8 +10,8 @@ components below keep their own upstream licenses, reproduced in full under
 
 - Source ID: `ui-ux-pro-max-runtime`
 - Upstream: https://github.com/nextlevelbuilder/ui-ux-pro-max-skill
-- Accepted ref: `v2.11.3`
-- Accepted commit: `4857a2c5ef989794751a0f66b8545a4a49566286`
+- Accepted ref: `v2.13.0`
+- Accepted commit: `4d140cf8ff6842de13213c7214eff3810371beb2`
 - License: MIT, Copyright (c) 2024 Next Level Builder
 - Adapted user skill: `skills/ui-ux-pro-max`
 - Notice details: `maintainer/upstreams/provenance/ui-ux-pro-max/NOTICE.md`
