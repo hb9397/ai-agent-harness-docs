@@ -19,6 +19,7 @@ REPO_ROOT = SKILLS_ROOT.parent
 PORTABLE_BASELINE_FIXTURE = SETUP_ROOT / "evals" / "fixtures" / "portable-routing-baseline.json"
 PORTABLE_ROUTING_TEMPLATE_ROOT = SETUP_ROOT / "templates" / "portable-routing"
 PORTABLE_ROUTING_FIXTURE = SETUP_ROOT / "evals" / "fixtures" / "portable-routing-bundle.json"
+ROUTING_COVERAGE_MANIFEST = SETUP_ROOT / "evals" / "fixtures" / "portable-routing-coverage.json"
 
 FORBIDDEN_LOCAL_SKILL_PATHS = (
     ".agents/skills",
@@ -172,6 +173,7 @@ def check_portable_routing_bundle() -> None:
         "artifact-format-contract.json.template",
         "README.md.template",
         "install-routing.ps1.template",
+        "normalize-artifact.ps1.template",
         "hooks/artifact-route-core.ps1.template",
         "hooks/claude-pre-tool-use.ps1.template",
         "hooks/codex-pre-tool-use.ps1.template",
@@ -264,6 +266,10 @@ def check_portable_routing_bundle() -> None:
                 raise AssertionError(f"portable installer does not plan {host} targets")
         if "-Plan" not in installer:
             raise AssertionError("portable installer has no no-write plan mode")
+        normalizer = read(bundle / "normalize-artifact.ps1")
+        for token in ("ApprovePromotion", "marker-aware", "fixed-format-inbox-only"):
+            if token not in normalizer:
+                raise AssertionError(f"portable normalizer contract missing: {token}")
 
     with tempfile.TemporaryDirectory(prefix="portable-routing-plan-") as tmp:
         project = Path(tmp) / "clean-project"
@@ -351,6 +357,11 @@ def check_portable_routing_bundle() -> None:
         )
         if outside_code != 0 or outside.get("hookSpecificOutput", {}).get("permissionDecision") != "deny":
             raise AssertionError(f"Codex traversal write was not denied: {outside} / {outside_stderr}")
+        superpowers_code, superpowers, superpowers_stderr = invoke_codex(
+            {"tool_name": "Write", "tool_input": {"file_path": "docs/superpowers/plans/external.md", "content": "blocked"}}
+        )
+        if superpowers_code != 0 or superpowers.get("hookSpecificOutput", {}).get("permissionDecision") != "deny" or ".docs/instruction/artifact-output-routing-instruction.md" not in superpowers.get("hookSpecificOutput", {}).get("permissionDecisionReason", ""):
+            raise AssertionError(f"Superpowers default path was not redirected to canonical routing: {superpowers} / {superpowers_stderr}")
 
         existing = project / ".docs" / "instruction" / "existing.md"
         existing.parent.mkdir(parents=True, exist_ok=True)
@@ -434,6 +445,64 @@ def check_portable_routing_bundle() -> None:
         )
         if checked.returncode != 0 or {item["state"] for item in json.loads(checked.stdout)["hosts"]} != {"pending-trust"}:
             raise AssertionError("Check did not report both installed hosts as pending-trust")
+        before_trust = snapshot_files(project)
+        trust_denied = subprocess.run(
+            ["pwsh", "-NoProfile", "-File", str(bundle / "install-routing.ps1"), "-ActivateTrust", "-TargetHost", "codex"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            check=False,
+        )
+        if trust_denied.returncode == 0 or snapshot_files(project) != before_trust:
+            raise AssertionError("unapproved Codex trust activation must fail without writing")
+        trust_activated = subprocess.run(
+            ["pwsh", "-NoProfile", "-File", str(bundle / "install-routing.ps1"), "-ActivateTrust", "-TargetHost", "codex", "-ApproveTrustEvidence"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            check=False,
+        )
+        if trust_activated.returncode != 0:
+            raise AssertionError(f"approved Codex trust activation failed: {trust_activated.stderr}")
+        post_trust = json.loads((bundle / "artifact-routing.json").read_text(encoding="utf-8"))
+        if post_trust["hosts"]["codex"]["status"] != "active" or post_trust["hosts"]["claude"]["status"] != "pending-trust":
+            raise AssertionError("Codex trust activation did not preserve the other host's pending-trust state")
+
+        text_input = project / "external.mdx"
+        text_input.write_text("<!-- harness-kit:managed:start -->\nNEW-MANAGED\n<!-- harness-kit:managed:end -->\n", encoding="utf-8", newline="\n")
+        text_target = project / ".docs" / "instruction" / "external.mdx"
+        text_target.write_text("<!-- harness-kit:managed:start -->\nOLD-MANAGED\n<!-- harness-kit:managed:end -->\nUSER-EXTENSION\n", encoding="utf-8", newline="\n")
+        normalizer_path = bundle / "normalize-artifact.ps1"
+        normalizer_plan = subprocess.run(
+            ["pwsh", "-NoProfile", "-File", str(normalizer_path), "-InputPath", str(text_input), "-ArtifactBundleId", "external-text", "-TargetPath", ".docs/instruction/external.mdx", "-Plan"],
+            capture_output=True, text=True, encoding="utf-8", errors="replace", check=False,
+        )
+        if normalizer_plan.returncode != 0 or json.loads(normalizer_plan.stdout).get("status") != "proposal-only":
+            raise AssertionError(f"text normalization plan failed: {normalizer_plan.stdout} / {normalizer_plan.stderr}")
+        normalizer_denied = subprocess.run(
+            ["pwsh", "-NoProfile", "-File", str(normalizer_path), "-InputPath", str(text_input), "-ArtifactBundleId", "external-text", "-TargetPath", ".docs/instruction/external.mdx", "-Promote"],
+            capture_output=True, text=True, encoding="utf-8", errors="replace", check=False,
+        )
+        if normalizer_denied.returncode == 0:
+            raise AssertionError("text promotion without G12 approval must fail")
+        normalizer_promoted = subprocess.run(
+            ["pwsh", "-NoProfile", "-File", str(normalizer_path), "-InputPath", str(text_input), "-ArtifactBundleId", "external-text", "-TargetPath", ".docs/instruction/external.mdx", "-Promote", "-ApprovePromotion"],
+            capture_output=True, text=True, encoding="utf-8", errors="replace", check=False,
+        )
+        if normalizer_promoted.returncode != 0 or "NEW-MANAGED" not in read(text_target) or "USER-EXTENSION" not in read(text_target):
+            raise AssertionError(f"approved marker-aware text promotion failed: {normalizer_promoted.stdout} / {normalizer_promoted.stderr}")
+        fixed_input = project / "external.pdf"
+        fixed_input.write_bytes(b"not-a-real-pdf")
+        fixed_target = project / ".docs" / "instruction" / "external.pdf"
+        fixed_promoted = subprocess.run(
+            ["pwsh", "-NoProfile", "-File", str(normalizer_path), "-InputPath", str(fixed_input), "-ArtifactBundleId", "external-fixed", "-TargetPath", ".docs/instruction/external.pdf", "-Promote", "-ApprovePromotion"],
+            capture_output=True, text=True, encoding="utf-8", errors="replace", check=False,
+        )
+        fixed_manifest = project / ".docs" / "_inbox" / "external-fixed" / "artifact-manifest.json"
+        if fixed_promoted.returncode != 0 or fixed_target.exists() or json.loads(read(fixed_manifest)).get("status") != "fixed-format-inbox-only":
+            raise AssertionError(f"fixed-format promotion must remain inbox-only: {fixed_promoted.stdout} / {fixed_promoted.stderr}")
         removed = subprocess.run(
             ["pwsh", "-NoProfile", "-File", str(bundle / "install-routing.ps1"), "-Uninstall", "-ApproveHostInstall"],
             capture_output=True,
@@ -449,13 +518,39 @@ def check_portable_routing_bundle() -> None:
 def check_portable_routing_lifecycle_contract() -> None:
     """B2 contract: lifecycle operations stay host-scoped and approval-gated."""
     installer = read(PORTABLE_ROUTING_TEMPLATE_ROOT / "install-routing.ps1.template")
-    for token in ("-Plan", "-Apply", "-Check", "-Uninstall", "[ValidateSet('claude', 'codex', 'all')]", "ApproveHostInstall"):
+    for token in ("-Plan", "-Apply", "-Check", "-Uninstall", "-ActivateTrust", "[ValidateSet('claude', 'codex', 'all')]", "ApproveHostInstall", "ApproveTrustEvidence"):
         if token not in installer:
             raise AssertionError(f"portable installer lifecycle operation missing: {token}")
     for template_name in ("root-context-single.template", "root-context.template", "claude-bridge.template"):
         template = read(SETUP_ROOT / "templates" / template_name)
         if ".docs/harness/artifact-routing.json" not in template:
             raise AssertionError(f"{template_name}: missing portable routing Layer 1 summary")
+
+
+def check_routing_coverage_manifest() -> None:
+    """B5: keep every portable-routing requirement traceable to executable evidence."""
+    coverage = json.loads(read(ROUTING_COVERAGE_MANIFEST))
+    cases = coverage.get("cases", [])
+    if [case.get("id") for case in cases] != list(range(1, 17)):
+        raise AssertionError("routing coverage manifest must contain exactly ordered cases 1..16")
+    for case in cases:
+        for field in ("title", "fixture", "assertion", "evidence"):
+            if not str(case.get(field, "")).strip():
+                raise AssertionError(f"routing coverage case {case['id']} is missing {field}")
+        for evidence_path in case["evidence"].split("; "):
+            if not (REPO_ROOT / evidence_path).is_file():
+                raise AssertionError(f"routing coverage evidence is missing: {evidence_path}")
+    matrix = coverage.get("runtime_matrix", [])
+    expected_matrix = {
+        ("harness-kit-installed", "claude"),
+        ("harness-kit-installed", "codex"),
+        ("portable-only", "claude"),
+        ("portable-only", "codex"),
+    }
+    if {(item.get("bundle"), item.get("host")) for item in matrix} != expected_matrix:
+        raise AssertionError("routing coverage matrix must cover installed|portable-only × Claude|Codex")
+    if any(item.get("expected_trust") not in {"pending-trust", "active"} for item in matrix):
+        raise AssertionError("routing coverage matrix has invalid trust state")
 
 
 def assert_allowed_outputs(project: Path, before: dict[str, str]) -> None:
@@ -891,6 +986,7 @@ def main() -> int:
     check_portable_routing_baseline()
     check_portable_routing_bundle()
     check_portable_routing_lifecycle_contract()
+    check_routing_coverage_manifest()
     check_filesystem_fixtures()
     print("harness setup contract and filesystem fixture evals passed")
     return 0

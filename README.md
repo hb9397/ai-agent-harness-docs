@@ -220,6 +220,11 @@ flowchart TD
 필요하다. 동적 shell 경로·hosted tool·외부 process는 완전 차단 대상이 아닌 bypass
 evidence로 기록하는 한계가 있다.
 
+외부 텍스트는 `.docs/harness/normalize-artifact.ps1 -Plan`으로 G12 제안을 먼저 확인한다.
+명시 승인 후에만 UTF-8·managed marker 기준으로 canonical 문서에 반영할 수 있다. JSON,
+YAML, 이미지, PDF는 `_inbox` manifest에 hash와 proposal만 남기며 자동 변환·승격하지
+않는다.
+
 ### 4단계 — 품질·문서·커밋
 
 1. `multi-review`로 보안·성능·유지보수·테스트 관점을 점검한다.

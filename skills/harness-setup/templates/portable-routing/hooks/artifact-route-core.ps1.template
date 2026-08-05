@@ -103,6 +103,11 @@ $inboxRoot = Join-Path $docsRoot '_inbox'
 $markerDirectory = Join-Path $docsRoot '.harness/artifact-approvals'
 $sourceRoots = @($routing.apps | ForEach-Object { Get-NormalizedPath ([string]$_.source_root) $project })
 $exceptionRoots = @($routing.write_exceptions | ForEach-Object { Get-NormalizedPath ([string]$_) $project })
+$forbiddenExternalRoots = @(
+    (Join-Path $project 'docs/superpowers/specs'),
+    (Join-Path $project 'docs/superpowers/plans')
+)
+$canonicalInstruction = [string]$routing.apps[0].routing_instruction
 $allowedRootFiles = @((Join-Path $project 'AGENTS.md'), (Join-Path $project 'CLAUDE.md'))
 $approvedMarkers = @()
 
@@ -118,6 +123,10 @@ foreach ($request in Get-WriteRequests) {
     $isDocs = Test-Contained $target $docsRoot
     $isException = $exceptionRoots | Where-Object { $_ -and (Test-Contained $target $_) }
 
+    if ($forbiddenExternalRoots | Where-Object { Test-Contained $target $_ }) {
+        Write-Output (New-Decision 'deny' "external default path is not canonical; use $canonicalInstruction to calculate the target" @($relative))
+        exit 0
+    }
     if ($isInbox -or $isException) { continue }
     if (($isDocs -or $isRootContext) -and $exists) { continue }
     if ($isDocs -or $isRootContext) {

@@ -348,6 +348,13 @@ settings merge와 Codex hooks.json merge는 서로 다른 adapter이며 기존 �
 bundle과 활성화된 host hook이 모두 남은 범위에서만 setup manifest에
 `harness-kit-runtime-required=false`를 기록한다.
 
+사용자가 host의 실제 신뢰 검토를 마친 증적을 제시할 때만 `-ActivateTrust`와
+`-ApproveTrustEvidence`로 해당 host의 manifest 상태를 `active`로 기록한다. 이 명령은
+`/hooks`를 대신 실행하거나 신뢰를 자동 추론하지 않는다. 외부 text artifact는
+`normalize-artifact.ps1 -Plan`으로 UTF-8·marker-aware merge proposal을 만들고 G12 승인 뒤
+`-Promote -ApprovePromotion`으로 반영한다. JSON/YAML·이미지·PDF는 `_inbox` manifest만
+갱신하며 lossless 여부를 알 수 없는 자동 canonical promotion은 금지한다.
+
 host adapter가 활성화된 경우 공통 write guard는 absolute/relative, separator, case,
 traversal을 정규화해 project containment를 확인한다. 기존 canonical file, 승인된 app
 source, `.docs/_inbox/**`, manifest exception은 허용한다. 새 managed `.docs` 또는 root

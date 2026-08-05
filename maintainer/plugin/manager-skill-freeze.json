@@ -211,7 +211,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/validate_artifact_output_contract.py",
-          "sha256": "d575fb5751e004f97c54200b6aab2296d29b03c5a22f0eca37df4115dad88e46"
+          "sha256": "0bc275afb9e1022e9dee88c36c929cb6aa79ff16fb273ee5b1d99b0de9555652"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py",

@@ -951,6 +951,13 @@ content SHA-256, TTL을 함께 묶은 1회성 approval marker가 정확히 일�
 tool, opt-out path, 명령 실행 후의 redirect, 외부 process는 완전 차단을 주장하지 않고
 bypass evidence로 남긴다. 실제 Codex `/hooks` trust는 여전히 별도의 사용자 증적이다.
 
+사용자가 Codex `/hooks` 또는 해당 host의 신뢰 검토를 마친 뒤에는
+`install-routing.ps1 -ActivateTrust -TargetHost codex -ApproveTrustEvidence`처럼 증적을
+명시해 manifest 상태만 `active`로 갱신한다. 이 명령은 신뢰 검토를 실행하거나 자동으로
+증명하지 않는다. 외부 Markdown 계열은 `normalize-artifact.ps1 -Plan`으로 UTF-8·managed
+marker 병합안을 보고 G12 승인 뒤에만 promotion한다. JSON/YAML·이미지·PDF는 source hash와
+proposal을 `_inbox`에 보관할 뿐 손실 가능 자동 변환이나 canonical promotion을 하지 않는다.
+
 ## 결론
 
 사용자 관점의 하네스는 **설치 → 문서 골격 → 설계·컨텍스트 → 구현 계획 →

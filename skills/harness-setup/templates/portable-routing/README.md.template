@@ -35,6 +35,15 @@ claimed as fully enforced. Hosted tools, opt-out tool paths, shell redirects
 created after command execution, and processes outside this project are also
 best-effort limits rather than a complete security boundary.
 
+## External artifact normalization
+
+`normalize-artifact.ps1 -Plan` previews a G12 proposal. With explicit
+`-Promote -ApprovePromotion`, text formats (`.md`, `.mdx`, `.txt`, `.rst`,
+`.adoc`, `.asciidoc`) are UTF-8 normalized and use a marker-aware merge that
+preserves existing unmanaged text. JSON/YAML, images, and PDF stay in
+`.docs/_inbox/{artifact-bundle-id}/artifact-manifest.json`; the tool refuses a
+lossy automatic conversion or canonical promotion for those fixed formats.
+
 ## Recovery and review
 
 Do not copy an adapter or configuration from one host to the other. Inspect the

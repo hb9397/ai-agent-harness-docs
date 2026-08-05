@@ -174,6 +174,10 @@ Markdown producer 뒤에는 `humanize-korean` 개선안이 연결된다. 다만 
 `git-scoped-account`는 필수 시작 단계가 아니다. 여러 repo의 계정을 맞춰야 할
 때만 명시 호출한다.
 
+`harness-setup`이 만든 portable bundle은 플러그인 제거 뒤에도 남는다. host hook의
+`pending-trust` 상태는 사용자가 신뢰 검토를 끝낸 증적을 명시해 `active`로 기록하기 전까지
+바뀌지 않으며, 외부 fixed-format 산출물은 `_inbox`에서만 관리한다.
+
 ### 설계·컨텍스트·프로토타입
 
 | 스킬 | 역할 | 언제 쓰는가 |

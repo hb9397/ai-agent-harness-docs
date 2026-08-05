@@ -23,5 +23,11 @@
   "inbox": {
     "manifest_path": ".docs/_inbox/artifact-manifest.json",
     "canonicalization": "proposal only; do not replace a canonical artifact without explicit approval"
+  },
+  "normalization": {
+    "text_extensions": [".md", ".mdx", ".txt", ".rst", ".adoc", ".asciidoc"],
+    "text_rule": "UTF-8 newline normalization and marker-aware three-way proposal; G12 approval is required before promotion",
+    "fixed_format_extensions": [".json", ".yaml", ".yml", ".png", ".jpg", ".jpeg", ".gif", ".webp", ".pdf"],
+    "fixed_format_rule": "record source hash and proposal in _inbox only; no lossy automatic conversion or canonical promotion"
   }
 }

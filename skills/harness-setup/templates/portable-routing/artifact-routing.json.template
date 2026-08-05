@@ -48,6 +48,7 @@
     ".docs/harness/artifact-format-contract.json",
     ".docs/harness/README.md",
     ".docs/harness/install-routing.ps1",
+    ".docs/harness/normalize-artifact.ps1",
     ".docs/harness/hooks/artifact-route-core.ps1",
     ".docs/harness/hooks/claude-pre-tool-use.ps1",
     ".docs/harness/hooks/codex-pre-tool-use.ps1",
