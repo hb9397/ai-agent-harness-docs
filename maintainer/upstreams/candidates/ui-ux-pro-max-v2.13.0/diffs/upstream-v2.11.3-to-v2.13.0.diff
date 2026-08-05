@@ -1,0 +1,302 @@
+diff --git a/.claude/skills/ui-ux-pro-max/scripts/design_system.py b/.claude/skills/ui-ux-pro-max/scripts/design_system.py
+index 7cc337d..7d790e1 100644
+--- a/.claude/skills/ui-ux-pro-max/scripts/design_system.py
++++ b/.claude/skills/ui-ux-pro-max/scripts/design_system.py
+@@ -77,6 +77,108 @@ def _resolve_dial(dial_name: str, value) -> dict:
+     return None
+ 
+ 
++# ============ COLOR MODE RESOLUTION ============
++# Style, palette and anti-patterns are resolved from separate CSVs. Without a
++# shared notion of "which mode did we land on", a dark-primary style can be
++# paired with a light palette and a "don't use dark mode" anti-pattern.
++
++# Phrases in styles.csv "Light Mode ✓" / "Dark Mode ✓" that mark a style as
++# dark-first rather than merely dark-capable ("✓ Full" means both work).
++_DARK_PRIMARY_MARKERS = (
++    "dark mode primary", "dark primary", "dark-only", "dark only",
++    "dark preferred", "dark focused", "dark-first", "dark rich",
++    "light mode only as exception",
++)
++
++# Query phrases that are an explicit request for a dark theme.
++_DARK_QUERY_MARKERS = (
++    "dark mode", "dark theme", "dark ui", "dark-mode", "darkmode",
++    "night mode", "midnight", "oled",
++)
++
++# Anti-pattern clauses that contradict a resolved dark mode.
++_DARK_ANTI_PATTERN_MARKERS = ("dark mode", "dark modes", "dark theme")
++
++# Relative luminance below which a Background hex counts as a dark surface.
++# #1F2937 (the lightest dark background in colors.csv) sits at ~0.026 and
++# #E8ECF1 (the darkest light background) at ~0.79, so the gap is wide.
++_DARK_BACKGROUND_MAX_LUMINANCE = 0.18
++
++
++def _relative_luminance(hex_color: str):
++    """WCAG relative luminance of a #RRGGBB string, or None if unparseable."""
++    if not hex_color:
++        return None
++    value = hex_color.strip().lstrip("#")
++    if len(value) == 3:
++        value = "".join(c * 2 for c in value)
++    if len(value) != 6:
++        return None
++    try:
++        channels = [int(value[i:i + 2], 16) / 255 for i in (0, 2, 4)]
++    except ValueError:
++        return None
++    linear = [c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
++              for c in channels]
++    return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
++
++
++def _palette_is_dark(palette: dict) -> bool:
++    """True when a colors.csv row's Background is a dark surface."""
++    luminance = _relative_luminance((palette or {}).get("Background", ""))
++    return luminance is not None and luminance < _DARK_BACKGROUND_MAX_LUMINANCE
++
++
++def _style_is_dark_primary(style: dict) -> bool:
++    """True when a styles.csv row describes itself as dark-first."""
++    if not style:
++        return False
++    declared = "{} {}".format(
++        style.get("Light Mode ✓", ""), style.get("Dark Mode ✓", "")
++    ).lower()
++    return any(marker in declared for marker in _DARK_PRIMARY_MARKERS)
++
++
++def _query_wants_dark(query: str) -> bool:
++    """True when the query explicitly asks for a dark theme."""
++    lowered = (query or "").lower()
++    return any(marker in lowered for marker in _DARK_QUERY_MARKERS)
++
++
++def _resolve_color_mode(query: str, style: dict) -> str:
++    """Resolve the mode the rest of the output has to agree with."""
++    if _query_wants_dark(query) or _style_is_dark_primary(style):
++        return "dark"
++    return "light"
++
++
++def _select_palette_for_mode(palettes: list, mode: str) -> dict:
++    """Pick the highest-ranked palette matching the resolved mode.
++
++    Only the dark case filters. Light is left on the existing "top hit wins"
++    behaviour so queries that never mention a mode keep their current palette.
++    Falls back to the top hit when the data has no matching ramp.
++    """
++    if not palettes:
++        return {}
++    if mode == "dark":
++        for palette in palettes:
++            if _palette_is_dark(palette):
++                return palette
++    return palettes[0]
++
++
++def _filter_anti_patterns_for_mode(anti_patterns: str, mode: str) -> str:
++    """Drop "avoid dark mode" advice once dark mode is the resolved answer."""
++    if mode != "dark" or not anti_patterns:
++        return anti_patterns
++    kept = [
++        clause for clause in anti_patterns.split("+")
++        if not any(marker in clause.lower() for marker in _DARK_ANTI_PATTERN_MARKERS)
++    ]
++    return " + ".join(clause.strip() for clause in kept if clause.strip())
++
++
+ # ============ DESIGN SYSTEM GENERATOR ============
+ class DesignSystemGenerator:
+     """Generates design system recommendations from aggregated searches."""
+@@ -244,7 +346,11 @@ class DesignSystemGenerator:
+         landing_results = self._extract_results(search_results.get("landing", {}))
+ 
+         best_style = self._select_best_match(style_results, effective_style_priority)
+-        best_color = color_results[0] if color_results else {}
++        # Resolve the mode from the style + query first, then pick a palette that
++        # agrees with it. Ranking colors independently is what let a dark-primary
++        # style ship with a light background.
++        color_mode = _resolve_color_mode(query, best_style)
++        best_color = _select_palette_for_mode(color_results, color_mode)
+         best_typography = typography_results[0] if typography_results else {}
+         best_landing = landing_results[0] if landing_results else {}
+ 
+@@ -313,7 +419,9 @@ class DesignSystemGenerator:
+                 "css_import": best_typography.get("CSS Import", "")
+             },
+             "key_effects": combined_effects,
+-            "anti_patterns": reasoning.get("anti_patterns", ""),
++            "anti_patterns": _filter_anti_patterns_for_mode(
++                reasoning.get("anti_patterns", ""), color_mode
++            ),
+             "decision_rules": reasoning.get("decision_rules", {}),
+             "severity": reasoning.get("severity", "MEDIUM"),
+             "dials": {
+diff --git a/.claude/skills/ui-ux-pro-max/scripts/tests/test_design_system_mode.py b/.claude/skills/ui-ux-pro-max/scripts/tests/test_design_system_mode.py
+new file mode 100644
+index 0000000..06f7eb3
+--- /dev/null
++++ b/.claude/skills/ui-ux-pro-max/scripts/tests/test_design_system_mode.py
+@@ -0,0 +1,159 @@
++#!/usr/bin/env python3
++# -*- coding: utf-8 -*-
++"""
++Regression tests for color-mode coherence in design_system.py (issue #428).
++
++Style, palette and anti-patterns used to be resolved independently, so a
++dark-primary style could be returned alongside a light palette and a
++"Dark mode by default" anti-pattern.
++
++Stdlib-only (unittest, not pytest) to match test_core.py -- this project ships
++with zero external dependencies.
++
++Run with:
++    python -m unittest discover -s scripts/tests -v
++or directly:
++    python scripts/tests/test_design_system_mode.py
++"""
++
++import sys
++import unittest
++from pathlib import Path
++
++SCRIPTS_DIR = Path(__file__).resolve().parent.parent
++sys.path.insert(0, str(SCRIPTS_DIR))
++
++from design_system import (  # noqa: E402
++    _filter_anti_patterns_for_mode,
++    _palette_is_dark,
++    _query_wants_dark,
++    _relative_luminance,
++    _resolve_color_mode,
++    _select_palette_for_mode,
++    _style_is_dark_primary,
++    DesignSystemGenerator,
++)  # noqa: I001 - private helpers first, public class last
++
++LIGHT_PALETTE = {"Product Type": "SaaS", "Background": "#F8FAFC", "Foreground": "#020617"}
++DARK_PALETTE = {"Product Type": "Fintech/Crypto", "Background": "#0F172A", "Foreground": "#F8FAFC"}
++
++# Verbatim from styles.csv row "Modern Dark (Cinema Mobile)".
++DARK_PRIMARY_STYLE = {
++    "Style Category": "Modern Dark (Cinema Mobile)",
++    "Light Mode ✓": "✓ Light mode only as exception",
++    "Dark Mode ✓": "✓ Dark Mode Primary",
++}
++DUAL_MODE_STYLE = {
++    "Style Category": "Minimalism",
++    "Light Mode ✓": "✓ Full",
++    "Dark Mode ✓": "✓ Full",
++}
++
++
++class TestLuminance(unittest.TestCase):
++    def test_parses_six_and_three_digit_hex(self):
++        self.assertAlmostEqual(_relative_luminance("#FFFFFF"), 1.0, places=6)
++        self.assertAlmostEqual(_relative_luminance("#000000"), 0.0, places=6)
++        self.assertAlmostEqual(_relative_luminance("#FFF"), 1.0, places=6)
++
++    def test_returns_none_for_unparseable(self):
++        for value in ("", "nope", "#12", "#GGGGGG", None):
++            self.assertIsNone(_relative_luminance(value))
++
++    def test_classifies_backgrounds_from_the_shipped_data(self):
++        # Lightest dark background and darkest light background in colors.csv.
++        self.assertTrue(_palette_is_dark({"Background": "#1F2937"}))
++        self.assertFalse(_palette_is_dark({"Background": "#E8ECF1"}))
++
++    def test_missing_background_is_not_dark(self):
++        self.assertFalse(_palette_is_dark({}))
++        self.assertFalse(_palette_is_dark(None))
++
++
++class TestModeResolution(unittest.TestCase):
++    def test_dark_primary_style_detected(self):
++        self.assertTrue(_style_is_dark_primary(DARK_PRIMARY_STYLE))
++
++    def test_dual_mode_style_is_not_dark_primary(self):
++        self.assertFalse(_style_is_dark_primary(DUAL_MODE_STYLE))
++        self.assertFalse(_style_is_dark_primary({}))
++
++    def test_query_keywords(self):
++        self.assertTrue(_query_wants_dark("fintech B2B professional dark mode"))
++        self.assertTrue(_query_wants_dark("gaming app OLED"))
++        self.assertFalse(_query_wants_dark("healthcare clinic booking app"))
++        self.assertFalse(_query_wants_dark(""))
++
++    def test_either_signal_resolves_dark(self):
++        self.assertEqual(_resolve_color_mode("saas dark mode", DUAL_MODE_STYLE), "dark")
++        self.assertEqual(_resolve_color_mode("saas", DARK_PRIMARY_STYLE), "dark")
++        self.assertEqual(_resolve_color_mode("saas", DUAL_MODE_STYLE), "light")
++
++
++class TestPaletteSelection(unittest.TestCase):
++    def test_dark_mode_skips_light_palettes(self):
++        chosen = _select_palette_for_mode([LIGHT_PALETTE, DARK_PALETTE], "dark")
++        self.assertEqual(chosen["Background"], "#0F172A")
++
++    def test_dark_mode_falls_back_to_top_hit_when_no_dark_ramp_exists(self):
++        chosen = _select_palette_for_mode([LIGHT_PALETTE], "dark")
++        self.assertEqual(chosen["Background"], "#F8FAFC")
++
++    def test_light_mode_keeps_the_existing_top_hit_behaviour(self):
++        chosen = _select_palette_for_mode([DARK_PALETTE, LIGHT_PALETTE], "light")
++        self.assertEqual(chosen["Background"], "#0F172A")
++
++    def test_empty_results(self):
++        self.assertEqual(_select_palette_for_mode([], "dark"), {})
++
++
++class TestAntiPatternGating(unittest.TestCase):
++    def test_dark_clause_dropped_others_kept(self):
++        result = _filter_anti_patterns_for_mode(
++            "Excessive animation + Dark mode by default", "dark")
++        self.assertEqual(result, "Excessive animation")
++
++    def test_light_mode_is_a_no_op(self):
++        original = "Excessive animation + Dark mode by default"
++        self.assertEqual(_filter_anti_patterns_for_mode(original, "light"), original)
++
++    def test_unrelated_anti_patterns_survive_dark_mode(self):
++        original = "Complex jargon + Tiny tap targets"
++        self.assertEqual(_filter_anti_patterns_for_mode(original, "dark"), original)
++
++    def test_empty_input(self):
++        self.assertEqual(_filter_anti_patterns_for_mode("", "dark"), "")
++
++
++class TestEndToEndCoherence(unittest.TestCase):
++    """The exact reproduction from issue #428."""
++
++    QUERY = "SaaS invoicing fintech B2B professional dark mode"
++
++    def test_dark_query_gets_a_dark_background(self):
++        ds = DesignSystemGenerator().generate(self.QUERY)
++        background = ds["colors"]["background"]
++        self.assertTrue(
++            _palette_is_dark({"Background": background}),
++            "dark-mode query returned a light background: {}".format(background),
++        )
++
++    def test_dark_query_foreground_is_lighter_than_background(self):
++        ds = DesignSystemGenerator().generate(self.QUERY)
++        background = _relative_luminance(ds["colors"]["background"])
++        foreground = _relative_luminance(ds["colors"]["foreground"])
++        self.assertIsNotNone(background)
++        self.assertIsNotNone(foreground)
++        self.assertGreater(foreground, background)
++
++    def test_dark_query_does_not_advise_against_dark_mode(self):
++        ds = DesignSystemGenerator().generate(self.QUERY)
++        self.assertNotIn("dark mode", ds["anti_patterns"].lower())
++
++    def test_light_query_keeps_a_light_background(self):
++        ds = DesignSystemGenerator().generate("healthcare clinic booking app")
++        self.assertFalse(_palette_is_dark({"Background": ds["colors"]["background"]}))
++
++
++if __name__ == "__main__":
++    unittest.main(verbosity=2)

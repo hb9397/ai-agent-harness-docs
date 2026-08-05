@@ -1,0 +1,5 @@
+# Candidate evidence preserves exact upstream blobs and literal unified diffs.
+# Those evidence files may intentionally contain upstream trailing whitespace.
+source-tree/** -whitespace
+runtime-preview/** -whitespace
+diffs/** -whitespace
