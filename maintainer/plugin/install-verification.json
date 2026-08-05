@@ -4,10 +4,10 @@
   "plugin": {
     "plugin_root": "plugins/harness-kit",
     "plugin_id": "harness-kit",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "codex_manifest_matches_claude": true,
-    "archive": "plugins/harness-kit-0.3.0.zip",
-    "archive_sha256": "04ab3cf120c9b0aee227971f2df7ee19c87d467759ef15e7f1d0e6ab7cffd334",
+    "archive": "plugins/harness-kit-0.3.1.zip",
+    "archive_sha256": "5a3f7fa8d9ecc73af469a142ba5a13a8865cfe18eef2fc29af70203206542889",
     "archive_sha256_matches_release": true,
     "logical_user_skills": 19,
     "codex_physical_skills": 19,
@@ -110,7 +110,7 @@
   },
   "cli_smoke": {
     "schema_version": "1.0.0",
-    "verified_at": "2026-08-03T00:00:00+09:00",
+    "verified_at": "2026-07-29T00:00:00+09:00",
     "plugin_id": "harness-kit",
     "qualified_plugin_id": "harness-kit@hb9397",
     "marketplace_source": ".",
@@ -125,7 +125,7 @@
         "evidence_level": "marketplace-install-and-cache-smoke",
         "model_invocation_verified": false,
         "installed_payload": {
-          "version": "0.3.0",
+          "version": "0.3.1",
           "skill_count": 19,
           "agent_count": 0,
           "required_skills": [
@@ -146,7 +146,7 @@
         "evidence_level": "marketplace-install-and-cache-smoke",
         "model_invocation_verified": false,
         "installed_payload": {
-          "version": "0.3.0",
+          "version": "0.3.1",
           "skill_count": 19,
           "agent_count": 0,
           "required_skills": [
