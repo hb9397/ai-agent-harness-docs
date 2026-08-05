@@ -14,6 +14,8 @@ SKILLS_ROOT = Path(__file__).resolve().parents[2]
 SETUP_ROOT = SKILLS_ROOT / "harness-setup"
 BOOTSTRAP_SKILL = SKILLS_ROOT / "harness-bootstrap" / "SKILL.md"
 CONTEXT_SKILL = SKILLS_ROOT / "context-doc" / "SKILL.md"
+REPO_ROOT = SKILLS_ROOT.parent
+PORTABLE_BASELINE_FIXTURE = SETUP_ROOT / "evals" / "fixtures" / "portable-routing-baseline.json"
 
 FORBIDDEN_LOCAL_SKILL_PATHS = (
     ".agents/skills",
@@ -366,6 +368,48 @@ def check_nested_handoff_contract() -> None:
         require(bootstrap, needle, BOOTSTRAP_SKILL)
 
 
+def check_portable_routing_baseline() -> None:
+    """Keep the read-only B0 evidence and the canonical inventory in sync."""
+    baseline = json.loads(PORTABLE_BASELINE_FIXTURE.read_text(encoding="utf-8"))
+    if baseline.get("schema_version") != "1.0.0":
+        raise AssertionError("portable routing baseline schema version changed")
+    case = baseline.get("case_study", {})
+    if case.get("inspection_mode") != "read-only" or case.get("external_project_mutations") != 0:
+        raise AssertionError("portable routing baseline must not claim external project writes")
+    topology = case.get("topology", {})
+    if topology.get("root_is_git") is not False or topology.get("docs_git") is not True:
+        raise AssertionError("portable routing baseline lost root-non-git/docs-git topology")
+    apps = topology.get("applications", [])
+    if sorted((item.get("path"), item.get("is_git")) for item in apps) != [
+        ("be-keai-e-life-check", True),
+        ("fe-keai-e-life-check", True),
+    ]:
+        raise AssertionError("portable routing baseline lost separate application Git topology")
+    claude = baseline.get("host_capabilities", {}).get("claude", {})
+    codex = baseline.get("host_capabilities", {}).get("codex", {})
+    if claude.get("status") != "supported" or codex.get("status") != "supported":
+        raise AssertionError("both host hook capabilities must be explicitly supported")
+    if claude.get("project_scope") != ".claude/settings.json":
+        raise AssertionError("Claude baseline must use project settings scope")
+    if codex.get("project_scope") != ".codex/hooks.json" or "/hooks" not in codex.get("trust", ""):
+        raise AssertionError("Codex baseline must record project hook path and hash trust")
+    expected_failures = {"path-unbound-marker", "sibling-prefix-containment", "hardcoded-app-regex"}
+    actual_failures = {item.get("id") for item in baseline.get("failure_fixtures", []) if item.get("expected") == "fail"}
+    if actual_failures != expected_failures:
+        raise AssertionError(f"portable routing failure fixtures drifted: {actual_failures}")
+    decisions = {item.get("asset"): item.get("decision") for item in baseline.get("reuse_scan", [])}
+    if decisions.get("maintainer/inventory/artifact-output-contract.json") != "extend":
+        raise AssertionError("artifact output contract must be an extension target")
+    if decisions.get("project-owned Codex hook adapter") != "new":
+        raise AssertionError("Codex adapter must remain a later new asset")
+    contract = json.loads((REPO_ROOT / "maintainer" / "inventory" / "artifact-output-contract.json").read_text(encoding="utf-8"))
+    inventory = contract.get("portable_routing_baseline", {})
+    if inventory.get("case_study_fixture") != "skills/harness-setup/evals/fixtures/portable-routing-baseline.json":
+        raise AssertionError("artifact output contract does not point to the B0 baseline fixture")
+    if {name: entry.get("status") for name, entry in inventory.get("host_capabilities", {}).items()} != {"claude": "supported", "codex": "supported"}:
+        raise AssertionError("artifact output contract host capability baseline drifted")
+
+
 def check_filesystem_fixtures() -> None:
     with tempfile.TemporaryDirectory(prefix="harness-setup-fixtures-") as tmp:
         root = Path(tmp)
@@ -523,6 +567,7 @@ def check_filesystem_fixtures() -> None:
 def main() -> int:
     check_setup_contract()
     check_nested_handoff_contract()
+    check_portable_routing_baseline()
     check_filesystem_fixtures()
     print("harness setup contract and filesystem fixture evals passed")
     return 0

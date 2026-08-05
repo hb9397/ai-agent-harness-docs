@@ -23,6 +23,45 @@
     "chat-only",
     "manager-repository-output"
   ],
+  "portable_routing_baseline": {
+    "status": "baseline-captured",
+    "scope": "Track B Phase B0 read-only host capability and topology evidence; this baseline neither installs hooks nor modifies an external project.",
+    "case_study_fixture": "skills/harness-setup/evals/fixtures/portable-routing-baseline.json",
+    "common_policy_location": ".docs/harness/**",
+    "host_specific_installation": {
+      "claude": ".claude/settings.json; .claude/hooks/**",
+      "codex": ".codex/hooks.json; .codex/hooks/**"
+    },
+    "host_capabilities": {
+      "claude": {
+        "status": "supported",
+        "event": "PreToolUse",
+        "matcher": "Write|Edit",
+        "input": "JSON stdin; tool_name and tool_input",
+        "deny": "exit code 2 with stderr or a documented decision response",
+        "project_scope": ".claude/settings.json",
+        "project_root_variable": "CLAUDE_PROJECT_DIR",
+        "source": "https://code.claude.com/docs/en/hooks"
+      },
+      "codex": {
+        "status": "supported",
+        "event": "PreToolUse",
+        "matcher": "apply_patch, Edit|Write, Bash, MCP or other local-function tool name",
+        "input": "JSON stdin; Bash and apply_patch use tool_input.command",
+        "deny": "exit code 2 with stderr or hookSpecificOutput.permissionDecision=deny",
+        "project_scope": ".codex/hooks.json",
+        "trust": "new or changed non-managed hook definitions remain pending review until trusted through /hooks",
+        "source": "https://learn.chatgpt.com/docs/hooks"
+      }
+    },
+    "bypass_boundaries": [
+      "hosted tools and remote services outside the local hook path",
+      "specialized tool paths that opt out of the default hook path",
+      "shell-internal dynamic paths after an allowed command has started",
+      "external processes and writes outside the project root"
+    ],
+    "reuse_decision": "extend artifact-output-contract and harness-setup eval; reuse existing setup/bootstrap/context templates and the read-only Claude case; create Codex adapter and portable bundle only in later approved phases."
+  },
   "skills": [
     {
       "skill": "code-comment",
