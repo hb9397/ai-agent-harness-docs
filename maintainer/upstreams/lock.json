@@ -468,10 +468,26 @@
       "id": "im-not-ai",
       "observed": {
         "source_url": "https://github.com/epoko77-ai/im-not-ai/releases/tag/v2.3.0",
-        "checked_at": "2026-07-30",
+        "checked_at": "2026-08-05",
         "ref": "v2.3.0",
         "sha": "82137e858763dadb99561f194c5c00465735017b",
-        "note": "Observed by check_upstreams.py with status=ok"
+        "evidence_status": null,
+        "product_version": null,
+        "note": "Observed by check_upstreams.py with status=ok",
+        "watched_paths": [
+          {
+            "path": "LICENSE",
+            "status": "ok",
+            "latest_commit_sha": "adc2814a162d7e9f020bf2b89e6fe131f133d074",
+            "latest_commit_url": "https://github.com/epoko77-ai/im-not-ai/commit/adc2814a162d7e9f020bf2b89e6fe131f133d074"
+          },
+          {
+            "path": "README.md",
+            "status": "ok",
+            "latest_commit_sha": "26e0bbc1034044bffa79b5c29cda161f9ff0bf86",
+            "latest_commit_url": "https://github.com/epoko77-ai/im-not-ai/commit/26e0bbc1034044bffa79b5c29cda161f9ff0bf86"
+          }
+        ]
       },
       "accepted": {
         "ref": "v2.3.0",
@@ -495,11 +511,21 @@
     {
       "id": "ui-ux-pro-max-runtime",
       "observed": {
-        "source_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/releases/tag/v2.11.3",
-        "checked_at": "2026-07-31",
-        "ref": "v2.11.3",
-        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
-        "note": "Pinned from the latest stable upstream release during Phase 0."
+        "source_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/releases/tag/v2.13.0",
+        "checked_at": "2026-08-05",
+        "ref": "v2.13.0",
+        "sha": "4d140cf8ff6842de13213c7214eff3810371beb2",
+        "evidence_status": null,
+        "product_version": null,
+        "note": "Observed by check_upstreams.py with status=ok",
+        "watched_paths": [
+          {
+            "path": "LICENSE",
+            "status": "ok",
+            "latest_commit_sha": "363cd8911f210ec640704101ee820e6e64a63c3b",
+            "latest_commit_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/commit/363cd8911f210ec640704101ee820e6e64a63c3b"
+          }
+        ]
       },
       "accepted": {
         "ref": "v2.11.3",
@@ -522,11 +548,21 @@
     {
       "id": "ui-ux-pro-max-principles",
       "observed": {
-        "source_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/releases/tag/v2.11.3",
-        "checked_at": "2026-07-31",
-        "ref": "v2.11.3",
-        "sha": "4857a2c5ef989794751a0f66b8545a4a49566286",
-        "note": "Pinned from the latest stable upstream release during Phase 0."
+        "source_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/releases/tag/v2.13.0",
+        "checked_at": "2026-08-05",
+        "ref": "v2.13.0",
+        "sha": "4d140cf8ff6842de13213c7214eff3810371beb2",
+        "evidence_status": null,
+        "product_version": null,
+        "note": "Observed by check_upstreams.py with status=ok",
+        "watched_paths": [
+          {
+            "path": ".claude/skills/ui-ux-pro-max/SKILL.md",
+            "status": "ok",
+            "latest_commit_sha": "f8ac5e1266dba8354ea96e19994d9f4345e7ec31",
+            "latest_commit_url": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill/commit/f8ac5e1266dba8354ea96e19994d9f4345e7ec31"
+          }
+        ]
       },
       "accepted": {
         "ref": "v2.11.3",

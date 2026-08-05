@@ -41,8 +41,18 @@
         "ref": "v2.13.0",
         "sha": "4d140cf8ff6842de13213c7214eff3810371beb2"
       },
-      "decision": "blocked-pending-G1-target-ref-approval",
-      "reason": "The plan forbids automatically expanding a v2.12.0 review when a newer stable release is observed."
+      "initial_decision": "blocked-pending-G1-target-ref-approval",
+      "approval": {
+        "gate": "G1",
+        "approved_at": "2026-08-05",
+        "approved_target": {
+          "ref": "v2.13.0",
+          "sha": "4d140cf8ff6842de13213c7214eff3810371beb2"
+        },
+        "instruction": "User selected v2.13.0 as the review target."
+      },
+      "decision": "approved-G1-v2.13.0-target",
+      "reason": "The original v2.12.0 review was not automatically expanded; G1 explicitly selected the observed v2.13.0 stable release."
     },
     "im_not_ai": {
       "status": "error",
@@ -73,9 +83,24 @@
       "improvement_plan/README.md"
     ],
     "future_upstream_mutation": {
-      "status": "not-finalized",
-      "blocked_by": "G1 target ref approval",
-      "rule": "Do not stage, promote, or change UI/UX canonical/projection/plugin paths until the user selects v2.12.0, v2.13.0, or rejects the candidate."
+      "status": "target-approved; later gates remain required",
+      "target": "ui-ux-pro-max-v2.13.0",
+      "allowed_review_paths": [
+        "maintainer/upstreams/candidates/ui-ux-pro-max-v2.13.0/**",
+        "maintainer/upstreams/staging/ui-ux-pro-max-v2.13.0/**",
+        "maintainer/upstreams/promotions/ui-ux-pro-max-v2.13.0.json",
+        "maintainer/upstreams/rollback/ui-ux-pro-max-v2.13.0.json",
+        "maintainer/upstreams/provenance/ui-ux-pro-max/**",
+        "maintainer/upstreams/registry.json",
+        "maintainer/upstreams/lock.json",
+        "maintainer/upstreams/provenance/current-skills.json",
+        "skills/ui-ux-pro-max/**",
+        "skills/design-prototype-docs/SKILL.md",
+        "skills/create-prototype/SKILL.md",
+        "skills/frontend-design/SKILL.md",
+        "skills/impl-verify/SKILL.md"
+      ],
+      "rule": "G1 permits v2.13.0 candidate review only. G2-G7 still govern stage, promotion, canonical, projection, archive, and release changes."
     }
   },
   "historical_preserve": [
@@ -84,5 +109,5 @@
     "maintainer/upstreams/candidates/ui-ux-pro-max/candidate.json",
     "maintainer/upstreams/promotions/ui-ux-pro-max-v2.11.3.json"
   ],
-  "phase_status": "blocked"
+  "phase_status": "completed"
 }
