@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0.0",
+  "plan": "improvement_plan/20260803/260803-2.skill-portfolio-upstream-refresh-impl-maintenance.md",
+  "phase": "Track A Phase 0",
+  "recorded_at": "2026-08-05",
+  "mode": "read-only baseline rerun",
+  "repository": {
+    "head": "45d94f329e11052d9c7a25bee2e186ac1d84cf4d",
+    "branch": "main",
+    "remote": "https://github.com/hb9397/harness-kit.git",
+    "git_dir": ".git",
+    "git_common_dir": ".git",
+    "linked_worktree": false
+  },
+  "immutable_archive": {
+    "path": "plugins/harness-kit-0.3.0.zip",
+    "sha256": "04ab3cf120c9b0aee227971f2df7ee19c87d467759ef15e7f1d0e6ab7cffd334",
+    "bytes": 1532899
+  },
+  "governance_hashes": {
+    "maintainer/upstreams/registry.json": "344e192800cfac9502b5bf15f469726d5227c991ddfc5f41f8ecc30c05c2b918",
+    "maintainer/upstreams/lock.json": "0924439f4052ea186f30f7e77d1a86ca7cfcd51cacddf4067079c75bc5fbc13b",
+    "maintainer/upstreams/provenance/current-skills.json": "90d05787d867435600c3e2ea6fe22ebae1e39dacd50e2bdfd8cb7bc371a9655c",
+    "maintainer/upstreams/provenance/ui-ux-pro-max/**": {
+      "file_count": 3,
+      "tree_sha256": "e016a2b9f1281d11f41aca3164da06296f1346d9f76bfd010fe1f828e07de00b"
+    }
+  },
+  "upstream_recheck": {
+    "command": "python maintainer/skills/skill-portfolio-maintainer/scripts/check_upstreams.py --verify-watched-paths",
+    "mode": "check",
+    "write_observed": false,
+    "verify_watched_paths": true,
+    "behavior_contract_validation": "passed",
+    "ui_ux_pro_max_relationship_group": {
+      "requested_target": {
+        "ref": "v2.12.0",
+        "sha": "14ddef5c05e52d7c253b8f0129de7bcd1045ae5b"
+      },
+      "observed_stable": {
+        "ref": "v2.13.0",
+        "sha": "4d140cf8ff6842de13213c7214eff3810371beb2"
+      },
+      "decision": "blocked-pending-G1-target-ref-approval",
+      "reason": "The plan forbids automatically expanding a v2.12.0 review when a newer stable release is observed."
+    },
+    "im_not_ai": {
+      "status": "error",
+      "reason": "HTTP 403: rate limit exceeded",
+      "pinned_state": "preserved"
+    }
+  },
+  "validation": {
+    "validate_registry": "passed",
+    "git_diff_check": "passed"
+  },
+  "reuse_scan": {
+    "reuse": [
+      "maintainer/skills/skill-portfolio-maintainer/scripts/check_upstreams.py",
+      "maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py",
+      "maintainer/inventory/phase0-baseline.json as historical evidence only"
+    ],
+    "extend": [
+      "new versioned baseline file for this 2026-08-03 plan"
+    ],
+    "new": [],
+    "decision": "new baseline artifact is required because the existing phase0-baseline.json records the 2026-07-30 integration and 18 user skills."
+  },
+  "exact_changed_path_allowlist": {
+    "phase0_commit": [
+      "maintainer/inventory/skill-portfolio-upstream-refresh-phase0-baseline.json",
+      "improvement_plan/20260803/260803-2.skill-portfolio-upstream-refresh-impl-maintenance.md",
+      "improvement_plan/README.md"
+    ],
+    "future_upstream_mutation": {
+      "status": "not-finalized",
+      "blocked_by": "G1 target ref approval",
+      "rule": "Do not stage, promote, or change UI/UX canonical/projection/plugin paths until the user selects v2.12.0, v2.13.0, or rejects the candidate."
+    }
+  },
+  "historical_preserve": [
+    "plugins/harness-kit-0.3.0.zip",
+    "maintainer/inventory/phase0-baseline.json",
+    "maintainer/upstreams/candidates/ui-ux-pro-max/candidate.json",
+    "maintainer/upstreams/promotions/ui-ux-pro-max-v2.11.3.json"
+  ],
+  "phase_status": "blocked"
+}
