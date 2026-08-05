@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "ui-ux-pro-max-v2.13.0",
+  "promoted_at": "2026-08-05",
+  "dry_run": false,
+  "approval_ids": {
+    "general": "USER-APPROVED-20260805-PHASE5-G3",
+    "asset_impact": "USER-APPROVED-20260805-PHASE5-G4",
+    "destructive": null
+  },
+  "upstream": {
+    "repository": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+    "baseline": {
+      "ref": "v2.11.3",
+      "sha": "4857a2c5ef989794751a0f66b8545a4a49566286"
+    },
+    "target": {
+      "ref": "v2.13.0",
+      "sha": "4d140cf8ff6842de13213c7214eff3810371beb2"
+    }
+  },
+  "source_hash": "0b6fc643fbdb081c2bd1c74759be7d71b1bd1b56ee5caa24397d03ce2cfaa01b",
+  "runtime_hash": "d293eddb195e1970aec2ef9fa6028b7432fd4e7c212831b91671696134b37f72",
+  "source_tree": {
+    "path": "maintainer/upstreams/candidates/ui-ux-pro-max-v2.13.0/source-tree",
+    "algorithm": "sha256-tree-v1",
+    "sha256": "0b6fc643fbdb081c2bd1c74759be7d71b1bd1b56ee5caa24397d03ce2cfaa01b",
+    "file_count": 45,
+    "byte_count": 1764462
+  },
+  "runtime_tree": {
+    "path": "maintainer/upstreams/candidates/ui-ux-pro-max-v2.13.0/runtime-preview",
+    "algorithm": "sha256-tree-v1",
+    "sha256": "d293eddb195e1970aec2ef9fa6028b7432fd4e7c212831b91671696134b37f72",
+    "file_count": 45,
+    "byte_count": 1769389
+  },
+  "validation": {
+    "source_tree": "exact Git archive target tree; 45 target blob hashes verified before commit",
+    "runtime_preview": "local adaptation and eval preserved; changed upstream scripts reflected verbatim",
+    "registry": "passed",
+    "portfolio_evals": "passed"
+  },
+  "embedded_lock_changed": false,
+  "plugin_release_created": false,
+  "handoff_to": "harness-plugin-maintainer",
+  "status": "promoted-handoff"
+}
