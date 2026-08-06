@@ -3,15 +3,15 @@
   "files": [
     {
       "path": ".claude-plugin/plugin.json",
-      "sha256": "3144fb7279cf3bcb612842f780e3559362a06937aac81747ea4207e366186731"
+      "sha256": "c693cc8d65bca6187ae3fc4e35272d25ee004e02a244ebf69672edd91069ce13"
     },
     {
       "path": ".codex-plugin/plugin.json",
-      "sha256": "4ab4ba7f9140f16674b1df0ce6759c69de5d16cad70d729836bdab5d1aeb26c2"
+      "sha256": "bb094865dd9e30f9bc505ee341cce3e812ec0c7a6ae9155559109a065b7bbe1f"
     },
     {
       "path": "CAPABILITIES.json",
-      "sha256": "8c26dfb58a04f224ec7f79a2bbe17c1a3ab13688cb7c024c74b380e03a387d5d"
+      "sha256": "a79907d7464afd627b9722e106c57e67ed289d0fe889ecad7007b7b77ea5192e"
     },
     {
       "path": "LICENSE",
@@ -27,7 +27,7 @@
     },
     {
       "path": "UPSTREAMS.lock.json",
-      "sha256": "9ab4f42d7876d6e0329d79425e4689969261d49b41893869cced174c0c1c680f"
+      "sha256": "73c1b54044ab7c4b4172b2f7ce3ca91bd25a47233d9d987159ab2806b01907c8"
     },
     {
       "path": "licenses/anthropic-frontend-design-LICENSE",
@@ -343,7 +343,7 @@
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/claude-bridge.template",
-      "sha256": "88552252c96cac6fce4a851f3b0e18e6c05b9fa82b64b043ba8bdd971b7a490a"
+      "sha256": "22d012017b80f0c5b8450975c0aee39201609e20759a0d009a8734db10cf03a6"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/docs-gitignore.template",
@@ -351,11 +351,11 @@
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/docs-readme-multi.template",
-      "sha256": "6b230a82691a34f2f457121c6704f1db9c4e05e695bb82d83b356589e1babaa1"
+      "sha256": "49ee147089de89a62764749586f87b5374ff222ae66fb30ffd963ecd7d8c7dbb"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/docs-readme-single.template",
-      "sha256": "b138f13e40e461ba418d499195bf4cc6f18d5cfd8965e730a3d83aa8a7ac5ffb"
+      "sha256": "ace4f030f03cc2433b94e6b01f5719b4dcd90e1c55db7fa1e1855e04d53cec2f"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/inbox-readme.template",
@@ -411,11 +411,11 @@
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/root-context-single.template",
-      "sha256": "8197ec5247cbe05afda2a8afb5f4b893da25e058b121835cef2ce860fe63872a"
+      "sha256": "8b8efcf8d953debdac699748029c360894d592f7de94b4b1e799c07b26d716e0"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/root-context.template",
-      "sha256": "e944c6ac4efd6cd02a9bec573caf4df5b1e4b8fb216d87acdd2fc2ed27ef83a6"
+      "sha256": "17bcc749ddebbeaba04922f75257d8b811996c57e98c8581e9076adc631dbbc9"
     },
     {
       "path": "runtime/claude/skills/humanize-korean/SKILL.md",
@@ -1155,7 +1155,7 @@
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/claude-bridge.template",
-      "sha256": "88552252c96cac6fce4a851f3b0e18e6c05b9fa82b64b043ba8bdd971b7a490a"
+      "sha256": "22d012017b80f0c5b8450975c0aee39201609e20759a0d009a8734db10cf03a6"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/docs-gitignore.template",
@@ -1163,11 +1163,11 @@
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/docs-readme-multi.template",
-      "sha256": "6b230a82691a34f2f457121c6704f1db9c4e05e695bb82d83b356589e1babaa1"
+      "sha256": "49ee147089de89a62764749586f87b5374ff222ae66fb30ffd963ecd7d8c7dbb"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/docs-readme-single.template",
-      "sha256": "b138f13e40e461ba418d499195bf4cc6f18d5cfd8965e730a3d83aa8a7ac5ffb"
+      "sha256": "ace4f030f03cc2433b94e6b01f5719b4dcd90e1c55db7fa1e1855e04d53cec2f"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/inbox-readme.template",
@@ -1223,11 +1223,11 @@
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/root-context-single.template",
-      "sha256": "8197ec5247cbe05afda2a8afb5f4b893da25e058b121835cef2ce860fe63872a"
+      "sha256": "8b8efcf8d953debdac699748029c360894d592f7de94b4b1e799c07b26d716e0"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/root-context.template",
-      "sha256": "e944c6ac4efd6cd02a9bec573caf4df5b1e4b8fb216d87acdd2fc2ed27ef83a6"
+      "sha256": "17bcc749ddebbeaba04922f75257d8b811996c57e98c8581e9076adc631dbbc9"
     },
     {
       "path": "runtime/codex/skills/humanize-korean/SKILL.md",

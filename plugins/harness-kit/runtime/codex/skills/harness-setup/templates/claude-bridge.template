@@ -5,6 +5,9 @@
 
 - 공통 프로젝트 컨텍스트와 작업 규칙은 `AGENTS.md`를 따른다.
 - portable routing과 Claude host hook 상태는 `@.docs/harness/artifact-routing.json`을
-  확인하며, `pending-trust` 상태의 hook을 활성화로 간주하지 않는다.
+  확인한다. 이 manifest는 프로젝트 소유 bundle의 Layer 1 상태 정본이며, 실제 산출물
+  위치·소유권·인계는 앱별 `artifact-output-routing-instruction.md`를 따른다.
+- bundle 생성만으로 Claude 설정·hook을 활성화하지 않는다. `pending-trust` 상태의 hook은
+  활성화로 간주하지 않으며, host별 승인과 신뢰 검토가 끝난 경우에만 사용한다.
 - 이 파일에는 Claude Code에서만 필요한 차이만 추가한다.
 <!-- harness-kit:managed:end -->

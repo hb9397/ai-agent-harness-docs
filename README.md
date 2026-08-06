@@ -24,12 +24,12 @@
 
 - 현행 사용자 스킬 정본: 19종 (`pre-commit` 제거 후 `skills/` 기준)
 - 마지막 생성 Plugin ID: `harness-kit`
-- 마지막 생성 Version: `0.4.0`
-- immutable Archive: `plugins/harness-kit-0.4.0.zip` (`0.3.0`, `0.3.1` archive는 보존)
-- `0.4.0` Codex runtime: 19 skills / 0 agents
-- `0.4.0` Claude runtime: 19 skills / 0 agents
+- 마지막 생성 Version: `0.4.1`
+- immutable Archive: `plugins/harness-kit-0.4.1.zip` (`0.3.0`, `0.3.1`, `0.4.0` archive는 보존)
+- `0.4.1` Codex runtime: 19 skills / 0 agents
+- `0.4.1` Claude runtime: 19 skills / 0 agents
 - 관리자 스킬: 3종, 이 저장소 안에서만 사용
-- 릴리스 상태: `not release-ready` — `0.4.0` 공식 Codex·Claude CLI 설치 smoke는
+- 릴리스 상태: `not release-ready` — `0.4.1` 공식 Codex·Claude CLI 설치 smoke는
   통과했지만, Codex·Claude CLI·앱 네 인터페이스의 실제 모델 호출 수동 증적이 모두 필요함
 
 ### 함께 사용해볼 만한 플러그인
@@ -84,7 +84,7 @@
 
 ![Claude 앱의 마켓플레이스 추가 화면](./.user-docs/assets/plugin-install/claude-app-add-marketplace.png)
 
-`0.4.0` CLI 설치 smoke는 2026-08-05에 Codex CLI `0.146.0`과 Claude Code `2.1.220`
+`0.4.1` CLI 설치 smoke는 Codex CLI `0.146.0`과 Claude Code `2.1.220`
 기준으로 통과했다. 격리된 설정 디렉터리에서 marketplace 등록, 설치, 19 skills / 0 agents
 확인, 제거까지 수행했다. 이는 설치·cache 증적일 뿐 실제 모델이 스킬 계약을 수행했다는
 증적은 아니다. 네 인터페이스의 직접 모델 호출과 앱 설치·trust 증적은 아직 남아 있다.
@@ -342,7 +342,7 @@ UI 판단이 필요할 때만 그 안에서 갈라져 나온다. 백엔드 전�
 
 ```mermaid
 flowchart TD
-    R["승인된 요구사항 또는 design-doc"] --> U["ui-ux-pro-max<br/>디자인 방향·시스템"]
+    R["승인된 요구사항 또는 **design**-doc"] --> U["ui-ux-pro-max<br/>디자인 방향·시스템"]
     U --> S["design-prototype-docs<br/>화면·상태·반응형 명세"]
     S --> M{"모션이 필요한가?"}
     M -->|"예"| MD["motion-design<br/>목적·타이밍·대체안"]

@@ -11,7 +11,7 @@
       "source": "./plugins/harness-kit",
       "displayName": "Harness Kit",
       "description": "Harness Kit plugin for Codex and Claude Code projects.",
-      "version": "0.4.0"
+      "version": "0.4.1"
     }
   ]
 }

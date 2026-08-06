@@ -22,6 +22,27 @@
 - 구현 계획: `.docs/impl-doc/{사용자}/{기능}.md`
 - 프로토타입: `.docs/prototype/{사용자}/{id}/`
 
+### Portable routing을 참조하는 이유
+
+`.docs/harness/`는 `harness-setup`이 프로젝트 안에 만드는 **프로젝트 소유** routing bundle이다.
+플러그인을 제거하거나 다른 에이전트를 사용해도, 이미 만들어진 문서의 정규 위치·형식·인계
+규칙을 사람이 읽고 재사용할 수 있게 남긴다. 단, 이 bundle은 스킬 자체를 대체하지 않는다.
+스킬 실행은 계속 설치된 `harness-kit` 플러그인이 담당한다.
+
+`artifact-routing.json`은 Layer 1 상태 정본이다. 단일/복수 앱 모드, 앱별 문서 루트와
+산출물 소유권, Layer 2 instruction 위치, Claude·Codex adapter의 설치·신뢰 상태를 함께
+기록한다. 실제 파일을 어디에 만들고 누구에게 인계할지는 Layer 2인
+`artifact-output-routing-instruction.md`를 따른다.
+
+manifest는 **계약 상태**, `install-routing.ps1 -Check`은 **실제 host-local 설치 상태**를
+보여 준다. 따라서 manifest가 `pending-trust`여도 adapter가 없는 host는 `not-installed`일
+수 있으며, 어느 경우도 active hook으로 취급하지 않는다.
+
+세팅만으로 Claude·Codex 설정이나 hook이 자동 활성화되지는 않는다. 기본 bundle 생성은
+공유 문서만 만들며, `install-routing.ps1 -Plan`/`-Check`은 읽기 전용이다. host별
+`.claude/` 또는 `.codex/` adapter는 별도 설치 승인 뒤에만 병합하고, Codex는 `/hooks`
+신뢰 검토까지 끝나기 전 `pending-trust` 상태를 활성화로 간주하지 않는다.
+
 > 아직 존재하지 않는 참조는 `context-doc` 또는 해당 산출물 스킬을 실행한 뒤
 > 실제 파일과 1:1로 맞춘다.
 

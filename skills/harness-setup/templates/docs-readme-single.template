@@ -48,6 +48,38 @@
 
 ---
 
+## Portable routing — 빠른 운영 안내
+
+`.docs/harness/`는 산출물의 경로·형식·인계 계약을 프로젝트 안에 남기는 **project-owned
+bundle**이다. 플러그인을 제거하거나 다른 AI 도구를 사용해도 기존 계약은 읽을 수 있지만,
+스킬 실행 자체는 설치된 `harness-kit` 플러그인이 담당한다.
+
+| 대상 | 역할 |
+|------|------|
+| `harness/artifact-routing.json` | Layer 1: 프로젝트 모드, 문서 루트, 소유권, host 계약 상태 |
+| `harness/artifact-format-contract.json` | 산출물 metadata·형식·provenance 규칙 |
+| `instruction/artifact-output-routing-instruction.md` | Layer 2: 실제 저장 경로와 owner·검토·인계 정본 |
+| `harness/install-routing.ps1` | host별 계획·상태 확인과 승인형 설치·제거·신뢰 기록 |
+| `harness/normalize-artifact.ps1` | 외부 문서의 정본 반영 전 UTF-8·marker-aware 제안 생성 |
+
+`artifact-routing.json`은 **계약 상태**, `install-routing.ps1 -Check`은 **실제 host-local
+설치 상태**를 보여 준다. 따라서 manifest가 `pending-trust`여도 adapter가 없는 host는
+`not-installed`일 수 있으며, 둘 다 active hook을 뜻하지 않는다. `active`는 설치 뒤
+host별 신뢰 검토 증적까지 기록된 상태이고, `uninstalled`는 승인된 제거가 끝난 상태다.
+
+안전한 순서는 다음과 같다.
+
+1. Layer 2 instruction과 manifest를 읽어 대상·정규 경로를 확인한다.
+2. `-Plan` 또는 `-Check`으로 차이를 확인한다. 둘은 읽기 전용이다.
+3. host adapter는 별도 G10 승인 뒤에만 `-Apply -ApproveHostInstall`으로 설치한다.
+4. Codex는 `/hooks` 검토 뒤에만 `-ActivateTrust -ApproveTrustEvidence`로 active를 기록한다.
+   외부 문서는 `normalize-artifact.ps1 -Plan`과 G12 승인 뒤에만 승격한다.
+
+host hook은 경로·승인 marker를 검사하는 보조 장치일 뿐 완전한 보안 sandbox가 아니다.
+동적 shell 경로, hosted tool, 외부 process 등은 계획·승인·검토로 함께 관리한다.
+
+---
+
 ## 로컬 전용 영역 (git에 올리지 않음)
 
 `.gitignore`로 아래 영역은 **각자 로컬에서만 보관**하고 git에 추적하지 않는다.

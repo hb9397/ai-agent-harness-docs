@@ -3,7 +3,7 @@
 생성 시각: 2026-08-01
 
 > Historical report: 이 문서는 `0.2.2` 후보의 감사 기록이다. 현재 `harness-kit`
-> `0.4.0` 후보의 live metadata와 설치 증적은 `release.json`,
+> `0.4.1` 후보의 live metadata와 설치 증적은 `release.json`,
 > `release-checklist.md`, `install-verification.json`을 따른다.
 
 대상 계획서: `improvement_plan/20260730/UI UX Pro Max 및 Motion Design 업스트림 통합 작업 계획서.md`
