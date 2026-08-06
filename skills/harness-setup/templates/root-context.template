@@ -35,10 +35,11 @@
 
 ### Portable routing을 참조하는 이유
 
-`.docs/harness/`는 `harness-setup`이 프로젝트 안에 만드는 **프로젝트 소유** routing bundle이다.
-플러그인을 제거하거나 다른 에이전트를 사용해도, 이미 만들어진 문서의 정규 위치·형식·인계
-규칙을 사람이 읽고 재사용할 수 있게 남긴다. 단, 이 bundle은 스킬 자체를 대체하지 않는다.
-스킬 실행은 계속 설치된 `harness-kit` 플러그인이 담당한다.
+`.docs/harness/`는 `harness-setup`이 프로젝트 안에 만드는 **프로젝트 소유 산출물 계약**이다.
+이후 Harness Kit가 아닌 스킬·에이전트도 앱별 Layer 2 instruction을 읽고 따르면, 같은
+개념의 문서를 기존 `.docs/{앱}/` 정규 경로와 소유·인계 규칙에 맞춰 이어서 만들 수 있다.
+따라서 도구가 바뀌어도 산출물 구조가 분산되지 않는다. 이 bundle은 스킬 자체를 대체하지
+않으며, 스킬 실행은 설치된 플러그인 또는 해당 도구가 담당한다.
 
 `artifact-routing.json`은 Layer 1 상태 정본이다. 복수 앱의 id·문서 루트·산출물 소유권,
 각 앱 Layer 2 instruction 위치, Claude·Codex adapter의 설치·신뢰 상태를 함께 기록한다.

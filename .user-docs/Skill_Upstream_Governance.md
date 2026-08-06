@@ -64,7 +64,7 @@ upstream 저장소 4개에 `adapted` 5건이다. 이 중 사용자 스킬은 4�
    판정과 promotion evidence의 정본
 
 문서에 숫자나 날짜를 독립적으로 고정해 machine source를 대체하지 않는다. 현재
-정본에서 `pre-commit`이 제거된 뒤 사용자 skill과 `0.4.1` payload는 19개다. 이전
+정본에서 `pre-commit`이 제거된 뒤 사용자 skill과 `0.4.2` payload는 19개다. 이전
 `0.2.2` artifact의 20개 inventory는 historical immutable archive 증적이지 현행
 source inventory가 아니다.
 
@@ -132,7 +132,7 @@ URL·SHA-256, copyright·NOTICE, file별 `verbatim`·`modified`·`excluded`·
   만들지 않는다. 같은 upstream의 별도 `adapted` runtime 관계가 있으면 그 관계의
   재배포 의무만 적용한다.
 
-현재 `0.4.1` artifact의 `packaged_upstreams`는
+현재 `0.4.2` artifact의 `packaged_upstreams`는
 `anthropic-frontend-design`, `im-not-ai`, `ui-ux-pro-max-runtime`,
 `lottiefiles-motion-design-runtime` 네 source다. `THIRD_PARTY_NOTICES.md`와
 `licenses/`는 네 source를 모두 닫는다. 관리자 전용 `skill-creator-guides`와
