@@ -160,26 +160,21 @@ flowchart TD
 ### 0단계 — 환경 준비
 
 1. Codex 또는 Claude에 플러그인을 설치하고 새 task/session을 연다.
-2. 여러 앱 repo의 Git 작성자 계정을 한 번에 맞춰야 할 때만
-   `git-scoped-account`를 명시 호출한다.
+2. 여러 앱 repo의 Git 작성자 계정을 한 번에 맞춰야 할 때만 `git-scoped-account`를 명시 호출한다.
 3. 신규 프로젝트나 기존 문서 골격의 갱신·복구에는 `harness-setup`을 실행한다.
-   하네스 문서가 없는 기존 코드라면 `harness-bootstrap`으로 바로 진입하며,
-   이 workflow가 내부에서 `harness-setup`을 수행한다.
+   하네스 문서가 없는 기존 코드라면 `harness-bootstrap`으로 바로 진입하며, 이 workflow가 내부에서 `harness-setup`을 수행한다.
 4. 생성·갱신 범위가 `.docs/**`, 루트 `AGENTS.md`, `CLAUDE.md`뿐인지 확인한다.
-5. `harness-setup`이 플러그인의 사용자 스킬 복사본을
-   `.agents/skills/`, `.claude/skills/`, `skills/`에 만들지 않았는지 확인한다.
+5. `harness-setup`이 플러그인의 사용자 스킬 복사본을 `.agents/skills/`, `.claude/skills/`, `skills/`에 만들지
+   않았는지 확인한다.
 
-`harness-setup`은 플러그인을 설치하는 스킬이 아니다. 설치된 플러그인을 사용해
-프로젝트 문서 골격과 루트 컨텍스트를 만드는 스킬이다. 기존 local skill copy가
-있으면 읽기 전용으로 분류·보고하며 승인 없이 수정하거나 삭제하지 않는다.
+`harness-setup`은 플러그인을 설치하는 스킬이 아니다. 설치된 플러그인을 사용해 프로젝트 문서 골격과 루트 컨텍스트를 만드는 스킬이다.
 
 ### 1단계 — 설계·컨텍스트·프로토타입
 
 - 아이디어나 요구사항이 있으면 `design-doc`으로 설계한다.
-- RFP가 있으면 파일이나 필요한 요구사항을 `design-doc`,
-  `design-prototype-docs`, 다중 화면·FE/BE 페어 계획용 `impl-fe-be-doc`
-  요청에 직접 제공한다. 단일·소규모 `impl-doc`은 승인된 설계나 PRD를
-  입력으로 삼는다. `rfp-ingest`는 없다.
+- RFP가 있으면 파일이나 필요한 요구사항을 `design-doc`, `design-prototype-docs`, 다중 화면·FE/BE 페어 계획용
+  `impl-fe-be-doc` 요청에 직접 제공한다.
+  단일·소규모 구현 계획 요청 `impl-doc`은 승인된 설계나 PRD를 입력값으로 삼는다.
 - 문서 없는 기존 코드베이스에는 `harness-bootstrap`을 사용한다. 이 스킬은
   필요한 `harness-setup` 골격을 확인한 뒤 코드에서 설계와 컨텍스트를
   역추출한다.
