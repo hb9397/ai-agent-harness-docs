@@ -160,31 +160,23 @@ flowchart TD
 ### 0단계 — 환경 준비
 
 1. Codex 또는 Claude에 플러그인을 설치하고 새 task/session을 연다.
-2. 여러 앱 repo의 Git 작성자 계정을 한 번에 맞춰야 할 때만 `git-scoped-account`를 명시 호출한다.
-3. 신규 프로젝트나 기존 문서 골격의 갱신·복구에는 `harness-setup`을 실행한다.
-   하네스 문서가 없는 기존 코드라면 `harness-bootstrap`으로 바로 진입하며, 이 workflow가 내부에서 `harness-setup`을 수행한다.
+2. 여러 앱 repo의 Git 작성자 계정을 한 번에 맞출 때만 `git-scoped-account`를 명시 호출한다.
+3. 신규 프로젝트를 시작하거나 기존 문서 골격을 갱신·복구할 때는 `harness-setup`을 실행한다. 하네스 문서가 없는 기존 코드라면 `harness-bootstrap`으로 바로 진입하며, 이 workflow가 내부에서 `harness-setup`을 수행한다.
 4. 생성·갱신 범위가 `.docs/**`, 루트 `AGENTS.md`, `CLAUDE.md`뿐인지 확인한다.
-5. `harness-setup`이 플러그인의 사용자 스킬 복사본을 `.agents/skills/`, `.claude/skills/`, `skills/`에 만들지
-   않았는지 확인한다.
+5. `harness-setup`이 플러그인의 사용자 스킬 복사본을 `.agents/skills/`, `.claude/skills/`, `skills/`에 만들지 않았는지 확인한다.
 
 `harness-setup`은 플러그인을 설치하는 스킬이 아니다. 설치된 플러그인을 사용해 프로젝트 문서 골격과 루트 컨텍스트를 만드는 스킬이다.
 
 ### 1단계 — 설계·컨텍스트·프로토타입
 
 - 아이디어나 요구사항이 있으면 `design-doc`으로 설계한다.
-- RFP가 있으면 파일이나 필요한 요구사항을 `design-doc`, `design-prototype-docs`, 다중 화면·FE/BE 페어 계획용
-  `impl-fe-be-doc` 요청에 직접 제공한다.
-  단일·소규모 구현 계획 요청 `impl-doc`은 승인된 설계나 PRD를 입력값으로 삼는다.
-- 문서 없는 기존 코드베이스에는 `harness-bootstrap`을 사용한다. 이 스킬은
-  필요한 `harness-setup` 골격을 확인한 뒤 코드에서 설계와 컨텍스트를
-  역추출한다.
-- 설계가 정리되면 `context-doc`으로 `AGENTS.md` 정본, `CLAUDE.md` bridge,
-  주제별 instruction 문서를 만든다.
-- 화면을 먼저 합의해야 하면 `design-prototype-docs`로 화면 설계 문서를 만들고
-  `create-prototype`으로 폐기 가능한 검증 시안을 만든다.
+- RFP가 있으면 파일이나 필요한 요구사항을 `design-doc`, `design-prototype-docs`, 다중 화면·FE/BE 페어 계획용 `impl-fe-be-doc` 요청에 직접 제공한다. 단일·소규모 구현 계획에는 승인된 설계나 PRD를 `impl-doc` 입력값으로 사용한다.
+- 문서가 없는 기존 코드베이스에는 `harness-bootstrap`을 사용한다. 이 스킬은 필요한 `harness-setup` 골격을 확인한 뒤 코드에서 설계와 컨텍스트를 역추출한다.
+- 설계가 정리되면 `context-doc`으로 `AGENTS.md` 정본, `CLAUDE.md` bridge, 주제별 instruction 문서를 만든다.
+- 화면 작업이면 `ui-ux-pro-max`로 디자인 방향을 정한 뒤 `design-prototype-docs`로 화면 설계 문서를 만든다.
+- 모션이 필요하면 `motion-design`으로 목적·타이밍·reduced-motion 대안을 정한다. 검증 시안은 `create-prototype`으로 만든다.
 
-`design-doc`은 초안을 대화창에 보여 주고, 사용자가 저장을 승인할 때 파일로
-저장한다. 후속 스킬에 파일 경로를 넘길 계획이라면 저장까지 요청한다.
+`design-doc`은 초안을 대화창에 보여 주고 사용자가 저장을 승인하면 파일로 저장한다. 후속 스킬에 파일 경로를 넘길 계획이라면 저장까지 요청한다.
 
 ### 2단계 — 구현 계획과 재사용 점검
 
@@ -193,11 +185,7 @@ flowchart TD
 | 한 앱의 단일 BE 기능, 단일 FE 기능, 모듈, CLI, 배치, 스크립트, 라이브러리 | `impl-doc` |
 | FE/BE 페어 다중 기능, 다중 화면, RFP/SFR 화면 중심 작업 | `impl-fe-be-doc` |
 
-구현 계획을 만든 다음 각 Phase 또는 태스크 시작 직전에
-`impl-reuse-scan`으로 기존 공통 모듈·컴포넌트·패턴을 찾는다. 이 스킬은 후보를
-보고할 뿐 자동으로 코드를 바꾸지 않는다.
-계획 전에는 `design-roadmap`과 `*-roadmap-impl-index.md`를 먼저 식별하고,
-각 Phase/태스크 종료 시 `impl-verify`를 명시적으로 호출한다.
+구현 계획을 만든 다음 각 Phase 또는 태스크 시작 직전에 `impl-reuse-scan`으로 기존 공통 모듈·컴포넌트·패턴을 찾는다. 이 스킬은 후보만 보고하며 자동으로 코드를 바꾸지 않는다. 계획을 세우기 전에는 `design-roadmap`과 `*-roadmap-impl-index.md`를 먼저 식별하고 각 Phase/태스크가 끝날 때마다 `impl-verify`를 명시적으로 호출한다.
 
 ### 3단계 — 구현과 검증
 
@@ -207,23 +195,7 @@ flowchart TD
 4. 구현이 끝나면 `impl-verify`로 계획 대비 PASS/FAIL/SKIP 매트릭스를 만든다.
 5. 실패가 있으면 해당 Phase를 보완하고 다시 검증한다.
 
-`create-prototype`은 `.docs/prototype/` 아래 검증 시안을 만드는 스킬이고,
-`frontend-design`은 실제 제품 UI를 구현하는 스킬이다.
-복수 앱의 문서·프로토타입·디자인 시스템 산출물은 항상 `.docs/{앱}/` 아래로
-분리한다. 모든 producer는 `@.docs/instruction/artifact-output-routing-instruction.md`
-(복수 앱은 `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`)을
-따라 위치·소유권·인계를 결정한다.
-
-선택적으로 host-local write guard를 설치하면 Claude·Codex의 관찰 가능한 쓰기 요청은
-같은 project-owned routing contract로 점검한다. 기존 canonical 문서·승인된 앱 source·
-`.docs/_inbox/**`는 허용하고, 새 관리 문서는 경로·내용 hash에 묶인 1회성 승인 marker가
-필요하다. 동적 shell 경로·hosted tool·외부 process는 완전 차단 대상이 아닌 bypass
-evidence로 기록하는 한계가 있다.
-
-외부 텍스트는 `.docs/harness/normalize-artifact.ps1 -Plan`으로 G12 제안을 먼저 확인한다.
-명시 승인 후에만 UTF-8·managed marker 기준으로 canonical 문서에 반영할 수 있다. JSON,
-YAML, 이미지, PDF는 `_inbox` manifest에 hash와 proposal만 남기며 자동 변환·승격하지
-않는다.
+`create-prototype`은 폐기 가능한 검증 시안을 만들고, `frontend-design`은 실제 제품 UI를 구현한다. 앱별 산출물 위치·소유권·인계는 단일 앱의 `@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의 `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를 따른다.
 
 ### 4단계 — 품질·문서·커밋
 
@@ -232,13 +204,12 @@ YAML, 이미지, PDF는 `_inbox` manifest에 hash와 proposal만 남기며 자�
 3. 필요한 문서 변경은 제안을 검토하고 승인한 뒤 반영한다.
 4. 인수인계에 필요한 주석이 부족할 때만 `code-comment`를 사용한다.
 5. 파일이 바뀐 최종 상태에서 프로젝트 검증을 다시 실행하고 증거를 남긴다.
-6. 사용자가 `commit`을 명시 호출하면 스킬이 지침, status, staged·unstaged·
-   untracked 범위, diff와 최근 log를 확인하고 의도한 파일만 stage한다.
-7. 정상 hook을 통과해 Conventional Commit을 만든 뒤 SHA, `git show`, status와
-   남은 변경을 다시 확인한다. 자동 push·amend·tag·branch 생성은 하지 않는다.
+6. 사용자가 `commit`을 명시 호출하면 스킬이 지침, status, staged·unstaged·untracked 범위, diff와 최근 log를 확인하고 의도한 파일만 stage한다.
+7. 정상 hook을 통과해 Conventional Commit을 만든 뒤 SHA, `git show`, status와 남은 변경을 다시 확인한다. 자동 push·amend·tag·branch 생성은 하지 않는다.
 
-플랫폼별 사용자 스킬을 맞추는 `agent-sync` 단계는 없다. 스킬 버전은 설치된
-플러그인이 제공하고, 프로젝트는 결과 문서와 코드만 관리한다.
+Markdown 산출물이 있으면 원 producer가 구조를 검증한 뒤 `humanize-korean` 개선안과 diff를 한 번 제안한다. 사용자가 승인한 변경만 반영하고 원 producer가 다시 검증한다.
+
+플랫폼별 사용자 스킬을 맞추는 `agent-sync` 단계는 없다. 스킬 버전은 설치된 플러그인이 제공하고 프로젝트는 결과 문서와 코드만 관리한다.
 
 ## 3. Markdown 산출물과 문서 개선
 
