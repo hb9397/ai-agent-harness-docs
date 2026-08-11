@@ -53,36 +53,19 @@
 
 ### Codex
 
-- CLI: `codex plugin marketplace add <이 저장소 URL 또는 루트 경로>` 후
-  `codex plugin add harness-kit@hb9397`
-- Codex 앱: 왼쪽 메뉴의 **플러그인**에서 설정 아이콘을 누르고
-  **플러그인 마켓플레이스 추가**를 연다. GitHub 저장소 화면의
-  **Code → Local → HTTPS**에서 복사한 `.git` 포함 URL
-  `https://github.com/hb9397/harness-kit.git`을 **출처**에 입력하고 `main` ref를
-  사용한다. 필요한 경우 sparse 경로를 지정한다. 앱에서
-  local marketplace 등록을 지원하지 않으면 같은 사용자 프로필의 CLI에서
-  등록한 뒤 앱을 재시작한다.
-- 설치 후 새 task에서 `$harness-setup`처럼 `$skill-name`으로 명시 호출한다.
-  ChatGPT Work의 `@` 호출과 혼동하지 않는다.
-- IDE extension은 별도의 플러그인 설치 인터페이스로 보지 않는다. Codex CLI/앱
-  설치를 우선한다.
+- CLI: `codex plugin marketplace add <이 저장소 URL 또는 루트 경로>` 후 `codex plugin add harness-kit@hb9397`
+- Codex 앱: 왼쪽 메뉴의 **플러그인**에서 설정 아이콘을 누르고 **플러그인 마켓플레이스 추가**를 연다. GitHub 저장소 화면의 **Code → Local → HTTPS**에서 복사한 `.git` 포함 URL `https://github.com/hb9397/harness-kit.git`을 **출처**에 입력하고 `main` ref를 사용한다. 필요한 경우 sparse 경로를 지정한다. 앱에서 local marketplace 등록을 지원하지 않으면 같은 사용자 프로필의 CLI에서 등록한 뒤 앱을 재시작한다.
+- 설치 후 새 task에서 `$harness-setup`처럼 `$skill-name`으로 명시 호출한다. ChatGPT Work의 `@` 호출과 혼동하지 않는다.
+- IDE extension은 별도의 플러그인 설치 인터페이스로 보지 않는다. Codex CLI/앱 설치를 우선한다.
 
 ![Codex 앱의 플러그인 마켓플레이스 추가 화면](./.user-docs/assets/plugin-install/codex-app-add-marketplace.png)
 
 ### Claude
 
-- Claude Code CLI:
-  `claude plugin marketplace add <이 저장소 URL 또는 루트 경로>` 후
-  `claude plugin install harness-kit@hb9397`
-- 설치 후 대화형 session에서 `/reload-plugins`를 실행하고
-  `/harness-kit:harness-setup`처럼 namespaced skill을 명시 호출한다.
-- Claude 앱: **설정 → 플러그인 → 추가 → 마켓플레이스 추가**에서 **URL**을
-  선택한다. GitHub 저장소 화면의 **Code → Local → HTTPS**에서 복사한 `.git`
-  포함 URL `https://github.com/hb9397/harness-kit.git`을 입력하고 동기화한다.
-  목록에 보이지 않으면 같은 사용자 프로필의 Claude Code CLI에서 marketplace를
-  등록한 뒤 앱을 다시 열어 설치하고 새 session을 연다.
-- Claude Chat/Cowork는 Code 플러그인과 별도 인터페이스다. 설치·권한·cache는
-  별도로 검증한다.
+- Claude Code CLI: `claude plugin marketplace add <이 저장소 URL 또는 루트 경로>` 후 `claude plugin install harness-kit@hb9397`
+- 설치 후 대화형 session에서 `/reload-plugins`를 실행하고 `/harness-kit:harness-setup`처럼 namespaced skill을 명시 호출한다.
+- Claude 앱: **설정 → 플러그인 → 추가 → 마켓플레이스 추가**에서 **URL**을 선택한다. GitHub 저장소 화면의 **Code → Local → HTTPS**에서 복사한 `.git` 포함 URL `https://github.com/hb9397/harness-kit.git`을 입력하고 동기화한다. 목록에 보이지 않으면 같은 사용자 프로필의 Claude Code CLI에서 marketplace를 등록한 뒤 앱을 다시 열어 설치하고 새 session을 연다.
+- Claude Chat/Cowork는 Code 플러그인과 별도 인터페이스다. 설치·권한·cache는 별도로 검증한다.
 
 ![Claude 앱의 마켓플레이스 추가 화면](./.user-docs/assets/plugin-install/claude-app-add-marketplace.png)
 
@@ -115,8 +98,7 @@
 
 ## 2. 기본 작업 흐름 한눈에 보기
 
-새 프로젝트, RFP 프로젝트, 문서 없는 기존 코드베이스는 진입점만 다르고 같은
-구현·검증 흐름으로 합류한다.
+새 프로젝트, RFP 프로젝트, 문서 없는 기존 코드베이스는 진입점만 다르고 같은 구현·검증 흐름으로 합류한다.
 
 ```mermaid
 flowchart TD
@@ -213,9 +195,7 @@ Markdown 산출물이 있으면 원 producer가 구조를 검증한 뒤 `humaniz
 
 ## 3. Markdown 산출물과 문서 개선
 
-여기서 producer는 Markdown 파일이나 문서 묶음을 생성·갱신하고 저장 경로와 필수
-구조, 링크, index, bridge를 검증한 뒤 다음 단계로 인계하는 산출물 책임 스킬을
-뜻한다. Markdown producer는 고정 7종과 조건부 2종, 총 9종이다.
+여기서 producer는 Markdown 파일이나 문서 묶음을 생성·갱신하고 저장 경로와 필수 구조, 링크, index, bridge를 검증한 뒤 다음 단계로 인계하는 산출물 책임 스킬을 뜻한다. Markdown producer는 고정 7종과 조건부 2종, 총 9종이다.
 
 고정 producer 7종:
 
@@ -232,16 +212,9 @@ Markdown 산출물이 있으면 원 producer가 구조를 검증한 뒤 `humaniz
 - `ui-ux-pro-max`
 - `motion-design`
 
-조건부 2종은 기본적으로 대화창에 결과를 보고한다. 사용자가 디자인 시스템이나
-모션 명세의 저장을 명시적으로 요청했을 때만 Markdown producer로 파일을 만든다.
-원 producer가 먼저 구조를 검증하고 중첩 호출에서는 bundle의 최외곽 owner만
-`humanize-korean` 개선안과 diff를 한 번 제안한다.
+조건부 2종은 기본적으로 대화창에 결과를 보고한다. 사용자가 디자인 시스템이나 모션 명세의 저장을 명시적으로 요청했을 때만 Markdown producer로 파일을 만든다. 원 producer가 먼저 구조를 검증하고 중첩 호출에서는 bundle의 최외곽 owner만 `humanize-korean` 개선안과 diff를 한 번 제안한다.
 
-사용자가 승인한 변경만 반영하며, 링크·경로·코드블록·표·식별자 같은 보호 요소를
-보존한다. 반영 뒤에는 원 producer가 링크·index·bridge·문서 구조를 다시
-검증한다. 제안·건너뛰기·거절·적용 상태와 내용 fingerprint는
-`.docs/.harness/humanize-handoffs.json`에 기록해 같은 내용의 중복 제안을
-막는다. 문서 개선을 건너뛰어도 원래 하네스 흐름은 계속된다.
+사용자가 승인한 변경만 반영하며, 링크·경로·코드블록·표·식별자 같은 보호 요소를 보존한다. 반영 뒤에는 원 producer가 링크·index·bridge·문서 구조를 다시 검증한다. 제안·건너뛰기·거절·적용 상태와 내용 fingerprint는 `.docs/.harness/humanize-handoffs.json`에 기록해 같은 내용의 중복 제안을 막는다. 문서 개선을 건너뛰어도 원래 하네스 흐름은 계속된다.
 
 ## 4. 최초 실행과 갱신 시점
 
@@ -280,8 +253,7 @@ my-app/
 
 ### 복수 애플리케이션
 
-프로젝트 최상위 폴더는 보통 git으로 관리하지 않고 앱 repo와 공용 `.docs` repo를
-분리한다.
+프로젝트 최상위 폴더는 보통 git으로 관리하지 않고 앱 repo와 공용 `.docs` repo를 분리한다.
 
 ```text
 my-project/
@@ -295,11 +267,7 @@ my-project/
 └── CLAUDE.md            ← AGENTS.md bridge
 ```
 
-복수 앱에서 `.docs/root-context/AGENTS.md`는 루트 정본 내용의 형상관리
-복사본이자 갱신 기준인 관리 원본이다. 루트 `AGENTS.md`와 `CLAUDE.md`는
-실행용 파일이며 `harness-setup`이 관리 원본을 기준으로 갱신한다. 이미 별도
-`.docs` repo를 운영하고 있다면 먼저 올바른 위치에 clone/pull한 뒤
-`harness-setup`을 실행해 기존 문서를 기준으로 갱신한다.
+복수 앱에서 `.docs/root-context/AGENTS.md`는 루트 정본 내용의 형상관리 복사본이자 갱신 기준인 관리 원본이다. 루트 `AGENTS.md`와 `CLAUDE.md`는 실행용 파일이며 `harness-setup`이 관리 원본을 기준으로 갱신한다. 이미 별도 `.docs` repo를 운영하고 있다면 먼저 올바른 위치에 clone/pull한 뒤 `harness-setup`을 실행해 기존 문서를 기준으로 갱신한다.
 
 ## 6. 주요 산출물과 형상관리
 
@@ -315,9 +283,7 @@ my-project/
 | 문서 개선 ledger | `.docs/.harness/humanize-handoffs.json` | 최종 Markdown fingerprint와 결정 상태 관리 |
 | 사용자 스킬 | 설치된 `harness-kit` 플러그인 | 프로젝트에 복사하지 않음 |
 
-`impl-doc`과 `impl-fe-be-doc`은 같은 저장소와
-`{YYMMDD}-0.{앱이름}-roadmap-impl-index.md`를 공유한다. 생성 스킬은 문서
-머리말로 구분한다.
+`impl-doc`과 `impl-fe-be-doc`은 같은 저장소와 `{YYMMDD}-0.{앱이름}-roadmap-impl-index.md`를 공유한다. 생성 스킬은 문서 머리말로 구분한다.
 
 ## 6-1. 디자인 작업 흐름
 
@@ -384,8 +350,7 @@ reduced-motion 대체안과 성능 검증 기준도 포함해줘.
 
 ## 7. 기존 프로젝트의 local skill copy 전환
 
-기존 `.agents/skills`, `.claude/skills` 또는 `skills/*/SKILL.md` 복사본은
-바로 삭제하지 않는다.
+기존 `.agents/skills`, `.claude/skills` 또는 `skills/*/SKILL.md` 복사본은 바로 삭제하지 않는다.
 
 1. 사용자 플러그인을 설치한다.
 2. 기존 local copy를 읽기 전용으로 inventory한다.
@@ -412,11 +377,9 @@ reduced-motion 대체안과 성능 검증 기준도 포함해줘.
 | 사용자 플러그인 후보 | `plugins/harness-kit/` | 빌드·검증 산출물 |
 | 실제 프로젝트 | `.docs/**`, `AGENTS.md`, `CLAUDE.md`, 코드 | 프로젝트 수행자 |
 
-별도의 관리자 플러그인은 만들지 않는다. 관리자는 이 저장소의 repo-local
-projection으로 정본을 관리하고, 사용자 경험을 검증할 때 일반 사용자와 같은
-`harness-kit` 플러그인을 격리된 CLI/App 설정에 설치해 dogfood한다.
+별도의 관리자용 플러그인은 만들지 않는다. 관리자는 `maintainer/skills/`의 정본을 관리하고, 이 저장소의 로컬 관리자 동기화본(projection)으로 작업 환경을 유지한다. 사용자 경험을 검증할 때는 일반 사용자와 같은 조건에서 `harness-kit` 플러그인을 분리된 Codex·Claude CLI·앱 설정에 설치해 직접 사용해 본다.
 
-관리자 projection은 직접 편집하지 않고 다음 생성기로만 맞춘다.
+관리자 동기화본(projection)은 직접 편집하지 않고 다음 생성기로만 정본과 맞춘다.
 
 ```bash
 python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projections.py
@@ -438,31 +401,17 @@ python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projecti
 외부 관계는 다음 integration mode로 구분한다.
 
 - `native`: 외부 upstream 관계가 없는 로컬 스킬
-- `reference`: 원칙·아이디어·workflow만 참고하고 원문 자산은 배포하지 않음 —
-  [개념·행동 참조 관계](./.user-docs/Skill_Upstream_Governance.md#concept-behavior-references)
-- `adapted`: upstream 콘텐츠를 번역·수정·재구성해 사용함 —
-  [직접 반입·변형 provenance](./.user-docs/Skill_Upstream_Governance.md#direct-import-provenance)
-- `vendored`: upstream 파일을 원문 그대로 포함함 —
-  [직접 반입·변형 provenance](./.user-docs/Skill_Upstream_Governance.md#direct-import-provenance)
+- `reference`: 원칙·아이디어·workflow만 참고하고 원문 자산은 배포하지 않음 — [개념·행동 참조 관계](./.user-docs/Skill_Upstream_Governance.md#concept-behavior-references)
+- `adapted`: upstream 콘텐츠를 번역·수정·재구성해 사용함 — [직접 반입·변형 provenance](./.user-docs/Skill_Upstream_Governance.md#direct-import-provenance)
+- `vendored`: upstream 파일을 원문 그대로 포함함 — [직접 반입·변형 provenance](./.user-docs/Skill_Upstream_Governance.md#direct-import-provenance)
 
-증거가 부족하면 `unknown` 차단 상태로 두며, 해소 전에는 반입하거나
-릴리스하지 않는다.
+증거가 부족하면 `unknown` 차단 상태로 두며, 해소 전에는 반입하거나 릴리스하지 않는다.
 
-`commit`은 특정 외부 commit skill을 반입하지 않는다. OpenAI Codex·Anthropic
-Claude Code의 공식 행동 출처와 Conventional Commits를 behavior-only source로 두고
-[commit-workflow 행동 계약](./.user-docs/Skill_Upstream_Governance.md#behavior-contracts)을
-거쳐 소비한다. 과거 `pre-commit`의 Superpowers reference는 승계하지 않는다.
+`commit`은 특정 외부 commit skill을 반입하지 않는다. OpenAI Codex·Anthropic Claude Code의 공식 행동 출처와 Conventional Commits를 behavior-only source로 두고 [commit-workflow 행동 계약](./.user-docs/Skill_Upstream_Governance.md#behavior-contracts)을 거쳐 소비한다. 과거 `pre-commit`의 Superpowers reference는 승계하지 않는다.
 
-관리자는 하나의 `skill-portfolio-maintainer` workflow에서 후보 탐색, 최신
-upstream 비교, 영향 분석, 승인된 promotion handoff를 수행한다. mode마다
-검토·반영·라이선스·동등성 검증 기준이 다르다. 현재 활성 `vendored` 관계는
-없으며, 외부 runtime을 그대로 제공한다고 주장하지 않는다. 보호 자산의
-삭제·이동·교체는 자동화하지 않는다.
+관리자는 하나의 `skill-portfolio-maintainer` workflow에서 후보 탐색, 최신 upstream 비교, 영향 분석, 승인된 promotion handoff를 수행한다. mode마다 검토·반영·라이선스·동등성 검증 기준이 다르다. 현재 활성 `vendored` 관계는 없으며, 외부 runtime을 그대로 제공한다고 주장하지 않는다. 보호 자산의 삭제·이동·교체는 자동화하지 않는다.
 
-`humanize-korean`은 `epoko77-ai/im-not-ai`의 주요 아이디어와 일부 자산을
-번역·수정·재구성해 하네스의 승인형 문서 후처리로 반영한 `adapted` 사용자
-스킬이다. 전체 upstream runtime을 그대로 `vendored`하지 않는다. 사용자는 별도
-upstream clone 없이 플러그인 안에서 사용하고, 관리자가 GitHub upstream을 추적한다.
+`humanize-korean`은 `epoko77-ai/im-not-ai`의 주요 아이디어와 일부 자산을 번역·수정·재구성해 하네스의 승인형 문서 후처리로 반영한 `adapted` 사용자 스킬이다. 전체 upstream runtime을 그대로 `vendored`하지 않는다. 사용자는 별도 upstream clone 없이 플러그인 안에서 사용하고, 관리자가 GitHub upstream을 추적한다.
 
 ### 같은 저장소를 두 방식으로 추적하기
 
@@ -473,26 +422,18 @@ upstream clone 없이 플러그인 안에서 사용하고, 관리자가 GitHub u
 | 직접 반입 `adapted` | 독립 스킬과 실행·지식 자산을 제공 | 포함 |
 | 참고 `reference` | 기존 디자인·검증 스킬에 개념만 반영 | 미포함 |
 
-두 관계는 같은 저장소 URL, 같은 라이선스 판정, 같은 고정 commit을 공유해야 하며
-한쪽만 승격할 수 없다. 참고 관계는 파일을 복사하지 않으므로 라이선스 배포 대상이
-아니다.
+두 관계는 같은 저장소 URL, 같은 라이선스 판정, 같은 고정 commit을 공유해야 하며 한쪽만 승격할 수 없다. 참고 관계는 파일을 복사하지 않으므로 라이선스 배포 대상이 아니다.
 
 ### 별도 설치 대상
 
-다음 프로젝트는 이 플러그인에 포함하지 않는다. 필요하면 사용자가 원본 안내에
-따라 직접 설치한다. 이 하네스의 필수 의존성이 아니다.
+다음 프로젝트는 이 플러그인에 포함하지 않는다. 필요하면 사용자가 원본 안내에 따라 직접 설치한다. 이 하네스의 필수 의존성이 아니다.
 
-- [Caveman](https://github.com/JuliusBrussee/caveman) — 응답 표현과 토큰 사용
-  방식을 바꾸는 별도 플러그인이다. 하네스의 설계·검증 계약과 목적이 다르다.
-- [Ruflo](https://github.com/ruvnet/ruflo) — 다중 에이전트, 메모리, MCP, hook을
-  포함하는 독립 메타 하네스다. 일부만 복제하지 않고 원본 제품으로 쓴다.
+- [Caveman](https://github.com/JuliusBrussee/caveman) — 응답 표현과 토큰 사용 방식을 바꾸는 별도 플러그인이다. 하네스의 설계·검증 계약과 목적이 다르다.
+- [Ruflo](https://github.com/ruvnet/ruflo) — 다중 에이전트, 메모리, MCP, hook을 포함하는 독립 메타 하네스다. 일부만 복제하지 않고 원본 제품으로 쓴다.
 
-설치 방법은 바뀔 수 있으므로 여기에 명령을 복제하지 않는다. **최신 설치 방법은
-각 원본 저장소의 안내를 따른다.**
+설치 방법은 바뀔 수 있으므로 여기에 명령을 복제하지 않는다. **최신 설치 방법은 각 원본 저장소의 안내를 따른다.**
 
-세부 업데이트 기준은
-[Skill Upstream Governance](./.user-docs/Skill_Upstream_Governance.md#approval-gates)를
-따른다.
+세부 업데이트 기준은 [Skill Upstream Governance](./.user-docs/Skill_Upstream_Governance.md#approval-gates)를 따른다.
 
 ## 11. 플러그인 빌드와 릴리스
 
@@ -501,15 +442,13 @@ skills/ 사용자 정본 수정
 → 관련 inventory·upstream registry·lock·provenance 갱신
 → harness-plugin-maintainer build
 → source/runtime/archive 검증
-→ 격리된 Codex·Claude CLI 설치 smoke
+→ 격리된 Codex·Claude CLI 설치 점검
 → Codex·Claude CLI·앱 실제 모델 호출 수동 증적
 → release checklist
 → 별도 승인 후 tag/push/release
 ```
 
-설치 smoke는 실제 모델 호출 성공을 뜻하지 않는다. 네 인터페이스의 설치·명시 호출·
-산출물·재시작·새 session 증적이 부족하면 릴리스 후보는
-`not-release-ready`로 유지한다.
+설치 점검은 실제 모델 호출 성공을 뜻하지 않는다. 네 인터페이스의 설치·명시 호출·산출물·재시작·새 session 증적이 부족하면 릴리스 후보는 `not-release-ready`로 유지한다.
 
 대표 검증 명령:
 
@@ -523,38 +462,24 @@ python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projecti
 python maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py
 ```
 
-현재 릴리스 게이트는
-[Plugin Release Checklist](./maintainer/plugin/release-checklist.md)에서 관리한다.
+현재 릴리스 게이트는 [Plugin Release Checklist](./maintainer/plugin/release-checklist.md)에서 관리한다.
 
 ## 12. 상세 문서
 
-- [Plugin Installation Guide](./.user-docs/Plugin_Installation_Guide.md) — Codex·Claude
-  CLI/App 설치·업데이트·제거·수동 증적
-- [Harness Engineering](./.user-docs/Harness_Engineering.md) — 사용자 런북과 관리자
-  운영 계약
-- [Harness Engineering Intro](./.user-docs/Harness_Engineering_Intro.md) — 도입 배경,
-  선택 가이드, 프롬프트 예시
+- [Plugin Installation Guide](./.user-docs/Plugin_Installation_Guide.md) — Codex·Claude CLI/App 설치·업데이트·제거·수동 증적
+- [Harness Engineering](./.user-docs/Harness_Engineering.md) — 사용자 런북과 관리자 운영 계약
+- [Harness Engineering Intro](./.user-docs/Harness_Engineering_Intro.md) — 도입 배경, 선택 가이드, 프롬프트 예시
 - [Docs Index](./.user-docs/README.md) — 문서 역할 인덱스
-- [Skill Upstream Governance](./.user-docs/Skill_Upstream_Governance.md) — 외부
-  `reference`·`adapted`·`vendored` 관계, 행동 contract, provenance와 최신화 정책
+- [Skill Upstream Governance](./.user-docs/Skill_Upstream_Governance.md) — 외부 `reference`·`adapted`·`vendored` 관계, 행동 contract, provenance와 최신화 정책
 
 ## 13. 라이선스
 
-이 저장소가 직접 저작한 부분은 Apache License 2.0을 따른다. 전문은
-[LICENSE](./LICENSE)에 있고 저작권 표기는 [NOTICE](./NOTICE)에 있다.
+이 저장소가 직접 저작한 부분은 Apache License 2.0을 따른다. 전문은 [LICENSE](./LICENSE)에 있고 저작권 표기는 [NOTICE](./NOTICE)에 있다.
 
-외부에서 반입한 구성요소는 각자의 원 라이선스를 그대로 유지한다. 원본 출처,
-고정 revision, 라이선스, 로컬 변경 여부는
-[THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)에서 추적한다. 사용자 플러그인
-아카이브는 독립 배포 단위이므로 라이선스 전문과 서드파티 고지를 자체적으로
-포함한다.
+외부에서 반입한 구성요소는 각자의 원 라이선스를 그대로 유지한다. 원본 출처, 고정 revision, 라이선스, 로컬 변경 여부는 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)에서 추적한다. 사용자 플러그인 아카이브는 독립 배포 단위이므로 라이선스 전문과 서드파티 고지를 자체적으로 포함한다.
 
-`reference` 관계로만 참고한 외부 프로젝트는 파일을 반입하지 않으므로 라이선스
-배포 대상이 아니다. 해당 관계는
-[개념·행동 참조 관계](./.user-docs/Skill_Upstream_Governance.md#concept-behavior-references)에서
-추적한다.
+`reference` 관계로만 참고한 외부 프로젝트는 파일을 반입하지 않으므로 라이선스 배포 대상이 아니다. 해당 관계는 [개념·행동 참조 관계](./.user-docs/Skill_Upstream_Governance.md#concept-behavior-references)에서 추적한다.
 
 ---
 
-하네스의 핵심은 단순하다. **사용자는 플러그인으로 같은 작업 흐름을 실행하고,
-관리자는 이 저장소에서 그 흐름의 스킬·외부 근거·배포 품질을 책임진다.**
+하네스의 핵심은 단순하다. **사용자는 플러그인으로 같은 작업 흐름을 실행하고, 관리자는 이 저장소에서 그 흐름의 스킬·외부 근거·배포 품질을 책임진다.**
