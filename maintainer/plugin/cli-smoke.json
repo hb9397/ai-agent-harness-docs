@@ -15,7 +15,7 @@
       "evidence_level": "marketplace-install-and-cache-smoke",
       "model_invocation_verified": false,
       "installed_payload": {
-        "version": "0.4.2",
+        "version": "0.4.3",
         "skill_count": 19,
         "agent_count": 0,
         "required_skills": [
@@ -36,7 +36,7 @@
       "evidence_level": "marketplace-install-and-cache-smoke",
       "model_invocation_verified": false,
       "installed_payload": {
-        "version": "0.4.2",
+        "version": "0.4.3",
         "skill_count": 19,
         "agent_count": 0,
         "required_skills": [

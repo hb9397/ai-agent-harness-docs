@@ -21,18 +21,22 @@ manual-evidence/
   이어받지 않는다. `verify_install_surfaces.py`가 이 불일치를 검사한다.
 - 네 인터페이스의 수동 증적이 모두 충족되기 전에는 release-ready로 표시하지 않는다.
 
-## 현재 상태 — `0.4.2`
+## 현재 상태 — `0.4.3`
+
+`0.4.3` 정식 게시는 명시적으로 승인됐다. 다만 이 승인은 네 인터페이스의 수동
+검증이 끝났다는 뜻이 아니다. 미확보 증적은 알려진 검증 한계로 계속 기록한다.
 
 | 인터페이스 | 상태 | 근거 |
 |---|---|---|
-| Codex CLI | `install-smoke-verified` | Codex CLI `0.146.0`에서 `0.4.2` payload 19 skills / 0 agents의 격리 설치·cache 검사·제거를 통과했다. 모델 호출은 미검증이다. |
+| Codex CLI | `install-smoke-verified` | Codex CLI `0.146.0`에서 `0.4.3` payload 19 skills / 0 agents의 격리 설치·cache 검사·제거를 통과했다. 모델 호출은 미검증이다. |
 | Codex 앱 | `manual-required` | 앱에서 직접 설치·호출한 증적이 필요하다. |
-| Claude Code CLI | `install-smoke-verified` | Claude Code `2.1.220`에서 `0.4.2` payload 19 skills / 0 agents의 격리 설치·cache 검사·제거를 통과했다. 모델 호출은 미검증이다. |
+| Claude Code CLI | `install-smoke-verified` | Claude Code `2.1.220`에서 `0.4.3` payload 19 skills / 0 agents의 격리 설치·cache 검사·제거를 통과했다. 모델 호출은 미검증이다. |
 | Claude 앱 | `manual-required` | 앱에서 직접 설치·호출한 증적이 필요하다. |
 
-`0.4.2` 설치 smoke는 격리된 `CODEX_HOME`과 `CLAUDE_CONFIG_DIR`에서
-marketplace 등록, 설치, 목록 확인, cache 검사, 제거까지 수행해 통과했다. 이 증적은
-`cli-smoke.json`에 payload 버전과 함께 보관한다.
+`0.4.3` 설치 smoke는 격리된 `CODEX_HOME`과 `CLAUDE_CONFIG_DIR`에서 marketplace
+등록, 설치, 목록 확인, cache 검사, 제거까지 수행해 통과했다. 이 결과는
+`cli-smoke.json`에 payload 버전과 함께 보관한다. 이전 `0.4.2` 결과는 현재 버전의
+증적으로 이어받지 않는다.
 
 **설치 smoke는 cache에 파일이 놓였다는 증적일 뿐이다.** 실제 모델이 스킬 계약을
 수행했다는 증적은 아니며, 네 인터페이스 모두 시나리오 A~H 수동 검증이 남아 있다.

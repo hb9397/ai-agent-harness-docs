@@ -43,14 +43,14 @@ AI Agent Harness는 Codex, Claude Code처럼 서로 다른 에이전트가 같�
 | 영역 | 담당 | 프로젝트에 남는가 |
 |------|------|-------------------|
 | 현행 사용자 스킬 정본 19종 | 관리 저장소 `skills/` | 다음 plugin build의 입력 |
-| 현재 `0.4.2` runtime 19종 | 설치된 `harness-kit` 플러그인 | local copy를 남기지 않음 |
+| 현재 `0.4.3` runtime 19종 | 설치된 `harness-kit` 플러그인 | local copy를 남기지 않음 |
 | 프로젝트 문서 골격 | 프로젝트 수행자가 `harness-setup`으로 생성 | `.docs/**`, `AGENTS.md`, `CLAUDE.md` |
 | 설계·구현 계획·프로토타입 | 프로젝트 수행자와 사용자 스킬 | `.docs/**` |
 | 코드·테스트 산출물 | 프로젝트 수행자 | 각 앱 repo |
 | 리뷰·검증 보고 | 프로젝트 수행자와 사용자 스킬 | 기본은 대화 보고, 스킬이 별도 파일 생성을 금지하면 repo에 저장하지 않음 |
 | 플러그인 build·upstream 최신화 | 하네스 관리자 | 이 관리 저장소 |
 
-Phase 5에서 `pre-commit`을 제거한 source inventory와 `0.4.2` generated runtime은
+Phase 5에서 `pre-commit`을 제거한 source inventory와 `0.4.3` generated runtime은
 모두 19종이다. 이전 `0.2.2` archive는 historical immutable artifact로만 보존한다.
 
 `harness-setup`의 쓰기 allowlist는 `.docs/**`, 루트 `AGENTS.md`,
@@ -951,7 +951,7 @@ cache에 선언된 수의 스킬이 존재함, 실제 모델이 산출물 계약
 - [ ] build가 clean source에서 재현된다.
 - [ ] source와 Codex·Claude runtime inventory가 일치한다.
 - [ ] 관리자 스킬과 agents가 사용자 payload에 없다.
-- [x] `0.4.2` CLI 설치 smoke가 격리 설정에서 통과한다.
+- [x] `0.4.3` CLI 설치 smoke가 격리 설정에서 통과한다. (`0.4.2` 증적은 이전 artifact 기록이다.)
 - [ ] 네 인터페이스의 수동 호출 증적이 있다.
 - [ ] release checklist의 미검증 항목이 없다.
 

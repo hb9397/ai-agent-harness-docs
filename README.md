@@ -24,13 +24,14 @@
 
 - 현행 사용자 스킬 정본: 19종 (`pre-commit` 제거 후 `skills/` 기준)
 - 마지막 생성 Plugin ID: `harness-kit`
-- 마지막 생성 Version: `0.4.2`
-- immutable Archive: `plugins/harness-kit-0.4.2.zip` (`0.3.0`, `0.3.1`, `0.4.0`, `0.4.1` archive는 보존)
-- `0.4.2` Codex runtime: 19 skills / 0 agents
-- `0.4.2` Claude runtime: 19 skills / 0 agents
+- 마지막 생성 Version: `0.4.3`
+- immutable Archive: `plugins/harness-kit-0.4.3.zip` (`0.3.0`, `0.3.1`, `0.4.0`, `0.4.1`, `0.4.2` archive는 보존)
+- `0.4.3` Codex runtime: 19 skills / 0 agents
+- `0.4.3` Claude runtime: 19 skills / 0 agents
 - 관리자 스킬: 3종, 이 저장소 안에서만 사용
-- 릴리스 상태: `not release-ready` — `0.4.2` 공식 Codex·Claude CLI 설치 smoke는
-  통과했지만, Codex·Claude CLI·앱 네 인터페이스의 실제 모델 호출 수동 증적이 모두 필요함
+- 릴리스 상태: `0.4.3` 정식 게시 승인 — 새 artifact의 자동 검증과 CLI 설치 smoke를
+  거쳐 게시하며, Codex·Claude CLI·앱 네 인터페이스의 실제 모델 호출 수동 증적은
+  아직 확보하지 못한 검증 한계로 명시함
 
 ### 함께 사용해볼 만한 플러그인
 

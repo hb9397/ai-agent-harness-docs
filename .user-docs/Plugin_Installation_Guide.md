@@ -1,10 +1,10 @@
 # Plugin Installation Guide
 
 > 기준일: 2026-08-03
-> 대상 플러그인: `harness-kit` `0.4.2`
-> 현재 상태: 공식 manifest·marketplace와 격리 CLI 설치 smoke를 자동 검증한다.
-> Codex와 Claude의 CLI·앱 네 인터페이스에서 실제 모델 호출·산출물·새 세션 증적까지
-> 확보되기 전에는 `not release-ready`다.
+> 대상 플러그인: `harness-kit` `0.4.3`
+> 현재 상태: 정식 게시 승인을 받은 후보이며, 공식 manifest·marketplace와 격리 CLI
+> 설치 smoke를 새 artifact 기준으로 검증한다. Codex와 Claude의 CLI·앱 네 인터페이스에서
+> 실제 모델 호출·산출물·새 세션 증적은 아직 확보하지 못한 검증 한계로 남아 있다.
 
 이 문서는 실제 프로젝트 사용자가 하네스 저장소를 clone하거나 스킬을 복사하지 않고 플러그인으로 시작하기 위한 설치·확인·업데이트·제거 기준이다.
 
@@ -26,15 +26,15 @@
 | 항목 | 값 |
 |------|----|
 | Plugin ID | `harness-kit` |
-| Version | `0.4.2` |
+| Version | `0.4.3` |
 | Local plugin root | `plugins/harness-kit` |
-| Archive | `plugins/harness-kit-0.4.2.zip` |
+| Archive | `plugins/harness-kit-0.4.3.zip` |
 | Archive SHA-256 | `maintainer/plugin/release.json`의 현재 생성값 |
 | Codex physical skills | 19 |
 | Codex agents | 0 |
 | Claude physical skills | 19 |
 | Claude agents | 0 |
-| Release gate | `not-release-ready` |
+| Release gate | `stable publication authorized; manual evidence pending` |
 
 릴리스 게이트 증적은 [maintainer/plugin/release-checklist.md](../maintainer/plugin/release-checklist.md)와 [maintainer/plugin/install-verification.json](../maintainer/plugin/install-verification.json)에 있다.
 
@@ -42,8 +42,8 @@
 
 ## 3. Codex CLI
 
-> `0.4.2` CLI 설치 smoke는 Codex CLI와 Claude Code 양쪽에서 통과했다. 다만 이는
-> 격리 설치·cache 증적이며, 실제 모델 호출과 앱 설치·trust는 별도 수동 증적으로 남긴다.
+> `0.4.3`은 Codex CLI와 Claude Code 양쪽에서 격리 설치·cache smoke를 통과했다.
+> 이 검사는 실제 모델 호출과 앱 설치·trust의 수동 증적을 대신하지 않는다.
 
 공식 Codex CLI `0.146.0`을 임시 `CODEX_HOME`에서 실행해 아래 marketplace
 등록·설치·목록·제거 흐름과 설치 cache의 skills / 0 agents를 확인했다. CI도
@@ -113,7 +113,7 @@ Codex 앱에서는 다음을 수동으로 확인한다.
 4. local marketplace가 앱에 보이지 않는 버전이면 앱과 같은 사용자 프로필의
    Codex CLI에서 marketplace와 플러그인을 등록하고 앱을 완전히 종료했다가 다시
    연다.
-5. 플러그인 화면 또는 `/plugins`에서 `harness-kit` `0.4.2`이
+5. 플러그인 화면 또는 `/plugins`에서 `harness-kit` `0.4.3`이
    설치·활성 상태인지 확인한다.
 6. 새 fixture 프로젝트에서 새 task/session을 연다.
 7. `$harness-setup`과 `$humanize-korean`을 명시 호출한다.
@@ -187,8 +187,8 @@ Claude 앱과 Claude Code CLI는 일부 설정을 공유할 수 있지만 host�
 9. cloud Code session은 plugin browser가 없어 프로젝트 `enabledPlugins` 정책을 별도 적용
 10. WSL session은 Desktop plugin 설치 인터페이스로 지원하지 않음을 명시
 
-`0.4.2` CLI 설치 smoke 결과: `install-smoke-verified`. 앱 설치와 직접 모델 호출은
-`manual-required`다.
+`0.4.3`은 정식 게시 승인을 받은 릴리스 후보이며 CLI 설치 smoke를 통과했다. 앱 설치와
+직접 모델 호출은 알려진 수동 검증 한계로 남긴다.
 
 ---
 

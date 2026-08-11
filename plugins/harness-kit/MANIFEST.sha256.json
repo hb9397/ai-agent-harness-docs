@@ -3,15 +3,15 @@
   "files": [
     {
       "path": ".claude-plugin/plugin.json",
-      "sha256": "a28970cedea0cdf2343aa849de948ecb4717c9d6c5769aadc061b9e18312c8db"
+      "sha256": "d060a36c1cfed60b5ec7ba995c96df3240987c953cd759cdb62780f2580a0a58"
     },
     {
       "path": ".codex-plugin/plugin.json",
-      "sha256": "7b8c248104a3c35fdc4f1e25d1b793f807761fce1daf2264e15bea9fb13e15e6"
+      "sha256": "6593aedcbb35829381f5b456967f3ce58ca8f0491f8338ee55f65bae45b9cf97"
     },
     {
       "path": "CAPABILITIES.json",
-      "sha256": "4026abe3e42fcccc988de3a3470542b5a3363518d94c5fb2f206984dca7fa5f3"
+      "sha256": "1db2779915bf1ac5dab5640c3683a2e1268f2dcdf485b5e3200fe7ea02dd20dc"
     },
     {
       "path": "LICENSE",
@@ -27,7 +27,7 @@
     },
     {
       "path": "UPSTREAMS.lock.json",
-      "sha256": "918c6790d525823e7abc5cf6f42cd3a4421e6133b3232966fa2e685aba743a98"
+      "sha256": "bd43849ce4bf1eccc549cabc5676f8a36d28aaf676d93180e35b8f32abab10ab"
     },
     {
       "path": "licenses/anthropic-frontend-design-LICENSE",
