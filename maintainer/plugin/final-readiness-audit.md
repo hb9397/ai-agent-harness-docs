@@ -2,9 +2,9 @@
 
 생성 시각: 2026-07-29T00:00:00+09:00
 
-> 역사 기록. 이 감사는 릴리스 후보 `0.1.0`을 설명한다. 현재 후보는
-> `harness-kit` `0.4.3`이며 최신 상태는 `release-checklist.md`와
-> `install-verification.json`을 따른다. `0.4.3` 정식 게시는 명시적으로 승인됐지만,
+> 역사 기록. 이 감사는 릴리스 후보 `0.1.0`을 설명한다. 현재 stable 릴리스는
+> `harness-kit` `0.4.3`이며 게시 결과는 `publish.json`, 최신 설치 검증 상태는
+> `release-checklist.md`와 `install-verification.json`을 따른다. `0.4.3`은 게시됐지만,
 > 네 인터페이스의 미확보 수동 증적은 알려진 검증 한계로 남는다. `0.1.0`의 CLI 설치
 > smoke 증적은 현재 후보에 적용되지 않는다.
 

@@ -7,10 +7,10 @@
 ## 현재 전환 상태
 
 - 기준 계획서: `improvement_plan/20260729/플러그인 전환 및 스킬 거버넌스 리팩토링 작업 계획서.md`
-- `harness-kit` `0.4.3` 정식 릴리스 후보의 빌드·설치·회귀검증과 게시를 진행 중이다.
+- `harness-kit` `0.4.3`은 annotated tag와 stable GitHub Release로 게시됐다.
 - inventory, upstream provenance, license/NOTICE, plugin build, 설치 인터페이스와 회귀검증 기준선은 `maintainer/` 아래에서 관리한다.
 - CLI 자동 설치 검증과 Codex·Claude 앱 수동 증적이 모두 충족되기 전에는 `release-ready`로 표시하지 않는다.
-- `0.4.3` stable 게시에는 관리자의 명시적 예외 승인이 적용됐으며, 미완료 수동 증적은 `maintainer/plugin/release-exceptions/v0.4.3.md`에 알려진 제한으로 남긴다.
+- `0.4.3` stable 게시에는 관리자의 명시적 예외 승인이 적용됐다. 게시 결과는 `maintainer/plugin/publish.json`에 기록하고, 미완료 수동 증적은 `maintainer/plugin/release-exceptions/v0.4.3.md`에 알려진 제한으로 남긴다.
 
 ## 정본 경로
 

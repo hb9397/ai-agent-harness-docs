@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0.0",
+  "generated_by": "harness-plugin-maintainer/publication-record",
+  "releases": {
+    "0.4.3": {
+      "status": "published",
+      "plugin_id": "harness-kit",
+      "version": "0.4.3",
+      "tag": "v0.4.3",
+      "tag_object_sha": "90f23bb25f94e82d0d25a412518c525a62c0351e",
+      "commit_sha": "a18456434e56e647813ba52899ab6e848111b489",
+      "archive": {
+        "path": "plugins/harness-kit-0.4.3.zip",
+        "size": 1620693,
+        "sha256": "0385680650cca7827b8f71445a9e7aa6e1d630997e0167a6f4094e38f14e2d76"
+      },
+      "notes": {
+        "path": "maintainer/plugin/release-notes/v0.4.3.md",
+        "sha256": "38da3e8d9adcf0152da765cfdf552492ae08c599f8c15126cf91a9a0edee7fd0"
+      },
+      "github": {
+        "repository": "hb9397/harness-kit",
+        "release_id": 368379584,
+        "release_url": "https://github.com/hb9397/harness-kit/releases/tag/v0.4.3",
+        "asset_id": 509792221,
+        "asset_name": "harness-kit-0.4.3.zip",
+        "asset_url": "https://github.com/hb9397/harness-kit/releases/download/v0.4.3/harness-kit-0.4.3.zip",
+        "published_at": "2026-08-11T06:57:44Z"
+      },
+      "verification": {
+        "remote_asset_sha256": "0385680650cca7827b8f71445a9e7aa6e1d630997e0167a6f4094e38f14e2d76",
+        "release_gate": "not-release-ready",
+        "manual_evidence_exception": "maintainer/plugin/release-exceptions/v0.4.3.md",
+        "verified_at": "2026-08-11T07:05:42Z"
+      }
+    }
+  }
+}

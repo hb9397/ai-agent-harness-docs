@@ -29,9 +29,10 @@
 - `0.4.3` Codex runtime: 19 skills / 0 agents
 - `0.4.3` Claude runtime: 19 skills / 0 agents
 - 관리자 스킬: 3종, 이 저장소 안에서만 사용
-- 릴리스 상태: `0.4.3` 정식 게시 승인 — 새 artifact의 자동 검증과 CLI 설치 smoke를
-  거쳐 게시하며, Codex·Claude CLI·앱 네 인터페이스의 실제 모델 호출 수동 증적은
-  아직 확보하지 못한 검증 한계로 명시함
+- 릴리스 상태: [`v0.4.3` stable 게시 완료](https://github.com/hb9397/harness-kit/releases/tag/v0.4.3) —
+  tag·commit·GitHub asset의 검증 결과는 `maintainer/plugin/publish.json`에 기록했으며,
+  Codex·Claude CLI·앱 네 인터페이스의 실제 모델 호출 수동 증적은 아직 확보하지 못한
+  검증 한계로 명시함
 
 ### 함께 사용해볼 만한 플러그인
 

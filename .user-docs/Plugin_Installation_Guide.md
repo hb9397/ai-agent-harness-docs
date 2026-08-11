@@ -1,9 +1,10 @@
 # Plugin Installation Guide
 
-> 기준일: 2026-08-03
+> 기준일: 2026-08-11
 > 대상 플러그인: `harness-kit` `0.4.3`
-> 현재 상태: 정식 게시 승인을 받은 후보이며, 공식 manifest·marketplace와 격리 CLI
-> 설치 smoke를 새 artifact 기준으로 검증한다. Codex와 Claude의 CLI·앱 네 인터페이스에서
+> 현재 상태: [`v0.4.3` stable 릴리스](https://github.com/hb9397/harness-kit/releases/tag/v0.4.3)로 게시됐으며,
+> 공식 manifest·marketplace와 격리 CLI 설치 smoke를 새 artifact 기준으로 검증했다.
+> Codex와 Claude의 CLI·앱 네 인터페이스에서
 > 실제 모델 호출·산출물·새 세션 증적은 아직 확보하지 못한 검증 한계로 남아 있다.
 
 이 문서는 실제 프로젝트 사용자가 하네스 저장소를 clone하거나 스킬을 복사하지 않고 플러그인으로 시작하기 위한 설치·확인·업데이트·제거 기준이다.
@@ -21,7 +22,7 @@
 
 ---
 
-## 2. 현재 릴리스 후보 정보
+## 2. 현재 stable 릴리스 정보
 
 | 항목 | 값 |
 |------|----|
@@ -29,12 +30,14 @@
 | Version | `0.4.3` |
 | Local plugin root | `plugins/harness-kit` |
 | Archive | `plugins/harness-kit-0.4.3.zip` |
-| Archive SHA-256 | `maintainer/plugin/release.json`의 현재 생성값 |
+| Archive SHA-256 | `0385680650cca7827b8f71445a9e7aa6e1d630997e0167a6f4094e38f14e2d76` |
 | Codex physical skills | 19 |
 | Codex agents | 0 |
 | Claude physical skills | 19 |
 | Claude agents | 0 |
-| Release gate | `stable publication authorized; manual evidence pending` |
+| GitHub Release | [`v0.4.3`](https://github.com/hb9397/harness-kit/releases/tag/v0.4.3) |
+| Publication record | `maintainer/plugin/publish.json` |
+| Release gate | `not-release-ready` — stable published by administrator exception; manual evidence pending |
 
 릴리스 게이트 증적은 [maintainer/plugin/release-checklist.md](../maintainer/plugin/release-checklist.md)와 [maintainer/plugin/install-verification.json](../maintainer/plugin/install-verification.json)에 있다.
 
@@ -187,8 +190,8 @@ Claude 앱과 Claude Code CLI는 일부 설정을 공유할 수 있지만 host�
 9. cloud Code session은 plugin browser가 없어 프로젝트 `enabledPlugins` 정책을 별도 적용
 10. WSL session은 Desktop plugin 설치 인터페이스로 지원하지 않음을 명시
 
-`0.4.3`은 정식 게시 승인을 받은 릴리스 후보이며 CLI 설치 smoke를 통과했다. 앱 설치와
-직접 모델 호출은 알려진 수동 검증 한계로 남긴다.
+`0.4.3`은 stable 릴리스로 게시됐으며 CLI 설치 smoke를 통과했다. 앱 설치와 직접 모델
+호출은 알려진 수동 검증 한계로 남긴다.
 
 ---
 
