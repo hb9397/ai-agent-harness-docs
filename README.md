@@ -40,7 +40,7 @@
 | 플러그인 | 함께 쓰는 목적 | GitHub |
 |---|---|---|
 | Caveman | 에이전트 응답을 짧고 압축된 형태로 유지 | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) |
-| Ponytail | YAGNI와 최소 변경 중심으로 불필요한 구현을 줄이는 작업 규칙 | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) |
+| Ponytail | 최소 변경 중심으로 불필요한 구현을 줄이는 작업 규칙 | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) |
 | Ruflo | 다중 에이전트 조정, swarm workflow와 orchestration이 필요한 작업 | [ruvnet/ruflo](https://github.com/ruvnet/ruflo) |
 
 ---
@@ -84,15 +84,8 @@
 
 ![Claude 앱의 마켓플레이스 추가 화면](./.user-docs/assets/plugin-install/claude-app-add-marketplace.png)
 
-`0.4.2` CLI 설치 smoke는 Codex CLI `0.146.0`과 Claude Code `2.1.220`
-기준으로 통과했다. 격리된 설정 디렉터리에서 marketplace 등록, 설치, 19 skills / 0 agents
-확인, 제거까지 수행했다. 이는 설치·cache 증적일 뿐 실제 모델이 스킬 계약을 수행했다는
-증적은 아니다. 네 인터페이스의 직접 모델 호출과 앱 설치·trust 증적은 아직 남아 있다.
-
 ### 사용자 스킬 정본 19종
 
-아래 목록은 `maintainer/plugin/CAPABILITIES.json`과
-`maintainer/upstreams/provenance/current-skills.json`을 기준으로 한다.
 `변형 반영(adapted)`은 외부 원본을 번역·재구성하거나 핵심 자료를 포함한 관계이고,
 `참조(reference)`는 개념·행동만 참고하며 외부 파일을 직접 포함하지 않는 관계다.
 
@@ -118,10 +111,6 @@
 | 문서 | [doc-audit](./skills/doc-audit/SKILL.md) | 코드와 문서의 괴리 분석 | 참조: [OpenAI AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md), [Claude Code memory](https://code.claude.com/docs/en/memory) |
 | 문서 | [humanize-korean](./skills/humanize-korean/SKILL.md) | Markdown 개선안·diff 제안 | 변형 반영: [im-not-ai](https://github.com/epoko77-ai/im-not-ai) |
 
-`rfp-ingest`와 `agent-sync`는 제거됐다. `custom-skill-design`은 사용자 스킬이
-아니라 이 관리 저장소에서만 쓰는 관리자 스킬이다. 관계별 적용 범위와 라이선스는
-[Skill Upstream Governance](./.user-docs/Skill_Upstream_Governance.md)를 따른다.
-
 ## 2. 기본 작업 흐름 한눈에 보기
 
 새 프로젝트, RFP 프로젝트, 문서 없는 기존 코드베이스는 진입점만 다르고 같은
@@ -129,28 +118,44 @@
 
 ```mermaid
 flowchart TD
-    P["플러그인 설치·새 session"] --> N{"프로젝트 상태"}
-    N -->|"신규·문서 골격 있음"| S["0단계: harness-setup<br/>+ producer gate"]
-    S --> D["design-doc<br/>+ producer gate"]
-    N -->|"하네스 문서 없는 기존 코드"| B["harness-bootstrap<br/>(setup 포함·bundle gate)"]
-    D --> C["context-doc<br/>+ producer gate"]
+    P["플러그인 설치·새 session"] --> G{" Git 작성자<br/>계정 설정이 필요한가?"}
+    G -->|"예"| GA["선택(권장): <br/>git-scoped-account"]
+    G -->|"아니오"| N{"프로젝트 상태"}
+    GA --> N
+    N -->|"신규·문서골격<br/>.docs 디렉토리가 있거나<br/> 아예 신규 프로젝트인 경우"| S["harness-setup"]
+    S --> D["design-doc<br/>"]
+    N -->|"하네스 문서 없는 기존 코드"| B["harness-bootstrap<br/>(harness setup, design-doc, context-doc 포함)"]
+    D --> C["context-doc"]
     B --> C2["설계·컨텍스트 산출물"]
-    D --> U["선택: design-prototype-docs<br/>+ producer gate<br/>→ create-prototype"]
-    C --> I["2단계: impl-doc 또는 impl-fe-be-doc<br/>+ producer gate"]
+    D -->|"화면 작업일 때 선택"| UX["ui-ux-pro-max"]
+    UX --> U["design-prototype-docs"]
+    U --> M{"모션 설계가 필요한가?"}
+    M -->|"예"| MD["motion-design"]
+    M -->|"아니오"| T{"검증 시안이 필요한가?"}
+    MD --> T
+    T -->|"예"| CP["create-prototype"]
+    T -->|"아니오"| I
+    CP --> I
+    C --> I["impl-doc <br/>또는<br/> impl-fe-be-doc"]
     C2 --> I
-    U --> I
     I --> R["impl-reuse-scan"]
-    R --> W["3단계: Phase·태스크 단위 구현<br/>제품 UI는 frontend-design 적용"]
+    R --> W["Phase·태스크 단위 계획 구현<br/>제품 UI는 frontend-design"]
     W --> V["impl-verify"]
-    V --> Q["4단계: multi-review + doc-audit"]
+    V --> Q["선택:<br/>multi-review + doc-audit"]
     Q --> CC["선택: code-comment"]
-    CC --> CM["명시 요청: commit<br/>scope·diff 확인 → 선택 stage → hook → commit"]
+    CC --> CM["commit"]
     Q --> CM
-```
 
-여기서 `producer gate`는 **원 producer 구조 검증 → 최외곽 owner의
-`humanize-korean` 제안 → 사용자 결정 → 승인 변경 반영 → 원 producer
-재검증**을 뜻한다. 이 gate를 통과한 최종 Markdown만 다음 노드로 넘긴다.
+    H["Markdown 산출물 공통 gate<br/>선택: humanize-korean<br/>"]
+    S -.-> H
+    B -.-> H
+    D -.-> H
+    C -.-> H
+    UX -.-> H
+    U -.-> H
+    MD -.-> H
+    I -.-> H
+```
 
 ### 0단계 — 환경 준비
 
