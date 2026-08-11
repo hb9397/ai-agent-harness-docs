@@ -252,7 +252,11 @@ harness-setup 명시 호출
 
 ## 10. Markdown 산출물 후처리
 
-다음 스킬은 `.md` 산출물을 만들 수 있다.
+여기서 producer는 Markdown 파일이나 문서 묶음을 생성·갱신하고 저장 경로와 구조를
+검증한 뒤 다음 단계로 넘기는 산출물 책임 스킬을 뜻한다. Markdown producer는 고정
+7종과 조건부 2종, 총 9종이다.
+
+고정 producer 7종:
 
 - `harness-setup`
 - `harness-bootstrap`
@@ -261,6 +265,17 @@ harness-setup 명시 호출
 - `design-prototype-docs`
 - `impl-doc`
 - `impl-fe-be-doc`
+
+조건부 producer 2종:
+
+- `ui-ux-pro-max`
+- `motion-design`
+
+조건부 2종은 기본적으로 대화창에 결과를 보고하며 사용자가 디자인 시스템이나
+모션 명세의 저장을 명시적으로 요청했을 때만 파일을 만든다. 모든 producer는 단일
+앱의 `@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
+`@.docs/{앱}/instruction/artifact-output-routing-instruction.md`에 따라 위치·소유권·
+인계를 결정한다.
 
 산출물 생성 후 흐름:
 

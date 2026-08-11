@@ -163,9 +163,9 @@ directory가 생겼다면 정상 결과로 보지 않는다.
 `.docs/_inbox/`, 루트 컨텍스트 골격을 만든다. 복수 앱이면 빈 앱별 context와
 instruction 디렉터리, `.docs/root-context/`도 준비한다.
 
-아래 트리는 `design-doc`, `context-doc`, `impl-*`, prototype producer까지
-진행한 뒤의 **대표 누적 구조**다. `context-base/`, `impl-doc/`, `prototype/`,
-`.harness/`가 setup만으로 모두 생긴다는 뜻은 아니다.
+아래 트리는 `design-doc`, `context-doc`, `impl-*`과 prototype·design-system
+producer의 산출물이 누적된 **대표 구조**다. `context-base/`, `impl-doc/`,
+`prototype/`, `design-system/`, `.harness/`가 setup만으로 모두 생긴다는 뜻은 아니다.
 
 단일 앱의 대표 구조:
 
@@ -179,6 +179,7 @@ instruction 디렉터리, `.docs/root-context/`도 준비한다.
 ├── instruction/
 ├── impl-doc/
 ├── prototype/
+├── design-system/
 └── .harness/
     └── humanize-handoffs.json
 ```
@@ -194,19 +195,23 @@ instruction 디렉터리, `.docs/root-context/`도 준비한다.
 ├── app-frontend/
 │   ├── context-base/
 │   ├── instruction/
-│   └── impl-doc/
+│   ├── impl-doc/
+│   ├── prototype/
+│   └── design-system/
 ├── app-backend-context.md
 ├── app-backend/
 │   ├── context-base/
 │   ├── instruction/
 │   └── impl-doc/
-├── prototype/
 ├── root-context/
 │   ├── AGENTS.md
 │   └── CLAUDE.md
 └── .harness/
     └── humanize-handoffs.json
 ```
+
+복수 앱에서는 문서·프로토타입·디자인 시스템 산출물을 공유 루트에 두지 않고 항상
+대상 앱의 `.docs/{앱}/` 아래에 분리한다.
 
 ## 5. 전체 사용자 흐름
 
@@ -235,11 +240,12 @@ flowchart TD
     CO --> CM
 ```
 
-가독성을 위해 흐름도에서는 각 Markdown producer 뒤의 공통 gate를 생략했다.
-`harness-setup`, `harness-bootstrap`, `design-doc`, `context-doc`,
+가독성을 위해 흐름도에서는 각 Markdown producer 뒤의 공통 gate를 생략했다. 고정
+producer인 `harness-setup`, `harness-bootstrap`, `design-doc`, `context-doc`,
 `design-prototype-docs`, `impl-doc`, `impl-fe-be-doc`의 출력은 모두
 **원 producer 검증 → 개선안·사용자 결정 → 승인 변경 반영 → 원 producer
-재검증**을 거친 뒤 다음 노드로 전달한다.
+재검증**을 거친 뒤 다음 노드로 전달한다. 조건부 producer인 `ui-ux-pro-max`와
+`motion-design`도 사용자가 파일 저장을 명시적으로 요청했을 때 같은 gate를 따른다.
 
 ### 5.1 1단계 — 설계와 컨텍스트
 
@@ -306,9 +312,11 @@ harness-setup 골격 확인
 ```text
 design-doc
 → design-prototype-docs
-→ .docs/prototype/{사용자}/{식별자}/design-doc.md
+→ 단일 .docs/prototype/{사용자}/{식별자}/design-doc.md
+  복수 .docs/{앱}/prototype/{사용자}/{식별자}/design-doc.md
 → create-prototype
-→ .docs/prototype/{사용자}/{식별자}/
+→ 단일 .docs/prototype/{사용자}/{식별자}/
+  복수 .docs/{앱}/prototype/{사용자}/{식별자}/
 ```
 
 프로토타입은 요구사항과 이동 흐름을 검증하는 폐기 가능한 산출물이다. 실제 제품
@@ -401,7 +409,11 @@ impl-verify
 
 ## 6. Markdown producer와 `humanize-korean`
 
-Markdown bundle을 만드는 producer는 9종이다. 고정 7종과 조건부 2종으로 나뉜다.
+여기서 producer는 Markdown 파일이나 문서 묶음을 생성·갱신하고 저장 경로와 필수 구조,
+링크, index, bridge를 검증한 뒤 다음 단계로 인계하는 산출물 책임 스킬이다.
+Markdown producer는 고정 7종과 조건부 2종, 총 9종이다.
+
+고정 producer 7종:
 
 - `harness-setup`
 - `harness-bootstrap`
@@ -410,6 +422,17 @@ Markdown bundle을 만드는 producer는 9종이다. 고정 7종과 조건부 2�
 - `design-prototype-docs`
 - `impl-doc`
 - `impl-fe-be-doc`
+
+조건부 producer 2종:
+
+- `ui-ux-pro-max`
+- `motion-design`
+
+조건부 2종은 기본적으로 대화창에 결과를 보고한다. 사용자가 디자인 시스템이나
+모션 명세의 저장을 명시적으로 요청했을 때만 Markdown 파일을 만든다. 모든
+producer는 단일 앱의 `@.docs/instruction/artifact-output-routing-instruction.md`
+또는 복수 앱의 `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`에
+따라 산출물 위치·소유권·인계를 결정한다.
 
 후처리 계약:
 
@@ -495,7 +518,7 @@ flowchart TD
 | `ui-ux-pro-max` | 제품 유형·업종·스택·접근성 요구 | 대화창 디자인 결정과 근거 | 저장 시 승인 필요 | 기존 토큰 우선 여부 |
 | `design-prototype-docs` | 디자인 결정 또는 기존 시스템 | 화면·상태·반응형 명세 `.md` | producer gate | 7개 품질 기준 |
 | `motion-design` | 모션 후보와 목적 | 모션 결정표 | 저장 시 승인 필요 | reduced-motion 대체안 필수 |
-| `create-prototype` | 승인된 명세와 모션 | `.docs/prototype/**` | — | 시안·요구사항 일치 |
+| `create-prototype` | 승인된 명세와 모션 | 단일 `.docs/prototype/**`, 복수 `.docs/{앱}/prototype/**` | — | 시안·요구사항 일치 |
 | `frontend-design` | 승인된 결정과 명세 | 제품 소스 | — | 기능·UI·접근성·모션 |
 
 #### 호출·생략 조건
@@ -516,11 +539,10 @@ flowchart TD
 두 신규 스킬의 기본 동작은 대화창 보고다. 사용자가 명시적으로 요청할 때만
 저장한다.
 
-```text
-.docs/design-system/{project-slug}/MASTER.md
-.docs/design-system/{project-slug}/pages/{page-slug}.md
-.docs/design-system/{project-slug}/motion/{screen-or-component}.md
-```
+| 담당 스킬 | 단일 앱 | 복수 앱 |
+|---|---|---|
+| `ui-ux-pro-max` | `.docs/design-system/{project-slug}/MASTER.md`, `.docs/design-system/{project-slug}/pages/{page-slug}.md` | `.docs/{앱}/design-system/{project-slug}/MASTER.md`, `.docs/{앱}/design-system/{project-slug}/pages/{page-slug}.md` |
+| `motion-design` | `.docs/design-system/{project-slug}/motion/{screen-or-component}.md` | `.docs/{앱}/design-system/{project-slug}/motion/{screen-or-component}.md` |
 
 기존 파일이 있으면 diff를 제시하고 승인 전에는 덮어쓰지 않는다. 두 스킬은
 조건부 Markdown producer이므로, 최외곽 생성자일 때만 `humanize-korean` 개선안을
@@ -542,7 +564,10 @@ budget은 문서 개선 단계의 보호 토큰이며 개선으로 값이 바뀌
 | 설계 | `.docs/**/context-base/DESIGN.md` | 프로젝트 문서 |
 | 루트 컨텍스트 | `AGENTS.md`, `CLAUDE.md` | `AGENTS.md` 정본, `CLAUDE.md` bridge |
 | 세부 규칙 | `.docs/**/instruction/*-instruction.md` | 프로젝트 문서 |
-| 화면 설계·시안 | `.docs/prototype/{사용자}/{식별자}/` | 공용 요구사항 검증 산출물 |
+| 화면 설계 | 단일 `.docs/prototype/{사용자}/{식별자}/design-doc.md`, 복수 `.docs/{앱}/prototype/{사용자}/{식별자}/design-doc.md` | `design-prototype-docs`가 관리하는 프로젝트 문서 |
+| 프로토타입 | 단일 `.docs/prototype/{사용자}/{식별자}/`, 복수 `.docs/{앱}/prototype/{사용자}/{식별자}/` | `create-prototype`이 만드는 폐기 가능한 검증 산출물 |
+| 디자인 시스템 | 단일 `.docs/design-system/{project-slug}/MASTER.md`·`pages/{page-slug}.md`, 복수 `.docs/{앱}/design-system/{project-slug}/MASTER.md`·`pages/{page-slug}.md` | `ui-ux-pro-max`가 명시적 저장 요청 때만 생성 |
+| 모션 명세 | 단일 `.docs/design-system/{project-slug}/motion/{screen-or-component}.md`, 복수 `.docs/{앱}/design-system/{project-slug}/motion/{screen-or-component}.md` | `motion-design`이 명시적 저장 요청 때만 생성 |
 | 구현 계획·index | `.docs/**/impl-doc/{사용자}/` | 구현 근거와 진행 index |
 | handoff ledger | `.docs/.harness/humanize-handoffs.json` | 개선 제안 중복 방지 상태 |
 | 코드·테스트 | 각 앱 repo | 앱별 형상관리 |

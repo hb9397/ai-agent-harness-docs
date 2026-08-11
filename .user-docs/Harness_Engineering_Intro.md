@@ -149,10 +149,11 @@ flowchart LR
 
 ### 3.6 문서 문체도 구조 계약을 해치지 않게 개선한다
 
-AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 그래서 7개
-Markdown producer 뒤에는 `humanize-korean` 개선안이 연결된다. 다만 자동
-덮어쓰지 않고 diff를 먼저 보여 주며, 승인 후 원 producer가 구조를 다시
-검증한다.
+AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 그래서 고정 7종과
+조건부 2종, 총 9종의 Markdown producer 뒤에는 `humanize-korean` 개선안이
+연결된다. 조건부인 `ui-ux-pro-max`와 `motion-design`은 사용자가 파일 저장을
+명시적으로 요청했을 때만 이 흐름에 들어온다. 자동으로 덮어쓰지 않고 diff를 먼저
+보여 주며 승인 후 원 producer가 구조를 다시 검증한다.
 
 ### 3.7 스킬 배포는 프로젝트 책임이 아니다
 
@@ -184,9 +185,16 @@ Markdown producer 뒤에는 `humanize-korean` 개선안이 연결된다. 다만 
 |------|------|-------------|
 | `design-doc` | 아이디어·요구사항·RFP를 구조화한 설계로 변환 | 신규 프로젝트·기능 설계 |
 | `context-doc` | 설계를 루트 컨텍스트와 instruction으로 변환 | 에이전트가 계속 읽을 기준이 필요할 때 |
+| `ui-ux-pro-max` | 디자인 방향·색·타이포그래피·레이아웃·접근성 결정 | 화면의 디자인 기준을 정하거나 기존 UI를 점검할 때 |
+| `motion-design` | 모션 목적·타이밍·이징·reduced-motion 대안 결정 | 전환·상태 피드백·등장 순서에 움직임이 필요할 때 |
 | `design-prototype-docs` | 화면 요구사항·배치·이동 흐름 문서화 | 화면을 먼저 합의할 때 |
-| `create-prototype` | `.docs/prototype/` 아래 검증 시안 생성 | 고객 확인·UX 검증용 시안 |
+| `create-prototype` | 단일 `.docs/prototype/`, 복수 `.docs/{앱}/prototype/` 아래 검증 시안 생성 | 고객 확인·UX 검증용 시안 |
 | `frontend-design` | 실제 제품 UI 구현 품질 기준 적용 | 앱의 페이지·컴포넌트·스타일 구현 |
+
+모든 producer는 단일 앱의 `@.docs/instruction/artifact-output-routing-instruction.md`
+또는 복수 앱의 `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를
+기준으로 산출물 위치·소유권·인계를 결정한다. `create-prototype`은 이 계약에 따라
+검증 시안을 만들고 `frontend-design`은 승인된 앱 소스에 실제 제품 UI를 구현한다.
 
 ### 구현 계획·점검
 
@@ -230,8 +238,12 @@ flowchart LR
 
     C --> C1["harness-bootstrap"]
 
-    D --> D1["design-prototype-docs"]
-    D1 --> D2["create-prototype"]
+    D --> D0["ui-ux-pro-max"]
+    D0 --> D1["design-prototype-docs"]
+    D1 --> DM{"모션이 필요한가?"}
+    DM -->|"예"| D3["motion-design"]
+    DM -->|"아니오"| D2["create-prototype"]
+    D3 --> D2
 
     E --> E1{"단일 작업인가?"}
     E1 -->|"예"| E2["impl-doc"]
@@ -253,7 +265,7 @@ flowchart LR
 - 문서 없는 기존 코드다 → `harness-bootstrap`
 - 요구사항이나 RFP를 설계로 정리한다 → `design-doc`
 - 설계를 에이전트 규칙으로 고정한다 → `context-doc`
-- 화면부터 본다 → `design-prototype-docs` → `create-prototype`
+- 화면부터 본다 → `ui-ux-pro-max` → `design-prototype-docs` → 필요 시 `motion-design` → `create-prototype`
 - 단일 기능 계획을 만든다 → `impl-doc`
 - 다중 화면·FE/BE 페어 계획을 만든다 → `impl-fe-be-doc`
 - 구현을 시작한다 → `impl-reuse-scan`
@@ -270,7 +282,7 @@ flowchart LR
 → harness-setup
 → design-doc
 → context-doc
-→ 선택: design-prototype-docs → create-prototype
+→ 화면 작업일 때 선택: ui-ux-pro-max → design-prototype-docs → 필요 시 motion-design → create-prototype
 → impl-doc 또는 impl-fe-be-doc
 → impl-reuse-scan
 → Phase·태스크 단위 구현
@@ -303,9 +315,12 @@ flowchart LR
 
 ### Markdown 문서 개선이 끼어드는 위치
 
-`harness-setup`, `harness-bootstrap`, `design-doc`, `context-doc`,
-`design-prototype-docs`, `impl-doc`, `impl-fe-be-doc`이 Markdown bundle을
-만들면 다음 순서를 거친다.
+여기서 producer는 Markdown 파일이나 문서 묶음을 생성·갱신하고 저장 경로와 구조를
+검증한 뒤 다음 단계로 넘기는 산출물 책임 스킬을 뜻한다. 고정 producer인 `harness-setup`,
+`harness-bootstrap`, `design-doc`, `context-doc`, `design-prototype-docs`, `impl-doc`,
+`impl-fe-be-doc`과 조건부 producer인 `ui-ux-pro-max`, `motion-design`이 Markdown
+bundle을 만들면 다음 순서를 거친다. 조건부 2종은 사용자가 파일 저장을 명시적으로
+요청했을 때만 이 흐름에 들어온다.
 
 ```text
 원 producer 구조 검증
@@ -554,6 +569,13 @@ ID를 다시 준다. 오래된 대화 전체를 끌고 가는 것보다 고정 �
 `/harness-kit:motion-design` 형식이다. 둘 다 기본은 대화창으로 결과를
 알려주는 것이고, 파일은 사용자가 만들라고 해야 만든다.
 
+파일 저장을 요청하면 담당 스킬과 대상 앱에 따라 위치를 나눈다.
+
+| 담당 스킬 | 단일 앱 | 복수 앱 |
+|---|---|---|
+| `ui-ux-pro-max` | `.docs/design-system/{project-slug}/MASTER.md`, `.docs/design-system/{project-slug}/pages/{page-slug}.md` | `.docs/{앱}/design-system/{project-slug}/MASTER.md`, `.docs/{앱}/design-system/{project-slug}/pages/{page-slug}.md` |
+| `motion-design` | `.docs/design-system/{project-slug}/motion/{screen-or-component}.md` | `.docs/{앱}/design-system/{project-slug}/motion/{screen-or-component}.md` |
+
 ### 프로토타입과 실제 화면은 다르다
 
 **프로토타입은 버려도 되는 시험 화면이다.** 요구사항이 맞는지, 화면 구성이
@@ -628,7 +650,9 @@ generated tree는 서로 일치한다.
 
 ### 3단계 — 화면·문서 품질 확장
 
+- `ui-ux-pro-max`
 - `design-prototype-docs`
+- 필요 시 `motion-design`
 - `create-prototype`
 - `frontend-design`
 - producer에 내장된 `humanize-korean` 승인 흐름

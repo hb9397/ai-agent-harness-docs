@@ -195,7 +195,7 @@ flowchart TD
 4. 구현이 끝나면 `impl-verify`로 계획 대비 PASS/FAIL/SKIP 매트릭스를 만든다.
 5. 실패가 있으면 해당 Phase를 보완하고 다시 검증한다.
 
-`create-prototype`은 폐기 가능한 검증 시안을 만들고, `frontend-design`은 실제 제품 UI를 구현한다. 앱별 산출물 위치·소유권·인계는 단일 앱의 `@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의 `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를 따른다.
+모든 Markdown producer는 단일 앱의 `@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의 `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를 기준으로 산출물 위치·소유권·인계를 결정한다. `create-prototype`은 같은 계약에 따라 `.docs/prototype/**` 또는 `.docs/{앱}/prototype/**`에 폐기 가능한 검증 시안을 만들고 `frontend-design`은 승인된 앱 소스에 실제 제품 UI를 구현한다.
 
 ### 4단계 — 품질·문서·커밋
 
@@ -209,13 +209,13 @@ flowchart TD
 
 Markdown 산출물이 있으면 원 producer가 구조를 검증한 뒤 `humanize-korean` 개선안과 diff를 한 번 제안한다. 사용자가 승인한 변경만 반영하고 원 producer가 다시 검증한다.
 
-플랫폼별 사용자 스킬을 맞추는 `agent-sync` 단계는 없다. 스킬 버전은 설치된 플러그인이 제공하고 프로젝트는 결과 문서와 코드만 관리한다.
-
 ## 3. Markdown 산출물과 문서 개선
 
-다음 7개 producer가 Markdown bundle을 만들면 원 producer가 먼저 구조를
-검증하고, bundle의 최외곽 owner가 `humanize-korean` 개선안과 diff를 한 번만
-제안한다.
+여기서 producer는 Markdown 파일이나 문서 묶음을 생성·갱신하고 저장 경로와 필수
+구조, 링크, index, bridge를 검증한 뒤 다음 단계로 인계하는 산출물 책임 스킬을
+뜻한다. Markdown producer는 고정 7종과 조건부 2종, 총 9종이다.
+
+고정 producer 7종:
 
 - `harness-setup`
 - `harness-bootstrap`
@@ -224,6 +224,16 @@ Markdown 산출물이 있으면 원 producer가 구조를 검증한 뒤 `humaniz
 - `design-prototype-docs`
 - `impl-doc`
 - `impl-fe-be-doc`
+
+조건부 producer 2종:
+
+- `ui-ux-pro-max`
+- `motion-design`
+
+조건부 2종은 기본적으로 대화창에 결과를 보고한다. 사용자가 디자인 시스템이나
+모션 명세의 저장을 명시적으로 요청했을 때만 Markdown producer로 파일을 만든다.
+원 producer가 먼저 구조를 검증하고 중첩 호출에서는 bundle의 최외곽 owner만
+`humanize-korean` 개선안과 diff를 한 번 제안한다.
 
 사용자가 승인한 변경만 반영하며, 링크·경로·코드블록·표·식별자 같은 보호 요소를
 보존한다. 반영 뒤에는 원 producer가 링크·index·bridge·문서 구조를 다시
@@ -297,6 +307,8 @@ my-project/
 | 에이전트 규칙 | `AGENTS.md`, `CLAUDE.md`, `.docs/**/instruction/` | `AGENTS.md` 정본, `CLAUDE.md` bridge |
 | 화면 설계 | 단일 `.docs/prototype/{사용자}/{식별자}/design-doc.md`, 복수 `.docs/{앱}/prototype/{사용자}/{식별자}/design-doc.md` | 프로젝트 문서로 commit |
 | 프로토타입 | 단일 `.docs/prototype/{사용자}/{식별자}/`, 복수 `.docs/{앱}/prototype/{사용자}/{식별자}/` | 검증용 산출물, 프로젝트 정책에 따라 commit |
+| 디자인 시스템 | 단일 `.docs/design-system/{project-slug}/MASTER.md`·`pages/{page-slug}.md`, 복수 `.docs/{앱}/design-system/{project-slug}/MASTER.md`·`pages/{page-slug}.md` | `ui-ux-pro-max` 산출물, 명시적 저장 요청 시 프로젝트 정책에 따라 commit |
+| 모션 명세 | 단일 `.docs/design-system/{project-slug}/motion/{screen-or-component}.md`, 복수 `.docs/{앱}/design-system/{project-slug}/motion/{screen-or-component}.md` | `motion-design` 산출물, 명시적 저장 요청 시 프로젝트 정책에 따라 commit |
 | 구현 계획 | 단일 `.docs/impl-doc/{사용자}/`, 복수 `.docs/{앱}/impl-doc/{사용자}/` | 계획서와 공용 roadmap index를 함께 관리 |
 | 문서 개선 ledger | `.docs/.harness/humanize-handoffs.json` | 최종 Markdown fingerprint와 결정 상태 관리 |
 | 사용자 스킬 | 설치된 `harness-kit` 플러그인 | 프로젝트에 복사하지 않음 |
@@ -313,14 +325,14 @@ UI 판단이 필요할 때만 그 안에서 갈라져 나온다. 백엔드 전�
 
 ```mermaid
 flowchart TD
-    R["승인된 요구사항 또는 **design**-doc"] --> U["ui-ux-pro-max<br/>디자인 방향·시스템"]
+    R["승인된 요구사항 또는 design-doc"] --> U["ui-ux-pro-max<br/>디자인 방향·시스템"]
     U --> S["design-prototype-docs<br/>화면·상태·반응형 명세"]
     S --> M{"모션이 필요한가?"}
     M -->|"예"| MD["motion-design<br/>목적·타이밍·대체안"]
     M -->|"아니오"| B{"최종 목적"}
     MD --> B
 
-    B -->|"검증용 프로토타입"| P["create-prototype<br/>.docs/prototype의 폐기 가능 시안"]
+    B -->|"검증용 프로토타입"| P["create-prototype<br/>project-owned .docs의 폐기 가능 시안"]
     P --> A{"사용자 검토"}
     A -->|"프로토타입만 필요"| PV["impl-verify<br/>시안·요구사항 검증"]
     A -->|"실제 화면 구현 승인"| F["frontend-design<br/>제품 소스 구현"]
@@ -333,7 +345,7 @@ flowchart TD
 
 | | 프로토타입 분기 | 실제 화면 분기 |
 |---|---|---|
-| 산출물 | `.docs/prototype/**`의 HTML·CSS·JS | 제품 소스코드 |
+| 산출물 | 단일 `.docs/prototype/**` 또는 복수 `.docs/{앱}/prototype/**` 아래 HTML·CSS·JS | 제품 소스코드 |
 | 목적 | 요구사항·UX 검증 | 유지보수되는 제품 화면 |
 | 수명 | 검증이 끝나면 폐기 가능 | 계속 유지 |
 
@@ -360,8 +372,13 @@ $ui-ux-pro-max
 reduced-motion 대체안과 성능 검증 기준도 포함해줘.
 ```
 
-두 스킬 모두 기본은 대화창 보고다. 사용자가 명시적으로 요청할 때만
-`.docs/design-system/**`에 저장한다.
+두 스킬 모두 기본은 대화창 보고다. 사용자가 명시적으로 저장을 요청할 때만 다음
+위치에 파일을 만든다.
+
+| 담당 스킬 | 단일 앱 | 복수 앱 |
+|---|---|---|
+| `ui-ux-pro-max` | `.docs/design-system/{project-slug}/MASTER.md`, `.docs/design-system/{project-slug}/pages/{page-slug}.md` | `.docs/{앱}/design-system/{project-slug}/MASTER.md`, `.docs/{앱}/design-system/{project-slug}/pages/{page-slug}.md` |
+| `motion-design` | `.docs/design-system/{project-slug}/motion/{screen-or-component}.md` | `.docs/{앱}/design-system/{project-slug}/motion/{screen-or-component}.md` |
 
 ## 7. 기존 프로젝트의 local skill copy 전환
 
