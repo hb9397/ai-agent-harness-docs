@@ -44,6 +44,7 @@
 | Caveman | 에이전트 응답을 짧고 압축된 형태로 유지 | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) |
 | Ponytail | 최소 변경 중심으로 불필요한 구현을 줄이는 작업 규칙 | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) |
 | Ruflo | 다중 에이전트 조정, swarm workflow와 orchestration이 필요한 작업 | [ruvnet/ruflo](https://github.com/ruvnet/ruflo) |
+| Context7 | 구현·검증 단계에서 라이브러리·프레임워크 최신 공식 문서를 MCP로 조회 | [upstash/context7](https://github.com/upstash/context7) |
 
 ---
 
