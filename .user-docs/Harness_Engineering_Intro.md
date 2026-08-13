@@ -26,9 +26,7 @@ AI를 팀에서 쓰기 시작하면 처음에는 생산성이 크게 올라가�
 > 설계, 컨텍스트, 구현 계획, 검증, 커밋의 기준이 크게 흔들리지 않는
 > 공통 작업 체계를 만드는 것.
 
-이전에는 그 체계를 저장소 clone과 스킬 복사로 배포했다. 현재는 실제 프로젝트가
-`harness-kit` 플러그인을 설치해서 같은 흐름을 사용한다. 사용자는 프로젝트
-결과물에 집중하고, 관리자는 스킬과 배포 품질을 한곳에서 관리한다.
+이전에는 그 체계를 저장소 clone과 스킬 복사로 배포했다. 현재는 실제 프로젝트가 `harness-kit` 플러그인을 설치해서 같은 흐름을 사용한다. 사용자는 프로젝트 결과물에 집중하고, 관리자는 스킬과 배포 품질을 한곳에서 관리한다.
 
 ---
 
@@ -52,19 +50,16 @@ flowchart LR
     X --> H["문서·코드 괴리"]
 ```
 
-하네스는 모델의 답을 완전히 같게 만들지는 않는다. 대신 어떤 문서를 먼저 만들고,
-무엇을 입력으로 쓰고, 언제 검증하는지를 같게 만든다.
+하네스는 모델의 답을 완전히 같게 만들지는 않는다. 대신 어떤 문서를 먼저 만들고, 무엇을 입력으로 쓰고, 언제 검증하는지를 같게 만든다.
 
 ### 문제 2. AI는 프로젝트 맥락을 계속 기억하지 못한다
 
 에이전트는 현재 task/session에 들어온 파일과 대화, 접근 가능한 코드로 판단한다.
-팀 규칙이 문서로 고정되지 않으면 새 session마다 다시 설명해야 하고, 설명이
-누락되면 에이전트가 임의의 기준을 선택한다.
+팀 규칙이 문서로 고정되지 않으면 새 session마다 다시 설명해야 하고, 설명이 누락되면 에이전트가 임의의 기준을 선택한다.
 
 그래서 하네스는 다음을 프로젝트에 남긴다.
 
-- 단일 앱의 루트 `AGENTS.md`, 복수 앱의 `.docs/root-context/AGENTS.md`
-  형상관리 원본과 루트 실행용 `AGENTS.md`
+- 단일 앱의 루트 `AGENTS.md`, 복수 앱의 `.docs/root-context/AGENTS.md` 형상관리 원본과 루트 실행용 `AGENTS.md`
 - Claude가 정본을 읽도록 하는 `CLAUDE.md` bridge
 - 설계 문서
 - 주제별 instruction
@@ -86,9 +81,7 @@ flowchart TD
 
 ### 문제 4. 좋은 결과를 재현하기 어렵다
 
-좋은 결과가 나와도 그것이 특정 사람의 경험, 모델의 우연한 판단, 프롬프트,
-문서 구조 중 무엇 때문인지 구분하기 어렵다. 작업 순서와 산출물이 고정돼야 다음
-사람도 같은 품질 기준을 재현할 수 있다.
+좋은 결과가 나와도 그것이 특정 사람의 경험, 모델의 우연한 판단, 프롬프트, 문서 구조 중 무엇 때문인지 구분하기 어렵다. 작업 순서와 산출물이 고정돼야 다음 사람도 같은 품질 기준을 재현할 수 있다.
 
 ## 2. 그래서 무엇을 고정하는가
 
@@ -120,47 +113,31 @@ flowchart LR
 
 ### 3.1 설계가 먼저다
 
-코드를 쓰기 전에 무엇을 만들고, 왜 만들며, 어디까지가 이번 범위인지 정리한다.
-작은 작업이라면 설계도 짧아질 수 있지만, 설계 없이 범위를 에이전트에게 넘기지는
-않는다.
+코드를 쓰기 전에 무엇을 만들고, 왜 만들며, 어디까지가 이번 범위인지 정리한다. 작은 작업이라면 설계도 짧아질 수 있지만, 설계 없이 범위를 에이전트에게 넘기지는 않는다.
 
 ### 3.2 고정 맥락은 얇고 연결 가능해야 한다
 
-단일 앱의 루트 `AGENTS.md`에는 프로젝트 팩트, 실행 방법, 중요한 규칙과 문서
-인덱스를 둔다. 복수 앱은 `.docs/root-context/AGENTS.md`를 형상관리 갱신
-기준으로 두고 루트 `AGENTS.md`를 실행용으로 갱신한다. 상세 규칙은
-`.docs/**/instruction/`으로 분리한다. `CLAUDE.md`는 별도의 정본이 아니라
-`@AGENTS.md`를 읽게 하는 bridge다.
+단일 앱의 루트 `AGENTS.md`에는 프로젝트 팩트, 실행 방법, 중요한 규칙과 문서 인덱스를 둔다. 복수 앱은 `.docs/root-context/AGENTS.md`를 형상관리 갱신 기준으로 두고 루트 `AGENTS.md`를 실행용으로 갱신한다. 상세 규칙은 `.docs/**/instruction/`으로 분리한다. `CLAUDE.md`는 별도의 정본이 아니라 `@AGENTS.md`를 읽게 하는 bridge다.
 
 ### 3.3 구현은 작은 단위로 쪼갠다
 
-한 번에 프로젝트 전체를 바꾸지 않는다. Phase, 화면, 기능, 모듈, 태스크로
-끊고 각 단위 끝에서 사람이 확인할 결과와 검증을 둔다.
+한 번에 프로젝트 전체를 바꾸지 않는다. Phase, 화면, 기능, 모듈, 태스크로 끊고 각 단위 끝에서 사람이 확인할 결과와 검증을 둔다.
 
 ### 3.4 문서와 코드는 함께 움직인다
 
-설계 결정이 바뀌면 문서도 바뀌어야 한다. 코드가 문서와 다를 때는 코드를
-설계에 맞추거나, 바뀐 결정을 문서에 반영한다. 낡은 문서를 그대로 두지 않는다.
+설계 결정이 바뀌면 문서도 바뀌어야 한다. 코드가 문서와 다를 때는 코드를 설계에 맞추거나, 바뀐 결정을 문서에 반영한다. 낡은 문서를 그대로 두지 않는다.
 
 ### 3.5 품질 확인을 앞당긴다
 
-모든 기능을 만든 뒤 한 번에 검증하지 않는다. Phase마다 재사용 후보를 보고,
-구현이 끝나면 계획 대비 결과를 확인하고, 리뷰와 커밋 전 검사를 수행한다.
+모든 기능을 만든 뒤 한 번에 검증하지 않는다. Phase마다 재사용 후보를 보고, 구현이 끝나면 계획 대비 결과를 확인하고, 리뷰와 커밋 전 검사를 수행한다.
 
 ### 3.6 문서 문체도 구조 계약을 해치지 않게 개선한다
 
-AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 그래서 고정 7종과
-조건부 2종, 총 9종의 Markdown producer 뒤에는 `humanize-korean` 개선안이
-연결된다. 조건부인 `ui-ux-pro-max`와 `motion-design`은 사용자가 파일 저장을
-명시적으로 요청했을 때만 이 흐름에 들어온다. 자동으로 덮어쓰지 않고 diff를 먼저
-보여 주며 승인 후 원 producer가 구조를 다시 검증한다.
+AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 그래서 고정 7종과 조건부 2종, 총 9종의 Markdown producer 뒤에는 `humanize-korean` 개선안이 연결된다. 조건부인 `ui-ux-pro-max`와 `motion-design`은 사용자가 파일 저장을 명시적으로 요청했을 때만 이 흐름에 들어온다. 자동으로 덮어쓰지 않고 diff를 먼저 보여 주며 승인 후 원 producer가 구조를 다시 검증한다.
 
 ### 3.7 스킬 배포는 프로젝트 책임이 아니다
 
-`harness-setup`은 플러그인의 사용자 스킬 복사본을 `.agents/skills`,
-`.claude/skills`, `skills/`에 만들거나 맞추지 않는다. 사용자 스킬은 설치된
-플러그인에서 제공한다. 기존 프로젝트 고유 custom skill과 legacy copy는 읽기
-전용으로 분류·보고하고 승인 없이 변경하지 않는다.
+`harness-setup`은 플러그인의 사용자 스킬 복사본을 `.agents/skills`, `.claude/skills`, `skills/`에 만들거나 맞추지 않는다. 사용자 스킬은 설치된 플러그인에서 제공한다. 기존 프로젝트 고유 custom skill과 legacy copy는 읽기 전용으로 분류·보고하고 승인 없이 변경하지 않는다.
 
 ## 4. 스킬 역할 소개
 
@@ -172,12 +149,9 @@ AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 
 | `harness-bootstrap` | 기존 코드를 스캔해 설계·컨텍스트 역추출 | 하네스 문서가 없는 기존 코드 |
 | `git-scoped-account` | 하위 앱 repo의 Git 작성자 계정을 범위 지정 | 사용자가 계정 적용·확인을 명시 요청할 때 |
 
-`git-scoped-account`는 필수 시작 단계가 아니다. 여러 repo의 계정을 맞춰야 할
-때만 명시 호출한다.
+`git-scoped-account`는 필수 시작 단계가 아니다. 여러 repo의 계정을 맞춰야 할 때만 명시 호출한다.
 
-`harness-setup`이 만든 portable bundle은 플러그인 제거 뒤에도 남는다. host hook의
-`pending-trust` 상태는 사용자가 신뢰 검토를 끝낸 증적을 명시해 `active`로 기록하기 전까지
-바뀌지 않으며, 외부 fixed-format 산출물은 `_inbox`에서만 관리한다.
+`harness-setup`이 만든 portable bundle은 플러그인 제거 뒤에도 남는다. host hook의 `pending-trust` 상태는 사용자가 신뢰 검토를 끝낸 증적을 명시해 `active`로 기록하기 전까지 바뀌지 않으며, 외부 fixed-format 산출물은 `_inbox`에서만 관리한다.
 
 ### 설계·컨텍스트·프로토타입
 
@@ -191,10 +165,7 @@ AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 
 | `create-prototype` | 단일 `.docs/prototype/`, 복수 `.docs/{앱}/prototype/` 아래 검증 시안 생성 | 고객 확인·UX 검증용 시안 |
 | `frontend-design` | 실제 제품 UI 구현 품질 기준 적용 | 앱의 페이지·컴포넌트·스타일 구현 |
 
-모든 producer는 단일 앱의 `@.docs/instruction/artifact-output-routing-instruction.md`
-또는 복수 앱의 `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를
-기준으로 산출물 위치·소유권·인계를 결정한다. `create-prototype`은 이 계약에 따라
-검증 시안을 만들고 `frontend-design`은 승인된 앱 소스에 실제 제품 UI를 구현한다.
+모든 producer는 단일 앱의 `@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의 `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를 기준으로 산출물 위치·소유권·인계를 결정한다. `create-prototype`은 이 계약에 따라 검증 시안을 만들고 `frontend-design`은 승인된 앱 소스에 실제 제품 UI를 구현한다.
 
 ### 구현 계획·점검
 
@@ -205,8 +176,7 @@ AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 
 | `impl-reuse-scan` | 기존 공통 자산 후보 보고 | Phase·태스크 시작 직전 |
 | `impl-verify` | 계획 대비 PASS/FAIL/SKIP 검증 | Phase·태스크 구현 직후 |
 
-단일 FE 화면이나 단일 BE API라는 이유만으로 `impl-fe-be-doc`을 고르지 않는다.
-분기 기준은 **단일 작업인가, 다중 화면 또는 페어 다중 기능인가**다.
+단일 FE 화면이나 단일 BE API라는 이유만으로 `impl-fe-be-doc`을 고르지 않는다. 분기 기준은 **단일 작업인가, 다중 화면 또는 페어 다중 기능인가**다.
 
 ### 품질·운영
 
@@ -218,9 +188,7 @@ AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 
 | `commit` | 범위·diff·검증을 확인하고 의도한 파일만 stage해 정상 hook과 Conventional Commit을 실행한 뒤 사후 증거 확인 | 사용자가 커밋을 명시 요청할 때 |
 | `humanize-korean` | 한국어 Markdown 개선안과 diff | producer 후처리 또는 명시적 문체 개선 |
 
-`rfp-ingest`와 `agent-sync`는 제거됐다. RFP는 `design-doc`,
-`design-prototype-docs`, 다중 화면·FE/BE 페어 계획용 `impl-fe-be-doc`에 직접
-입력하고, 사용자 스킬 배포·업데이트는 플러그인이 담당한다.
+`rfp-ingest`와 `agent-sync`는 제거됐다. RFP는 `design-doc`, `design-prototype-docs`, 다중 화면·FE/BE 페어 계획용 `impl-fe-be-doc`에 직접 입력하고, 사용자 스킬 배포·업데이트는 플러그인이 담당한다.
 
 ## 5. 언제 어떤 스킬을 쓰는가
 
@@ -310,17 +278,11 @@ flowchart LR
 → 이후 흐름은 동일
 ```
 
-`harness-bootstrap`은 최초 도입용이다. 이후 설계나 컨텍스트가 바뀌었을 때마다
-전체 코드를 다시 스캔하기보다 `design-doc`과 `context-doc`을 갱신한다.
+`harness-bootstrap`은 최초 도입용이다. 이후 설계나 컨텍스트가 바뀌었을 때마다 전체 코드를 다시 스캔하기보다 `design-doc`과 `context-doc`을 갱신한다.
 
 ### Markdown 문서 개선이 끼어드는 위치
 
-여기서 producer는 Markdown 파일이나 문서 묶음을 생성·갱신하고 저장 경로와 구조를
-검증한 뒤 다음 단계로 넘기는 산출물 책임 스킬을 뜻한다. 고정 producer인 `harness-setup`,
-`harness-bootstrap`, `design-doc`, `context-doc`, `design-prototype-docs`, `impl-doc`,
-`impl-fe-be-doc`과 조건부 producer인 `ui-ux-pro-max`, `motion-design`이 Markdown
-bundle을 만들면 다음 순서를 거친다. 조건부 2종은 사용자가 파일 저장을 명시적으로
-요청했을 때만 이 흐름에 들어온다.
+여기서 producer는 Markdown 파일이나 문서 묶음을 생성·갱신하고 저장 경로와 구조를 검증한 뒤 다음 단계로 넘기는 산출물 책임 스킬을 뜻한다. 고정 producer인 `harness-setup`, `harness-bootstrap`, `design-doc`, `context-doc`, `design-prototype-docs`, `impl-doc`, `impl-fe-be-doc`과 조건부 producer인 `ui-ux-pro-max`, `motion-design`이 Markdown bundle을 만들면 다음 순서를 거친다. 조건부 2종은 사용자가 파일 저장을 명시적으로 요청했을 때만 이 흐름에 들어온다.
 
 ```text
 원 producer 구조 검증
@@ -331,16 +293,13 @@ bundle을 만들면 다음 순서를 거친다. 조건부 2종은 사용자가 �
 → 최종 Markdown을 downstream에 전달
 ```
 
-상태와 내용 fingerprint는 `.docs/.harness/humanize-handoffs.json`에 기록해
-새 session에서도 같은 제안을 반복하지 않는다. 개선을 건너뛰어도 작업은 계속된다.
+상태와 내용 fingerprint는 `.docs/.harness/humanize-handoffs.json`에 기록해 새 session에서도 같은 제안을 반복하지 않는다. 개선을 건너뛰어도 작업은 계속된다.
 
 ## 7. 시작하는 방법
 
 ### 7.1 먼저 플러그인을 설치한다
 
-프로젝트 옆에 이 관리 저장소를 clone하지 않는다. 설치와 업데이트는 플랫폼의
-plugin marketplace를 사용한다. 자세한 명령은
-[Plugin Installation Guide](./Plugin_Installation_Guide.md)를 따른다.
+프로젝트 옆에 이 관리 저장소를 clone하지 않는다. 설치와 업데이트는 플랫폼의 plugin marketplace를 사용한다. 자세한 명령은 [Plugin Installation Guide](./Plugin_Installation_Guide.md)를 따른다.
 
 ### 7.2 플랫폼 문법으로 스킬을 명시 호출한다
 
@@ -362,8 +321,7 @@ Claude Code:
 /harness-kit:impl-verify
 ```
 
-파일 첨부와 경로 참조 문법은 플랫폼 인터페이스에 따라 다를 수 있다. 중요한 것은
-호출 문자를 억지로 통일하는 것이 아니라 다음 네 가지를 요청에 함께 넣는 것이다.
+파일 첨부와 경로 참조 문법은 플랫폼 인터페이스에 따라 다를 수 있다. 중요한 것은 호출 문자를 억지로 통일하는 것이 아니라 다음 네 가지를 요청에 함께 넣는 것이다.
 
 - 어떤 스킬을 사용할지
 - 무엇을 참고할지
@@ -382,8 +340,7 @@ Claude Code:
 
 ## 8. 실전 프롬프트 예시
 
-아래 예시는 Codex 문법을 사용한다. Claude에서는 `$skill-name`을
-`/harness-kit:skill-name`으로 바꾼다.
+아래 예시는 Codex 문법을 사용한다. Claude에서는 `$skill-name`을 `/harness-kit:skill-name`으로 바꾼다.
 
 ### 예시 1. 아이디어에서 설계 문서로
 
@@ -492,10 +449,8 @@ $doc-audit
 승인 전에는 문서를 수정하지 말아줘.
 ```
 
-필요한 코드 주석을 승인해 반영했다면 마지막 변경 상태를 재검증한 뒤 범위를 적어
-`$commit <범위>` 또는 `/harness-kit:commit <범위>`를 명시 호출한다.
-`commit`은 기존·범위 밖 staged 변경을 보존하며, message-only 요청은 index,
-worktree, HEAD를 바꾸지 않는다. 리뷰에서 commit으로 자동 handoff하지 않는다.
+필요한 코드 주석을 승인해 반영했다면 마지막 변경 상태를 재검증한 뒤 범위를 적어 `$commit <범위>` 또는 `/harness-kit:commit <범위>`를 명시 호출한다.
+`commit`은 기존·범위 밖 staged 변경을 보존하며, message-only 요청은 index, worktree, HEAD를 바꾸지 않는다. 리뷰에서 commit으로 자동 handoff하지 않는다.
 
 ## 9. 권장 사용 습관
 
@@ -540,34 +495,25 @@ worktree, HEAD를 바꾸지 않는다. 리뷰에서 commit으로 자동 handoff�
 
 ### 9.4 검증 실패를 다음 Phase로 넘기지 않는다
 
-`impl-verify`의 FAIL은 다음 Phase 차단을 권고하는 신호다. 실패를 고치거나,
-정말 허용할 이유와 후속 작업을 명시한다.
+`impl-verify`의 FAIL은 다음 Phase 차단을 권고하는 신호다. 실패를 고치거나, 정말 허용할 이유와 후속 작업을 명시한다.
 
 ### 9.5 문서 갱신을 미루지 않는다
 
-구조가 바뀌었는데 `AGENTS.md`나 설계가 예전 상태면 다음 에이전트가 낡은 규칙을
-믿는다. `doc-audit`으로 괴리를 찾고, 승인한 변경을 해당 producer로 갱신한다.
+구조가 바뀌었는데 `AGENTS.md`나 설계가 예전 상태면 다음 에이전트가 낡은 규칙을 믿는다. `doc-audit`으로 괴리를 찾고, 승인한 변경을 해당 producer로 갱신한다.
 
 ### 9.6 새 session은 실패가 아니라 도구다
 
-대화가 길어져 범위가 섞이면 새 session을 열고 현재 설계, 구현 계획, 태스크
-ID를 다시 준다. 오래된 대화 전체를 끌고 가는 것보다 고정 문서에서 문맥을
-복원하는 편이 안정적이다.
+대화가 길어져 범위가 섞이면 새 session을 열고 현재 설계, 구현 계획, 태스크 ID를 다시 준다. 오래된 대화 전체를 끌고 가는 것보다 고정 문서에서 문맥을 복원하는 편이 안정적이다.
 
 ## 9.7 화면을 만들 때 쓰는 별도 흐름
 
 화면이 있는 작업에는 디자인 전용 흐름이 따로 있다. 백엔드 작업에는 쓰지 않는다.
 
-**`ui-ux-pro-max`** — 화면의 색, 글꼴, 배치, 사용 편의성을 정할 때 쓴다. 안에는
-제품 종류별·업종별 디자인 자료가 담긴 검색 가능한 자료실이 들어 있다. "감으로
-정하지 말고 근거를 찾아보자"에 가깝다.
+**`ui-ux-pro-max`** — 화면의 색, 글꼴, 배치, 사용 편의성을 정할 때 쓴다. 안에는 제품 종류별·업종별 디자인 자료가 담긴 검색 가능한 자료실이 들어 있다. "감으로 정하지 말고 근거를 찾아보자"에 가깝다.
 
-**`motion-design`** — 화면이 왜 움직이는지, 얼마나 빠르게, 어떤 순서로
-움직이는지 정할 때 쓴다.
+**`motion-design`** — 화면이 왜 움직이는지, 얼마나 빠르게, 어떤 순서로 움직이는지 정할 때 쓴다.
 
-호출은 다른 스킬과 같다. Codex는 `$ui-ux-pro-max`, Claude Code는
-`/harness-kit:motion-design` 형식이다. 둘 다 기본은 대화창으로 결과를
-알려주는 것이고, 파일은 사용자가 만들라고 해야 만든다.
+호출은 다른 스킬과 같다. Codex는 `$ui-ux-pro-max`, Claude Code는 `/harness-kit:motion-design` 형식이다. 둘 다 기본은 대화창으로 결과를 알려주는 것이고, 파일은 사용자가 만들라고 해야 만든다.
 
 파일 저장을 요청하면 담당 스킬과 대상 앱에 따라 위치를 나눈다.
 
@@ -578,54 +524,35 @@ ID를 다시 준다. 오래된 대화 전체를 끌고 가는 것보다 고정 �
 
 ### 프로토타입과 실제 화면은 다르다
 
-**프로토타입은 버려도 되는 시험 화면이다.** 요구사항이 맞는지, 화면 구성이
-쓸 만한지 빨리 확인하려고 만든다. 확인이 끝나면 역할이 끝난다.
+**프로토타입은 버려도 되는 시험 화면이다.** 요구사항이 맞는지, 화면 구성이 쓸 만한지 빨리 확인하려고 만든다. 확인이 끝나면 역할이 끝난다.
 
-**실제 화면은 제품 소스에 들어가서 계속 유지되는 화면이다.** 기존 컴포넌트를
-쓰고, 기존 상태 관리와 연결되고, 테스트와 배포를 거친다.
+**실제 화면은 제품 소스에 들어가서 계속 유지되는 화면이다.** 기존 컴포넌트를 쓰고, 기존 상태 관리와 연결되고, 테스트와 배포를 거친다.
 
-프로토타입 코드를 그대로 제품에 넣지 않는 이유는 **만든 목적이 다르기**
-때문이다. 프로토타입은 빨리 보여주려고 지름길을 많이 쓴다. 데이터를 화면에
-직접 박아 넣고, 기존 컴포넌트를 무시하고 새로 그리고, 예외 처리를 생략한다.
-그걸 제품에 넣으면 그 지름길이 전부 갚아야 할 빚이 된다.
+프로토타입 코드를 그대로 제품에 넣지 않는 이유는 **만든 목적이 다르기** 때문이다. 프로토타입은 빨리 보여주려고 지름길을 많이 쓴다. 데이터를 화면에 직접 박아 넣고, 기존 컴포넌트를 무시하고 새로 그리고, 예외 처리를 생략한다. 그걸 제품에 넣으면 그 지름길이 전부 갚아야 할 빚이 된다.
 
-그래서 프로토타입에서 넘어갈 때는 **코드가 아니라 결정을 넘긴다.** "이 색과 이
-배치로 가기로 했다"를 넘기고, 구현은 제품 구조에 맞게 다시 한다.
+그래서 프로토타입에서 넘어갈 때는 **코드가 아니라 결정을 넘긴다.** "이 색과 이 배치로 가기로 했다"를 넘기고, 구현은 제품 구조에 맞게 다시 한다.
 
 ### 모션을 항상 넣지 않는 이유
 
-움직임은 공짜가 아니다. 사용자의 주의를 가져가고, 기다리게 만들고, 어떤
-사람에게는 어지러움을 유발한다. 그래서 이 하네스는 모션을 넣기 전에 **왜
-필요한지 먼저 묻는다.**
+움직임은 공짜가 아니다. 사용자의 주의를 가져가고, 기다리게 만들고, 어떤 사람에게는 어지러움을 유발한다. 그래서 이 하네스는 모션을 넣기 전에 **왜 필요한지 먼저 묻는다.**
 
-정보를 전달하거나, 상태가 바뀐 걸 알리거나, 어디서 열렸는지 보여주거나,
-눌렸다는 걸 알려주는 목적이 없으면 넣지 않는다. 특히 공공·의료·금융 화면은
-조용한 쪽이 기본이다. 급한 일을 처리하러 온 사람에게 화려한 화면은 방해다.
+정보를 전달하거나, 상태가 바뀐 걸 알리거나, 어디서 열렸는지 보여주거나, 눌렸다는 걸 알려주는 목적이 없으면 넣지 않는다. 특히 공공·의료·금융 화면은 조용한 쪽이 기본이다. 급한 일을 처리하러 온 사람에게 화려한 화면은 방해다.
 
-`prefers-reduced-motion`을 켠 사용자에게는 대체 수단이 반드시 있어야 한다.
-애니메이션만 꺼서는 안 되고, 그 움직임이 전달하던 정보를 **다른 방법으로**
-전달해야 한다.
+`prefers-reduced-motion`을 켠 사용자에게는 대체 수단이 반드시 있어야 한다. 애니메이션만 꺼서는 안 되고, 그 움직임이 전달하던 정보를 **다른 방법으로** 전달해야 한다.
 
 ### Caveman과 Ruflo가 여기 없는 이유
 
 가끔 함께 언급되는 두 도구가 있다.
 
-[Caveman](https://github.com/JuliusBrussee/caveman)은 AI가 말을 짧게 하도록
-바꾸는 도구다. 토큰을 아끼는 게 목적이라 이 하네스가 하려는 "설계와 검증을
-문서로 남기기"와 방향이 다르다.
+[Caveman](https://github.com/JuliusBrussee/caveman)은 AI가 말을 짧게 하도록 바꾸는 도구다. 토큰을 아끼는 게 목적이라 이 하네스가 하려는 "설계와 검증을 문서로 남기기"와 방향이 다르다.
 
-[Ruflo](https://github.com/ruvnet/ruflo)는 그 자체로 완결된 큰 하네스다. 여러
-에이전트, 메모리, 도구 연결을 모두 갖고 있다. 이걸 조금만 떼어다 넣으면 원본의
-장점은 사라지고 유지보수 부담만 남는다.
+[Ruflo](https://github.com/ruvnet/ruflo)는 그 자체로 완결된 큰 하네스다. 여러 에이전트, 메모리, 도구 연결을 모두 갖고 있다. 이걸 조금만 떼어다 넣으면 원본의 장점은 사라지고 유지보수 부담만 남는다.
 
-둘 다 좋은 도구지만 **필요하면 원본 그대로 따로 설치해서 쓰는 편이 낫다.**
-설치 방법은 각 저장소 안내를 따른다.
+둘 다 좋은 도구지만 **필요하면 원본 그대로 따로 설치해서 쓰는 편이 낫다.** 설치 방법은 각 저장소 안내를 따른다.
 
 ## 10. 추천하는 최초 도입 순서
 
-현재 source inventory 19개를 처음부터 모두 쓰려고 하지 않아도 된다. 이전 immutable
-`0.2.2` artifact는 20개 runtime을 담은 historical 기록이며, 현재 `0.4.3` source와
-generated tree는 서로 일치한다.
+현재 source inventory 19개를 처음부터 모두 쓰려고 하지 않아도 된다. 이전 immutable `0.2.2` artifact는 20개 runtime을 담은 historical 기록이며, 현재 `0.4.3` source와 generated tree는 서로 일치한다.
 
 ### 0단계 — 설치와 문서 골격
 
@@ -657,8 +584,7 @@ generated tree는 서로 일치한다.
 - `frontend-design`
 - producer에 내장된 `humanize-korean` 승인 흐름
 
-반복 업무를 새 스킬로 만드는 단계는 사용자 프로젝트에서 수행하지 않는다.
-사례를 모아 하네스 관리자에게 개선 후보로 전달한다.
+반복 업무를 새 스킬로 만드는 단계는 사용자 프로젝트에서 수행하지 않는다. 사례를 모아 하네스 관리자에게 개선 후보로 전달한다.
 
 ## 11. 팀 관점에서 얻는 효과
 
@@ -693,16 +619,14 @@ flowchart LR
 | 프로젝트 수행자 | 플러그인 설치, `.docs`와 루트 컨텍스트 생성, 설계·구현·검증 | 관리 저장소 clone, 사용자 스킬 복사, 양 플랫폼 동기화 |
 | 하네스 관리자 | 사용자 스킬 정본, upstream, provenance, plugin build·검증·release gate | 각 사용자 프로젝트의 산출물 직접 운영 |
 
-별도의 관리자 플러그인은 없다. 관리자는 이 저장소의 repo-local 관리자 스킬을
-쓰고, 사용자 경험을 검증할 때만 일반 사용자용 플러그인을 격리 설치한다.
+별도의 관리자 플러그인은 없다. 관리자는 이 저장소의 repo-local 관리자 스킬을 쓰고, 사용자 경험을 검증할 때만 일반 사용자용 플러그인을 격리 설치한다.
 
 이 분리가 필요한 이유:
 
 - 사용자 프로젝트마다 스킬 복사본이 갈라지는 것을 막는다.
 - Codex와 Claude runtime을 한 정본에서 만든다.
 - 관리자 스킬이 사용자 payload에 섞이지 않는다.
-- 외부 스킬이 `reference`, `adapted`, `vendored` 중 어떤 방식으로 영향을
-  주었는지 추적한다.
+- 외부 스킬이 `reference`, `adapted`, `vendored` 중 어떤 방식으로 영향을 주었는지 추적한다.
 - 업데이트를 파일 복사 문제가 아니라 검증 가능한 plugin release로 바꾼다.
 
 ## 13. 관리자 스킬
@@ -713,9 +637,7 @@ flowchart LR
 | `skill-portfolio-maintainer` | 외부 공식·유명 스킬 탐색, integration mode 분류, 최신화와 보호 자산 영향 관리 |
 | `harness-plugin-maintainer` | 양 플랫폼 plugin build, validate, 설치 인터페이스 증적, release gate |
 
-관리자 스킬은 `maintainer/skills/`가 정본이며 `.agents/skills/`,
-`.claude/skills/`는 생성된 repo-local projection이다. 사용자 플러그인에는
-포함하지 않는다.
+관리자 스킬은 `maintainer/skills/`가 정본이며 `.agents/skills/`, `.claude/skills/`는 생성된 repo-local projection이다. 사용자 플러그인에는 포함하지 않는다.
 
 ## 14. 외부 스킬을 다루는 네 가지 mode
 
@@ -725,41 +647,25 @@ flowchart LR
 
 ### `reference`
 
-공식·유명 스킬의 좋은 원칙이나 workflow를 조사해 현재 스킬을 개선하지만 원문
-자산을 배포하지 않는 방식이다. 설계 인터뷰, 작은 태스크 분해, 검증 순서,
-trigger 원칙 같은 개념이 여기에 해당한다.
+공식·유명 스킬의 좋은 원칙이나 workflow를 조사해 현재 스킬을 개선하지만 원문 자산을 배포하지 않는 방식이다. 설계 인터뷰, 작은 태스크 분해, 검증 순서, trigger 원칙 같은 개념이 여기에 해당한다.
 
-참고 관계는
-[Skill Upstream Governance의 개념·행동 참조](./Skill_Upstream_Governance.md#concept-behavior-references)에
-기록한다.
+참고 관계는 [Skill Upstream Governance의 개념·행동 참조](./Skill_Upstream_Governance.md#concept-behavior-references)에 기록한다.
 
 ### `adapted`
 
-upstream 콘텐츠를 번역·수정·재구성해 로컬 목적에 맞게 사용하는 방식이다.
-source, accepted ref, 파일 대응, 로컬 변경, 업데이트 방식, 회귀검증 범위를
-엄격하게 기록한다.
+upstream 콘텐츠를 번역·수정·재구성해 로컬 목적에 맞게 사용하는 방식이다. source, accepted ref, 파일 대응, 로컬 변경, 업데이트 방식, 회귀검증 범위를 엄격하게 기록한다.
 
-`humanize-korean`은 `epoko77-ai/im-not-ai`를 하네스 문서 후처리에 맞게
-변형한 `adapted` 관계다. 사용자는 별도 upstream clone 없이 플러그인 안에서
-사용하고, 관리자가 GitHub upstream을 추적한다. 전체 upstream runtime을
-원문 그대로 제공하지 않는다.
+`humanize-korean`은 `epoko77-ai/im-not-ai`를 하네스 문서 후처리에 맞게 변형한 `adapted` 관계다. 사용자는 별도 upstream clone 없이 플러그인 안에서 사용하고, 관리자가 GitHub upstream을 추적한다. 전체 upstream runtime을 원문 그대로 제공하지 않는다.
 
 ### `vendored`
 
-upstream 파일을 수정 없이 원문 그대로 포함하는 방식이다. 파일 hash, 라이선스,
-NOTICE, 원본 테스트와 양 플랫폼 설치 재현성을 검증해야 한다. 현재 활성
-`vendored` 관계는 없다.
+upstream 파일을 수정 없이 원문 그대로 포함하는 방식이다. 파일 hash, 라이선스, NOTICE, 원본 테스트와 양 플랫폼 설치 재현성을 검증해야 한다. 현재 활성 `vendored` 관계는 없다.
 
-`adapted`와 `vendored` provenance는
-[Skill Upstream Governance의 직접 반입·변형 관계](./Skill_Upstream_Governance.md#direct-import-provenance)에
-기록한다.
+`adapted`와 `vendored` provenance는 [Skill Upstream Governance의 직접 반입·변형 관계](./Skill_Upstream_Governance.md#direct-import-provenance)에 기록한다.
 
-증거가 부족한 관계는 `unknown` 차단 상태로 두고, 해소 전에는 반입하거나
-릴리스하지 않는다.
+증거가 부족한 관계는 `unknown` 차단 상태로 두고, 해소 전에는 반입하거나 릴리스하지 않는다.
 
-네 mode는 하나의 관리자 최신화 workflow에서 조사할 수 있지만 같은 것으로
-취급하지 않는다. `reference`와 `adapted`는 원본과 동일 동작을 보장하지 않으며,
-어느 mode도 검증하지 않은 upstream 전체 runtime 동등성을 주장하지 않는다.
+네 mode는 하나의 관리자 최신화 workflow에서 조사할 수 있지만 같은 것으로 취급하지 않는다. `reference`와 `adapted`는 원본과 동일 동작을 보장하지 않으며, 어느 mode도 검증하지 않은 upstream 전체 runtime 동등성을 주장하지 않는다.
 
 ## 15. 관리자가 하네스를 갱신하는 흐름
 
@@ -779,8 +685,7 @@ inventory
 → release gate
 ```
 
-템플릿, 스크립트, 자산, 예시, eval은 보호 자산이다. 보완과 삭제·이동·교체를
-같은 작업으로 처리하지 않으며, 파괴적 변경은 별도 승인을 받는다.
+템플릿, 스크립트, 자산, 예시, eval은 보호 자산이다. 보완과 삭제·이동·교체를 같은 작업으로 처리하지 않으며, 파괴적 변경은 별도 승인을 받는다.
 
 ## 16. 사용자 피드백이 관리자 개선으로 이어지는 방법
 
@@ -793,10 +698,7 @@ inventory
 - Codex와 Claude에서 결과 차이가 반복된다.
 - upstream의 최신 버전에 유용한 변경이 있다.
 
-사용자는 반복 입력·출력, 성공·실패 사례, 필요한 권한, 보호해야 할 자산을
-정리해 관리자에게 전달한다. 관리자는 `custom-skill-design` 또는
-`skill-portfolio-maintainer`로 후보를 검토하고, 사용자 플러그인의 다음
-버전에 반영한다.
+사용자는 반복 입력·출력, 성공·실패 사례, 필요한 권한, 보호해야 할 자산을 정리해 관리자에게 전달한다. 관리자는 `custom-skill-design` 또는 `skill-portfolio-maintainer`로 후보를 검토하고, 사용자 플러그인의 다음 버전에 반영한다.
 
 ---
 
@@ -804,13 +706,10 @@ inventory
 
 사용자에게 하네스는 다음 흐름이다.
 
-> 플러그인 설치 → 설계와 고정 컨텍스트 → 작은 구현 계획 → 구현 전 재사용 점검
-> → Phase별 구현·검증 → 리뷰·문서 감사 → 최종 검사와 커밋
+> 플러그인 설치 → 설계와 고정 컨텍스트 → 작은 구현 계획 → 구현 전 재사용 점검 → Phase별 구현·검증 → 리뷰·문서 감사 → 최종 검사와 커밋
 
 관리자에게 하네스는 다음 흐름이다.
 
-> 사용자 스킬 정본 → 외부 근거와 보호 자산 관리 → 양 플랫폼 build·검증
-> → 실제 설치 인터페이스 증적 → 안전한 release
+> 사용자 스킬 정본 → 외부 근거와 보호 자산 관리 → 양 플랫폼 build·검증 → 실제 설치 인터페이스 증적 → 안전한 release
 
-하네스의 목적은 AI를 더 많이 쓰는 것이 아니다. 누가 어떤 모델과 실행 환경을
-쓰더라도 팀의 공통 규칙 위에서 비슷한 품질의 결과를 반복해서 만드는 것이다.
+하네스의 목적은 AI를 더 많이 쓰는 것이 아니다. 누가 어떤 모델과 실행 환경을 쓰더라도 팀의 공통 규칙 위에서 비슷한 품질의 결과를 반복해서 만드는 것이다.
