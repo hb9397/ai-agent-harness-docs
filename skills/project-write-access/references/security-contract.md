@@ -1,0 +1,82 @@
+# 보안 계약과 실패 경계
+
+## 라우팅 표
+
+| 목적 | 읽을 섹션 |
+|---|---|
+| 최초 설정·정책 변경 | 관리자 신뢰와 복구 + 승인 경계 |
+| 위협 분석·최종 보고 | 위협 모델 + 강제력의 한계 |
+
+## 위협 모델
+
+보호 대상은 `.docs/**`와 같은 저장소에 포함된 루트 `AGENTS.md`·`CLAUDE.md`다.
+애플리케이션 소스코드는 기존 저장소 권한에 맡긴다.
+
+대비하는 실수와 공격은 다음과 같다.
+
+- 개발자가 다른 역할의 공용 문서를 실수로 commit·push하는 경우
+- AI가 잘못된 앱·사용자 경로에 문서를 만들거나 Git 명령에 포함하는 경우
+- CODEOWNERS, 정책, 훅 중 하나만 바뀌어 세 계층이 서로 다른 권한을 주장하는 경우
+- 정책 파일을 지운 뒤 자신을 최초 관리자로 다시 등록하려는 경우
+
+대비하지 못하는 범위도 명확하다.
+
+- 저장소 관리자나 운영체제 관리자가 서버 규칙·로컬 훅·키 파일을 직접 바꾸는 행위
+- `--no-verify`, 다른 Git 실행 파일, 별도 프로그램을 통한 로컬 훅 우회
+- 지원되는 hook 밖의 AI 도구, 사람의 직접 편집
+- Git 밖에 있는 컨테이너 루트 파일의 원격 강제
+
+## 관리자 신뢰와 복구
+
+관리자 개인키는 OpenSSH Ed25519 서명키를 사용한다. 같은 개인키를 다음 사용자별
+지속 경로에 각각 저장한다.
+
+```text
+~/.codex/harness-kit/admin-keys/{project-id}.key
+~/.claude/harness-kit/admin-keys/{project-id}.key
+```
+
+플러그인 캐시와 프로젝트 저장소에는 개인키를 두지 않는다. 공개키와 지문만
+`trust.json`에 둔다. `policy.sig`는 `harness-kit-project-write-access` namespace로
+canonical `policy.json`을 서명한다.
+
+키 쓰기는 sibling 임시 파일에 쓴 뒤 원자적으로 교체한다. POSIX에서는 소유자만 읽고
+쓸 수 있는지 검사한다. Windows에서는 현재 사용자 ACL로 제한을 시도하고 성공 여부를
+검증 결과에 남긴다. ACL을 확인하지 못하면 키 생성은 성공으로 과장하지 않는다.
+
+정책이 이미 존재하면 다음 순서로 검증한다.
+
+1. `trust.json`의 프로젝트 식별자와 공개키 지문
+2. `policy.sig`의 서명
+3. `policy_core_sha256`
+4. `generated_manifest_sha256`
+5. 생성 목록의 full 또는 관리 블록 해시
+
+어느 하나라도 틀리면 fail closed 한다. 파일을 삭제한 사실만으로 초기 상태로 돌아가지
+않는다. 일치하는 로컬 키나 백업 키가 없으면 저장소 운영자가 Git 이력과 별도 합의로
+복구해야 하며 이 스킬이 새 관리자를 임의 지정하지 않는다.
+
+## 승인 경계
+
+- Plan·verify·공식 문서 조회는 읽기 전용이다.
+- fetch·fast-forward 갱신은 원격 동기화 승인 범위다.
+- 공유 정책과 CODEOWNERS 쓰기는 저장소 파일 승인 범위다.
+- `core.hooksPath` 변경은 각 개발자 PC의 Git 설정 승인 범위다.
+- `.claude/settings.json`·`.codex/hooks.json` 변경은 host 설정 승인 범위다.
+- 브랜치 보호·승인 규칙 API 변경은 저장소 관리자 권한과 별도 승인 범위다.
+- 키 생성·교체·폐기는 다른 변경과 묶지 않는 별도 승인 범위다.
+
+승인되지 않은 범위는 `미적용`으로 남긴다. 부분 성공을 전체 성공으로 표시하지 않는다.
+
+## 강제력의 한계
+
+CODEOWNERS는 소유자를 지정할 뿐이다. GitHub는 code-owner review가 필요한 브랜치
+보호나 ruleset, GitLab은 보호 브랜치의 Code Owner 승인, Gitea는 branch protection의
+code owner approval을 켜야 병합 제한이 생긴다.
+
+표준 Git에는 `pre-add`가 없다. `pre-commit`과 `pre-push`는 실수를 일찍 막는 보조
+장치이며 클라이언트 보안 경계가 아니다. 최종 강제는 원격 서버가 맡는다.
+
+Claude의 `PreToolUse`는 해당 host가 호출하는 도구만 볼 수 있다. Codex 훅은 설치 후
+사용자의 훅 검토와 신뢰 확인 전까지 활성으로 보지 않는다. 동적 shell 명령에서 대상
+경로를 확정할 수 없으면 보호 문서 관련 명령을 거부하거나 사람에게 넘긴다.

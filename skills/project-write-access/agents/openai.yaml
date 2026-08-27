@@ -1,0 +1,7 @@
+interface:
+  display_name: "프로젝트 문서 쓰기 권한"
+  short_description: "서명 정책으로 문서 쓰기 권한의 세 계층을 관리합니다"
+  default_prompt: "Use $project-write-access to preview and manage this project's document write-access policy."
+
+policy:
+  allow_implicit_invocation: false
