@@ -14,7 +14,6 @@
 | [Harness_Engineering.md](./Harness_Engineering.md) | 사용자 source·`0.4.3` runtime 19종, 관리자 3종, 플러그인 흐름, `.docs`/컨텍스트/Markdown 후처리 운영 정본 |
 | [Harness_Engineering_Intro.md](./Harness_Engineering_Intro.md) | 플러그인 기반 하네스 도입 배경과 실제 프로젝트 사용 예시 |
 | [Multi_App_Doc_Flow_And_Ownership.md](./Multi_App_Doc_Flow_And_Ownership.md) | 복수 앱 프로젝트의 AI 문서 흐름, 문서 소유권, 선택형 3계층 쓰기 권한 제어 |
-| [Project_Write_Access_Skill_Implementation_Prompt.md](./Project_Write_Access_Skill_Implementation_Prompt.md) | 선택형 문서 쓰기 권한 스킬을 다른 세션에서 설계·검증·패키징하기 위한 구현 프롬프트 |
 
 ---
 
