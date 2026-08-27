@@ -10,11 +10,12 @@
 
 이 문서는 하나의 프로젝트 안에 애플리케이션이 여러 개 있고 그 프로젝트를 여러 사람이 함께 진행할 때를 다룬다. 다루는 범위는 AI 에이전트가 읽는 문서의 흐름과 소유권이다. 애플리케이션 내부의 코드 구조는 다루지 않는다.
 
-설명에 쓰는 예시 프로젝트 이름은 `exam`이고 애플리케이션은 세 개다.
+설명에 쓰는 예시 프로젝트 이름은 `exam`이고 애플리케이션은 네 개다.
 
 | 애플리케이션 | 성격 |
 |---|---|
 | `fe-exam-portal` | 포털 프론트엔드 |
+| `fe-exam-mobile` | 모바일 애플리케이션 |
 | `be-exam-portal` | 포털 백엔드 |
 | `be-exam-collector` | 수집 배치 백엔드 |
 
@@ -35,7 +36,10 @@
 3. design-doc               앱별 설계 기준을 작성한다.
 4. context-doc              설계를 AI가 반복해서 읽을 컨텍스트와 지침으로 나눈다.
 
-[네 스킬 이후 — 목적에 맞는 플러그인과 도구를 자유롭게 선택]
+[선택 운영 스킬 — 쓰기 권한을 구분해야 할 때만 명시 호출]
+project-write-access        관리자·PM/PL·개발자의 문서 쓰기 범위를 경로별로 연결하고 세 계층의 보호 장치를 맞춘다.
+
+[필수 스킬 이후 — 목적에 맞는 플러그인과 도구를 자유롭게 선택]
 기능 구체화                Superpowers brainstorming 등으로 아이디어·요구사항·대안 정리
 구현 계획                  impl-doc·impl-fe-be-doc 또는 Superpowers writing-plans 등
 프로토타입                 design-prototype-docs·create-prototype 또는 다른 디자인 도구
@@ -52,6 +56,8 @@
 | `git-scoped-account` | 컨테이너의 공통 계정 파일(예: `.gitconfig-scoped`)과 각 앱 레포의 `.git/config` 내 `include.path` | 각 앱 레포에 커밋되는 코드와 설정 등 산출물의 Git 이력이 실제 사용자 계정으로 남게 해, 여러 레포에서도 작성자와 변경 출처를 일관되게 추적한다 |
 | `design-doc` | `.docs/{앱}/context-base/DESIGN.md` | 도메인·범위·아키텍처·데이터·연동 결정을 앱별 설계 정본으로 만든다. 이 기준이 없으면 이후 지침이 추측으로 채워진다 |
 | `context-doc` | `.docs/{앱}-context.md`, `.docs/{앱}/instruction/**`, `.docs/root-context/AGENTS.md`·`CLAUDE.md` 복사본 | 설계 정본을 고정 컨텍스트와 주제별 지침으로 나눠, AI가 대상 앱에 필요한 규칙만 찾아 반복해서 읽게 한다 |
+
+프로젝트에서 문서 쓰기 권한까지 나눠야 한다면 `project-write-access`를 명시적으로 호출한다. 기존 `.docs`가 있는 프로젝트는 공용 문서를 고치기 전에 실행하고, 새 프로젝트는 `harness-setup`으로 문서 골격을 만든 직후 `design-doc`과 `context-doc`보다 먼저 실행한다. 이 스킬은 구조를 만드는 다섯 번째 필수 스킬이 아니라 권한 관리가 필요한 팀만 쓰는 선택 항목이다. 설치하지 않거나 호출하지 않아도 기존 문서 생성 흐름은 그대로 동작한다. 자세한 적용 범위와 한계는 14절에서 설명한다.
 
 `git-scoped-account`는 산출물 파일의 저장 경로를 정하는 스킬이 아니다. 사용자별 폴더는 `.docs/{앱}/impl-doc/{사용자}/`와 `.docs/prototype/{사용자}/`처럼 라우팅 계약이 나누고, 이 스킬은 앱 레포에 커밋된 산출물의 `user.name`과 `user.email`을 프로젝트 범위에서 일치시킨다. 두 장치를 함께 써야 산출물을 사용자별 위치와 계정별 Git 이력으로 구분할 수 있다. 별도 레포인 `.docs`는 이 스킬의 앱 레포 탐지 대상이 아니므로, 문서 커밋의 계정 출처까지 통일하려면 `.docs` 레포의 로컬 Git 계정도 별도로 확인한다.
 
@@ -78,6 +84,8 @@ exam/                                          ← 컨테이너 폴더.
 ├── fe-exam-portal/                            ← [개발자] 프론트엔드 앱 레포.
 │                                                 독립 git 레포.
 │                                                 실제 소스코드.
+├── fe-exam-mobile/                            ← [개발자] 모바일 앱 레포.
+│                                                 독립 git 레포.
 ├── be-exam-portal/                            ← [개발자] 포털 백엔드 앱 레포.
 │                                                 독립 git 레포.
 ├── be-exam-collector/                         ← [개발자] 외부 데이터 수집 배치 앱 레포.
@@ -88,6 +96,9 @@ exam/                                          ← 컨테이너 폴더.
      │
      ├── README.md                              ← [관리자] .docs 구조와 스킬별 산출물 위치 안내
      ├── .gitignore                             ← [관리자] _inbox·*.local.* 를 git에서 제외
+     ├── .github/CODEOWNERS                     ← [선택·관리자] GitHub용 문서 소유자 규칙
+     ├── .gitlab/CODEOWNERS                     ← [선택·관리자] GitLab용 문서 소유자 규칙
+     ├── .gitea/CODEOWNERS                      ← [선택·관리자] Gitea용 문서 소유자 규칙
      │
      ├── _inbox/                                ← 에이전트가 읽을 파일을 잠시 두는 공간.
      │   │                                        스크린샷·로그·표준 문서·외부 산출물 등.
@@ -116,7 +127,8 @@ exam/                                          ← 컨테이너 폴더.
      │   ├── artifact-format-contract.json        산출물 metadata·경로·정규화 규칙
      │   ├── install-routing.ps1                  host hook 설치 계획·확인·승인형 적용
      │   ├── normalize-artifact.ps1               외부 문서를 정본에 반영하기 전 제안 생성
-     │   └── hooks/                               Claude·Codex 공용 경로 검사 원본
+     │   ├── hooks/                               Claude·Codex 공용 경로 검사 원본
+     │   └── access-control/                      [선택] 서명된 쓰기 권한 정책·계정 연결·Git 훅 원본
      │
      ├── fe-exam-portal-context.md              ← [PL] 프론트엔드 앱 고정 컨텍스트.
      │                                            개요·기술 스택·트리·도메인·실행 방법·환경 변수·주의사항 + 지침 인덱스.
@@ -142,6 +154,25 @@ exam/                                          ← 컨테이너 폴더.
      │           ├── 260629-0.fe-exam-portal-roadmap-impl-index.md   ← 로드맵 인덱스 (디렉토리당 1개)
      │           ├── 260629-1.login-form-impl-ui.md                  ← 기능별 구현 계획
      │           └── 260711-1.search-filter-impl-pair.md
+     │
+     ├── fe-exam-mobile-context.md              ← [PL] 모바일 앱 고정 컨텍스트.
+     │                                            개요·기술 스택·트리·도메인·실행 방법·환경 변수·주의사항 + 지침 인덱스.
+     ├── fe-exam-mobile/
+     │   ├── context-base/
+     │   │   └── DESIGN.md                      ← [PL] design-doc 산출물.
+     │   │                                        앱 전체 설계 맥락.
+     │   ├── instruction/                       ← [PL] 모바일 앱의 설계·구현 규칙.
+     │   │   ├── agent-instruction.md             [항상] AI 동작 규칙
+     │   │   ├── artifact-output-routing-instruction.md  [항상] 산출물 위치·소유권·인계
+     │   │   ├── architecture-instruction.md      [조건] 화면·상태·네이티브 연동 경계
+     │   │   ├── code-style-instruction.md        [조건] 네이밍·예외 처리·주석 스타일
+     │   │   ├── framework-instruction.md         [조건] 모바일 프레임워크 사용 규칙·금지 패턴
+     │   │   ├── api-instruction.md               [조건] API 호출·응답 규약
+     │   │   └── file-convention-instruction.md   [조건] 파일 위치·네이밍 규칙
+     │   └── impl-doc/                          ← [개발자]
+     │       └── {사용자}/
+     │           ├── 260702-0.fe-exam-mobile-roadmap-impl-index.md   ← 로드맵 인덱스
+     │           └── 260702-1.push-login-impl-ui.md                  ← 기능별 구현 계획
      │
      ├── be-exam-portal-context.md              ← [PL] 포털 백엔드 앱 고정 컨텍스트.
      │                                            개요·기술 스택·트리·도메인·실행 방법·환경 변수·주의사항 + 지침 인덱스.
@@ -184,7 +215,7 @@ exam/                                          ← 컨테이너 폴더.
      │           ├── 260629-1.healthcheck-batch-impl-batch.md         ← 기능별 구현 계획
      │           └── 260711-1.news-schema-impl-pipeline.md
      │
-     └── prototype/                             ← [개발자] 세 앱이 공유하는 화면 검증용 산출물.
+     └── prototype/                             ← [개발자] 네 앱이 공유하는 화면 검증용 산출물.
          └── {사용자}/                            예: lhb9397/
              └── {식별자}/                        예: SFR-019/ (요구사항 번호·화면 id)
                  ├── design-doc.md                design-prototype-docs 산출물.
@@ -203,6 +234,8 @@ exam/                                          ← 컨테이너 폴더.
 | `[관리자]` | 하네스 세팅 관리자 | 루트 `AGENTS.md`·`CLAUDE.md`, `.docs/README.md`, `.docs/.gitignore`, `.docs/root-context/`, `.docs/harness/` |
 | `[PL]` | PL·대리급 개발 리딩 | `{앱}-context.md`, `{앱}/context-base/`, `{앱}/instruction/` |
 | `[개발자]` | 각 개발자 | 자기 로컬의 `.gitconfig-scoped`와 앱 레포 Git 계정 설정, `{앱}/impl-doc/{사용자}/`, `prototype/{사용자}/`, 앱 소스 레포 |
+
+`project-write-access`를 사용하는 프로젝트에서는 앱별 instruction 안의 권한 관리 블록만 예외로 둔다. 해당 블록은 관리자가 승인한 정책에서 스킬이 갱신하며, PL은 그 바깥의 설계·개발 규칙을 관리한다.
 
 Git 계정은 각 개발자가 자기 로컬 컨테이너에서 `git-scoped-account`로 한 번 세팅한다. 이후 그 개발자가 어느 앱 레포에서 커밋하더라도 자기 공통 config 파일에 적힌 계정으로 author가 남는다. 이 파일은 팀이 공유하는 단일 계정 파일이 아니며 컨테이너 루트와 마찬가지로 어떤 git에도 커밋하지 않는다. 개발자마다 자신의 계정 파일을 따로 가지므로 레포별 반복 설정 없이도 산출물의 작성자를 사용자·계정별로 추적할 수 있고, 전역 `~/.gitconfig`도 바뀌지 않는다.
 
@@ -226,7 +259,7 @@ git 경계는 층마다 다르다.
   Codex        → exam/AGENTS.md를 그대로 로드한다.
 
 [루트 AGENTS.md의 역할 — AI가 프로젝트를 찾아 읽는 방법을 정하는 안내 지도]
-  · 프로젝트 경계             → 컨테이너·앱 3개·.docs의 위치와 git 경계
+  · 프로젝트 경계             → 컨테이너·앱 4개·.docs의 위치와 git 경계
   · 작업 대상 식별            → 어떤 앱을 대상으로 하는 작업인지 판단하는 기준
   · 앱별 컨텍스트 진입점      → .docs/{앱}-context.md
   · 앱별 세부 규칙 위치        → .docs/{앱}/instruction/
@@ -269,7 +302,10 @@ git 경계는 층마다 다르다.
 3. `.docs`가 이미 팀에 존재하면 그것도 컨테이너 바로 아래에 `git clone`한다. `.docs`는 별도 레포이므로 뒤늦게 합류한 사람은 앱 레포와 `.docs` 레포를 각각 clone해야 같은 문서 맥락을 갖게 된다.
 
 ```bash
-git clone {앱 레포 주소} fe-exam-portal
+git clone {포털 프론트엔드 레포 주소} fe-exam-portal
+git clone {모바일 앱 레포 주소} fe-exam-mobile
+git clone {포털 백엔드 레포 주소} be-exam-portal
+git clone {수집 배치 레포 주소} be-exam-collector
 ```
 
 ```bash
@@ -281,6 +317,7 @@ git clone {문서 레포 주소} .docs
 ```text
 exam/
 ├── fe-exam-portal/
+├── fe-exam-mobile/
 ├── be-exam-portal/
 ├── be-exam-collector/
 └── .docs/          ← 신규 프로젝트라면 아직 없다. harness-setup이 만든다
@@ -341,6 +378,7 @@ exam/                                     ← 컨테이너 폴더 (git init 하�
 ├── .gitconfig-scoped                     ← git-scoped-account가 만든 공통 계정 설정
 │
 ├── fe-exam-portal/                       ← 프론트엔드 앱 레포 (로컬 config에 include.path 주입됨)
+├── fe-exam-mobile/                       ← 모바일 앱 레포 (로컬 config에 include.path 주입됨)
 ├── be-exam-portal/                       ← 포털 백엔드 앱 레포 (로컬 config에 include.path 주입됨)
 ├── be-exam-collector/                    ← 수집 배치 앱 레포 (로컬 config에 include.path 주입됨)
 │
@@ -374,6 +412,12 @@ exam/                                     ← 컨테이너 폴더 (git init 하�
     │   ├── instruction/                  ← context-doc이 지침을 만들 위치
     │   └── impl-doc/                     ← 구현 계획이 쌓일 위치
     │
+    ├── fe-exam-mobile-context.md         ← 모바일 앱 컨텍스트용 빈 파일
+    ├── fe-exam-mobile/
+    │   ├── context-base/
+    │   ├── instruction/
+    │   └── impl-doc/
+    │
     ├── be-exam-portal-context.md
     ├── be-exam-portal/
     │   ├── context-base/
@@ -386,7 +430,7 @@ exam/                                     ← 컨테이너 폴더 (git init 하�
     │   ├── instruction/
     │   └── impl-doc/
     │
-    └── prototype/                        ← 세 앱이 공유하는 프로토타입 산출물 위치
+    └── prototype/                        ← 네 앱이 공유하는 프로토타입 산출물 위치
 ```
 
 `.docs`를 새로 만든 경우에는 여기서 별도 레포로 초기화하고 원격에 push해야 팀이 공유할 수 있다.
@@ -408,10 +452,11 @@ cd .docs && git init && git add -A && git commit -m "init: 프로젝트 AI 문�
 | 대상 앱 | 설계 기준 문서 |
 |---|---|
 | `fe-exam-portal` | `.docs/fe-exam-portal/context-base/DESIGN.md` |
+| `fe-exam-mobile` | `.docs/fe-exam-mobile/context-base/DESIGN.md` |
 | `be-exam-portal` | `.docs/be-exam-portal/context-base/DESIGN.md` |
 | `be-exam-collector` | `.docs/be-exam-collector/context-base/DESIGN.md` |
 
-앱별 문서를 분리하는 이유는 프론트엔드, 포털 백엔드, 수집 배치가 서로 다른 도메인과 기술 제약을 갖기 때문이다. 하나의 문서에 모두 섞으면 어떤 규칙이 어느 앱에 적용되는지 모호해진다.
+앱별 문서를 분리하는 이유는 웹 프론트엔드, 모바일, 포털 백엔드, 수집 배치가 서로 다른 도메인과 기술 제약을 갖기 때문이다. 하나의 문서에 모두 섞으면 어떤 규칙이 어느 앱에 적용되는지 모호해진다.
 
 `DESIGN.md`는 `context-doc`, `impl-doc`, `impl-fe-be-doc` 같은 후속 작업의 공통 입력으로 쓰인다. 설계 기준이 바뀌면 `design-doc`으로 같은 문서를 갱신하고 저장 위치와 소유권은 해당 앱의 `artifact-output-routing-instruction.md`를 따른다. 다른 플러그인이 만든 기획서나 설계서는 근거 자료로 사용할 수 있지만, 그 파일을 그대로 정본으로 삼지 않고 `design-doc`의 검토·승인 과정을 거쳐 `DESIGN.md`에 반영한다.
 
@@ -490,6 +535,18 @@ cd .docs && git init && git add -A && git commit -m "init: 프로젝트 AI 문�
 │   │   └── data-standard-instruction.md  ← 팀이 필요해서 추가한 주제
 │   └── impl-doc/
 │
+├── fe-exam-mobile-context.md             ← 애플리케이션 컨텍스트 (설계·원칙·기술 스택·지침 인덱스)
+├── fe-exam-mobile/
+│   ├── context-base/DESIGN.md
+│   ├── instruction/
+│   │   ├── agent-instruction.md
+│   │   ├── artifact-output-routing-instruction.md
+│   │   ├── architecture-instruction.md
+│   │   ├── framework-instruction.md
+│   │   ├── api-instruction.md
+│   │   └── file-convention-instruction.md
+│   └── impl-doc/
+│
 ├── be-exam-portal-context.md
 ├── be-exam-portal/
 │   ├── context-base/DESIGN.md
@@ -517,7 +574,7 @@ cd .docs && git init && git add -A && git commit -m "init: 프로젝트 AI 문�
 └── prototype/
 ```
 
-앱마다 instruction 목록이 다른 것이 정상이다. 프론트에는 아키텍처·프레임워크 규칙이 두껍게 붙고 백엔드에서는 API·프레임워크 규약이 늘어난다. 공통으로 지켜야 할 표준(예: 데이터 표준)만 세 앱에 같은 이름으로 들어간다.
+앱마다 instruction 목록이 다른 것이 정상이다. 웹과 모바일 프론트엔드에는 아키텍처·프레임워크 규칙이 두껍게 붙고 백엔드에서는 API·프레임워크 규약이 늘어난다. 공통으로 지켜야 할 표준(예: 데이터 표준)만 네 앱에 같은 이름으로 들어간다.
 
 ---
 
@@ -594,7 +651,7 @@ cd .docs && git init && git add -A && git commit -m "init: 프로젝트 AI 문�
 - 덮어쓰기·이동·삭제에 필요한 승인 절차
 - 금지 사항: 앱 A에서 앱 B의 경로에 쓰지 않는다, `.docs` 밖에 쓰지 않는다, 프로토타입 코드를 제품 소스로 복사하지 않는다
 
-`.docs/harness/artifact-routing.json`은 기계 판독용 정본이다. 여기에는 앱 식별자, `source_root`, `docs_root`, `prototype_owner`, 앱별 컨텍스트 경로와 host 상태가 들어간다. 여기서 프로젝트 단위 예외도 확정된다. 예를 들어 프로토타입은 스킬의 기본값이 앱별 디렉토리다. `exam` 프로젝트처럼 세 앱이 하나의 `.docs/prototype/`을 공유하기로 했다면 `prototype_owner`와 라우팅 instruction의 프로젝트 적용 절이 우선한다.
+`.docs/harness/artifact-routing.json`은 기계 판독용 정본이다. 여기에는 앱 식별자, `source_root`, `docs_root`, `prototype_owner`, 앱별 컨텍스트 경로와 host 상태가 들어간다. 여기서 프로젝트 단위 예외도 확정된다. 예를 들어 프로토타입은 스킬의 기본값이 앱별 디렉토리다. `exam` 프로젝트처럼 네 앱이 하나의 `.docs/prototype/`을 공유하기로 했다면 `prototype_owner`와 라우팅 instruction의 프로젝트 적용 절이 우선한다.
 
 ### 다른 플러그인의 산출물을 이 구조로 끌어오는 방식
 
@@ -655,10 +712,7 @@ cd .docs && git init && git add -A && git commit -m "init: 프로젝트 AI 문�
 .docs/be-exam-collector/impl-doc/lhb9397/
 ├── 260629-0.be-exam-collector-roadmap-impl-index.md   ← 로드맵 인덱스 (순번 0 고정)
 ├── 260629-1.healthcheck-batch-impl-batch.md
-├── 260711-1.collector-news-schema-impl-pipeline.md
-└── design-roadmap/
-    ├── 260629-0.collector-roadmap-impl-index.md
-    └── 260724-1.collector-overview.md
+└── 260711-1.collector-news-schema-impl-pipeline.md
 
 .docs/prototype/lhb9397/SFR-019/
 ├── index.html
@@ -712,6 +766,7 @@ cd .docs && git init && git add -A && git commit -m "init: 프로젝트 AI 문�
 | 배선 | `.docs/root-context/AGENTS.md`, `.docs/root-context/CLAUDE.md` | 하네스 세팅 관리자 | 루트 파일의 원본. 갱신은 `harness-setup` 재실행으로만 |
 | 배선 | `.docs/README.md`, `.docs/.gitignore` | 하네스 세팅 관리자 | `.docs` 구조·추적 정책의 정본 |
 | 배선 | `.docs/harness/**` | 하네스 세팅 관리자 | 경로·형식·host 설치 상태 계약. 승인 절차 자체를 정의한다 |
+| 권한 | `.docs/{앱}/instruction/*.md` 안의 `project-write-access` 관리 블록 | 권한 관리자·`project-write-access` | 서명된 경로 정책을 AI 지침에 반영한다. PL이 관리하는 본문과 분리한다 |
 | 상태 | `.docs/.harness/**` | 관련 producer·hook 자동 관리 | 문서 개선 handoff와 일회용 쓰기 승인 상태. 사람이 직접 편집하지 않는다 |
 | 로컬 계정 | 컨테이너의 `.gitconfig-scoped` 계열 파일과 앱 레포의 `.git/config` 참조 | 각 개발자 | 자기 작업 환경의 산출물 커밋을 자신의 Git 계정으로 남긴다. 팀과 파일을 공유하지 않는다 |
 | 설계 | `.docs/{앱}/context-base/**` | PL·대리급 개발 리딩 | 앱 전체 설계 맥락. 이후 모든 산출물의 입력 |
@@ -734,11 +789,11 @@ cd .docs && git init && git add -A && git commit -m "init: 프로젝트 AI 문�
 
 ## 12. 왜 설계·컨텍스트·지침은 PL·대리급이 관리하는가
 
-`{앱}/context-base/**`, `{앱}-context.md`, `{앱}/instruction/**`는 성격이 다르다. 이 문서들은 **팀 전체의 코드 결과물을 결정한다.** 에이전트는 매 작업마다 이 문서를 읽고 그대로 코드를 만들기 때문에 여기 적힌 규칙 한 줄이 그날 팀이 만든 모든 코드에 반영된다. 사람에게 주는 코딩 가이드와 강제력이 다르다.
+`{앱}/context-base/**`, `{앱}-context.md`, `{앱}/instruction/**`는 성격이 다르다. 이 문서들은 **팀 전체의 코드 결과물을 결정한다.** 에이전트는 매 작업마다 이 문서를 읽고 그대로 코드를 만들기 때문에 여기 적힌 규칙 한 줄이 그날 팀이 만든 모든 코드에 반영된다. 사람에게 주는 코딩 가이드와 강제력이 다르다. 다만 선택형 권한 기능을 사용하면 instruction 안의 `project-write-access` 관리 블록만 관리자가 소유하고, PL은 그 바깥의 설계·개발 규칙을 관리한다.
 
 그래서 이 계층은 아키텍처 결정 권한이 있는 사람, 즉 설계를 리딩하는 PL·대리급이 관리한다.
 
-- 일관성: 세 앱에 걸친 데이터 표준이나 API 규약은 앱 담당자가 각자 쓰면 서로 어긋난다.
+- 일관성: 네 앱에 걸친 데이터 표준이나 API 규약은 앱 담당자가 각자 쓰면 서로 어긋난다.
 - 변경 파급: instruction 한 줄 수정은 이후 생성될 모든 코드에 적용된다. 코드 리뷰 한 건보다 파급이 크다.
 - 판단 필요: `context-doc`은 설계 문서에 있는 주제만 문서로 만들고 없는 내용은 `미정`으로 남긴다. 그 `미정`을 무엇으로 채울지는 설계 결정이다.
 
@@ -753,6 +808,7 @@ cd .docs && git init && git add -A && git commit -m "init: 프로젝트 AI 문�
 | 담당 앱 | 개발자 소유 경로 |
 |---|---|
 | `fe-exam-portal` | `.docs/fe-exam-portal/impl-doc/{사용자}/**` |
+| `fe-exam-mobile` | `.docs/fe-exam-mobile/impl-doc/{사용자}/**` |
 | `be-exam-portal` | `.docs/be-exam-portal/impl-doc/{사용자}/**` |
 | `be-exam-collector` | `.docs/be-exam-collector/impl-doc/{사용자}/**` |
 
@@ -760,17 +816,100 @@ cd .docs && git init && git add -A && git commit -m "init: 프로젝트 AI 문�
 
 구현 중 발견한 내용이 앱 전체의 아키텍처, API 계약, 코딩 규칙을 바꾸는 결정이라면 개인 `impl-doc`에만 남겨 두지 않는다. PL·대리급 개발 리딩에게 제안해 `DESIGN.md`나 `instruction/**`의 팀 공용 기준으로 승격한다. 반대로 다른 플러그인이 구현 계획이나 검증 문서를 만들더라도 산출물은 `artifact-output-routing-instruction.md`가 정한 해당 앱·사용자 경로에 저장한다.
 
-## 14. 미정 — 소유권을 강제하는 방법
+## 14. 소유권을 강제하는 세 계층
 
-여기까지가 누가 무엇을 소유하는가를 정한 기준이다. 이 기준을 실제로 어떻게 강제할지, 즉 규약 문서로만 둘지, 레포 권한이나 CODEOWNERS로 막을지, `.docs/harness/`의 write guard로 처리할지, 아니면 리뷰 절차로 흡수할지는 아직 정하지 않았다.
+이 절은 선택형 권한 관리 스킬인 `project-write-access`가 만들어졌다고 가정해 설명한다. 이 스킬은 문서 하네스를 만들거나 설계·구현 산출물을 생성하지 않는다. 프로젝트별 Git 계정과 문서 경로를 권한에 연결한다. 하나의 정책을 원격 Git 서비스·개발자 PC의 Git·AI 지침에 나눠 적용하는 일만 맡는다. 자동으로 실행되지 않으며 관리자가 명시적으로 호출해야 한다.
 
-각 방식은 구조에 따라 적용 가능 여부가 다르다.
+권한은 `admin > pm-pl > developer`의 세 단계로 단순하게 둔다. 상위 권한은 하위 권한의 쓰기 범위를 물려받는다. 읽기는 세 권한 모두 허용한다. 경로마다 필요한 최소 쓰기 권한을 지정하되 개발자 작업 경로는 Git 계정과 사용자 식별자가 일치할 때만 쓸 수 있게 한다.
 
-- 복수 레포 구조에서 루트 `AGENTS.md` / `CLAUDE.md`는 어떤 git에도 속하지 않으므로 레포 권한이나 CODEOWNERS로 막을 수 없다.
-- 단일 레포 구조에서는 두 파일이 레포 안에 있으므로 레포 차원의 통제가 가능하다.
-- `.docs/harness/`의 host hook은 `active` 상태여야 동작한다. 그마저도 완전한 차단 장치가 아니다.
+| 최소 쓰기 권한 | 대표 경로 | 적용 원칙 |
+|---|---|---|
+| `admin` | 루트 컨텍스트, `.docs/README.md`, `.docs/.gitignore`, `.docs/harness/**`, instruction 안의 권한 관리 블록 | AI가 문서를 찾아 읽는 연결 구조와 권한 정책을 바꾸는 영역이다 |
+| `pm-pl` | `.docs/{앱}/context-base/**`, `.docs/{앱}-context.md`, `.docs/{앱}/instruction/**` | 앱 전체의 설계와 반복 적용 규칙을 바꾸는 영역이다 |
+| `developer` | `.docs/{앱}/impl-doc/{사용자}/**`, 승인된 `.docs` 프로토타입 경로 | 담당 개발자의 구현 계획과 문서 산출물 영역이다 |
 
-**이 절은 다음 논의에서 채운다.** 현재 시점에서 확정된 것은 소유권 구분과 그 근거까지다.
+`project-write-access`가 보호하는 것은 `.docs/**`와 같은 저장소에서 함께 관리하는 루트 `AGENTS.md`·`CLAUDE.md`다. 애플리케이션 소스코드의 쓰기 권한은 기존 저장소 정책에 맡기며 이 스킬이 새로 제한하지 않는다.
+
+### 14.1 최초 설정과 이후 관리
+
+프로젝트에 서명된 권한 정책이 없을 때 처음 `project-write-access`를 실행한 사람을 관리자로 등록한다. 다만 이미 원격 저장소가 연결된 프로젝트라면 호출자에게 해당 저장소의 관리자 또는 소유자 권한이 있는지 먼저 확인한다. 관리자 권한이 확인되지 않으면 최초 설정으로 넘어가지 않는다. 로컬에서만 `git init`을 마친 새 프로젝트라면 첫 호출자를 관리자로 등록하고 원격 연결 뒤 다시 검증한다.
+
+원격 `.docs` 저장소가 있으면 최초 설정과 정책 변경 전에 원격 이력을 확인하고 최신 정책을 한 번 동기화한다. 작업 폴더가 깨끗하고 fast-forward가 가능한 경우에만 갱신한다. 로컬 변경을 지우는 강제 reset은 하지 않는다. 로컬과 원격 이력이 갈라졌거나 아직 커밋하지 않은 변경이 있으면 초기화나 정책 갱신을 멈추고 관리자가 먼저 정리하게 한다. 로컬에서만 시작한 프로젝트는 이 단계를 건너뛰고 원격을 연결한 뒤 다시 확인한다.
+
+최초 설정에서는 프로젝트 식별자와 관리자 서명키를 만든다. 개인키는 Codex와 Claude의 사용자별 전역 보관 위치에 각각 저장한다. 플러그인 캐시는 업데이트 때 교체될 수 있으므로 키를 넣지 않는다. 저장 위치의 예는 다음과 같다.
+
+```text
+~/.codex/harness-kit/admin-keys/{project-id}.key
+~/.claude/harness-kit/admin-keys/{project-id}.key
+```
+
+공유 저장소에는 개인키를 올리지 않는다. `.docs/harness/access-control/`에는 공개 검증 정보, 경로별 권한 정책, 정책 서명, Git 서비스별 계정 연결 정보와 생성 파일 목록만 둔다.
+
+```text
+.docs/harness/access-control/
+├── trust.json                 ← 프로젝트 식별자·관리자 공개키·키 지문
+├── policy.json                ← 역할 상속·경로별 최소 쓰기 권한·계정 연결
+├── policy.sig                 ← policy.json의 관리자 서명
+├── provider-state.json        ← Git 서비스별 적용 대상과 확인 상태
+├── generated-manifest.json    ← 스킬이 생성·갱신한 파일 목록과 해시
+└── hooks/                     ← 개발자 PC에 설치할 Git 훅 원본
+```
+
+두 번째 호출부터는 로컬 관리자 키의 지문과 공유 정책의 서명을 먼저 확인한다. 검증된 관리자만 GitHub·GitLab·Gitea 계정을 프로젝트의 `admin`, `pm-pl`, `developer` 권한에 연결하거나 정책을 다시 생성할 수 있다. 키가 없더라도 별도로 보관한 동일한 관리자 키를 제시해 검증할 수 있다.
+
+관리자를 바꾸려면 기존 관리자 키나 검증 가능한 백업 키로 기존 신뢰 정보를 폐기한다. Codex·Claude의 키 사본을 함께 정리한 뒤 새 관리자를 등록한다. 공유 정책 파일을 지우는 것만으로 최초 설정 상태로 돌아가지는 않는다. 정책 파일이 삭제됐다가 다시 생긴 이력은 Git에 남는다. 서명과 생성 파일 목록이 맞지 않으면 스킬은 변경을 거부하고 관리자에게 보고한다.
+
+### 14.2 1계층 — 원격 Git 서비스에서 막는다
+
+첫 번째 계층은 GitHub·GitLab·Gitea가 직접 집행한다. `project-write-access`는 하나의 서명된 정책에서 세 서비스용 소유자 파일을 모두 생성한다.
+
+```text
+.github/CODEOWNERS
+.gitlab/CODEOWNERS
+.gitea/CODEOWNERS
+```
+
+CODEOWNERS는 AI가 읽는 지침이나 개인 PC의 Git 설정이 아니다. 저장소에 커밋된 파일을 Git 서비스가 읽어 특정 경로의 검토 책임자를 PR 또는 MR에 자동으로 지정하는 설정 파일이다. 세 파일을 모두 만드는 이유는 저장소가 다른 서비스로 옮겨져도 같은 소유권 원본에서 바로 맞출 수 있게 하기 위해서다. 실제로는 현재 연결된 서비스가 자신에게 맞는 파일만 사용한다.
+
+파일을 찾는 순서는 서비스마다 다르다. GitHub는 `.github/CODEOWNERS`를 저장소 루트와 `docs/`보다 먼저 찾지만, GitLab과 Gitea는 저장소 루트의 `CODEOWNERS`를 먼저 찾고 각각 `.gitlab/`, `.gitea/` 파일은 나중에 찾는다. 스킬은 세 파일을 생성하는 데서 끝내지 않고 더 높은 우선순위의 기존 파일 때문에 현재 서비스용 규칙이 무시되는지 확인해야 한다. 충돌이 있으면 기존 파일과의 병합 또는 이전 계획을 보여주고 관리자가 승인하기 전에는 바꾸지 않는다.
+
+CODEOWNERS만으로 로컬 `git add`, `commit`, `push`가 막히지는 않는다. 소유자 승인을 필수로 만드는 브랜치 보호, 직접 push 제한, 병합 권한 같은 서버 규칙이 함께 켜져야 강제력이 생긴다. `dev`나 `main`에서 어떤 동작을 막을지는 프로젝트마다 다르므로 이 문서에서 하나의 권장안을 고정하지 않는다. 예를 들어 “`.docs/{앱}/instruction/**` 변경은 `pm-pl` 소유자의 승인이 없으면 `dev`나 `main`에 병합할 수 없다” 같은 정책을 프로젝트가 별도로 정한다.
+
+스킬이 서버 규칙까지 조회하거나 적용하려면 각 저장소에 대한 Git 서비스 관리자 권한과 API 인증이 필요하다. 권한이 없으면 CODEOWNERS 생성과 적용 계획까지만 수행하고 서버 설정은 `미적용`으로 보고해야 한다. PR이나 MR 작성 자체를 허용할지, 병합만 제한할지도 서버 기능과 프로젝트 정책에 따라 별도로 정한다.
+
+### 14.3 2계층 — 개발자 PC의 Git에서 일찍 막는다
+
+두 번째 계층은 GitHub·GitLab·Gitea 전용 설정이 아니라 표준 Git 훅이다. 스킬은 `.docs/harness/access-control/hooks/`의 원본을 기준으로 각 대상 저장소의 로컬 `core.hooksPath`를 연결한다. `pre-commit`은 스테이징된 경로와 현재 Git 계정의 권한을 비교한다. `pre-push`는 원격으로 내보낼 커밋을 같은 정책으로 다시 검사한다.
+
+표준 Git에는 `pre-add` 훅이 없으므로 사람이 실행한 `git add` 자체를 완전히 차단할 수는 없다. 대신 권한 밖 파일이 스테이징돼도 `pre-commit`에서 커밋을 막는다. 누락이나 잘못된 로컬 설정은 `pre-push`에서 한 번 더 잡는다. 로컬 훅은 `--no-verify`나 설정 변경으로 우회할 수 있으므로 최종 보안 경계가 아니라 실수를 앞에서 줄이는 장치다. 우회된 변경의 최종 차단은 1계층이 맡는다.
+
+복수 레포 구조에서는 `.docs` 자체가 별도 저장소이므로 CODEOWNERS와 Git 훅이 `.docs` 저장소 안에 생긴다. 단일 레포 구조에서는 CODEOWNERS와 `.git/config`가 프로젝트 루트에 있어야 하지만 검사 대상은 `.docs/**`와 정책에 포함한 루트 문서로 한정한다. 즉 보호 대상은 문서 권한이지만 Git이 요구하는 설정 파일의 물리적 위치는 저장소 구조에 따라 달라진다.
+
+### 14.4 3계층 — AI가 편집하기 전에 막는다
+
+세 번째 계층은 AI가 문서를 읽고 파일 도구를 호출하는 시점에 적용한다. `project-write-access`는 앱별 `agent-instruction.md`와 관련 `*-instruction.md`의 전용 관리 블록에 다음 규칙을 반영한다. 이 블록은 `harness-kit:write-access:start`와 `harness-kit:write-access:end` 표시 사이로 한정하며, PL이 작성한 나머지 본문은 건드리지 않는다.
+
+- 파일을 쓰기 전에 서명된 `policy.json`과 현재 프로젝트·대상 앱을 확인한다.
+- 현재 Git 서비스 계정과 로컬 Git 계정을 정책에 등록된 계정과 대조한다.
+- 대상 경로에 필요한 최소 권한보다 낮거나 신원을 확인할 수 없으면 편집하지 않는다.
+- 권한이 없는 공용 문서의 변경이 필요하면 직접 고치지 않고 `.docs/_inbox/`에 제안하거나 소유자에게 요청한다.
+- AI가 실행하는 `git add`, `commit`, `push`, PR·MR 관련 명령도 같은 경로 정책을 통과해야 한다.
+
+로컬 `user.name`과 `user.email`은 사용자가 바꿀 수 있으므로 관리자 인증 수단이 아니다. AI는 확인된 Git 서비스 계정과 서명된 계정 연결을 우선해야 한다. 서비스 계정을 확인하지 못한 상태에서는 로컬 이름만 믿고 보호 문서를 고치지 않는다.
+
+Claude와 Codex에 활성화한 쓰기 훅은 파일 편집과 Git 명령을 실행하기 직전에 이 정책을 검사한다. 다른 AI 도구가 훅을 지원하지 않으면 지침을 읽고 따르는 수준에 머문다. 사람의 직접 편집이나 별도 프로그램까지 지침으로 막을 수는 없으므로 이 계층 역시 단독 보안 장치로 보지 않는다.
+
+### 14.5 세 계층을 함께 쓰는 이유
+
+| 계층 | 가장 잘 막는 지점 | 단독으로 해결하지 못하는 것 |
+|---|---|---|
+| 원격 Git 서비스 | 직접 push, 승인 없는 병합, 보호 브랜치 반영 | 로컬 편집과 스테이징 |
+| 개발자 PC의 Git | 권한 밖 문서의 commit·push를 조기에 중단 | `git add` 자체, `--no-verify` 우회, 다른 PC |
+| AI 지침·쓰기 훅 | 의도와 다른 편집·파일 생성·Git 명령을 실행 전에 중단 | 사람의 직접 편집, 훅을 쓰지 않는 도구 |
+
+세 계층은 같은 `policy.json`에서 파생돼야 한다. 서비스별 CODEOWNERS, 로컬 Git 훅, AI 지침을 사람이 따로 고치면 서로 다른 권한을 주장하게 된다. 스킬은 적용 전에 차이를 보여주고 관리자의 승인을 받은 뒤 자신이 생성한 영역만 갱신한다. 적용 후에는 세 계층을 다시 읽어 정책 해시와 계정 연결이 일치하는지 확인한다.
+
+복수 레포 구조의 루트 `AGENTS.md`와 `CLAUDE.md`는 어떤 저장소에도 속하지 않으므로 CODEOWNERS나 Git 훅으로 보호할 수 없다. 이 두 파일은 AI 쓰기 훅과 운영 규약으로 관리한다. 더 강한 통제가 필요하면 운영체제 파일 권한을 사용하거나 루트 파일도 형상관리되는 구조로 바꿔야 한다. 단일 레포 구조에서는 두 파일이 저장소 안에 있으므로 세 계층을 모두 적용할 수 있다.
 
 ---
 
@@ -791,10 +930,15 @@ cd .docs && git init && git add -A && git commit -m "init: 프로젝트 AI 문�
 3. design-doc               앱별 DESIGN.md 작성
 4. context-doc              앱별 *-context.md와 instruction 세트 작성
 
+[선택 운영 스킬 — 쓰기 권한을 구분해야 할 때만 명시 호출]
+project-write-access        같은 레포 안의 문서 쓰기 경로를 역할에 연결하고 세 계층의 보호 장치를 맞춤
+
 [네 역할 이후 — 플러그인 선택 자유]
 구현 계획·프로토타입·실제 구현은 다른 플러그인이나 도구를 사용해도 된다.
 산출물의 정본 경로와 앱·사용자별 소유권만 이 프로젝트의 라우팅 계약을 따른다.
 ```
+
+쓰기 권한을 나눠야 하는 단일 레포도 `harness-setup` 직후 `project-write-access`를 명시적으로 호출한다. 이 선택 기능을 사용하지 않는 프로젝트는 네 필수 역할만으로 기존 흐름을 그대로 이어 간다.
 
 ### 15.2 최종 구조
 
@@ -802,10 +946,14 @@ cd .docs && git init && git add -A && git commit -m "init: 프로젝트 AI 문�
 exam/                                     ← 단일 git 레포 (루트에서 git init)
 ├── .git/
 ├── .gitignore
+├── .github/CODEOWNERS                    ← [선택·관리자] GitHub용 문서 소유자 규칙
+├── .gitlab/CODEOWNERS                    ← [선택·관리자] GitLab용 문서 소유자 규칙
+├── .gitea/CODEOWNERS                     ← [선택·관리자] Gitea용 문서 소유자 규칙
 ├── AGENTS.md                             ← 공통 AI 컨텍스트 정본 (레포에 커밋됨)
 ├── CLAUDE.md                             ← @AGENTS.md bridge (레포에 커밋됨)
 │
 ├── fe-exam-portal/                       ← 프론트엔드 앱 폴더 (별도 레포 아님)
+├── fe-exam-mobile/                       ← 모바일 앱 폴더
 ├── be-exam-portal/                       ← 포털 백엔드 앱 폴더
 ├── be-exam-collector/                    ← 외부 데이터 수집 배치 앱 폴더
 │
@@ -823,10 +971,17 @@ exam/                                     ← 단일 git 레포 (루트에서 gi
     │   ├── artifact-format-contract.json
     │   ├── install-routing.ps1
     │   ├── normalize-artifact.ps1
-    │   └── hooks/
+    │   ├── hooks/
+    │   └── access-control/               ← [선택] 서명된 쓰기 권한 정책·계정 연결·Git 훅 원본
     │
     ├── fe-exam-portal-context.md
     ├── fe-exam-portal/
+    │   ├── context-base/DESIGN.md
+    │   ├── instruction/*.md
+    │   └── impl-doc/{사용자}/*.md
+    │
+    ├── fe-exam-mobile-context.md
+    ├── fe-exam-mobile/
     │   ├── context-base/DESIGN.md
     │   ├── instruction/*.md
     │   └── impl-doc/{사용자}/*.md
@@ -896,7 +1051,7 @@ Claude Code  : /harness-kit:harness-setup
 
 이 구조에서는 판정 단계에 한 번 더 확인이 붙는다. `harness-setup`은 루트에 빌드 매니페스트가 있으면서 하위에도 앱 후보가 여러 개면 모노레포 가능성으로 보고 사용자에게 직접 묻는다.
 
-> 탐색 결과 루트에도 매니페스트가 있고 하위 앱 후보가 3개입니다. 복수 애플리케이션으로 세팅할까요?
+> 탐색 결과 루트에도 매니페스트가 있고 하위 앱 후보가 4개입니다. 복수 애플리케이션으로 세팅할까요?
 
 여기서 복수 애플리케이션으로 승인하면 제1부와 같은 앱별 골격(`{앱}-context.md`, `{앱}/context-base/`, `{앱}/instruction/`, `{앱}/impl-doc/`)이 만들어진다. 단일 애플리케이션으로 승인하면 `.docs/context-base/`, `.docs/instruction/`처럼 앱 구분 없는 평평한 구조가 된다. 나중에 앱별로 쪼개려면 문서를 옮기는 작업이 따로 필요하다. **앱이 실제로 여러 개라면 처음부터 복수 애플리케이션으로 세팅한다.**
 
@@ -929,6 +1084,7 @@ git config --local user.email "{메일}"
 | 대상 앱 | 산출물 |
 |---|---|
 | `fe-exam-portal` | `.docs/fe-exam-portal/context-base/DESIGN.md` |
+| `fe-exam-mobile` | `.docs/fe-exam-mobile/context-base/DESIGN.md` |
 | `be-exam-portal` | `.docs/be-exam-portal/context-base/DESIGN.md` |
 | `be-exam-collector` | `.docs/be-exam-collector/context-base/DESIGN.md` |
 
@@ -945,6 +1101,7 @@ exam/
 ├── AGENTS.md                             ← 앱 목록·경로 지도 (레포에 커밋)
 ├── CLAUDE.md                             ← @AGENTS.md bridge (레포에 커밋)
 ├── fe-exam-portal/
+├── fe-exam-mobile/
 ├── be-exam-portal/
 ├── be-exam-collector/
 └── .docs/
@@ -964,6 +1121,18 @@ exam/
     │   │   ├── api-instruction.md
     │   │   ├── file-convention-instruction.md
     │   │   └── data-standard-instruction.md
+    │   └── impl-doc/
+    │
+    ├── fe-exam-mobile-context.md
+    ├── fe-exam-mobile/
+    │   ├── context-base/DESIGN.md
+    │   ├── instruction/
+    │   │   ├── agent-instruction.md
+    │   │   ├── artifact-output-routing-instruction.md
+    │   │   ├── architecture-instruction.md
+    │   │   ├── framework-instruction.md
+    │   │   ├── api-instruction.md
+    │   │   └── file-convention-instruction.md
     │   └── impl-doc/
     │
     ├── be-exam-portal-context.md
@@ -1023,3 +1192,8 @@ exam/
 | [Plugin_Installation_Guide.md](./Plugin_Installation_Guide.md) | 플러그인 설치·확인·업데이트·제거 |
 | [Harness_Engineering.md](./Harness_Engineering.md) | 사용자·관리자 운영 정본, 스킬 전체 맵 |
 | [Harness_Engineering_Intro.md](./Harness_Engineering_Intro.md) | 하네스 도입 배경과 사용 예시 |
+| [Project_Write_Access_Skill_Implementation_Prompt.md](./Project_Write_Access_Skill_Implementation_Prompt.md) | 선택형 문서 쓰기 권한 스킬을 별도 세션에서 설계·구현·검증하기 위한 프롬프트 |
+| [GitHub Code owners](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners) | GitHub CODEOWNERS 탐색 위치와 소유자 승인 조건 |
+| [GitLab Code Owners](https://docs.gitlab.com/user/project/codeowners/) | GitLab CODEOWNERS 탐색 위치와 보호 브랜치 승인 조건 |
+| [Gitea Code Owners](https://docs.gitea.com/next/usage/repository/code-owners/) | Gitea CODEOWNERS 탐색 위치와 보호 브랜치 승인 조건 |
+| [Git hooks](https://git-scm.com/docs/githooks) | `core.hooksPath`, `pre-commit`, `pre-push`의 공식 동작과 한계 |
