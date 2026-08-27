@@ -226,7 +226,7 @@ def pre_commit(project_root: Path) -> int:
     policy = load_verified_policy(project_root)
     git_root = Path.cwd().resolve()
     provider, account = git_identity(git_root)
-    changed = run_git(git_root, "diff", "--cached", "--name-only", "--diff-filter=ACMR").stdout.decode().splitlines()
+    changed = run_git(git_root, "diff", "--cached", "--name-only").stdout.decode().splitlines()
     paths = [project_path_from_git(policy, item) for item in changed]
     denied = authorize_paths(policy, provider, account, paths, project_root)
     if denied:
@@ -307,12 +307,59 @@ def paths_from_git_command(command: str, git_root: Path, policy: dict[str, Any])
         if ".docs" in command or "AGENTS.md" in command or "CLAUDE.md" in command:
             raise GuardError("dynamic command target could not be parsed safely")
         return []
-    executable = tokens[0].lower() if tokens else ""
-    if not tokens or not executable.endswith(("git", "git.exe")):
+    command_index = 0
+    while command_index < len(tokens) and tokens[command_index] in {"&", "command"}:
+        command_index += 1
+    if command_index < len(tokens) and tokens[command_index] == "env":
+        command_index += 1
+        while command_index < len(tokens) and re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", tokens[command_index]):
+            command_index += 1
+    if command_index >= len(tokens):
+        return []
+
+    executable = re.split(r"[\\/]", tokens[command_index].strip("\"'"))[-1].lower()
+    provider_review_commands = {
+        "gh": ({"pr"}, {"checks", "diff", "list", "ls", "status", "view"}),
+        "gh.exe": ({"pr"}, {"checks", "diff", "list", "ls", "status", "view"}),
+        "glab": ({"mr"}, {"approvers", "diff", "issues", "list", "ls", "view"}),
+        "glab.exe": ({"mr"}, {"approvers", "diff", "issues", "list", "ls", "view"}),
+        "tea": ({"pr", "pull", "pulls"}, {"list", "ls", "show", "view"}),
+        "tea.exe": ({"pr", "pull", "pulls"}, {"list", "ls", "show", "view"}),
+    }
+    review_command = provider_review_commands.get(executable)
+    if review_command is not None:
+        topics, read_actions = review_command
+        options_with_value = {"-R", "--repo", "--hostname", "--config", "--login", "--remote"}
+        positionals: list[str] = []
+        arguments = tokens[command_index + 1:]
+        index = 0
+        while index < len(arguments):
+            argument = arguments[index]
+            if argument in options_with_value:
+                index += 2
+                continue
+            if any(argument.startswith(option + "=") for option in options_with_value if option.startswith("--")):
+                index += 1
+                continue
+            if argument.startswith("-") or argument == "--":
+                index += 1
+                continue
+            positionals.append(argument.lower())
+            index += 1
+        if positionals and positionals[0] in topics:
+            action = positionals[1] if len(positionals) > 1 else None
+            if action is None or action in read_actions:
+                return []
+            raise GuardError(
+                "AI provider pull/merge-request write commands require separately verified server protection and human approval"
+            )
+        return []
+
+    if executable not in {"git", "git.exe"}:
         if ".docs" in command or "AGENTS.md" in command or "CLAUDE.md" in command:
             raise GuardError("non-Git command targets protected documents and cannot be proven safe")
         return []
-    index = 1
+    index = command_index + 1
     while index < len(tokens) and tokens[index].startswith("-"):
         option = tokens[index]
         index += 2 if option in {"-C", "--git-dir", "--work-tree", "--namespace", "--config-env"} and index + 1 < len(tokens) else 1
@@ -331,7 +378,7 @@ def paths_from_git_command(command: str, git_root: Path, policy: dict[str, Any])
             candidates = [line[3:] for line in output.splitlines() if len(line) > 3]
         return [to_project_path(item) for item in candidates]
     if action == "commit":
-        output = run_git(git_root, "diff", "--cached", "--name-only", "--diff-filter=ACMR").stdout.decode()
+        output = run_git(git_root, "diff", "--cached", "--name-only").stdout.decode()
         return [project_path_from_git(policy, item) for item in output.splitlines()]
     if action in {"push", "merge", "rebase"}:
         raise GuardError(f"AI {action} requires the standard Git hook and a separately verified branch state")

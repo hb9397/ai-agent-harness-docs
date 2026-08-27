@@ -118,6 +118,19 @@ def apply(project: Path, config: Path, plan_hash: str, codex_keys: Path, claude_
     )
 
 
+def ai_command(guard: Path, project: Path, host: str, shell_command: str) -> subprocess.CompletedProcess[str]:
+    payload = json.dumps({"cwd": str(project), "tool_input": {"command": shell_command}}, ensure_ascii=False)
+    return subprocess.run(
+        [sys.executable, str(guard), "ai", "--host", host, "--project-root", str(project)],
+        cwd=project,
+        input=payload,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+
+
 def make_single_fixture(root: Path) -> Path:
     project = root / "single"
     init_repo(project)
@@ -190,6 +203,33 @@ def test_single_repository(root: Path) -> None:
     assert "commit denied" in denied_commit.stderr
     git(project, "reset", "--", str(denied_path))
     denied_path.unlink()
+
+    protected_path = project / ".docs" / "README.md"
+    protected_text = protected_path.read_text(encoding="utf-8")
+    protected_path.unlink()
+    git(project, "add", str(protected_path))
+    denied_deletion = git(project, "commit", "-m", "must deny protected deletion", check=False)
+    assert denied_deletion.returncode != 0
+    assert "commit denied" in denied_deletion.stderr
+    protected_path.write_text(protected_text, encoding="utf-8", newline="\n")
+    git(project, "add", str(protected_path))
+
+    provider_review_commands = ("gh pr create --base main", "glab mr create --target-branch main", "tea pr create")
+    provider_read_commands = ("gh pr list", "glab mr view 42", "tea pr list")
+    for host in ("claude", "codex"):
+        for provider_command in provider_review_commands:
+            denied_ai = ai_command(guard, project, host, provider_command)
+            assert denied_ai.returncode == 0, denied_ai.stderr
+            decision = json.loads(denied_ai.stdout)["hookSpecificOutput"]
+            assert decision["permissionDecision"] == "deny"
+            assert "human approval" in decision["permissionDecisionReason"]
+        for provider_command in provider_read_commands:
+            allowed_review_read = ai_command(guard, project, host, provider_command)
+            assert allowed_review_read.returncode == 0
+            assert allowed_review_read.stdout == ""
+        allowed_ai = ai_command(guard, project, host, "gh issue list")
+        assert allowed_ai.returncode == 0
+        assert allowed_ai.stdout == ""
 
     own_path = project / ".docs" / "web" / "impl-doc" / "dev-a" / "allowed.md"
     write(own_path, "allowed\n")
