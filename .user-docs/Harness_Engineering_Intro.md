@@ -152,7 +152,7 @@ AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 
 
 복수 repo 프로젝트에서는 모든 참여자가 `git-scoped-account`를 자기 로컬 컨테이너에서 최초 1회 명시 호출한다. 단일 repo는 적용 대상이 없으므로 현재 repo에 유효한 `user.name`과 `user.email`의 값과 출처를 최초 1회 확인한다.
 
-`project-write-access`는 선택 기능이며 일반 문서 작성 흐름과 자동으로 연결되지 않는다. 권한을 사용하는 프로젝트에서는 관리자가 `harness-setup`과 Git 계정 설정·확인 뒤, `design-doc`, `context-doc`, 앱 핵심 문서를 만드는 `harness-bootstrap`보다 먼저 설정한다. 현재 `project-write-access`는 관리 저장소 정본에만 있고 stable `0.4.3` runtime에는 없으므로, 이를 포함한 플러그인 버전이 설치된 환경에서만 호출할 수 있다.
+`project-write-access`는 선택 기능이며 일반 문서 작성 흐름과 자동으로 연결되지 않는다. 권한을 사용하는 프로젝트에서는 관리자가 `harness-setup`과 Git 계정 설정·확인 뒤, `design-doc`, `context-doc`, 앱 핵심 문서를 만드는 `harness-bootstrap`보다 먼저 설정한다. 이 스킬은 `0.5.0` runtime에 포함되지만 자동 실행되지 않으며, 검증된 관리자가 명시적으로 호출할 때만 설정·변경한다.
 
 `harness-setup`이 만든 portable bundle은 플러그인 제거 뒤에도 남는다. host hook의 `pending-trust` 상태는 사용자가 신뢰 검토를 끝낸 증적을 명시해 `active`로 기록하기 전까지 바뀌지 않으며, 외부 fixed-format 산출물은 `_inbox`에서만 관리한다.
 
@@ -573,7 +573,7 @@ $doc-audit
 
 ## 10. 추천하는 최초 도입 순서
 
-관리 저장소의 사용자 스킬 정본은 20종이고, stable `0.4.3` runtime은 19종이다. 정본에만 있는 `project-write-access`는 이를 포함한 플러그인 버전이 배포된 뒤 실제 프로젝트에서 사용할 수 있다. 프로젝트 수행자가 모든 스킬을 한꺼번에 사용할 필요는 없다.
+관리 저장소의 사용자 스킬 정본과 현재 main `0.5.0` runtime은 모두 20종이다. `project-write-access`도 이 runtime에 포함되지만 권한을 쓰지 않는 프로젝트에서는 호출하지 않는다. 프로젝트 수행자가 모든 스킬을 한꺼번에 사용할 필요는 없다.
 
 ### 0단계 — 설치와 문서 골격
 

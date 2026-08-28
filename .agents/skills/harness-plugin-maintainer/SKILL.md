@@ -168,7 +168,7 @@ python maintainer/skills/harness-plugin-maintainer/evals/run_evals.py
 python maintainer/skills/harness-plugin-maintainer/scripts/run_all_skill_evals.py
 python maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py --check
 python maintainer/skills/harness-plugin-maintainer/scripts/validate_plugin.py
-python maintainer/skills/harness-plugin-maintainer/scripts/smoke_cli_install.py
+python maintainer/skills/harness-plugin-maintainer/scripts/smoke_cli_install.py --output maintainer/plugin/cli-smoke.json
 python maintainer/skills/harness-plugin-maintainer/scripts/verify_install_surfaces.py --check
 python maintainer/skills/harness-plugin-maintainer/scripts/freeze_manager_inventory.py --check
 python maintainer/skills/harness-plugin-maintainer/scripts/run_release_regression.py

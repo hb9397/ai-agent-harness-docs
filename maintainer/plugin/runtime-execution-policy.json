@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "generated_at": "2026-08-03",
+  "generated_at": "2026-08-28",
   "purpose": "Declare the execution surface every packaged user skill is allowed to have. runtime-allowlist.json governs Claude agent and alias entries only; this file governs executable assets shipped inside skills.",
   "audit_method": "Python modules are parsed and their imports and call names are compared against the denied sets below. Declaring a capability here does not grant it at runtime; the platform permission mode still applies.",
   "denied_everywhere": {
@@ -22,6 +22,22 @@
       "subprocess": false,
       "writes": "Only files the user explicitly approves. Proposal-only by default.",
       "note": "Deterministic guard for protected tokens and change rate."
+    },
+    {
+      "skill": "project-write-access",
+      "executables": [
+        "assets/runtime/pre-commit",
+        "assets/runtime/pre-push",
+        "assets/runtime/write_access_guard.py",
+        "scripts/project_write_access.py"
+      ],
+      "interpreter": "python3 with system Git, OpenSSH ssh-keygen and platform-local hook shell",
+      "third_party_dependencies": [],
+      "network": false,
+      "subprocess": true,
+      "subprocess_allowlist": ["git", "icacls", "python", "sh", "ssh-keygen"],
+      "writes": "Only the explicitly selected project's access-control bundle, provider CODEOWNERS files, managed instruction blocks, host hook configuration, local Git config/hooks, and the administrator's harness-kit key store after plan review and approval.",
+      "note": "The skill does not call provider APIs. Server-side branch protection stays an external administrator step. Every generated policy is signed and verified locally."
     },
     {
       "skill": "ui-ux-pro-max",

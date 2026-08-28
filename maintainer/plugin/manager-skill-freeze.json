@@ -89,7 +89,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/plugin_common.py",
-          "sha256": "5118fca6af5c24352b1cda1928730fc1d5e3ab191a46b655c48366210a1865ea"
+          "sha256": "22fa5c96fd7b99f9a65ecab9a86d680218c42978fbb0f4459badd50e5bb8de65"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/run_all_skill_evals.py",
@@ -109,7 +109,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/validate_plugin.py",
-          "sha256": "b20b999400cb0701a5563e444cb19b3f735bddc01e3847cbbc5a9c7f90bf8604"
+          "sha256": "0682016f1e95ae000d740ce333504d74601ec03c1e3def04958a5d652bb63c31"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/verify_install_surfaces.py",
@@ -117,7 +117,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/SKILL.md",
-          "sha256": "71bf1ec06e879a158901f2c199e6a8f9df30e16ff1806f2dcb55474108c405d5"
+          "sha256": "c4c0d60698d0e0ed20b4231bbb41b390988c6db352b046a99f6e03c39692bb45"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/templates/claude-agent.md",
@@ -211,7 +211,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/validate_artifact_output_contract.py",
-          "sha256": "0bc275afb9e1022e9dee88c36c929cb6aa79ff16fb273ee5b1d99b0de9555652"
+          "sha256": "85d0038c1151ee8adb68b5a33da6c70c9d99596c1726fa92941119f68755c379"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py",

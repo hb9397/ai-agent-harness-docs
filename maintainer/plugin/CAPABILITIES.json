@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "generated_at": "2026-08-27",
+  "generated_at": "2026-08-28",
   "logical_user_skills": [
     "code-comment",
     "commit",
@@ -20,11 +20,10 @@
     "impl-verify",
     "motion-design",
     "multi-review",
+    "project-write-access",
     "ui-ux-pro-max"
   ],
-  "pending_packaging": [
-    "project-write-access"
-  ],
+  "pending_packaging": [],
   "pending_packaging_note": "Canonical user skills that exist in skills/ but are intentionally not shipped yet. Empty means every canonical user skill is packaged. Listing a skill here keeps the inventory check strict instead of silently tolerating drift.",
   "aliases": {},
   "maintainer_skills_excluded_from_user_plugin": [

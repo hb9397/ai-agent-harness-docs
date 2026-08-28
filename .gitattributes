@@ -12,6 +12,8 @@
 *.yml text eol=lf
 *.yaml text eol=lf
 *.template text eol=lf
+**/assets/runtime/pre-commit text eol=lf
+**/assets/runtime/pre-push text eol=lf
 LICENSE* text eol=lf
 NOTICE* text eol=lf
 *LICENSE* text eol=lf

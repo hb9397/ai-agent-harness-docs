@@ -2,10 +2,10 @@
   "schema_version": "1.0.0",
   "generated_by": "harness-plugin-maintainer",
   "plugin_id": "harness-kit",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "plugin_root": "plugins/harness-kit",
-  "archive": "plugins/harness-kit-0.4.3.zip",
-  "archive_sha256": "0385680650cca7827b8f71445a9e7aa6e1d630997e0167a6f4094e38f14e2d76",
+  "archive": "plugins/harness-kit-0.5.0.zip",
+  "archive_sha256": "3d9c244c5f8788eb0bd010bc37098ae1910b4dd1a0b960afe01059af3dad1b62",
   "marketplaces": {
     "codex": ".agents/plugins/marketplace.json",
     "claude": ".claude-plugin/marketplace.json"
@@ -16,10 +16,10 @@
     "lottiefiles-motion-design-runtime",
     "ui-ux-pro-max-runtime"
   ],
-  "logical_user_skills": 19,
-  "codex_physical_skills": 19,
+  "logical_user_skills": 20,
+  "codex_physical_skills": 20,
   "codex_physical_agents": 0,
-  "claude_physical_skills": 19,
+  "claude_physical_skills": 20,
   "claude_physical_agents": 0,
   "markdown_producers": [
     "harness-setup",

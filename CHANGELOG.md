@@ -2,6 +2,29 @@
 
 이 문서는 `harness-kit` 사용자 플러그인의 주요 변경 사항을 기록한다.
 
+## [0.5.0] - 2026-08-28
+
+### 추가
+
+- 명시 호출 전용 `project-write-access`를 사용자 runtime에 추가했다. 검증된 관리자가 서명 정책을 만들고 GitHub·GitLab·Gitea용 CODEOWNERS, 로컬 Git 훅, Codex·Claude 쓰기 가드를 같은 문서 권한 모델로 설정한다.
+- `admin`, `pm-pl`, 앱별 `app-doc-lead`, 일반 기여자의 `team` 범위를 구분했다. `admin`이 앱 핵심 문서를 대신 수정할 때는 권한 전용 추가 확인을 요구한다.
+
+### 변경
+
+- 사용자 스킬 정본, capability inventory와 Codex·Claude runtime을 모두 20종으로 맞췄다.
+- `harness-setup`과 Git 계정 확인 뒤 권한 정책을 먼저 설정하고, 허용된 역할·앱 범위에서 `design-doc`, `context-doc`, `harness-bootstrap`을 사용하는 흐름을 문서화했다.
+- 플러그인·산출물 라우팅·실행 파일·평가 범위·upstream provenance 기준선을 `0.5.0`에 맞췄다.
+- Windows에서도 권한 스킬의 한글 JSON 회귀검사가 UTF-8로 일관되게 동작하도록 평가 실행기의 자식 프로세스 인코딩을 고정했다.
+- CLI 설치 smoke 결과를 `maintainer/plugin/cli-smoke.json`에 명시적으로 기록해 다음 릴리스 검사가 이전 버전 증적을 재사용하지 않도록 관리자 검증 명령을 바로잡았다.
+- 확장자 없는 `pre-commit`·`pre-push` 셸 자산도 실행 정책 검사 대상에 포함해 권한 스킬의 전체 실행 표면을 검증한다.
+
+### 배포 상태
+
+- `0.5.0`은 main 배포 후보다. tag와 GitHub Release는 아직 만들지 않았으며 게시된 최신 stable은 `v0.4.3`이다.
+- `0.5.0` 아카이브 SHA-256은 `3d9c244c5f8788eb0bd010bc37098ae1910b4dd1a0b960afe01059af3dad1b62`이다.
+- Codex CLI와 Claude Code CLI의 격리 marketplace 등록, 설치, 캐시 확인과 제거 smoke를 통과했다.
+- Codex·Claude CLI·앱의 실제 모델 호출 수동 증적은 별도 릴리스 게이트로 남는다.
+
 ## [0.4.3] - 2026-08-11
 
 ### 호환성 변경

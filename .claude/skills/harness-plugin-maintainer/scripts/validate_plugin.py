@@ -287,7 +287,12 @@ def validate_runtime_execution_policy(root: Path, errors: list[str]) -> None:
             shipped = sorted(
                 path.relative_to(skill_dir).as_posix()
                 for path in skill_dir.rglob("*")
-                if path.is_file() and path.suffix in {".py", ".sh"} and "evals" not in path.relative_to(skill_dir).parts
+                if path.is_file()
+                and "evals" not in path.relative_to(skill_dir).parts
+                and (
+                    path.suffix in {".py", ".sh"}
+                    or path.read_bytes().startswith(b"#!")
+                )
             )
             if not shipped:
                 continue
@@ -301,17 +306,20 @@ def validate_runtime_execution_policy(root: Path, errors: list[str]) -> None:
             allow_subprocess = bool(entry.get("subprocess"))
             allowed_commands = set(entry.get("subprocess_allowlist", []))
             for path in (skill_dir / rel for rel in shipped):
-                if path.suffix == ".sh":
+                executable_text = path.read_text(encoding="utf-8", errors="replace")
+                is_shell = path.suffix == ".sh" or executable_text.startswith(
+                    ("#!/bin/sh", "#!/usr/bin/env sh", "#!/bin/bash", "#!/usr/bin/env bash")
+                )
+                if is_shell:
                     # Shell scripts are not parsed, so scan for the capabilities
                     # the policy denies. Skipping them would leave a hole big
                     # enough to drive a network call through.
-                    text = path.read_text(encoding="utf-8", errors="replace")
                     for token in ("curl", "wget", "nc ", "ncat", "ssh ", "scp ",
                                   "pip install", "npm install", "Invoke-WebRequest"):
-                        if re.search(rf"(?<![\w-]){re.escape(token.strip())}(?![\w-])", text):
+                        if re.search(rf"(?<![\w-]){re.escape(token.strip())}(?![\w-])", executable_text):
                             error(errors, f"{platform}/{name}/{path.name}: denied shell capability {token.strip()!r}")
                     if allowed_commands:
-                        invoked = set(re.findall(r"^\s*([a-z][\w.-]*)\s", text, re.MULTILINE))
+                        invoked = set(re.findall(r"^\s*([a-z][\w.-]*)\s", executable_text, re.MULTILINE))
                         external = {c for c in invoked if c in {"git", "docker", "kubectl", "aws", "gh"}}
                         for cmd in sorted(external - allowed_commands):
                             error(errors, f"{platform}/{name}/{path.name}: command {cmd!r} is not in the policy allowlist")

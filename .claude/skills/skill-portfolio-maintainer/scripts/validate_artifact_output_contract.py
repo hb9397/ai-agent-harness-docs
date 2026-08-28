@@ -60,8 +60,8 @@ def main() -> int:
 
     user = {entry["skill"] for entry in entries if entry["scope"] == "user"}
     manager = {entry["skill"] for entry in entries if entry["scope"] == "manager"}
-    assert len(user) == data["discovery"]["expected_user_skill_count"] == 19, "user skill count mismatch"
-    assert len(manager) == data["discovery"]["expected_manager_skill_count"] == 3, "manager skill count mismatch"
+    assert len(user) == data["discovery"]["expected_user_skill_count"], "user skill count mismatch"
+    assert len(manager) == data["discovery"]["expected_manager_skill_count"], "manager skill count mismatch"
     assert user == live_skills("skills"), "user skill manifest mismatch"
     assert manager == live_skills("maintainer/skills"), "manager skill manifest mismatch"
 

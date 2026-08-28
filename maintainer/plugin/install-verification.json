@@ -4,15 +4,15 @@
   "plugin": {
     "plugin_root": "plugins/harness-kit",
     "plugin_id": "harness-kit",
-    "version": "0.4.3",
+    "version": "0.5.0",
     "codex_manifest_matches_claude": true,
-    "archive": "plugins/harness-kit-0.4.3.zip",
-    "archive_sha256": "0385680650cca7827b8f71445a9e7aa6e1d630997e0167a6f4094e38f14e2d76",
+    "archive": "plugins/harness-kit-0.5.0.zip",
+    "archive_sha256": "3d9c244c5f8788eb0bd010bc37098ae1910b4dd1a0b960afe01059af3dad1b62",
     "archive_sha256_matches_release": true,
-    "logical_user_skills": 19,
-    "codex_physical_skills": 19,
+    "logical_user_skills": 20,
+    "codex_physical_skills": 20,
     "codex_physical_agents": 0,
-    "claude_physical_skills": 19,
+    "claude_physical_skills": 20,
     "claude_physical_agents": 0,
     "markdown_producer_count": 9,
     "humanize_aliases": {},
@@ -79,10 +79,10 @@
         "--help"
       ],
       "available": true,
-      "status": "failed-to-start",
-      "exit_code": null,
-      "stdout_excerpt": "",
-      "stderr_excerpt": "[WinError 5] 액세스가 거부되었습니다"
+      "status": "ok",
+      "exit_code": 0,
+      "stdout_excerpt": "Codex CLI\n\nIf no subcommand is specified, options will be forwarded to the interactive CLI.\n\nUsage: codex [OPTIONS] [PROMPT]\n       codex [OPTIONS] <COMMAND> [ARGS]\n\nCommands:\n  agents            Browse all agent sessions on the shared local app-server daemon\n  exec              Run Codex non-interactively [aliases: e]\n  review            Run a code review non-interactively\n  login             Manage login\n  logout            Remove stored authentication credentials\n  mcp               Manage external MCP servers for Codex\n  plugin            Manage Codex plugins\n  mcp-server        Start Codex as an MCP server (stdio)\n  app-server        [experimental] Run the app server or related tooling\n  remote-control    [experimental] Manage the app-server daemon with remote control enabled\n  app               Launch the Desktop app (opens the app installer if missing)\n  completion        Generate shell completion scripts\n  update            Update Codex to the latest version\n  doctor           ",
+      "stderr_excerpt": ""
     },
     "codex_plugin_help": {
       "command": [
@@ -91,10 +91,10 @@
         "--help"
       ],
       "available": true,
-      "status": "failed-to-start",
-      "exit_code": null,
-      "stdout_excerpt": "",
-      "stderr_excerpt": "[WinError 5] 액세스가 거부되었습니다"
+      "status": "ok",
+      "exit_code": 0,
+      "stdout_excerpt": "Manage Codex plugins\n\nUsage: codex plugin [OPTIONS] <COMMAND>\n\nCommands:\n  add          Install a plugin from a configured marketplace snapshot\n  list         List plugins available from configured marketplace snapshots\n  marketplace  Add, list, upgrade, or remove configured plugin marketplaces\n  remove       Remove an installed plugin from local config and cache\n  help         Print this message or the help of the given subcommand(s)\n\nOptions:\n  -c, --config <key=value>\n          Override a configuration value that would otherwise be loaded from `~/.codex/config.toml`.\n          Use a dotted path (`foo.bar.baz`) to override nested values. The `value` portion is parsed\n          as TOML. If it fails to parse as TOML, the raw string is used as a literal.\n          \n          Examples: - `-c model=\"o3\"` - `-c 'sandbox_permissions=[\"disk-full-read-access\"]'` - `-c\n          shell_environment_policy.inherit=all`\n\n      --enable <FEATURE>\n          Enable a feature (repeatable). Equivalent ",
+      "stderr_excerpt": ""
     },
     "claude_help": {
       "command": [
@@ -125,8 +125,8 @@
         "evidence_level": "marketplace-install-and-cache-smoke",
         "model_invocation_verified": false,
         "installed_payload": {
-          "version": "0.4.3",
-          "skill_count": 19,
+          "version": "0.5.0",
+          "skill_count": 20,
           "agent_count": 0,
           "required_skills": [
             "harness-setup",
@@ -146,8 +146,8 @@
         "evidence_level": "marketplace-install-and-cache-smoke",
         "model_invocation_verified": false,
         "installed_payload": {
-          "version": "0.4.3",
-          "skill_count": 19,
+          "version": "0.5.0",
+          "skill_count": 20,
           "agent_count": 0,
           "required_skills": [
             "harness-setup",

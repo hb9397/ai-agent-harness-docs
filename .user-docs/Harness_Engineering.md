@@ -31,15 +31,15 @@ AI Agent Harness는 Codex, Claude Code처럼 서로 다른 에이전트가 같�
 | 영역 | 담당 | 프로젝트에 남는가 |
 |------|------|-------------------|
 | 사용자 스킬 정본 20종 | 관리 저장소 `skills/` | 다음 plugin build의 입력 |
-| stable `0.4.3` runtime 19종 | 설치된 `harness-kit` 플러그인 | local copy를 남기지 않음 |
-| `project-write-access` | 관리 저장소 `skills/`에만 있는 정본 | 이를 포함한 플러그인 버전이 배포된 뒤 프로젝트에서 호출 |
+| 현재 main `0.5.0` runtime 20종 | 설치된 `harness-kit` 플러그인 | local copy를 남기지 않음 |
+| `project-write-access` | `0.5.0` runtime에 포함된 명시 호출 전용 스킬 | 권한을 사용하는 프로젝트에서 관리자만 설정·변경 |
 | 프로젝트 문서 골격 | 프로젝트 수행자가 `harness-setup`으로 생성 | `.docs/**`, `AGENTS.md`, `CLAUDE.md` |
 | 설계·구현 계획·프로토타입 | 프로젝트 수행자와 사용자 스킬 | `.docs/**` |
 | 코드·테스트 산출물 | 프로젝트 수행자 | 각 앱 repo |
 | 리뷰·검증 보고 | 프로젝트 수행자와 사용자 스킬 | 기본은 대화 보고, 스킬이 별도 파일 생성을 금지하면 repo에 저장하지 않음 |
 | 플러그인 build·upstream 최신화 | 하네스 관리자 | 이 관리 저장소 |
 
-관리 저장소 정본과 stable runtime의 수는 같지 않다. 배포 검증에서는 `project-write-access`를 포함해 source·runtime·capability inventory를 같은 집합으로 맞춘 뒤 새 버전을 만든다.
+관리 저장소의 사용자 스킬 정본, `0.5.0`의 Codex·Claude runtime과 capability inventory는 모두 20종으로 같다. 게시된 최신 stable은 `v0.4.3`이며, `0.5.0`은 tag·GitHub Release를 만들기 전 main 배포 후보다.
 
 `harness-setup`의 쓰기 allowlist는 `.docs/**`, 루트 `AGENTS.md`, `CLAUDE.md`다. `.agents/skills/**`, `.claude/skills/**`, `skills/**`를 생성·복사·동기화하지 않는다. 실행 전에 존재하던 local skill 경로는 읽기 전용으로 분류·보고하고 승인 없이 변경하지 않는다.
 
@@ -143,7 +143,7 @@ Codex는 설치 후 새 task를 열고 필요하면 앱을 재시작한다. Clau
 - `app-doc-lead`: 배정된 앱에서 `pm-pl`과 같은 종류의 핵심 문서를 관리한다.
 - 일반 기여자: 별도 principal 등록 없이 `impl-doc/**`, `prototype/**`, `_inbox/**` 같은 `team` 범위를 사용한다.
 
-이 스킬은 문서 쓰기 권한만 관리하고 소스코드 권한은 바꾸지 않는다. CODEOWNERS는 서버 보호 규칙과 결합해야 병합을 강제하며, 로컬 Git 훅과 AI 쓰기 가드는 각각 우회 가능성과 host 신뢰 경계를 가진다. 현재 `project-write-access`는 관리 저장소 정본에만 있고 stable `0.4.3` runtime에는 포함되지 않는다.
+이 스킬은 문서 쓰기 권한만 관리하고 소스코드 권한은 바꾸지 않는다. CODEOWNERS는 서버 보호 규칙과 결합해야 병합을 강제하며, 로컬 Git 훅과 AI 쓰기 가드는 각각 우회 가능성과 host 신뢰 경계를 가진다. `project-write-access`는 `0.5.0` runtime에 포함되지만 자동 실행되지 않으며, 검증된 관리자가 명시적으로 호출할 때만 설정·변경한다.
 
 ### 4.4 `.docs` 초기 골격과 진행 후 구조
 
@@ -666,7 +666,7 @@ flowchart TD
 
 | 구분 | 수 | 정본 | 생성물 또는 대상 |
 |------|---:|------|-------------------|
-| 사용자 스킬 | 19 | `skills/` | `plugins/harness-kit/**` |
+| 사용자 스킬 | 20 | `skills/` | `plugins/harness-kit/**` |
 | 관리자 스킬 | 3 | `maintainer/skills/` | `.agents/skills/`, `.claude/skills/` |
 | upstream·provenance | - | `maintainer/upstreams/` | registry, lock, 비교·반영 증적 |
 | plugin metadata | - | `maintainer/inventory/`, `maintainer/plugin/` | manifest, catalog, release 증적 |
@@ -856,7 +856,7 @@ python maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py
 - [ ] build가 clean source에서 재현된다.
 - [ ] source와 Codex·Claude runtime inventory가 일치한다.
 - [ ] 관리자 스킬과 agents가 사용자 payload에 없다.
-- [x] `0.4.3` CLI 설치 smoke가 격리 설정에서 통과한다.
+- [x] `0.5.0` CLI 설치 smoke가 격리 설정에서 통과한다.
 - [ ] 네 인터페이스의 수동 호출 증적이 있다.
 - [ ] release checklist의 미검증 항목이 없다.
 

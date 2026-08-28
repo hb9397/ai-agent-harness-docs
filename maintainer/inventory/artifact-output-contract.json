@@ -11,7 +11,7 @@
   "discovery": {
     "user_root": "skills/*/SKILL.md",
     "manager_root": "maintainer/skills/*/SKILL.md",
-    "expected_user_skill_count": 19,
+    "expected_user_skill_count": 20,
     "expected_manager_skill_count": 3,
     "unknown_write_capability_is_failure": true,
     "scope_boundary": "manager skills never write user .docs and user skills never write manager maintainer/"
@@ -370,6 +370,19 @@
       "approval": "explicit save request for persistence",
       "handoff": "producer or implementation owner action list",
       "evidence": "skills/multi-review/SKILL.md"
+    },
+    {
+      "skill": "project-write-access",
+      "scope": "user",
+      "artifact_class": "source-mutation",
+      "routing_profile": "source-mutation",
+      "persistence": "project-owned access policy, CODEOWNERS, Git hooks, AI hook configuration and local Git identity binding",
+      "single_app_path": ".docs/harness/access-control/**; .github/CODEOWNERS; .gitlab/CODEOWNERS; .gitea/CODEOWNERS; AGENTS.md; CLAUDE.md; local .git hook and config state",
+      "multi_app_path": ".docs/harness/access-control/**; app-scoped instruction blocks; provider CODEOWNERS; root context; local .git hook and config state",
+      "owner": "verified project admin",
+      "approval": "explicit administrator invocation; plan review before apply; additional confirmation when admin edits app-owned documents",
+      "handoff": "signed policy and verification report; provider branch protection remains an external administrator action",
+      "evidence": "skills/project-write-access/SKILL.md; skills/project-write-access/scripts; skills/project-write-access/assets/runtime"
     },
     {
       "skill": "ui-ux-pro-max",

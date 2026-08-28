@@ -1,13 +1,13 @@
 # 외부 Agent Skills 레포지토리 구성 분석
 
-> **현행 addendum — 2026-08-03**
+> **현행 addendum — 2026-08-28**
 >
 > 이 문서의 본문은 2026-05-27 당시 외부 생태계 조사 기록이다. 현행 운영 기준은 플러그인 전환 이후 문서인 [README.md](../README.md), [Plugin Installation Guide](./Plugin_Installation_Guide.md), [Harness Engineering Guide](./Harness_Engineering.md)를 따른다.
 >
-> 현재 source 구성은 사용자 스킬 19종과 관리자 스킬 3종으로 분리되어 있다.
-> 사용자 정본은 `skills/`에서 관리해 다음 plugin build의 입력으로 사용한다. 마지막
-> 현재 `0.3.0` payload도 19종이며, immutable `0.2.2` 20종 archive는 historical
-> 비교 증적으로만 보존한다. 관리자 스킬은 `maintainer/skills/`와 repo-local `.agents/skills`,
+> 현재 source 구성은 사용자 스킬 20종과 관리자 스킬 3종으로 분리되어 있다.
+> 사용자 정본은 `skills/`에서 관리해 plugin build의 입력으로 사용한다. 현재 main
+> `0.5.0` payload도 20종이며, 게시된 최신 stable `v0.4.3`과 이전 archive는 historical
+> 비교 증적으로 보존한다. 관리자 스킬은 `maintainer/skills/`와 repo-local `.agents/skills`,
 > `.claude/skills` projection에서만 사용한다.
 >
 > `agent-sync`와 `rfp-ingest`는 제거됐다. `custom-skill-design`은 사용자 스킬에서 관리자 스킬로 이동했다. 실제 프로젝트 사용자는 이 저장소를 clone하거나 `.agents/.claude` 스킬을 직접 복사하지 않고, Codex/Claude 플러그인을 설치한 뒤 `harness-setup`을 실행한다.

@@ -1,9 +1,9 @@
 {
   "schema_version": "1.1.0",
-  "generated_at": "2026-08-05",
-  "scope": "Phase 1 audit: 19 user skills plus 3 maintainer skills",
+  "generated_at": "2026-08-28",
+  "scope": "Current provenance: 20 user skills plus 3 maintainer skills",
   "counts": {
-    "user_skills": 19,
+    "user_skills": 20,
     "maintainer_skills": 3,
     "candidate_skills": 0
   },
@@ -216,6 +216,16 @@
       ],
       "direct_import": false,
       "evidence": "Multi-perspective review concepts are reference-only."
+    },
+    {
+      "name": "project-write-access",
+      "area": "user",
+      "mode": "native",
+      "sources": [
+        "internal-harness-native"
+      ],
+      "direct_import": false,
+      "evidence": "Local project-document access workflow for signed administrator policy, provider CODEOWNERS generation, Git hooks, and AI write guards. No external skill or runtime file is imported."
     },
     {
       "name": "ui-ux-pro-max",

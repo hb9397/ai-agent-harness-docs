@@ -1,8 +1,8 @@
 # Plugin Installation Guide
 
 > 기준일: 2026-08-28
-> 대상 플러그인: `harness-kit` `0.4.3`
-> 현재 상태: [`v0.4.3` stable 릴리스](https://github.com/hb9397/harness-kit/releases/tag/v0.4.3)로 게시됐으며, 공식 manifest·marketplace와 격리 CLI 설치 smoke를 새 artifact 기준으로 검증했다.
+> 대상 플러그인: `harness-kit` `0.5.0`
+> 현재 상태: `0.5.0`은 main 배포 후보이며 공식 manifest·marketplace와 Codex·Claude CLI의 격리 설치 smoke를 통과했다. 아직 tag·GitHub Release를 만들지 않았고, 게시된 최신 stable은 [`v0.4.3`](https://github.com/hb9397/harness-kit/releases/tag/v0.4.3)이다.
 > 다만 Codex와 Claude의 CLI·앱 네 인터페이스에서 실제 모델 호출·산출물·새 세션 증적은 아직 확보하지 못한 검증 한계로 남아 있다.
 
 이 문서는 실제 프로젝트 사용자가 하네스 저장소를 clone하거나 스킬을 복사하지 않고 플러그인으로 시작하기 위한 설치·확인·업데이트·제거 기준이다.
@@ -22,32 +22,33 @@
 
 ---
 
-## 2. 현재 stable 릴리스 정보
+## 2. 현재 main 배포 후보 정보
 
 | 항목 | 값 |
 |------|----|
 | Plugin ID | `harness-kit` |
-| Version | `0.4.3` |
+| Version | `0.5.0` |
 | Local plugin root | `plugins/harness-kit` |
-| Archive | `plugins/harness-kit-0.4.3.zip` |
-| Archive SHA-256 | `0385680650cca7827b8f71445a9e7aa6e1d630997e0167a6f4094e38f14e2d76` |
-| Codex physical skills | 19 |
+| Archive | `plugins/harness-kit-0.5.0.zip` |
+| Archive SHA-256 | `3d9c244c5f8788eb0bd010bc37098ae1910b4dd1a0b960afe01059af3dad1b62` |
+| Codex physical skills | 20 |
 | Codex agents | 0 |
-| Claude physical skills | 19 |
+| Claude physical skills | 20 |
 | Claude agents | 0 |
-| GitHub Release | [`v0.4.3`](https://github.com/hb9397/harness-kit/releases/tag/v0.4.3) |
-| Publication record | `maintainer/plugin/publish.json` |
+| GitHub Release | 미생성. 게시된 최신 stable은 [`v0.4.3`](https://github.com/hb9397/harness-kit/releases/tag/v0.4.3) |
+| Candidate record | `maintainer/plugin/release.json` |
+| Stable publication record | `maintainer/plugin/publish.json` |
 | Release gate | `not-release-ready` — Codex·Claude CLI·앱의 실제 모델 호출 수동 증적이 모두 충족되지 않음 |
 
 릴리스 게이트 증적은 [maintainer/plugin/release-checklist.md](../maintainer/plugin/release-checklist.md)와 [maintainer/plugin/install-verification.json](../maintainer/plugin/install-verification.json)에 있다.
 
-관리 저장소의 사용자 스킬 정본은 20종이지만 stable `0.4.3` runtime은 19종이다. 정본의 `project-write-access`는 현재 stable runtime에 포함되지 않으며, 이를 포함한 플러그인 버전이 배포된 뒤 실제 프로젝트에서 호출할 수 있다.
+관리 저장소의 사용자 스킬 정본과 `0.5.0`의 Codex·Claude runtime은 모두 20종이다. `project-write-access`도 배포 후보에 포함되지만 자동으로 실행되지 않으며, 권한을 나누는 프로젝트의 검증된 관리자만 명시적으로 호출한다.
 
 ---
 
 ## 3. Codex CLI
 
-> `0.4.3`은 Codex CLI와 Claude Code 양쪽에서 격리 설치·cache smoke를 통과했다.
+> `0.5.0` 배포 후보는 Codex CLI와 Claude Code 양쪽에서 격리 설치·cache smoke를 통과했다.
 > 이 검사는 실제 모델 호출과 앱 설치·trust의 수동 증적을 대신하지 않는다.
 
 공식 Codex CLI `0.146.0`을 임시 `CODEX_HOME`에서 실행해 아래 marketplace 등록·설치·목록·제거 흐름과 설치 cache의 skills / 0 agents를 확인했다.
@@ -103,7 +104,7 @@ Codex 앱에서는 다음을 수동으로 확인한다.
 2. **플러그인 마켓플레이스 추가**에서 `hb9397/harness-kit` 저장소 또는 Git URL, `main` ref를 입력한다. monorepo 일부만 사용할 때만 sparse 경로를 지정한다.
 3. 추가한 marketplace에서 `harness-kit`을 찾아 설치한다.
 4. local marketplace가 앱에 보이지 않는 버전이면 앱과 같은 사용자 프로필의 Codex CLI에서 marketplace와 플러그인을 등록하고 앱을 완전히 종료했다가 다시 연다.
-5. 플러그인 화면 또는 `/plugins`에서 `harness-kit` `0.4.3`이 설치·활성 상태인지 확인한다.
+5. 플러그인 화면 또는 `/plugins`에서 `harness-kit` `0.5.0`이 설치·활성 상태인지 확인한다.
 6. 새 fixture 프로젝트에서 새 task/session을 연다.
 7. `$harness-setup`과 `$humanize-korean`을 명시 호출한다.
 8. 새 버전 후보를 설치하거나 stale cache를 비운 뒤 version marker가 갱신되는지 확인한다.
@@ -166,7 +167,7 @@ Claude 앱과 Claude Code CLI는 일부 설정을 공유할 수 있지만 host�
 9. cloud Code session은 plugin browser가 없어 프로젝트 `enabledPlugins` 정책을 별도 적용
 10. WSL session은 Desktop plugin 설치 인터페이스로 지원하지 않음을 명시
 
-`0.4.3`은 stable 릴리스로 게시됐으며 CLI 설치 smoke를 통과했다. 앱 설치와 직접 모델 호출은 알려진 수동 검증 한계로 남긴다.
+`0.5.0`은 main 배포 후보이며 tag·GitHub Release를 만들지 않았다. Codex·Claude CLI의 격리 설치 smoke는 통과했고, 앱 설치와 직접 모델 호출은 수동 검증 항목으로 남긴다.
 
 ---
 
@@ -235,7 +236,7 @@ harness-setup 명시 호출
 | Codex CLI·앱 | `$harness-setup` |
 | Claude Code CLI·Claude 앱 | `/harness-kit:harness-setup` |
 
-권한 기능을 포함한 플러그인 버전의 명시 호출은 Codex `$project-write-access`, Claude Code·Claude 앱 `/harness-kit:project-write-access`다. 최초 설정과 이후 정책 변경은 검증된 관리자만 수행한다.
+`0.5.0`에서 권한 기능을 명시 호출하는 방법은 Codex `$project-write-access`, Claude Code·Claude 앱 `/harness-kit:project-write-access`다. 최초 설정과 이후 정책 변경은 검증된 관리자만 수행한다.
 
 ---
 

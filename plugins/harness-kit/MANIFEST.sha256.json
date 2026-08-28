@@ -3,15 +3,15 @@
   "files": [
     {
       "path": ".claude-plugin/plugin.json",
-      "sha256": "d060a36c1cfed60b5ec7ba995c96df3240987c953cd759cdb62780f2580a0a58"
+      "sha256": "714c0c2602ca42a0e76336aa060d56bca11b37d5b85f4f528bd045bc6007c2ee"
     },
     {
       "path": ".codex-plugin/plugin.json",
-      "sha256": "6593aedcbb35829381f5b456967f3ce58ca8f0491f8338ee55f65bae45b9cf97"
+      "sha256": "4f5ca853603a7e22c61b9324c673cc3f2a8a4a6827b88598ffbe00e9d0065e36"
     },
     {
       "path": "CAPABILITIES.json",
-      "sha256": "1db2779915bf1ac5dab5640c3683a2e1268f2dcdf485b5e3200fe7ea02dd20dc"
+      "sha256": "9bb4f182e602b6547d63e57dbf520e00593f37646fb3f1a83964a210aec76487"
     },
     {
       "path": "LICENSE",
@@ -27,7 +27,7 @@
     },
     {
       "path": "UPSTREAMS.lock.json",
-      "sha256": "bd43849ce4bf1eccc549cabc5676f8a36d28aaf676d93180e35b8f32abab10ab"
+      "sha256": "5fee365e4a0a800887cf25b9b42f0de805b8d01785c71cb4ec52ae067ca49d63"
     },
     {
       "path": "licenses/anthropic-frontend-design-LICENSE",
@@ -676,6 +676,54 @@
     {
       "path": "runtime/claude/skills/multi-review/template.md",
       "sha256": "11895446389916a78df63e5a429d652fae1f5636657f511a585519995db34a78"
+    },
+    {
+      "path": "runtime/claude/skills/project-write-access/SKILL.md",
+      "sha256": "603ca84b747dfb6f23de65ed9b7b6332286d438ee7871a96ece7479be81c7cd1"
+    },
+    {
+      "path": "runtime/claude/skills/project-write-access/agents/openai.yaml",
+      "sha256": "56e18b95b81c6be9b59a8c665d40452f41ff6797bc65662f4994ab5471a87643"
+    },
+    {
+      "path": "runtime/claude/skills/project-write-access/assets/runtime/pre-commit",
+      "sha256": "472c21bcef9a8ff80cff253748a653fc8c5791cb3a7e83ca2d081e5b8f986966"
+    },
+    {
+      "path": "runtime/claude/skills/project-write-access/assets/runtime/pre-push",
+      "sha256": "cfb301e113a4d9490ecd19e2957e4432e16eb7f712609baedf5fc9951833066b"
+    },
+    {
+      "path": "runtime/claude/skills/project-write-access/assets/runtime/write_access_guard.py",
+      "sha256": "8aa450aaeec24c7c24017c64387f8ed554ad74fb208249684e3b8d857a36e0e6"
+    },
+    {
+      "path": "runtime/claude/skills/project-write-access/evals/evals.json",
+      "sha256": "e43f528cf44b6a7583634814547624037e1c0930a584a938dd7c24e5bf61521c"
+    },
+    {
+      "path": "runtime/claude/skills/project-write-access/evals/run_evals.py",
+      "sha256": "3d339382c198d9bb8e6c20f6d6d7b104bc55cc757d9c14c04f64875a9a9ca521"
+    },
+    {
+      "path": "runtime/claude/skills/project-write-access/prompts/workflow.md",
+      "sha256": "ee71b8beee211e752defd7d2663a36199048e5aea4d49e4cb1dd2d67a23b8591"
+    },
+    {
+      "path": "runtime/claude/skills/project-write-access/references/policy-schema.md",
+      "sha256": "81684f42bcf35be13994cf4519d26304d16bd86d835a83cb6628f36d9658379f"
+    },
+    {
+      "path": "runtime/claude/skills/project-write-access/references/provider-capabilities.md",
+      "sha256": "139d1836442e7d2689aed44c02256390a13688a649fccc74572a51446df8280e"
+    },
+    {
+      "path": "runtime/claude/skills/project-write-access/references/security-contract.md",
+      "sha256": "089191074106fd9689095c0fcdd56823755d2436cb59b0413f0e61b417410fc7"
+    },
+    {
+      "path": "runtime/claude/skills/project-write-access/scripts/project_write_access.py",
+      "sha256": "2be28e272d27a67c51ab46eb1535f465c86ae1a59d52e67b7be6fb70a1a51081"
     },
     {
       "path": "runtime/claude/skills/ui-ux-pro-max/SKILL.md",
@@ -1488,6 +1536,54 @@
     {
       "path": "runtime/codex/skills/multi-review/template.md",
       "sha256": "11895446389916a78df63e5a429d652fae1f5636657f511a585519995db34a78"
+    },
+    {
+      "path": "runtime/codex/skills/project-write-access/SKILL.md",
+      "sha256": "603ca84b747dfb6f23de65ed9b7b6332286d438ee7871a96ece7479be81c7cd1"
+    },
+    {
+      "path": "runtime/codex/skills/project-write-access/agents/openai.yaml",
+      "sha256": "56e18b95b81c6be9b59a8c665d40452f41ff6797bc65662f4994ab5471a87643"
+    },
+    {
+      "path": "runtime/codex/skills/project-write-access/assets/runtime/pre-commit",
+      "sha256": "472c21bcef9a8ff80cff253748a653fc8c5791cb3a7e83ca2d081e5b8f986966"
+    },
+    {
+      "path": "runtime/codex/skills/project-write-access/assets/runtime/pre-push",
+      "sha256": "cfb301e113a4d9490ecd19e2957e4432e16eb7f712609baedf5fc9951833066b"
+    },
+    {
+      "path": "runtime/codex/skills/project-write-access/assets/runtime/write_access_guard.py",
+      "sha256": "8aa450aaeec24c7c24017c64387f8ed554ad74fb208249684e3b8d857a36e0e6"
+    },
+    {
+      "path": "runtime/codex/skills/project-write-access/evals/evals.json",
+      "sha256": "e43f528cf44b6a7583634814547624037e1c0930a584a938dd7c24e5bf61521c"
+    },
+    {
+      "path": "runtime/codex/skills/project-write-access/evals/run_evals.py",
+      "sha256": "3d339382c198d9bb8e6c20f6d6d7b104bc55cc757d9c14c04f64875a9a9ca521"
+    },
+    {
+      "path": "runtime/codex/skills/project-write-access/prompts/workflow.md",
+      "sha256": "ee71b8beee211e752defd7d2663a36199048e5aea4d49e4cb1dd2d67a23b8591"
+    },
+    {
+      "path": "runtime/codex/skills/project-write-access/references/policy-schema.md",
+      "sha256": "81684f42bcf35be13994cf4519d26304d16bd86d835a83cb6628f36d9658379f"
+    },
+    {
+      "path": "runtime/codex/skills/project-write-access/references/provider-capabilities.md",
+      "sha256": "139d1836442e7d2689aed44c02256390a13688a649fccc74572a51446df8280e"
+    },
+    {
+      "path": "runtime/codex/skills/project-write-access/references/security-contract.md",
+      "sha256": "089191074106fd9689095c0fcdd56823755d2436cb59b0413f0e61b417410fc7"
+    },
+    {
+      "path": "runtime/codex/skills/project-write-access/scripts/project_write_access.py",
+      "sha256": "2be28e272d27a67c51ab46eb1535f465c86ae1a59d52e67b7be6fb70a1a51081"
     },
     {
       "path": "runtime/codex/skills/ui-ux-pro-max/SKILL.md",

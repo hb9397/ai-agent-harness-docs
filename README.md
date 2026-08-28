@@ -21,13 +21,13 @@
 현재 정본과 배포본:
 
 - 사용자 스킬 정본: `skills/`의 20종. `project-write-access`를 포함한다.
-- stable Plugin ID·Version: `harness-kit` `0.4.3`
-- stable archive: `plugins/harness-kit-0.4.3.zip`
-- `0.4.3` Codex runtime: 19 skills / 0 agents
-- `0.4.3` Claude runtime: 19 skills / 0 agents
-- `project-write-access`는 현재 관리 저장소 정본에만 있으며 `0.4.3` runtime에는 포함되지 않는다. 이 스킬은 이를 포함한 플러그인 버전이 배포된 뒤 실제 프로젝트에서 호출할 수 있다.
+- 현재 main 배포 후보: `harness-kit` `0.5.0`
+- 배포 후보 archive: `plugins/harness-kit-0.5.0.zip` (`3d9c244c5f8788eb0bd010bc37098ae1910b4dd1a0b960afe01059af3dad1b62`)
+- `0.5.0` Codex runtime: 20 skills / 0 agents
+- `0.5.0` Claude runtime: 20 skills / 0 agents
+- `project-write-access`는 `0.5.0` 배포 후보에 포함되며, 문서 쓰기 권한을 나누는 프로젝트에서 관리자만 명시적으로 호출한다.
 - 관리자 스킬: 3종, 이 저장소 안에서만 사용
-- 릴리스 상태: [`v0.4.3` stable](https://github.com/hb9397/harness-kit/releases/tag/v0.4.3). tag·commit·GitHub asset 검증 결과는 `maintainer/plugin/publish.json`에 있으며, Codex·Claude CLI·앱의 실제 모델 호출 증적은 현재 수동 검증 항목이다.
+- 게시된 최신 stable은 [`v0.4.3`](https://github.com/hb9397/harness-kit/releases/tag/v0.4.3)이다. `0.5.0`은 main 배포 후보이며 아직 tag·GitHub Release를 만들지 않았다. `v0.4.3`의 게시 증적은 `maintainer/plugin/publish.json`에 보존한다.
 
 ### 함께 사용해볼 만한 플러그인
 

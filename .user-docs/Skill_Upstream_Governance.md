@@ -15,7 +15,7 @@
 | `skills/ui-ux-pro-max` ← [UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | `ui-ux-pro-max-runtime` | `adapted` / `active`; accepted·embedded; group `ui-ux-pro-max` | `v2.13.0` / `4d140cf8ff6842de13213c7214eff3810371beb2` | accepted와 일치 / 2026-08-05 | 생성된 스킬 트리 44개 파일을 반입했다. `data/`, `references/`, `scripts/`는 보존하고 `SKILL.md`는 플랫폼 중립 경로·범위 확인·승인형 저장 계약으로 수정했다. v2.13.0은 dark-mode palette·anti-pattern 정합성과 regression test를 보강한다. | 생성기 `src/`, CLI `cli/`, 형제 스킬 6종은 제외한다. | 포함; 패키징 source | MIT / `maintainer/upstreams/provenance/ui-ux-pro-max/NOTICE.md` / `maintainer/upstreams/provenance/ui-ux-pro-max/file-map.json` |
 | `skills/motion-design` ← [LottieFiles Motion Design](https://github.com/LottieFiles/motion-design-skill) | `lottiefiles-motion-design-runtime` | `adapted` / `active`; accepted·embedded; group `lottiefiles-motion-design` | `main` / `f9a8a041b85185ee4881b3471d3415e939aac772` | accepted와 일치 / 2026-07-31 | `director/`, `patterns/`, `reference/` 16개 파일을 보존하고 `SKILL.md`는 목적 우선 분류·모션 생략 허용·저밀도·접근성·성능·승인형 저장 계약으로 수정했다. | upstream의 생성·개발용 파일은 file-map의 `excluded`에 따른다. | 포함; 패키징 source | MIT / `maintainer/upstreams/provenance/lottiefiles-motion-design/NOTICE.md` / `maintainer/upstreams/provenance/lottiefiles-motion-design/file-map.json` |
 
-현재 사용자 스킬 정본은 19개이고, 관리자 스킬은 3개다. 직접 반입 관계는 upstream 저장소 4개에 `adapted` 5건이다. 이 중 사용자 스킬은 4개, 관리자 전용 스킬은 `custom-skill-design` 1개이며 활성 `vendored` 관계는 0건이다. UI/UX Pro Max와 Motion Design은 이미 사용자 payload와 패키징 NOTICE에 포함된다.
+현재 사용자 스킬 정본은 20개이고, 관리자 스킬은 3개다. 직접 반입 관계는 upstream 저장소 4개에 `adapted` 5건이다. 이 중 사용자 스킬은 4개, 관리자 전용 스킬은 `custom-skill-design` 1개이며 활성 `vendored` 관계는 0건이다. UI/UX Pro Max와 Motion Design은 이미 사용자 payload와 패키징 NOTICE에 포함된다.
 
 <a id="concept-behavior-references"></a>
 ## 개념·행동 참조 관계 요약
@@ -48,7 +48,7 @@
 5. `maintainer/plugin/release.json`: 특정 plugin artifact의 skill 수, 패키징 upstream과 release 상태의 정본
 6. `maintainer/upstreams/provenance/**`: license, NOTICE, file-map, 제3자 권리 판정과 promotion evidence의 정본
 
-문서에 숫자나 날짜를 독립적으로 고정해 machine source를 대체하지 않는다. 현재 정본에서 `pre-commit`이 제거된 뒤 사용자 skill과 `0.4.3` payload는 19개다. 이전 `0.2.2` artifact의 20개 inventory는 historical immutable archive 증적이지 현행 source inventory가 아니다.
+문서에 숫자나 날짜를 독립적으로 고정해 machine source를 대체하지 않는다. 현재 사용자 skill과 `0.5.0` payload는 `project-write-access`를 포함해 20개다. 이전 artifact의 inventory는 historical immutable archive 증적이지 현행 source inventory가 아니다.
 
 <a id="source-and-evidence-model"></a>
 ## 출처 mode, lifecycle, evidence state
@@ -100,7 +100,7 @@
 - `ui-ux-pro-max`와 `motion-design`은 보존 자산과 수정 `SKILL.md`를 file-map에서 파일별로 구분한다. 두 runtime source는 이미 plugin NOTICE와 license bundle에 포함된다.
 - `reference` 관계는 파일을 복사하지 않으므로 그 관계 자체가 license payload를 만들지 않는다. 같은 upstream의 별도 `adapted` runtime 관계가 있으면 그 관계의 재배포 의무만 적용한다.
 
-현재 `0.4.3` artifact의 `packaged_upstreams`는 `anthropic-frontend-design`, `im-not-ai`, `ui-ux-pro-max-runtime`, `lottiefiles-motion-design-runtime` 네 source다. `THIRD_PARTY_NOTICES.md`와 `licenses/`는 네 source를 모두 닫는다. 관리자 전용 `skill-creator-guides`와 concept/behavior-only `reference`는 사용자 payload에 넣지 않는다.
+현재 `0.5.0` artifact의 `packaged_upstreams`는 `anthropic-frontend-design`, `im-not-ai`, `ui-ux-pro-max-runtime`, `lottiefiles-motion-design-runtime` 네 source다. `THIRD_PARTY_NOTICES.md`와 `licenses/`는 네 source를 모두 닫는다. 관리자 전용 `skill-creator-guides`와 concept/behavior-only `reference`는 사용자 payload에 넣지 않는다.
 
 Motion Design의 upstream 참조 자료에는 Material Design 3, Apple Human Interface Guidelines와 Disney 애니메이션 원칙이 언급된다. upstream 최상위 MIT license는 upstream 저작자가 보유하지 않은 제3자 권리를 허가하지 못한다. `maintainer/upstreams/provenance/lottiefiles-motion-design/NOTICE.md`의 파일별 판정을 유지하며 외부 지침의 설명문이나 표 전체로 반입 범위를 확대하지 않는다.
 
