@@ -209,8 +209,8 @@ flowchart TD
     A -->|"예"| PA["관리자: project-write-access"]
     A -->|"아니오"| X{"진입 유형"}
     PA --> X
-    X -->|"신규·요구사항 기반"| D["권한 범위에 맞게 design-doc"]
-    X -->|"하네스 문서 없는 기존 코드"| B["권한 범위에 맞게 harness-bootstrap"]
+    X -->|"신규·요구사항 기반"| D["권한 범위에 맞게<br/>design-doc"]
+    X -->|"하네스 문서 없는 기존 코드"| B["권한 범위에 맞게<br/>harness-bootstrap"]
     D --> C["context-doc"]
     D --> P["선택: design-prototype-docs"]
     P --> CP["create-prototype"]

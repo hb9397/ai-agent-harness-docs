@@ -14,6 +14,7 @@
 |---|---|
 | [Plugin Installation Guide](./.user-docs/Plugin_Installation_Guide.md) | Codex CLI·앱과 Claude Code CLI·앱의 설치·업데이트·제거 및 첫 호출 방법 |
 | [Harness Engineering](./.user-docs/Harness_Engineering.md) | 플러그인 운영, `.docs` 구조, 설계·구현·검증, 관리자 경계를 정의한 현행 정본 |
+| [Multi App Document Flow and Ownership](./.user-docs/Multi_App_Doc_Flow_And_Ownership.md) | 복수 애플리케이션 프로젝트에서 AI가 문서를 읽고 만드는 흐름과 역할별 문서 소유권·쓰기 권한 기준 |
 | [Harness Engineering Intro](./.user-docs/Harness_Engineering_Intro.md) | 하네스 도입 배경과 실제 프로젝트 사용 흐름을 처음 보는 사람을 위한 안내서 |
 | [Skill Upstream Governance](./.user-docs/Skill_Upstream_Governance.md) | 외부 출처의 직접 반영·변형 반영·개념/행동 참조, provenance와 최신화 정책 |
 | [maintainer/README.md](./maintainer/README.md) | 관리자 스킬, projection, 사용자 플러그인의 책임 경계와 유지보수 방법 |
@@ -106,8 +107,8 @@ flowchart TD
     A -->|"예"| PA["관리자: project-write-access<br/>최초 설정·정책 변경"]
     A -->|"아니오"| N{"프로젝트 상태"}
     PA --> N
-    N -->|"신규·요구사항 기반"| D["권한 범위에 맞게 design-doc"]
-    N -->|"하네스 문서 없는 기존 코드"| B["권한 범위에 맞게 harness-bootstrap<br/>기존 코드에서 설계·컨텍스트 역추출"]
+    N -->|"신규·요구사항 기반"| D["권한 범위에 맞게<br/>design-doc"]
+    N -->|"하네스 문서 없는 기존 코드"| B["권한 범위에 맞게<br/>harness-bootstrap<br/>기존 코드에서 설계·컨텍스트 역추출"]
     D --> C["context-doc"]
     B --> C2["설계·컨텍스트 산출물"]
     D -->|"화면 작업일 때 선택"| UX["ui-ux-pro-max"]
