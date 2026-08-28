@@ -18,16 +18,16 @@
 | [Skill Upstream Governance](./.user-docs/Skill_Upstream_Governance.md) | 외부 출처의 직접 반영·변형 반영·개념/행동 참조, provenance와 최신화 정책 |
 | [maintainer/README.md](./maintainer/README.md) | 관리자 스킬, projection, 사용자 플러그인의 책임 경계와 유지보수 방법 |
 
-현재 정본과 마지막 생성 artifact:
+현재 정본과 배포본:
 
-- 현행 사용자 스킬 정본: 19종 (`pre-commit` 제거 후 `skills/` 기준)
-- 마지막 생성 Plugin ID: `harness-kit`
-- 마지막 생성 Version: `0.4.3`
-- immutable Archive: `plugins/harness-kit-0.4.3.zip` (`0.3.0`, `0.3.1`, `0.4.0`, `0.4.1`, `0.4.2` archive는 보존)
+- 사용자 스킬 정본: `skills/`의 20종. `project-write-access`를 포함한다.
+- stable Plugin ID·Version: `harness-kit` `0.4.3`
+- stable archive: `plugins/harness-kit-0.4.3.zip`
 - `0.4.3` Codex runtime: 19 skills / 0 agents
 - `0.4.3` Claude runtime: 19 skills / 0 agents
+- `project-write-access`는 현재 관리 저장소 정본에만 있으며 `0.4.3` runtime에는 포함되지 않는다. 이 스킬은 이를 포함한 플러그인 버전이 배포된 뒤 실제 프로젝트에서 호출할 수 있다.
 - 관리자 스킬: 3종, 이 저장소 안에서만 사용
-- 릴리스 상태: [`v0.4.3` stable 게시 완료](https://github.com/hb9397/harness-kit/releases/tag/v0.4.3) — tag·commit·GitHub asset의 검증 결과는 `maintainer/plugin/publish.json`에 기록했다. 다만 Codex·Claude CLI·앱 네 인터페이스에서 실제 모델을 호출해 확인한 수동 증적은 아직 확보하지 못했고, 이를 검증 한계로 명시한다.
+- 릴리스 상태: [`v0.4.3` stable](https://github.com/hb9397/harness-kit/releases/tag/v0.4.3). tag·commit·GitHub asset 검증 결과는 `maintainer/plugin/publish.json`에 있으며, Codex·Claude CLI·앱의 실제 모델 호출 증적은 현재 수동 검증 항목이다.
 
 ### 함께 사용해볼 만한 플러그인
 
@@ -64,7 +64,7 @@
 
 ![Claude 앱의 마켓플레이스 추가 화면](./.user-docs/assets/plugin-install/claude-app-add-marketplace.png)
 
-### 사용자 스킬 정본 19종
+### 사용자 스킬 정본 20종
 
 `변형 반영(adapted)`은 외부 원본을 번역·재구성하거나 핵심 자료를 포함한 관계이고, `참조(reference)`는 개념·행동만 참고하며 외부 파일을 직접 포함하지 않는 관계다.
 
@@ -73,6 +73,7 @@
 | 설치·기반 | [harness-setup](./skills/harness-setup/SKILL.md) | `.docs`와 루트 컨텍스트 초기화·복구 | 참조: [OpenAI AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md), [Claude Code memory](https://code.claude.com/docs/en/memory) |
 | 설치·기반 | [harness-bootstrap](./skills/harness-bootstrap/SKILL.md) | 기존 코드에서 설계·컨텍스트 역추출 | 참조: [OpenAI AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md), [Claude Code memory](https://code.claude.com/docs/en/memory) |
 | 설치·기반 | [git-scoped-account](./skills/git-scoped-account/SKILL.md) | 프로젝트 트리 하위 repo Git 계정 설정 | 로컬 정본: [harness-kit](https://github.com/hb9397/harness-kit) |
+| 권한 | [project-write-access](./skills/project-write-access/SKILL.md) | 프로젝트 문서 쓰기 역할과 CODEOWNERS·Git 훅·AI 쓰기 가드 설정 | 로컬 정본: [harness-kit](https://github.com/hb9397/harness-kit) |
 | 설계·컨텍스트 | [design-doc](./skills/design-doc/SKILL.md) | 요구사항·아이디어·RFP를 구조화한 설계 | 참조: [Superpowers](https://github.com/obra/superpowers), [gstack](https://github.com/garrytan/gstack) |
 | 설계·컨텍스트 | [context-doc](./skills/context-doc/SKILL.md) | `AGENTS.md` 정본, Claude bridge, instruction 생성 | 참조: [OpenAI AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md), [Claude Code memory](https://code.claude.com/docs/en/memory) |
 | UI/UX 설계 | [ui-ux-pro-max](./skills/ui-ux-pro-max/SKILL.md) | 제품 유형·스타일·색·타이포그래피·레이아웃 결정 | 변형 반영: [UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) |
@@ -96,13 +97,17 @@
 
 ```mermaid
 flowchart TD
-    P["플러그인 설치·새 session"] --> G{" Git 작성자<br/>계정 설정이 필요한가?"}
-    G -->|"예"| GA["선택(권장): <br/>git-scoped-account"]
-    G -->|"아니오"| N{"프로젝트 상태"}
-    GA --> N
-    N -->|"신규·문서골격<br/>.docs 디렉토리가 있거나<br/> 아예 신규 프로젝트인 경우"| S["harness-setup"]
-    S --> D["design-doc<br/>"]
-    N -->|"하네스 문서 없는 기존 코드"| B["harness-bootstrap<br/>(harness setup, design-doc, context-doc 포함)"]
+    P["플러그인 설치·새 session"] --> S["모든 참여자: harness-setup<br/>작업 환경별 최초 1회"]
+    S --> G{"Git 구조"}
+    G -->|"복수 repo"| GA["모든 참여자: git-scoped-account<br/>로컬 컨테이너별 최초 1회"]
+    G -->|"단일 repo"| GV["모든 참여자: 유효 Git 작성자<br/>계정 최초 1회 확인"]
+    GA --> A{"문서 쓰기 권한을<br/>분리하는가?"}
+    GV --> A
+    A -->|"예"| PA["관리자: project-write-access<br/>최초 설정·정책 변경"]
+    A -->|"아니오"| N{"프로젝트 상태"}
+    PA --> N
+    N -->|"신규·요구사항 기반"| D["권한 범위에 맞게 design-doc"]
+    N -->|"하네스 문서 없는 기존 코드"| B["권한 범위에 맞게 harness-bootstrap<br/>기존 코드에서 설계·컨텍스트 역추출"]
     D --> C["context-doc"]
     B --> C2["설계·컨텍스트 산출물"]
     D -->|"화면 작업일 때 선택"| UX["ui-ux-pro-max"]
@@ -138,12 +143,15 @@ flowchart TD
 ### 0단계 — 환경 준비
 
 1. Codex 또는 Claude에 플러그인을 설치하고 새 task/session을 연다.
-2. 여러 앱 repo의 Git 작성자 계정을 한 번에 맞출 때만 `git-scoped-account`를 명시 호출한다.
-3. 신규 프로젝트를 시작하거나 기존 문서 골격을 갱신·복구할 때는 `harness-setup`을 실행한다. 하네스 문서가 없는 기존 코드라면 `harness-bootstrap`으로 바로 진입하며, 이 workflow가 내부에서 `harness-setup`을 수행한다.
-4. 생성·갱신 범위가 `.docs/**`, 루트 `AGENTS.md`, `CLAUDE.md`뿐인지 확인한다.
-5. `harness-setup`이 플러그인의 사용자 스킬 복사본을 `.agents/skills/`, `.claude/skills/`, `skills/`에 만들지 않았는지 확인한다.
+2. 모든 참여자는 자기 작업 환경에서 `harness-setup`을 최초 1회 실행한다. 플러그인 공지가 하네스 갱신을 요구하거나 앱 경계가 바뀌거나 문서 골격을 복구할 때만 update mode로 다시 실행한다.
+3. 복수 repo 프로젝트의 모든 참여자는 자기 로컬 컨테이너에서 `git-scoped-account`를 최초 1회 명시 호출한다. 단일 repo에서는 이 스킬 대신 현재 repo에 적용되는 `user.name`과 `user.email`의 값과 출처를 최초 1회 확인한다.
+4. 문서 쓰기 권한을 분리하는 프로젝트라면 관리자가 `project-write-access`를 명시 호출해 정책을 설정한다. `harness-setup`과 Git 계정 설정·확인을 마친 뒤, `design-doc`, `context-doc`, 앱 핵심 문서를 만드는 `harness-bootstrap`보다 먼저 수행한다.
+5. 생성·갱신 범위가 `.docs/**`, 루트 `AGENTS.md`, `CLAUDE.md`뿐인지 확인한다.
+6. `harness-setup`이 플러그인의 사용자 스킬 복사본을 `.agents/skills/`, `.claude/skills/`, `skills/`에 만들지 않았는지 확인한다.
 
 `harness-setup`은 플러그인을 설치하는 스킬이 아니다. 설치된 플러그인을 사용해 프로젝트 문서 골격과 루트 컨텍스트를 만드는 스킬이다.
+
+`project-write-access`는 선택 기능이며 권한 관리만 담당한다. 정책을 사용하지 않아도 기존 하네스 흐름은 그대로 작동한다. 정책이 활성화되면 `pm-pl`은 모든 앱, `app-doc-lead`는 배정된 앱에서 `design-doc`과 `context-doc`을 사용할 수 있다. `admin`이 앱 핵심 문서를 직접 수정할 때는 대상 파일과 변경 내용을 확인한 뒤 한 번 더 승인해야 한다. 일반 기여자는 구현 계획·프로토타입·`_inbox` 같은 `team` 범위를 사용한다.
 
 ### 1단계 — 설계·컨텍스트·프로토타입
 
@@ -155,6 +163,8 @@ flowchart TD
 - 모션이 필요하면 `motion-design`으로 목적·타이밍·reduced-motion 대안을 정한다. 검증 시안은 `create-prototype`으로 만든다.
 
 `design-doc`은 초안을 대화창에 보여 주고 사용자가 저장을 승인하면 파일로 저장한다. 후속 스킬에 파일 경로를 넘길 계획이라면 저장까지 요청한다.
+
+권한 정책이 활성화된 프로젝트에서는 서명 정책과 쓰기 가드가 현재 Git 계정, 역할, 대상 앱을 먼저 판정한다. `design-doc`과 `context-doc`은 역할을 부여하거나 권한 정책을 바꾸지 않는다.
 
 ### 2단계 — 구현 계획과 재사용 점검
 
@@ -215,11 +225,12 @@ Markdown 산출물이 있으면 원 producer가 구조를 검증한 뒤 `humaniz
 | 항목 | 최초 | 다시 실행할 때 |
 |------|------|----------------|
 | 플러그인 설치 | 사용자 프로필에 설치 | 새 릴리스 적용 시 plugin update 후 새 session |
-| `git-scoped-account` | 여러 repo의 작성자 계정 설정이 필요할 때 | 계정·remote 범위가 바뀔 때 |
-| `harness-setup` | 프로젝트 문서 골격 생성 | 앱 구성, 루트 컨텍스트, `.docs` 골격 복구가 필요할 때 |
-| `design-doc` | 아이디어·요구사항을 설계로 고정 | 핵심 요구사항이나 아키텍처 결정이 바뀔 때 |
+| `harness-setup` | 모든 참여자가 자기 작업 환경에서 1회 | 플러그인 공지가 갱신을 요구하거나 앱 경계 변경·골격 복구가 필요할 때 |
+| Git 작성자 계정 | 복수 repo는 모든 참여자가 `git-scoped-account` 1회, 단일 repo는 유효 계정 확인 1회 | 계정이 바뀌거나 복수 repo의 바로 아래 앱 repo가 추가될 때 |
+| `project-write-access` | 권한 분리가 필요할 때 검증된 관리자가 설정 | 관리자·계정·역할·앱 배정·경로·서버 규칙이 바뀔 때 |
+| `design-doc` | 권한 정책이 있으면 허용된 역할이 앱별 설계 정본 작성 | 핵심 요구사항이나 아키텍처 결정이 바뀔 때 |
 | `harness-bootstrap` | 문서 없는 기존 코드에 최초 도입 | 전체 재스캔보다 `design-doc`·`context-doc` 갱신을 우선 |
-| `context-doc` | 설계를 에이전트 규칙으로 변환 | 설계·프레임워크·실행 방법·금지 규칙이 바뀔 때 |
+| `context-doc` | 권한 정책이 있으면 `design-doc`과 같은 역할·앱 범위에서 실행 | 설계·프레임워크·실행 방법·금지 규칙이 바뀔 때 |
 | `impl-*` | 기능 구현 전에 작성 | 범위·Phase·의존성·완료 기준이 바뀔 때 |
 | `doc-audit` | 필요 시 | 코드와 문서가 어긋났거나 릴리스 전일 때 |
 
@@ -312,7 +323,7 @@ flowchart TD
 
 모션은 조건부다. 정적 화면으로 목적이 충분하거나 요구사항에 모션이 없으면 `motion-design`을 건너뛴다. 공공·의료·금융·엔터프라이즈 화면은 낮은 모션 밀도가 기본값이다.
 
-### 두 신규 스킬 호출 예시
+### 디자인·모션 스킬 호출 예시
 
 ```text
 $ui-ux-pro-max
@@ -333,13 +344,13 @@ reduced-motion 대체안과 성능 검증 기준도 포함해줘.
 | `ui-ux-pro-max` | `.docs/design-system/{project-slug}/MASTER.md`, `.docs/design-system/{project-slug}/pages/{page-slug}.md` | `.docs/{앱}/design-system/{project-slug}/MASTER.md`, `.docs/{앱}/design-system/{project-slug}/pages/{page-slug}.md` |
 | `motion-design` | `.docs/design-system/{project-slug}/motion/{screen-or-component}.md` | `.docs/{앱}/design-system/{project-slug}/motion/{screen-or-component}.md` |
 
-## 7. 기존 프로젝트의 local skill copy 전환
+## 7. 프로젝트 내부 사용자 스킬 복사본 처리
 
-기존 `.agents/skills`, `.claude/skills` 또는 `skills/*/SKILL.md` 복사본은 바로 삭제하지 않는다.
+프로젝트에서는 사용자 스킬을 설치된 플러그인에서만 사용한다. `.agents/skills`, `.claude/skills` 또는 `skills/*/SKILL.md`에 사용자 스킬 복사본이 발견돼도 바로 삭제하지 않는다.
 
 1. 사용자 플러그인을 설치한다.
-2. 기존 local copy를 읽기 전용으로 inventory한다.
-3. 구버전 복사본, 사용자 수정 복사본, 프로젝트 custom skill을 분류한다.
+2. 프로젝트 내부 사용자 스킬 복사본을 읽기 전용으로 inventory한다.
+3. 플러그인 스킬 복사본, 사용자 수정 복사본, 프로젝트 custom skill을 분류한다.
 4. 백업 위치와 복원 방법을 확인한다.
 5. 사용자가 승인한 항목만 backup/remove 한다.
 6. 새 session에서 플러그인 스킬만 한 번 노출되는지 확인한다.
@@ -392,7 +403,7 @@ python maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projecti
 
 증거가 부족하면 `unknown` 차단 상태로 두며, 해소 전에는 반입하거나 릴리스하지 않는다.
 
-`commit`은 특정 외부 commit skill을 반입하지 않는다. OpenAI Codex·Anthropic Claude Code의 공식 행동 출처와 Conventional Commits를 behavior-only source로 두고 [commit-workflow 행동 계약](./.user-docs/Skill_Upstream_Governance.md#behavior-contracts)을 거쳐 소비한다. 과거 `pre-commit`의 Superpowers reference는 승계하지 않는다.
+`commit`은 특정 외부 commit skill을 반입하지 않는다. OpenAI Codex·Anthropic Claude Code의 공식 행동 출처와 Conventional Commits를 behavior-only source로 두고 [commit-workflow 행동 계약](./.user-docs/Skill_Upstream_Governance.md#behavior-contracts)을 거쳐 소비한다.
 
 관리자는 하나의 `skill-portfolio-maintainer` workflow에서 후보 탐색, 최신 upstream 비교, 영향 분석, 승인된 promotion handoff를 수행한다. mode마다 검토·반영·라이선스·동등성 검증 기준이 다르다. 현재 활성 `vendored` 관계는 없으며, 외부 runtime을 그대로 제공한다고 주장하지 않는다. 보호 자산의 삭제·이동·교체는 자동화하지 않는다.
 

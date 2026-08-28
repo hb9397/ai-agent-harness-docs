@@ -1,6 +1,6 @@
 # Plugin Installation Guide
 
-> 기준일: 2026-08-11
+> 기준일: 2026-08-28
 > 대상 플러그인: `harness-kit` `0.4.3`
 > 현재 상태: [`v0.4.3` stable 릴리스](https://github.com/hb9397/harness-kit/releases/tag/v0.4.3)로 게시됐으며, 공식 manifest·marketplace와 격리 CLI 설치 smoke를 새 artifact 기준으로 검증했다.
 > 다만 Codex와 Claude의 CLI·앱 네 인터페이스에서 실제 모델 호출·산출물·새 세션 증적은 아직 확보하지 못한 검증 한계로 남아 있다.
@@ -16,6 +16,8 @@
 - 설치 후 새 task/session 또는 reload가 필요하다.
 - 프로젝트에서는 `harness-setup`을 호출해 `.docs/**`, 루트 `AGENTS.md`, `CLAUDE.md`만 만든다.
 - `harness-setup`은 사용자 프로젝트에 `.agents/skills/`, `.claude/skills/`, `skills/`를 생성하거나 스킬을 복사·동기화하지 않는다.
+- 모든 참여자는 자기 작업 환경에서 `harness-setup`을 최초 1회 실행한다. 복수 repo에서는 `git-scoped-account`도 로컬 컨테이너별로 최초 1회 실행한다.
+- 문서 쓰기 권한을 나눌 때만 관리자가 `project-write-access`를 명시 호출한다. 권한 기능이 없어도 나머지 하네스 흐름은 그대로 사용할 수 있다.
 - `.md` 산출물 후처리는 별도 `im-not-ai` 설치 없이 내장 `humanize-korean`을 쓴다.
 
 ---
@@ -35,9 +37,11 @@
 | Claude agents | 0 |
 | GitHub Release | [`v0.4.3`](https://github.com/hb9397/harness-kit/releases/tag/v0.4.3) |
 | Publication record | `maintainer/plugin/publish.json` |
-| Release gate | `not-release-ready` — stable published by administrator exception; manual evidence pending |
+| Release gate | `not-release-ready` — Codex·Claude CLI·앱의 실제 모델 호출 수동 증적이 모두 충족되지 않음 |
 
 릴리스 게이트 증적은 [maintainer/plugin/release-checklist.md](../maintainer/plugin/release-checklist.md)와 [maintainer/plugin/install-verification.json](../maintainer/plugin/install-verification.json)에 있다.
+
+관리 저장소의 사용자 스킬 정본은 20종이지만 stable `0.4.3` runtime은 19종이다. 정본의 `project-write-access`는 현재 stable runtime에 포함되지 않으며, 이를 포함한 플러그인 버전이 배포된 뒤 실제 프로젝트에서 호출할 수 있다.
 
 ---
 
@@ -64,7 +68,6 @@ codex plugin marketplace list
 
 ```text
 codex plugin marketplace upgrade hb9397
-codex plugin remove ai-agent-harness@ai-agent-harness   # 이전 설치가 남아 있을 때만
 codex plugin add harness-kit@hb9397
 ```
 
@@ -84,7 +87,7 @@ Codex 앱에서는 왼쪽 메뉴의 **플러그인**과 `/plugins` UI에서 설�
 
 ### 3-4. Codex IDE extension
 
-Phase 8 기준 Codex IDE extension은 별도 공식 플러그인 설치 인터페이스로 보지 않는다. 프로젝트에서 확장이 Codex CLI/앱 플러그인 상태를 공유하지 않으면 `AGENTS.md`와 `.docs` 산출물만 일반 프로젝트 문서로 참조한다.
+Codex IDE extension은 이 문서의 별도 플러그인 설치 인터페이스로 다루지 않는다. 프로젝트에서 확장이 Codex CLI/앱 플러그인 상태를 공유하지 않으면 `AGENTS.md`와 `.docs` 산출물만 일반 프로젝트 문서로 참조한다.
 
 ---
 
@@ -191,8 +194,8 @@ Private GitHub source를 사용할 때 확인할 것:
 
 ```text
 codex plugin list 또는 claude plugin list
-플랫폼별 plugin remove/uninstall ai-agent-harness@ai-agent-harness  # 구 버전 migration 시 1회
 플랫폼별 plugin marketplace upgrade/update hb9397
+플랫폼별 plugin remove/uninstall harness-kit@hb9397
 플랫폼별 plugin add/install harness-kit@hb9397
 새 task/session
 version marker 확인
@@ -206,13 +209,22 @@ version marker 확인
 
 ```text
 harness-setup 명시 호출
+→ 모든 참여자가 자기 작업 환경에서 최초 1회 수행
 → 단일/복수 앱 확인
 → .docs 생성 또는 갱신
 → AGENTS.md 생성 또는 갱신
 → CLAUDE.md bridge 생성 또는 갱신
 → .agents/skills·.claude/skills·skills 미생성 확인
-→ design-doc/context-doc/harness-bootstrap로 프로젝트 문서화
+→ 복수 repo: 모든 참여자가 자기 로컬 컨테이너에서 git-scoped-account 최초 1회
+  단일 repo: 현재 유효한 Git 작성자 계정의 값과 출처 최초 1회 확인
+→ 문서 권한을 분리하면 관리자: project-write-access 최초 설정
+→ 권한 정책이 있으면 허용된 역할·앱 범위에서 design-doc/context-doc 또는 harness-bootstrap
+→ 권한 정책이 없으면 같은 문서화 흐름을 그대로 수행
 ```
+
+`harness-setup`은 플러그인 공지가 프로젝트 하네스 갱신을 요구하거나 앱 경계가 바뀌거나 골격 복구가 필요할 때만 update mode로 다시 실행한다. `git-scoped-account`는 계정이 바뀌거나 복수 repo 컨테이너 바로 아래에 앱 repo가 추가될 때 다시 실행한다.
+
+`project-write-access`가 활성화되면 `pm-pl`은 모든 앱, `app-doc-lead`는 배정된 앱에서 `design-doc`과 `context-doc`을 사용한다. `admin`이 앱 핵심 문서를 직접 수정할 때는 대상 파일과 변경 내용을 확인한 뒤 한 번 더 승인한다. 일반 기여자는 구현 계획·프로토타입·`_inbox` 같은 `team` 범위를 사용한다.
 
 복수 앱에서는 `.docs/root-context/AGENTS.md`가 루트 컨텍스트의 관리 원본이다. 루트 `CLAUDE.md`는 `AGENTS.md`를 읽도록 하는 bridge로 둔다.
 
@@ -222,6 +234,8 @@ harness-setup 명시 호출
 |---|---|
 | Codex CLI·앱 | `$harness-setup` |
 | Claude Code CLI·Claude 앱 | `/harness-kit:harness-setup` |
+
+권한 기능을 포함한 플러그인 버전의 명시 호출은 Codex `$project-write-access`, Claude Code·Claude 앱 `/harness-kit:project-write-access`다. 최초 설정과 이후 정책 변경은 검증된 관리자만 수행한다.
 
 ---
 
@@ -264,14 +278,14 @@ harness-setup 명시 호출
 
 ---
 
-## 11. 기존 local skill copy 마이그레이션
+## 11. 프로젝트 내부 사용자 스킬 복사본 처리
 
-기존 프로젝트에 `.agents/skills` 또는 `.claude/skills`가 남아 있을 수 있다. 이 경우 기본 동작은 삭제가 아니라 읽기 전용 inventory다.
+프로젝트에서는 사용자 스킬을 설치된 플러그인에서만 사용한다. `.agents/skills` 또는 `.claude/skills`에서 사용자 스킬 복사본을 발견하면 기본 동작은 삭제가 아니라 읽기 전용 inventory다.
 
 분류:
 
-- known old harness copy
-- user-modified old copy
+- 플러그인 사용자 스킬 복사본
+- 사용자가 수정한 복사본
 - unknown custom skill
 
 삭제 또는 이동은 다음 조건을 만족해야 한다.

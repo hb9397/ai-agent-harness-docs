@@ -26,7 +26,7 @@ AI를 팀에서 쓰기 시작하면 처음에는 생산성이 크게 올라가�
 > 설계, 컨텍스트, 구현 계획, 검증, 커밋의 기준이 크게 흔들리지 않는
 > 공통 작업 체계를 만드는 것.
 
-이전에는 그 체계를 저장소 clone과 스킬 복사로 배포했다. 현재는 실제 프로젝트가 `harness-kit` 플러그인을 설치해서 같은 흐름을 사용한다. 사용자는 프로젝트 결과물에 집중하고, 관리자는 스킬과 배포 품질을 한곳에서 관리한다.
+실제 프로젝트는 `harness-kit` 플러그인을 설치해서 같은 흐름을 사용한다. 프로젝트 저장소는 사용자 스킬 복사본을 배포하지 않는다. 사용자는 프로젝트 결과물에 집중하고, 관리자는 스킬과 배포 품질을 한곳에서 관리한다.
 
 ---
 
@@ -137,7 +137,7 @@ AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 
 
 ### 3.7 스킬 배포는 프로젝트 책임이 아니다
 
-`harness-setup`은 플러그인의 사용자 스킬 복사본을 `.agents/skills`, `.claude/skills`, `skills/`에 만들거나 맞추지 않는다. 사용자 스킬은 설치된 플러그인에서 제공한다. 기존 프로젝트 고유 custom skill과 legacy copy는 읽기 전용으로 분류·보고하고 승인 없이 변경하지 않는다.
+`harness-setup`은 플러그인의 사용자 스킬 복사본을 `.agents/skills`, `.claude/skills`, `skills/`에 만들거나 맞추지 않는다. 사용자 스킬은 설치된 플러그인에서 제공한다. 프로젝트에서 발견한 고유 custom skill과 사용자 스킬 복사본은 읽기 전용으로 분류·보고하고 승인 없이 변경하지 않는다.
 
 ## 4. 스킬 역할 소개
 
@@ -145,11 +145,14 @@ AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 
 
 | 스킬 | 역할 | 언제 쓰는가 |
 |------|------|-------------|
-| `harness-setup` | `.docs` 골격, `AGENTS.md` 정본, `CLAUDE.md` bridge와 `.docs/harness/` portable routing bundle 생성·복구; 별도 승인 시 Claude·Codex write guard 설치 | 새 프로젝트 도입 또는 문서 골격 갱신 |
+| `harness-setup` | `.docs` 골격, `AGENTS.md` 정본, `CLAUDE.md` bridge와 `.docs/harness/` portable routing bundle 생성·복구; 별도 승인 시 Claude·Codex write guard 설치 | 모든 참여자가 자기 작업 환경에서 최초 1회, 공지가 요구한 갱신·앱 경계 변경·골격 복구 때 |
 | `harness-bootstrap` | 기존 코드를 스캔해 설계·컨텍스트 역추출 | 하네스 문서가 없는 기존 코드 |
-| `git-scoped-account` | 하위 앱 repo의 Git 작성자 계정을 범위 지정 | 사용자가 계정 적용·확인을 명시 요청할 때 |
+| `git-scoped-account` | 하위 앱 repo의 Git 작성자 계정을 로컬 컨테이너 범위로 지정 | 복수 repo 프로젝트에서 모든 참여자가 최초 1회, 계정·앱 repo 변경 때 |
+| `project-write-access` | `.docs`와 Git에 포함된 루트 컨텍스트의 쓰기 역할을 CODEOWNERS·Git 훅·AI 쓰기 가드에 연결 | 문서 권한을 분리할 때 관리자가 최초 설정·검증·변경 |
 
-`git-scoped-account`는 필수 시작 단계가 아니다. 여러 repo의 계정을 맞춰야 할 때만 명시 호출한다.
+복수 repo 프로젝트에서는 모든 참여자가 `git-scoped-account`를 자기 로컬 컨테이너에서 최초 1회 명시 호출한다. 단일 repo는 적용 대상이 없으므로 현재 repo에 유효한 `user.name`과 `user.email`의 값과 출처를 최초 1회 확인한다.
+
+`project-write-access`는 선택 기능이며 일반 문서 작성 흐름과 자동으로 연결되지 않는다. 권한을 사용하는 프로젝트에서는 관리자가 `harness-setup`과 Git 계정 설정·확인 뒤, `design-doc`, `context-doc`, 앱 핵심 문서를 만드는 `harness-bootstrap`보다 먼저 설정한다. 현재 `project-write-access`는 관리 저장소 정본에만 있고 stable `0.4.3` runtime에는 없으므로, 이를 포함한 플러그인 버전이 설치된 환경에서만 호출할 수 있다.
 
 `harness-setup`이 만든 portable bundle은 플러그인 제거 뒤에도 남는다. host hook의 `pending-trust` 상태는 사용자가 신뢰 검토를 끝낸 증적을 명시해 `active`로 기록하기 전까지 바뀌지 않으며, 외부 fixed-format 산출물은 `_inbox`에서만 관리한다.
 
@@ -157,8 +160,8 @@ AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 
 
 | 스킬 | 역할 | 언제 쓰는가 |
 |------|------|-------------|
-| `design-doc` | 아이디어·요구사항·RFP를 구조화한 설계로 변환 | 신규 프로젝트·기능 설계 |
-| `context-doc` | 설계를 루트 컨텍스트와 instruction으로 변환 | 에이전트가 계속 읽을 기준이 필요할 때 |
+| `design-doc` | 아이디어·요구사항·RFP를 구조화한 앱별 설계로 변환 | 신규 프로젝트·기능 설계. 권한 정책이 있으면 허용된 역할·앱 범위에서 실행 |
+| `context-doc` | 설계를 앱 컨텍스트와 instruction, 루트 반영 원본으로 변환 | 에이전트가 계속 읽을 기준이 필요할 때. 권한 정책이 있으면 `design-doc`과 같은 범위에서 실행 |
 | `ui-ux-pro-max` | 디자인 방향·색·타이포그래피·레이아웃·접근성 결정 | 화면의 디자인 기준을 정하거나 기존 UI를 점검할 때 |
 | `motion-design` | 모션 목적·타이밍·이징·reduced-motion 대안 결정 | 전환·상태 피드백·등장 순서에 움직임이 필요할 때 |
 | `design-prototype-docs` | 화면 요구사항·배치·이동 흐름 문서화 | 화면을 먼저 합의할 때 |
@@ -188,13 +191,22 @@ AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 
 | `commit` | 범위·diff·검증을 확인하고 의도한 파일만 stage해 정상 hook과 Conventional Commit을 실행한 뒤 사후 증거 확인 | 사용자가 커밋을 명시 요청할 때 |
 | `humanize-korean` | 한국어 Markdown 개선안과 diff | producer 후처리 또는 명시적 문체 개선 |
 
-`rfp-ingest`와 `agent-sync`는 제거됐다. RFP는 `design-doc`, `design-prototype-docs`, 다중 화면·FE/BE 페어 계획용 `impl-fe-be-doc`에 직접 입력하고, 사용자 스킬 배포·업데이트는 플러그인이 담당한다.
+RFP는 `design-doc`, `design-prototype-docs`, 다중 화면·FE/BE 페어 계획용 `impl-fe-be-doc`에 직접 입력한다. 사용자 스킬 배포·업데이트는 플러그인이 담당한다.
 
 ## 5. 언제 어떤 스킬을 쓰는가
 
 ```mermaid
 flowchart LR
-    A["지금 어떤 상황인가?"] --> B["아이디어·요구사항·RFP"]
+    S["모든 참여자<br/>harness-setup 최초 1회"] --> T{"Git 구조"}
+    T -->|"복수 repo"| GA["모든 참여자<br/>git-scoped-account 최초 1회"]
+    T -->|"단일 repo"| GV["유효 Git 작성자<br/>계정 확인"]
+    GA --> P{"문서 권한을 분리하는가?"}
+    GV --> P
+    P -->|"예"| PA["관리자<br/>project-write-access"]
+    P -->|"아니오"| A["지금 어떤 상황인가?"]
+    PA --> A
+
+    A --> B["아이디어·요구사항·RFP"]
     A --> C["문서 없는 기존 코드"]
     A --> D["화면을 먼저 확인"]
     A --> E["구현 계획 필요"]
@@ -229,7 +241,9 @@ flowchart LR
 
 빠른 선택:
 
-- 프로젝트 문서 골격이 없다 → `harness-setup`
+- 모든 참여자의 작업 환경에서 프로젝트 문서 골격을 처음 확인한다 → `harness-setup` 1회
+- 복수 repo 프로젝트에서 Git 작성자 계정을 맞춘다 → 모든 참여자가 `git-scoped-account` 1회
+- 문서 쓰기 권한을 나눈다 → 관리자가 `project-write-access` 설정·변경
 - 문서 없는 기존 코드다 → `harness-bootstrap`
 - 요구사항이나 RFP를 설계로 정리한다 → `design-doc`
 - 설계를 에이전트 규칙으로 고정한다 → `context-doc`
@@ -247,9 +261,12 @@ flowchart LR
 ```text
 플러그인 설치
 → 새 task/session
-→ harness-setup
-→ design-doc
-→ context-doc
+→ 모든 참여자: 자기 작업 환경에서 harness-setup 최초 1회
+→ 복수 repo: 모든 참여자가 자기 로컬 컨테이너에서 git-scoped-account 최초 1회
+  단일 repo: 현재 적용되는 Git 작성자 계정 최초 1회 확인
+→ 문서 권한을 분리하면 관리자: project-write-access 최초 설정
+→ 권한 정책이 있으면 허용된 역할·앱 범위에서 design-doc
+→ 같은 역할·앱 범위에서 context-doc
 → 화면 작업일 때 선택: ui-ux-pro-max → design-prototype-docs → 필요 시 motion-design → create-prototype
 → impl-doc 또는 impl-fe-be-doc
 → impl-reuse-scan
@@ -269,8 +286,12 @@ flowchart LR
 ```text
 플러그인 설치
 → 새 task/session
+→ 모든 참여자: 자기 작업 환경에서 harness-setup 최초 1회
+→ 복수 repo: git-scoped-account 최초 1회
+  단일 repo: 유효 Git 작성자 계정 확인
+→ 문서 권한을 분리하면 관리자: project-write-access 최초 설정
 → harness-bootstrap
-   ├─ harness-setup 골격
+   ├─ 기존 harness-setup 골격 확인
    ├─ 코드 스캔
    ├─ design-doc 형식 설계
    └─ context-doc 형식 컨텍스트
@@ -278,7 +299,7 @@ flowchart LR
 → 이후 흐름은 동일
 ```
 
-`harness-bootstrap`은 최초 도입용이다. 이후 설계나 컨텍스트가 바뀌었을 때마다 전체 코드를 다시 스캔하기보다 `design-doc`과 `context-doc`을 갱신한다.
+`harness-bootstrap`은 문서 없는 기존 코드를 설계·컨텍스트로 역추출하는 진입점이다. 권한 정책이 활성화된 프로젝트에서는 내부의 설계·컨텍스트 쓰기도 현재 역할과 앱 범위를 따른다. 이후 설계나 컨텍스트가 바뀌면 전체 코드를 다시 스캔하기보다 `design-doc`과 `context-doc`을 갱신한다.
 
 ### Markdown 문서 개선이 끼어드는 위치
 
@@ -365,7 +386,7 @@ $design-doc
 모호한 점은 한 번에 최대 5개만 질문해줘.
 ```
 
-RFP를 별도 `rfp-ingest`로 변환하지 않는다.
+RFP는 이 producer에 직접 입력한다.
 
 ### 예시 3. 기존 코드에 하네스 도입
 
@@ -552,19 +573,21 @@ $doc-audit
 
 ## 10. 추천하는 최초 도입 순서
 
-현재 source inventory 19개를 처음부터 모두 쓰려고 하지 않아도 된다. 이전 immutable `0.2.2` artifact는 20개 runtime을 담은 historical 기록이며, 현재 `0.4.3` source와 generated tree는 서로 일치한다.
+관리 저장소의 사용자 스킬 정본은 20종이고, stable `0.4.3` runtime은 19종이다. 정본에만 있는 `project-write-access`는 이를 포함한 플러그인 버전이 배포된 뒤 실제 프로젝트에서 사용할 수 있다. 프로젝트 수행자가 모든 스킬을 한꺼번에 사용할 필요는 없다.
 
 ### 0단계 — 설치와 문서 골격
 
 - 플러그인 설치
 - 새 task/session
-- `harness-setup`
+- 모든 참여자가 자기 작업 환경에서 `harness-setup` 최초 1회
+- 복수 repo는 모든 참여자가 `git-scoped-account` 최초 1회, 단일 repo는 유효 Git 작성자 계정 확인
+- 문서 권한을 나누면 관리자가 `project-write-access` 설정
 - local user skill directory 미생성 확인
 
 ### 1단계 — 최소 하네스
 
-- 신규·요구사항 기반: `design-doc` → `context-doc`
-- 하네스 문서 없는 기존 코드: `harness-bootstrap`
+- 신규·요구사항 기반: 권한 정책이 있으면 허용된 역할·앱 범위에서 `design-doc` → `context-doc`
+- 하네스 문서 없는 기존 코드: 같은 권한 범위에서 `harness-bootstrap`
 - `impl-doc` 또는 `impl-fe-be-doc`
 - `impl-verify`
 
