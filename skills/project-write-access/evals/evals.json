@@ -3,8 +3,8 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "복수 앱 단일 저장소에서 관리자 1명, PL 1명, 개발자 2명의 문서 쓰기 권한을 처음 설정해줘.",
-      "expected_output": "읽기 전용 Plan과 별도 승인 뒤 Apply를 나누고 세 provider CODEOWNERS, 서명 정책, 로컬·AI 훅 상태를 만든다.",
+      "prompt": "복수 앱 단일 저장소에서 관리자 1명, 전역 PL 1명, 모바일 앱 문서 책임자 1명의 문서 쓰기 권한을 처음 설정해줘.",
+      "expected_output": "개발자는 등록하지 않는다. 읽기 전용 Plan과 별도 승인 뒤 Apply를 나누고 앱별 역할 배정, 세 provider CODEOWNERS, 서명 정책, 로컬·AI 훅 상태를 만든다.",
       "files": [],
       "assertions": []
     },
@@ -17,8 +17,15 @@
     },
     {
       "id": 3,
-      "prompt": "내 개발자 계정으로 다른 사용자의 impl-doc을 커밋하고 push해도 되는지 검사해줘.",
-      "expected_output": "개인 경로 owner 불일치를 거부하고 로컬 훅 우회 가능성과 원격 서버 규칙 필요성을 함께 보고한다.",
+      "prompt": "등록하지 않은 개발자 계정으로 impl-doc을 커밋하고 push해도 되는지 검사해줘.",
+      "expected_output": "team 범위의 impl-doc 쓰기는 허용하지만 관리자 문서와 앱 핵심 문서는 거부하고 로컬 훅 우회 가능성과 원격 서버 규칙 필요성을 함께 보고한다.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 4,
+      "prompt": "관리자가 모바일 앱 DESIGN.md를 대신 고쳐줘.",
+      "expected_output": "일반 내용 승인과 별도로 대상 앱, 정확한 파일, 원래 소유 범위, 수정 요약과 이유를 보여주고 이 변경에 한해 한 번 더 확인받는다.",
       "files": [],
       "assertions": []
     }

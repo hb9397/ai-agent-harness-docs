@@ -21,8 +21,9 @@ from typing import Any
 SKILL_ROOT = Path(__file__).resolve().parents[1]
 RUNTIME_ROOT = SKILL_ROOT / "assets" / "runtime"
 NAMESPACE = "harness-kit-project-write-access"
-SCHEMA_VERSION = "1.0.0"
-ROLES = {"developer": 1, "pm-pl": 2, "admin": 3}
+SCHEMA_VERSION = "1.1.0"
+ROLES = {"admin", "pm-pl", "app-doc-lead"}
+WRITE_SCOPES = {"admin", "app-doc", "team"}
 PROVIDERS = ("github", "gitlab", "gitea")
 CODEOWNERS_MARKERS = (
     "# harness-kit:write-access:start",
@@ -97,6 +98,7 @@ def validate_config(raw: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(principals, list) or not principals:
         raise AccessError("principals must contain at least one entry")
     ids: set[str] = set()
+    provider_accounts: set[tuple[str, str]] = set()
     admin_count = 0
     for principal in principals:
         principal_id = str(principal.get("id", ""))
@@ -107,6 +109,20 @@ def validate_config(raw: dict[str, Any]) -> dict[str, Any]:
             raise AccessError(f"unsupported role for {principal_id}: {role}")
         ids.add(principal_id)
         admin_count += int(role == "admin")
+        scoped_applications = principal.get("applications")
+        if role == "app-doc-lead":
+            if (
+                not isinstance(scoped_applications, list)
+                or not scoped_applications
+                or any(not isinstance(app, str) for app in scoped_applications)
+                or len(set(scoped_applications)) != len(scoped_applications)
+                or any(app not in applications for app in scoped_applications)
+            ):
+                raise AccessError(
+                    f"app-doc-lead {principal_id} requires unique applications from the configured application list"
+                )
+        elif scoped_applications is not None:
+            raise AccessError(f"applications may be assigned only to app-doc-lead principals: {principal_id}")
         accounts = principal.get("accounts", {})
         if not isinstance(accounts, dict):
             raise AccessError(f"accounts for {principal_id} must be an object")
@@ -115,6 +131,10 @@ def validate_config(raw: dict[str, Any]) -> dict[str, Any]:
                 raise AccessError(f"unsupported provider account: {provider}")
             if not isinstance(account, str) or not re.fullmatch(r"@[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?", account):
                 raise AccessError(f"invalid {provider} account for {principal_id}")
+            account_key = (provider, account.casefold())
+            if account_key in provider_accounts:
+                raise AccessError(f"{provider} account is assigned to more than one principal: {account}")
+            provider_accounts.add(account_key)
     if admin_count < 1:
         raise AccessError("at least one admin principal is required")
 
@@ -124,16 +144,28 @@ def validate_config(raw: dict[str, Any]) -> dict[str, Any]:
             raise AccessError("path_rules must be a non-empty array when provided")
         for rule in configured_rules:
             pattern = rule.get("pattern")
-            role = rule.get("minimum_role")
-            owner = rule.get("owner")
-            if not isinstance(pattern, str) or not (pattern.startswith(".docs/") or pattern in {"AGENTS.md", "CLAUDE.md"}):
-                raise AccessError("path_rules may protect only .docs/**, AGENTS.md, or CLAUDE.md")
+            write_scope = rule.get("write_scope")
+            application = rule.get("application")
+            allowed_control_paths = {
+                "AGENTS.md",
+                "CLAUDE.md",
+                ".github/CODEOWNERS",
+                ".gitlab/CODEOWNERS",
+                ".gitea/CODEOWNERS",
+                ".claude/settings.json",
+                ".codex/hooks.json",
+            }
+            if not isinstance(pattern, str) or not (pattern.startswith(".docs/") or pattern in allowed_control_paths):
+                raise AccessError("path_rules may protect only document-harness and write-access control paths")
             if "\\" in pattern or any(part == ".." for part in pattern.split("/")):
                 raise AccessError("path_rules may not contain backslashes or parent traversal")
-            if role not in ROLES or not isinstance(rule.get("priority"), int):
-                raise AccessError("each path rule requires a valid minimum_role and integer priority")
-            if owner is not None and owner not in ids:
-                raise AccessError(f"path rule owner is not a configured principal: {owner}")
+            if write_scope not in WRITE_SCOPES or not isinstance(rule.get("priority"), int):
+                raise AccessError("each path rule requires a valid write_scope and integer priority")
+            if write_scope == "app-doc":
+                if application not in applications:
+                    raise AccessError("app-doc path rules require a configured application")
+            elif application is not None:
+                raise AccessError("application may be set only on app-doc path rules")
 
     repositories = raw.get("repositories", [])
     if not isinstance(repositories, list):
@@ -208,40 +240,48 @@ def path_rules(config: dict[str, Any], layout: dict[str, Any]) -> list[dict[str,
     docs = ".docs"
     rules: list[dict[str, Any]] = []
 
-    def add(pattern: str, role: str, priority: int, owner: str | None = None) -> None:
-        item: dict[str, Any] = {"pattern": pattern, "minimum_role": role, "priority": priority}
-        if owner is not None:
-            item["owner"] = owner
+    def add(pattern: str, write_scope: str, priority: int, application: str | None = None) -> None:
+        item: dict[str, Any] = {"pattern": pattern, "write_scope": write_scope, "priority": priority}
+        if application is not None:
+            item["application"] = application
         rules.append(item)
 
+    def add_control_plane() -> None:
+        add("AGENTS.md", "admin", 120)
+        add("CLAUDE.md", "admin", 120)
+        add(".claude/settings.json", "admin", 120)
+        add(".codex/hooks.json", "admin", 120)
+        codeowners_prefix = "" if layout["git_root_relative"] == "." else f"{docs}/"
+        for provider_dir in (".github", ".gitlab", ".gitea"):
+            add(f"{codeowners_prefix}{provider_dir}/CODEOWNERS", "admin", 120)
+
+    add_control_plane()
+    add(f"{docs}/**", "admin", 0)
+
     if config.get("path_rules"):
-        add("AGENTS.md", "admin", 0)
-        add("CLAUDE.md", "admin", 0)
-        add(f"{docs}/**", "admin", 0)
         configured_patterns = {item["pattern"] for item in config["path_rules"]}
         rules = [item for item in rules if item["pattern"] not in configured_patterns]
         rules.extend(copy.deepcopy(config["path_rules"]))
         return rules
 
-    add("AGENTS.md", "admin", 120)
-    add("CLAUDE.md", "admin", 120)
-    add(f"{docs}/**", "admin", 0)
     add(f"{docs}/README.md", "admin", 110)
     add(f"{docs}/.gitignore", "admin", 110)
     add(f"{docs}/root-context/**", "admin", 110)
     add(f"{docs}/harness/**", "admin", 110)
     add(f"{docs}/.harness/**", "admin", 110)
-    add(f"{docs}/*-context.md", "pm-pl", 90)
+    add(f"{docs}/_inbox/**", "team", 100)
+    add(f"{docs}/prototype/**", "team", 100)
+    if len(config["applications"]) == 1:
+        application = config["applications"][0]
+        add(f"{docs}/context-base/**", "app-doc", 90, application)
+        add(f"{docs}/instruction/**", "app-doc", 90, application)
+        add(f"{docs}/impl-doc/**", "team", 100)
     for app in config["applications"]:
-        add(f"{docs}/{app}/context-base/**", "pm-pl", 90)
-        add(f"{docs}/{app}/instruction/**", "pm-pl", 90)
-        for principal in config["principals"]:
-            principal_id = principal["id"]
-            add(f"{docs}/{app}/impl-doc/{principal_id}/**", "developer", 100, principal_id)
-    for principal in config["principals"]:
-        principal_id = principal["id"]
-        add(f"{docs}/prototype/{principal_id}/**", "developer", 100, principal_id)
-        add(f"{docs}/_inbox/{principal_id}/**", "developer", 100, principal_id)
+        add(f"{docs}/{app}-context.md", "app-doc", 90, app)
+        add(f"{docs}/{app}/context-base/**", "app-doc", 90, app)
+        add(f"{docs}/{app}/instruction/**", "app-doc", 90, app)
+        add(f"{docs}/{app}/impl-doc/**", "team", 100)
+        add(f"{docs}/{app}/prototype/**", "team", 100)
     return rules
 
 
@@ -253,7 +293,12 @@ def build_policy_core(config: dict[str, Any], layout: dict[str, Any], remote_ver
         "git_root_relative": layout["git_root_relative"],
         "root_context_tracked": layout["root_context_tracked"],
         "remote_verification": remote_verification,
-        "role_inheritance": {"admin": ["pm-pl", "developer"], "pm-pl": ["developer"], "developer": []},
+        "role_inheritance": {"admin": ["pm-pl"], "pm-pl": [], "app-doc-lead": []},
+        "authorization_model": {
+            "app_scoped_role": "app-doc-lead",
+            "unregistered_team_write": True,
+            "admin_app_doc_confirmation": "required-by-ai-instruction",
+        },
         "applications": sorted(config["applications"]),
         "principals": sorted(config["principals"], key=lambda item: item["id"]),
         "path_rules": path_rules(config, layout),
@@ -272,15 +317,21 @@ def path_in_git(rule_path: str, layout: dict[str, Any]) -> str | None:
 
 
 def eligible_owners(policy: dict[str, Any], rule: dict[str, Any], provider: str) -> list[str]:
-    required = ROLES[rule["minimum_role"]]
-    owner = rule.get("owner")
+    write_scope = rule["write_scope"]
+    if write_scope == "team":
+        return []
+    application = rule.get("application")
     result: list[str] = []
     for principal in policy["principals"]:
-        rank = ROLES[principal["role"]]
+        role = principal["role"]
         account = principal.get("accounts", {}).get(provider)
-        if not account or rank < required:
+        if not account:
             continue
-        if owner is not None and principal["id"] != owner and rank <= required:
+        if write_scope == "admin" and role != "admin":
+            continue
+        if write_scope == "app-doc" and not (
+            role == "pm-pl" or (role == "app-doc-lead" and application in principal.get("applications", []))
+        ):
             continue
         result.append(account)
     return sorted(set(result), key=str.casefold)
@@ -311,22 +362,10 @@ def glob_to_gitea(pattern: str) -> str:
 def render_codeowners_block(policy: dict[str, Any], provider: str, layout: dict[str, Any], policy_core_hash: str) -> str:
     start, end = CODEOWNERS_MARKERS
     lines = [start, f"# policy_core_sha256: {policy_core_hash}"]
-    admin_owners = sorted(
-        {
-            principal.get("accounts", {}).get(provider)
-            for principal in policy["principals"]
-            if principal["role"] == "admin" and principal.get("accounts", {}).get(provider)
-        },
-        key=str.casefold,
-    )
-    if provider in {"github", "gitlab"} and admin_owners:
-        fallback = "/.docs/" if layout["git_root_relative"] == "." else "*"
-        lines.append(f"{fallback} {' '.join(admin_owners)}")
-    elif provider == "gitea":
-        lines.append("# coverage: known signed-policy paths only; Go regexp has no portable ordered fallback")
+    lines.append("# coverage: explicit owner paths only; team-write paths intentionally have no CODEOWNERS rule")
     rendered = 0
     for rule in sorted(policy["path_rules"], key=lambda item: int(item["priority"])):
-        if provider == "gitea" and rule["pattern"] == ".docs/**" and rule["minimum_role"] == "admin" and not rule.get("owner"):
+        if rule["pattern"] == ".docs/**" and rule["write_scope"] == "admin":
             continue
         relative = path_in_git(rule["pattern"], layout)
         if relative is None:
@@ -337,9 +376,6 @@ def render_codeowners_block(policy: dict[str, Any], provider: str, layout: dict[
         pattern = glob_to_gitea(relative) if provider == "gitea" else "/" + relative.lstrip("/")
         lines.append(f"{pattern} {' '.join(owners)}")
         rendered += 1
-    if admin_owners:
-        own_path = {"github": "/.github/CODEOWNERS", "gitlab": "/.gitlab/CODEOWNERS", "gitea": "^\\.gitea/CODEOWNERS$"}[provider]
-        lines.append(f"{own_path} {' '.join(admin_owners)}")
     if rendered == 0:
         lines.append(f"# inactive: no valid {provider} owner account is registered")
     lines.append(end)
@@ -415,8 +451,12 @@ def render_instruction_block(policy_core_hash: str) -> str:
             "## 문서 쓰기 권한 확인",
             "",
             f"- 정책: `@.docs/harness/access-control/policy.json` (`{policy_core_hash}`)",
-            "- 읽기는 허용한다. 파일 생성·편집과 AI가 실행하는 Git 명령 전에 서명 정책의 현재 계정·역할·대상 경로를 확인한다.",
-            "- 신원·프로젝트·앱·경로를 확정할 수 없거나 최소 역할이 부족하면 직접 쓰지 말고 소유자에게 변경안을 제안한다.",
+            "- 읽기는 모두 허용한다. 파일 생성·편집과 AI가 실행하는 Git 명령 전에 서명 정책의 현재 계정·역할·대상 앱·쓰기 범위를 확인한다.",
+            "- `admin`은 관리 문서와 제어 설정을, `pm-pl`은 모든 앱의 핵심 문서를, `app-doc-lead`는 배정된 앱의 핵심 문서만 쓸 수 있다.",
+            "- 등록되지 않은 일반 기여자도 `team` 범위의 구현 지침·프로토타입·임시 입력 경로에는 쓸 수 있다. 개발자를 개인별 principal로 등록하지 않는다.",
+            "- `admin`이 `app-doc` 범위를 대신 수정할 때는 일반 내용 승인과 별도로 대상 앱·파일·원래 소유 범위·수정 이유를 보여주고 한 번 더 확인받는다. 그 승인을 다른 변경에 재사용하지 않는다.",
+            "- guard의 `check-path`가 `decision=confirm`을 반환하거나 `PreToolUse`가 `permissionDecision=ask`를 반환하면 그 확인을 생략하지 않는다.",
+            "- 신원·프로젝트·앱·경로를 확정할 수 없거나 권한이 부족하면 직접 쓰지 말고 해당 문서 소유자에게 변경안을 제안한다.",
             "- 이 블록은 `project-write-access`만 갱신한다. 블록 밖의 설계·개발 지침은 원래 소유자가 관리한다.",
             end,
             "",

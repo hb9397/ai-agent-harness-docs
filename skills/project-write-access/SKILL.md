@@ -1,6 +1,6 @@
 ---
 name: project-write-access
-description: "사용자가 프로젝트 문서 쓰기 권한 설정·변경·검증·제거·관리자 교체를 명시적으로 요청할 때만 사용한다. `.docs/**`와 루트 AGENTS.md·CLAUDE.md를 `admin > pm-pl > developer` 역할에 연결하고 GitHub·GitLab·Gitea CODEOWNERS, 표준 Git 훅, Codex·Claude 쓰기 가드를 하나의 서명 정책에서 계획·적용한다. 일반 문서 생성·편집·커밋 요청에는 사용하지 않는다."
+description: "사용자가 프로젝트 문서 쓰기 권한 설정·변경·검증·제거·관리자 교체를 명시적으로 요청할 때만 사용한다. `.docs/**`와 루트 AGENTS.md·CLAUDE.md를 관리자, 전역 PM·PL, 앱별 문서 책임자, 등록 없는 팀 작성 범위에 연결하고 GitHub·GitLab·Gitea CODEOWNERS, 표준 Git 훅, Codex·Claude 쓰기 가드를 하나의 서명 정책에서 계획·적용한다. 일반 문서 생성·편집·커밋 요청에는 사용하지 않는다."
 allowed-tools: Read, Write, Glob, Grep
 disable-model-invocation: true
 ---
@@ -17,6 +17,25 @@ disable-model-invocation: true
 
 일반 파일 편집, 문서 생성, 구현, 커밋에서 이 스킬을 자동으로 연결하지 않는다.
 
+## 권한 모델
+
+이 스킬에 사람별로 등록하는 쓰기 역할은 다음 세 가지다.
+
+- `admin`: 루트 에이전트 지도, `.docs/harness/**`, `.docs/root-context/**`, 권한 정책,
+  CODEOWNERS와 AI·Git 훅 설정을 관리한다.
+- `pm-pl`: 프로젝트의 모든 앱에 대해 `DESIGN.md`, 앱 컨텍스트와 앱 instruction 같은
+  핵심 문서를 관리한다.
+- `app-doc-lead`: `pm-pl`과 같은 종류의 앱 핵심 문서를 관리하되, 정책에 배정된 앱에만
+  권한이 있다. 한 앱에 여러 명을 둘 수 있고 한 사람이 여러 앱을 맡을 수 있다.
+
+개발자는 principal로 등록하지 않는다. 등록되지 않은 일반 기여자도 기존 저장소 쓰기
+권한이 있으면 `impl-doc/**`, `prototype/**`, `_inbox/**` 같은 `team` 범위에 쓸 수 있다.
+따라서 이 모델은 개발자끼리 개인 폴더를 분리하지 않으며, 그 구분이 필요하면 별도
+정책으로 확장해야 한다.
+
+`app-doc-lead`의 지정·해제는 서명 정책 변경이다. 현재 정책을 검증할 수 있는
+`admin`만 적용할 수 있고 `pm-pl`은 변경안을 제안할 수만 있다.
+
 ## 스킬 리소스 해석
 
 `scripts/`, `assets/`, `prompts/`, `references/`는 현재 로드된
@@ -28,8 +47,8 @@ disable-model-invocation: true
 
 | 요청 | 흐름 |
 |---|---|
-| 최초 설정 | Step 0 → 1 → 2 → 3 → 4 → 5 |
-| 계정·역할·경로 정책 변경 | Step 0 → 1 → 2 → 3 → 4 → 5 |
+| 최초 설정 | Step 0 → 1 → 2에서 최초 관리자 확정 → 3 → 4 → 5 |
+| 최초 이후 계정·역할·앱 배정·경로 정책 변경 | Step 0 → 1 → 2에서 기존 관리자 검증 → 3 → 4 → 5 |
 | 상태 확인·괴리 검사 | Step 0 → 1 → 5. 읽기 전용으로 종료 |
 | 제거 | Step 0 → 1 → 2 → 제거 계획 → 별도 승인 → 5 |
 | 관리자 교체 | Step 0 → 1 → 2 → 교체 계획 → 기존 키 승인 → 별도 승인 → 5 |
@@ -94,8 +113,11 @@ disable-model-invocation: true
 Plan에는 최소한 다음을 포함한다.
 
 - 프로젝트 식별자와 현재·제안 관리자 지문
-- 역할별 사용자 식별자와 GitHub·GitLab·Gitea 계정 연결
-- 경로별 최소 쓰기 역할과 개발자 개인 경로
+- `admin`, `pm-pl`, `app-doc-lead` 사용자 식별자와 GitHub·GitLab·Gitea 계정 연결
+- 앱별 `app-doc-lead` 배정과 한 앱의 복수 책임자 여부
+- 경로별 `admin`, `app-doc`, `team` 쓰기 범위
+- 일반 개발자는 등록하지 않으며 `team` 범위는 저장소 쓰기 권한을 가진 미등록
+  기여자에게도 열린다는 사실
 - 생성·수정·유지·충돌 파일 목록
 - CODEOWNERS가 더 높은 우선순위 파일 때문에 무시되는지 여부
 - 기존 Git 훅 연결·복구 계획
@@ -130,6 +152,14 @@ Plan을 사람에게 보여준 뒤 다음 범위를 나눠 승인받는다.
 스냅샷으로 복구한다. 이미 바뀐 원격 상태를 되돌리지 못하면 성공으로 보고하지 말고
 정확한 차이를 제시한다.
 
+`admin`이 `app-doc` 범위의 문서를 직접 만들거나 고칠 때는 일반 내용·저장 승인과
+분리해 한 번 더 묻는다. 추가 질문에는 대상 앱, 정확한 파일, 원래 소유 범위,
+수정 요약과 관리자가 대신 수정해야 하는 이유를 담는다. 답변은 그때 보여준 변경에만
+유효하며 대상 파일이나 변경 내용이 달라지면 다시 묻는다. AI instruction과 활성으로
+검증된 `PreToolUse` 훅은 이 경우 `ask` 판정을 내린다. 비대화형 Git 훅은 질문할 수
+없으므로 역할에 따른 허용·거부만 판정하며, 사람의 직접 편집에 같은 질문을 보장한다고
+표현하지 않는다.
+
 ## Step 5 — 재검증과 보고
 
 `scripts/project_write_access.py verify`를 실행하고 다음을 대조한다.
@@ -138,6 +168,7 @@ Plan을 사람에게 보여준 뒤 다음 범위를 나눠 승인받는다.
 - 세 CODEOWNERS 관리 블록과 서비스별 활성 파일 우선순위
 - 로컬 Git 훅의 설치 상태와 기존 훅 연결 상태
 - AI instruction 관리 블록과 Claude·Codex host 훅 상태
+- 관리자 문서, 앱 핵심 문서, 팀 작성 경로의 판정과 앱별 책임자 범위
 - 세 계층이 같은 `policy_core_sha256`을 가리키는지
 - 원격 브랜치·검토 규칙의 실제 상태
 

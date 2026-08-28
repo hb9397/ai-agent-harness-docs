@@ -3,6 +3,12 @@
 필요한 provider·host 섹션만 읽는다. 기능은 서비스 요금제와 설치 버전에 따라 달라질
 수 있으므로 Apply 직전에 공식 문서를 다시 확인한다.
 
+생성기는 `admin`과 `app-doc`처럼 명시적인 문서 소유자가 있는 경로만 CODEOWNERS
+관리 블록에 넣는다. 역할 등록이 없는 일반 기여자에게 열린 `team` 경로에는 owner
+규칙을 만들지 않는다. 그래서 `.docs/**` 전체 관리자 fallback도 CODEOWNERS에는 넣지
+않고, 알려지지 않은 새 `.docs` 경로의 기본 관리자 판정은 서명 정책과 로컬·AI 가드가
+맡는다. 새 경로의 원격 승인까지 강제하려면 정책에 명시 경로를 추가해야 한다.
+
 ## GitHub
 
 - CODEOWNERS 탐색 순서: `.github/CODEOWNERS` → 루트 `CODEOWNERS` →

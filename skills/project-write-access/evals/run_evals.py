@@ -54,11 +54,12 @@ def commit_all(root: Path, message: str) -> None:
     git(root, "commit", "-q", "-m", message)
 
 
-def base_config(path: Path, repo_path: str = ".") -> Path:
+def base_config(path: Path, repo_path: str = ".", applications: list[str] | None = None) -> Path:
+    application_ids = applications or ["web", "api"]
     config = {
-        "schema_version": "1.0.0",
+        "schema_version": "1.1.0",
         "project_id": "fixture-project",
-        "applications": ["web", "api"],
+        "applications": application_ids,
         "principals": [
             {
                 "id": "owner",
@@ -71,14 +72,14 @@ def base_config(path: Path, repo_path: str = ".") -> Path:
                 "accounts": {"github": "@lead", "gitlab": "@lead", "gitea": "@lead"},
             },
             {
-                "id": "dev-a",
-                "role": "developer",
-                "accounts": {"github": "@dev-a", "gitlab": "@dev-a", "gitea": "@dev-a"},
-            },
-            {
-                "id": "dev-b",
-                "role": "developer",
-                "accounts": {"github": "@dev-b", "gitlab": "@dev-b", "gitea": "@dev-b"},
+                "id": "web-doc-lead",
+                "role": "app-doc-lead",
+                "applications": [application_ids[0]],
+                "accounts": {
+                    "github": "@web-doc-lead",
+                    "gitlab": "@web-doc-lead",
+                    "gitea": "@web-doc-lead",
+                },
             },
         ],
         "repositories": [
@@ -131,6 +132,22 @@ def ai_command(guard: Path, project: Path, host: str, shell_command: str) -> sub
     )
 
 
+def ai_file_write(guard: Path, project: Path, host: str, path: Path) -> subprocess.CompletedProcess[str]:
+    payload = json.dumps(
+        {"cwd": str(project), "tool_input": {"file_path": str(path), "content": "proposed"}},
+        ensure_ascii=False,
+    )
+    return subprocess.run(
+        [sys.executable, str(guard), "ai", "--host", host, "--project-root", str(project)],
+        cwd=project,
+        input=payload,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+
+
 def make_single_fixture(root: Path) -> Path:
     project = root / "single"
     init_repo(project)
@@ -138,8 +155,7 @@ def make_single_fixture(root: Path) -> Path:
     write(project / "CLAUDE.md", "@AGENTS.md\n")
     for app in ("web", "api"):
         write(project / ".docs" / app / "instruction" / "agent-instruction.md", f"# {app} rules\n\nTEAM-{app}\n")
-        (project / ".docs" / app / "impl-doc" / "dev-a").mkdir(parents=True)
-        (project / ".docs" / app / "impl-doc" / "dev-b").mkdir(parents=True)
+        (project / ".docs" / app / "impl-doc").mkdir(parents=True)
     write(project / ".docs" / "README.md", "# Docs\n")
     write(project / ".docs" / ".gitignore", "_inbox/*\n")
     write(project / ".github" / "CODEOWNERS", "# TEAM-RULE\n/src/ @source-owner\n")
@@ -176,43 +192,89 @@ def test_single_repository(root: Path) -> None:
     key_a = codex_keys / "fixture-project.key"
     key_b = claude_keys / "fixture-project.key"
     assert key_a.read_bytes() == key_b.read_bytes()
-    assert "TEAM-RULE" in (project / ".github" / "CODEOWNERS").read_text(encoding="utf-8")
-    assert "TEAM-web" in (project / ".docs" / "web" / "instruction" / "agent-instruction.md").read_text(encoding="utf-8")
+    codeowners = (project / ".github" / "CODEOWNERS").read_text(encoding="utf-8")
+    assert "TEAM-RULE" in codeowners
+    assert "/.docs/web/context-base/** @lead @web-doc-lead" in codeowners
+    assert "/.docs/api/context-base/** @lead" in codeowners
+    assert "/.docs/web/impl-doc/**" not in codeowners
+    assert "/.docs/ @owner" not in codeowners
+    instruction = (project / ".docs" / "web" / "instruction" / "agent-instruction.md").read_text(encoding="utf-8")
+    assert "TEAM-web" in instruction
+    assert "한 번 더 확인" in instruction
+    assert "개발자를 개인별 principal로 등록하지 않는다" in instruction
     assert git(project, "config", "--local", "--get", "core.hooksPath").stdout.strip() == ".docs/harness/access-control/hooks/git"
 
     guard = project / ".docs" / "harness" / "access-control" / "hooks" / "write_access_guard.py"
     allow_admin = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@owner", ".docs/harness/access-control/policy.json"], check=False)
+    confirm_admin_app = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@owner", ".docs/web/context-base/DESIGN.md"], check=False)
     deny_admin_doc = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@dev-a", ".docs/harness/access-control/policy.json"], check=False)
-    allow_own = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@dev-a", ".docs/web/impl-doc/dev-a/task.md"], check=False)
-    deny_other = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@dev-a", ".docs/web/impl-doc/dev-b/task.md"], check=False)
+    allow_team_a = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@dev-a", ".docs/web/impl-doc/dev-a/task.md"], check=False)
+    allow_team_b = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@dev-a", ".docs/web/impl-doc/dev-b/task.md"], check=False)
+    allow_pm_pl_all_apps = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@lead", ".docs/api/context-base/DESIGN.md"], check=False)
+    allow_app_lead = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@web-doc-lead", ".docs/web/instruction/agent-instruction.md"], check=False)
+    deny_other_app = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@web-doc-lead", ".docs/api/context-base/DESIGN.md"], check=False)
+    deny_app_lead_admin = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@web-doc-lead", ".docs/README.md"], check=False)
     allow_admin_unlisted = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@owner", ".docs/new-admin-document.md"], check=False)
     deny_dev_unlisted = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@dev-a", ".docs/new-admin-document.md"], check=False)
     assert allow_admin.returncode == 0
+    assert confirm_admin_app.returncode == 3
+    assert json.loads(confirm_admin_app.stdout)["decision"] == "confirm"
     assert deny_admin_doc.returncode == 1
-    assert allow_own.returncode == 0
-    assert deny_other.returncode == 1
+    assert allow_team_a.returncode == 0
+    assert allow_team_b.returncode == 0
+    assert allow_pm_pl_all_apps.returncode == 0
+    assert allow_app_lead.returncode == 0
+    assert deny_other_app.returncode == 1
+    assert deny_app_lead_admin.returncode == 1
     assert allow_admin_unlisted.returncode == 0
     assert deny_dev_unlisted.returncode == 1
 
+    for host in ("claude", "codex"):
+        admin_app_prompt = ai_file_write(
+            guard, project, host, project / ".docs" / "web" / "context-base" / "DESIGN.md"
+        )
+        assert admin_app_prompt.returncode == 0
+        prompt_decision = json.loads(admin_app_prompt.stdout)["hookSpecificOutput"]
+        assert prompt_decision["permissionDecision"] == "ask"
+        assert "관리자가 앱 문서 소유 범위를 대신 수정" in prompt_decision["permissionDecisionReason"]
+
+    git(project, "config", "--local", "harness.writeAccess.account", "@web-doc-lead")
+    instruction_path = project / ".docs" / "web" / "instruction" / "agent-instruction.md"
+    original_instruction = instruction_path.read_text(encoding="utf-8")
+    staged_tamper = original_instruction.replace("읽기는 모두 허용한다", "읽기 제한을 해제한다")
+    assert staged_tamper != original_instruction
+    write(instruction_path, staged_tamper)
+    git(project, "add", str(instruction_path))
+    write(instruction_path, original_instruction)
+    denied_managed_block = git(project, "commit", "-m", "must deny staged managed-block tamper", check=False)
+    assert denied_managed_block.returncode != 0
+    assert "staged generated content" in denied_managed_block.stderr
+    git(project, "reset", "--", str(instruction_path))
+
     git(project, "config", "--local", "harness.writeAccess.account", "@dev-a")
-    denied_path = project / ".docs" / "web" / "impl-doc" / "dev-b" / "denied.md"
-    write(denied_path, "denied\n")
-    assert git(project, "add", str(denied_path)).returncode == 0
-    denied_commit = git(project, "commit", "-m", "must be denied", check=False)
-    assert denied_commit.returncode != 0
-    assert "commit denied" in denied_commit.stderr
-    git(project, "reset", "--", str(denied_path))
-    denied_path.unlink()
+    team_path = project / ".docs" / "web" / "impl-doc" / "dev-b" / "team.md"
+    write(team_path, "team\n")
+    assert git(project, "add", str(team_path)).returncode == 0
+    git(project, "commit", "-q", "-m", "unregistered contributor team document")
+    assert (project / ".git" / "previous-hook-ran").is_file()
 
     protected_path = project / ".docs" / "README.md"
     protected_text = protected_path.read_text(encoding="utf-8")
+    write(protected_path, protected_text + "blocked\n")
+    git(project, "add", str(protected_path))
+    denied_admin_edit = git(project, "commit", "-m", "must deny admin document", check=False)
+    assert denied_admin_edit.returncode != 0
+    assert "commit denied" in denied_admin_edit.stderr
+    git(project, "reset", "--", str(protected_path))
+    protected_path.write_text(protected_text, encoding="utf-8", newline="\n")
+
     protected_path.unlink()
     git(project, "add", str(protected_path))
     denied_deletion = git(project, "commit", "-m", "must deny protected deletion", check=False)
     assert denied_deletion.returncode != 0
     assert "commit denied" in denied_deletion.stderr
+    git(project, "reset", "--", str(protected_path))
     protected_path.write_text(protected_text, encoding="utf-8", newline="\n")
-    git(project, "add", str(protected_path))
 
     provider_review_commands = ("gh pr create --base main", "glab mr create --target-branch main", "tea pr create")
     provider_read_commands = ("gh pr list", "glab mr view 42", "tea pr list")
@@ -231,11 +293,6 @@ def test_single_repository(root: Path) -> None:
         assert allowed_ai.returncode == 0
         assert allowed_ai.stdout == ""
 
-    own_path = project / ".docs" / "web" / "impl-doc" / "dev-a" / "allowed.md"
-    write(own_path, "allowed\n")
-    git(project, "add", str(own_path))
-    git(project, "commit", "-q", "-m", "developer-owned document")
-    assert (project / ".git" / "previous-hook-ran").is_file()
     local_state = json.loads((project / ".git" / "harness-write-access.json").read_text(encoding="utf-8"))
     assert local_state["previous_hooks"]["pre-commit"] == str(previous_hook.resolve())
     guard = project / ".docs" / "harness" / "access-control" / "hooks" / "write_access_guard.py"
@@ -263,9 +320,9 @@ def test_single_repository(root: Path) -> None:
     assert self_hosted_push.returncode == 0, self_hosted_push.stderr
 
     git(project, "config", "--local", "harness.writeAccess.account", "@owner")
-    write(denied_path, "admin-created\n")
-    git(project, "add", str(denied_path))
-    git(project, "commit", "-q", "-m", "admin updates another owner path")
+    write(protected_path, protected_text + "admin update\n")
+    git(project, "add", str(protected_path))
+    git(project, "commit", "-q", "-m", "admin updates admin document")
     git(project, "config", "--local", "harness.writeAccess.account", "@dev-a")
     local_oid = git(project, "rev-parse", "HEAD").stdout.strip()
     push_input = f"refs/heads/main {local_oid} refs/heads/main {baseline_sha}\n"
@@ -298,6 +355,31 @@ def test_single_repository(root: Path) -> None:
     assert "signature" in failed.stderr
     signature.write_bytes(valid_signature)
     controller("verify", "--project-root", str(project))
+
+    updated_config = json.loads(config.read_text(encoding="utf-8"))
+    app_lead = next(item for item in updated_config["principals"] if item["role"] == "app-doc-lead")
+    app_lead["applications"].append("api")
+    write(config, json.dumps(updated_config, ensure_ascii=False, indent=2) + "\n")
+    policy_update_plan = plan(project, config)
+    apply(project, config, policy_update_plan["plan_hash"], codex_keys, claude_keys)
+    updated_guard = project / ".docs" / "harness" / "access-control" / "hooks" / "write_access_guard.py"
+    newly_allowed_app = command(
+        [
+            sys.executable,
+            str(updated_guard),
+            "check-path",
+            "--project-root",
+            str(project),
+            "--provider",
+            "github",
+            "--account",
+            "@web-doc-lead",
+            ".docs/api/context-base/DESIGN.md",
+        ],
+        check=False,
+    )
+    assert newly_allowed_app.returncode == 0
+    commit_all(project, "assign second application to document lead")
 
     old_key = root / "old-admin-backup.key"
     old_key.write_bytes((codex_keys / "fixture-project.key").read_bytes())
@@ -396,6 +478,88 @@ def test_single_repository(root: Path) -> None:
     assert not (project / ".git" / "harness-write-access.json").exists()
 
 
+def test_single_application_defaults(root: Path) -> None:
+    project = root / "single-application"
+    init_repo(project)
+    write(project / "AGENTS.md", "# Agent map\n")
+    write(project / "CLAUDE.md", "@AGENTS.md\n")
+    write(project / ".docs" / "instruction" / "agent-instruction.md", "# App rules\n")
+    write(project / ".docs" / "README.md", "# Docs\n")
+    commit_all(project, "baseline")
+    config = base_config(root / "single-application-config.json", applications=["solo"])
+    codex_keys = root / "single-application-codex-keys"
+    claude_keys = root / "single-application-claude-keys"
+    current_plan = plan(project, config)
+    apply(project, config, current_plan["plan_hash"], codex_keys, claude_keys)
+
+    policy = json.loads(
+        (project / ".docs" / "harness" / "access-control" / "policy.json").read_text(encoding="utf-8")
+    )
+    rules = {rule["pattern"]: rule for rule in policy["path_rules"]}
+    assert rules[".docs/context-base/**"] == {
+        "application": "solo",
+        "pattern": ".docs/context-base/**",
+        "priority": 90,
+        "write_scope": "app-doc",
+    }
+    assert rules[".docs/instruction/**"]["write_scope"] == "app-doc"
+    assert rules[".docs/impl-doc/**"]["write_scope"] == "team"
+
+    guard = project / ".docs" / "harness" / "access-control" / "hooks" / "write_access_guard.py"
+    allow_unregistered_team = command(
+        [
+            sys.executable,
+            str(guard),
+            "check-path",
+            "--project-root",
+            str(project),
+            "--provider",
+            "github",
+            "--account",
+            "@unregistered",
+            ".docs/impl-doc/anyone/task.md",
+        ],
+        check=False,
+    )
+    allow_scoped_lead = command(
+        [
+            sys.executable,
+            str(guard),
+            "check-path",
+            "--project-root",
+            str(project),
+            "--provider",
+            "github",
+            "--account",
+            "@web-doc-lead",
+            ".docs/context-base/DESIGN.md",
+        ],
+        check=False,
+    )
+    assert allow_unregistered_team.returncode == 0
+    assert allow_scoped_lead.returncode == 0
+
+
+def test_rejects_legacy_developer_role(root: Path) -> None:
+    project = root / "legacy-role"
+    init_repo(project)
+    write(project / "AGENTS.md", "# Agent map\n")
+    write(project / "CLAUDE.md", "@AGENTS.md\n")
+    config = base_config(root / "legacy-role-config.json")
+    value = json.loads(config.read_text(encoding="utf-8"))
+    value["principals"].append(
+        {
+            "id": "legacy-developer",
+            "role": "developer",
+            "accounts": {"github": "@legacy-developer"},
+        }
+    )
+    write(config, json.dumps(value, ensure_ascii=False, indent=2) + "\n")
+    rejected = controller("plan", "--project-root", str(project), "--config", str(config), check=False)
+    assert rejected.returncode == 2
+    assert "unsupported role" in rejected.stderr
+
+
 def test_multi_repository(root: Path) -> None:
     project = root / "multi"
     docs = project / ".docs"
@@ -455,6 +619,8 @@ def main() -> int:
     with tempfile.TemporaryDirectory(prefix="project-write-access-evals-") as raw:
         root = Path(raw)
         test_single_repository(root)
+        test_single_application_defaults(root)
+        test_rejects_legacy_developer_role(root)
         test_multi_repository(root)
         test_failed_apply_removes_new_keys(root)
     print("project-write-access evals: PASS")

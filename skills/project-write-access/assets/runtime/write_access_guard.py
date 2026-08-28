@@ -18,7 +18,16 @@ from typing import Any
 
 
 NAMESPACE = "harness-kit-project-write-access"
-ROLE_RANK = {"developer": 1, "pm-pl": 2, "admin": 3}
+ROLES = {"admin", "pm-pl", "app-doc-lead"}
+WRITE_SCOPES = {"admin", "app-doc", "team"}
+CODEOWNERS_MARKERS = (
+    "# harness-kit:write-access:start",
+    "# harness-kit:write-access:end",
+)
+INSTRUCTION_MARKERS = (
+    "<!-- harness-kit:write-access:start -->",
+    "<!-- harness-kit:write-access:end -->",
+)
 
 
 class GuardError(RuntimeError):
@@ -31,6 +40,37 @@ def canonical_json(value: Any) -> bytes:
 
 def sha256_bytes(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
+
+
+def managed_hash(content: bytes, markers: tuple[str, str]) -> str:
+    text = content.decode("utf-8")
+    start, end = markers
+    if text.count(start) != 1 or text.count(end) != 1:
+        raise GuardError("managed block is missing or malformed")
+    left = text.index(start)
+    right = text.index(end, left) + len(end)
+    return sha256_bytes(text[left:right].encode("utf-8"))
+
+
+def json_handler_hash(content: bytes) -> str:
+    data = json.loads(content.decode("utf-8"))
+    entries = data.get("hooks", {}).get("PreToolUse", [])
+    managed = [entry for entry in entries if "write_access_guard.py" in json.dumps(entry, ensure_ascii=False)]
+    if len(managed) != 1:
+        raise GuardError("managed AI hook entry is missing or duplicated")
+    return sha256_bytes(canonical_json(managed[0]))
+
+
+def generated_content_hash(content: bytes, mode: str) -> str:
+    if mode == "full":
+        return sha256_bytes(content)
+    if mode == "codeowners-block":
+        return managed_hash(content, CODEOWNERS_MARKERS)
+    if mode == "instruction-block":
+        return managed_hash(content, INSTRUCTION_MARKERS)
+    if mode == "json-handler":
+        return json_handler_hash(content)
+    raise GuardError(f"unknown generated-manifest mode: {mode}")
 
 
 def run_git(root: Path, *args: str, check: bool = True, stdin: bytes | None = None) -> subprocess.CompletedProcess[bytes]:
@@ -102,6 +142,18 @@ def load_verified_policy(project_root: Path) -> dict[str, Any]:
     manifest_bytes = manifest_path.read_bytes()
     if policy.get("generated_manifest_sha256") != sha256_bytes(manifest_bytes):
         raise GuardError("generated manifest hash does not match policy")
+    manifest = json.loads(manifest_bytes.decode("utf-8"))
+    for entry in manifest.get("files", []):
+        path = (project_root / str(entry.get("path", ""))).resolve()
+        try:
+            path.relative_to(project_root.resolve())
+        except ValueError as exc:
+            raise GuardError("generated-manifest path escapes project root") from exc
+        if not path.is_file():
+            raise GuardError(f"generated file is missing: {entry.get('path')}")
+        actual = generated_content_hash(path.read_bytes(), str(entry.get("mode", "")))
+        if actual != entry.get("sha256"):
+            raise GuardError(f"generated content hash does not match: {entry.get('path')}")
     return policy
 
 
@@ -165,24 +217,51 @@ def is_protected_path(path: str) -> bool:
     return path in {"AGENTS.md", "CLAUDE.md"} or path.startswith(".docs/")
 
 
+def permits(rule: dict[str, Any], principal: dict[str, Any] | None) -> bool:
+    write_scope = str(rule.get("write_scope"))
+    if write_scope == "team":
+        return True
+    if write_scope not in WRITE_SCOPES or principal is None:
+        return False
+    role = str(principal.get("role"))
+    if role not in ROLES:
+        return False
+    if write_scope == "admin":
+        return role == "admin"
+    application = rule.get("application")
+    return role in {"admin", "pm-pl"} or (
+        role == "app-doc-lead" and application in principal.get("applications", [])
+    )
+
+
 def authorize_paths(policy: dict[str, Any], provider: str, account: str, paths: list[str], project_root: Path) -> list[str]:
     principal = principal_for(policy, provider, account)
     denied: list[str] = []
     for raw in paths:
         path = normalize_project_path(raw, project_root)
-        if not is_protected_path(path):
-            continue
         rule = rule_for_path(policy, path)
-        if principal is None or rule is None:
-            denied.append(path)
+        if rule is None:
+            if is_protected_path(path):
+                denied.append(path)
             continue
-        actual_rank = ROLE_RANK.get(str(principal.get("role")), 0)
-        required_rank = ROLE_RANK.get(str(rule.get("minimum_role")), 99)
-        owner = rule.get("owner")
-        owner_ok = owner is None or owner == principal.get("id") or actual_rank > required_rank
-        if actual_rank < required_rank or not owner_ok:
+        if not permits(rule, principal):
             denied.append(path)
     return sorted(set(denied))
+
+
+def admin_app_confirmation_paths(
+    policy: dict[str, Any], provider: str, account: str, paths: list[str], project_root: Path
+) -> list[str]:
+    principal = principal_for(policy, provider, account)
+    if principal is None or principal.get("role") != "admin":
+        return []
+    required: list[str] = []
+    for raw in paths:
+        path = normalize_project_path(raw, project_root)
+        rule = rule_for_path(policy, path)
+        if rule is not None and rule.get("write_scope") == "app-doc":
+            required.append(path)
+    return sorted(set(required))
 
 
 def git_identity(git_root: Path) -> tuple[str, str]:
@@ -200,6 +279,35 @@ def project_path_from_git(policy: dict[str, Any], git_path: str) -> str:
     while normalized.startswith("./"):
         normalized = normalized[2:]
     return normalized if prefix == "." else f"{prefix.strip('/')}/{normalized}"
+
+
+def git_path_from_project(policy: dict[str, Any], project_path: str) -> str | None:
+    prefix = str(policy.get("git_root_relative", "."))
+    if prefix == ".":
+        return project_path
+    marker = prefix.strip("/") + "/"
+    return project_path[len(marker):] if project_path.startswith(marker) else None
+
+
+def verify_staged_generated_entries(
+    project_root: Path, policy: dict[str, Any], git_root: Path, changed_project_paths: list[str]
+) -> None:
+    manifest_path = access_dir_from_project(project_root) / "generated-manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    changed = set(changed_project_paths)
+    for entry in manifest.get("files", []):
+        project_path = str(entry.get("path", ""))
+        if project_path not in changed:
+            continue
+        git_path = git_path_from_project(policy, project_path)
+        if git_path is None:
+            continue
+        staged = run_git(git_root, "show", f":{git_path}", check=False)
+        if staged.returncode != 0:
+            raise GuardError(f"generated file may not be deleted while access control is active: {project_path}")
+        actual = generated_content_hash(staged.stdout, str(entry.get("mode", "")))
+        if actual != entry.get("sha256"):
+            raise GuardError(f"staged generated content does not match the signed manifest: {project_path}")
 
 
 def invoke_previous_hook(git_root: Path, hook_name: str, args: list[str], stdin: bytes) -> int:
@@ -228,6 +336,7 @@ def pre_commit(project_root: Path) -> int:
     provider, account = git_identity(git_root)
     changed = run_git(git_root, "diff", "--cached", "--name-only").stdout.decode().splitlines()
     paths = [project_path_from_git(policy, item) for item in changed]
+    verify_staged_generated_entries(project_root, policy, git_root, paths)
     denied = authorize_paths(policy, provider, account, paths, project_root)
     if denied:
         print("project-write-access: commit denied for " + ", ".join(denied), file=sys.stderr)
@@ -387,7 +496,7 @@ def paths_from_git_command(command: str, git_root: Path, policy: dict[str, Any])
     return []
 
 
-def ai_decision(project_root: Path, payload: dict[str, Any]) -> tuple[bool, str]:
+def ai_decision(project_root: Path, payload: dict[str, Any]) -> tuple[str, str]:
     policy = load_verified_policy(project_root)
     cwd = Path(str(payload.get("cwd") or project_root)).resolve()
     docs_root = project_root / ".docs"
@@ -412,8 +521,15 @@ def ai_decision(project_root: Path, payload: dict[str, Any]) -> tuple[bool, str]
                 raise
     denied = authorize_paths(policy, provider, account, normalized, project_root)
     if denied:
-        return False, "write denied for: " + ", ".join(denied)
-    return True, "allowed"
+        return "deny", "write denied for: " + ", ".join(denied)
+    confirmation = admin_app_confirmation_paths(policy, provider, account, normalized, project_root)
+    if confirmation:
+        return (
+            "ask",
+            "관리자가 앱 문서 소유 범위를 대신 수정합니다. 대상 앱·정확한 파일·원래 소유 범위·수정 요약과 이유를 확인한 뒤 이 변경에 한해 승인하세요: "
+            + ", ".join(confirmation),
+        )
+    return "allow", "allowed"
 
 
 def emit_ai_denial(host: str, reason: str) -> int:
@@ -421,6 +537,18 @@ def emit_ai_denial(host: str, reason: str) -> int:
         "hookSpecificOutput": {
             "hookEventName": "PreToolUse",
             "permissionDecision": "deny",
+            "permissionDecisionReason": f"project-write-access: {reason}",
+        }
+    }
+    print(json.dumps(output, ensure_ascii=False, separators=(",", ":")))
+    return 0
+
+
+def emit_ai_confirmation(host: str, reason: str) -> int:
+    output = {
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "ask",
             "permissionDecisionReason": f"project-write-access: {reason}",
         }
     }
@@ -460,11 +588,30 @@ def main() -> int:
             if denied:
                 print(json.dumps({"decision": "deny", "paths": denied}, ensure_ascii=False))
                 return 1
+            confirmation = admin_app_confirmation_paths(
+                policy, args.provider, args.account, args.paths, project_root
+            )
+            if confirmation:
+                print(
+                    json.dumps(
+                        {
+                            "decision": "confirm",
+                            "paths": confirmation,
+                            "reason": "admin is crossing into app-doc ownership; ask one additional access-specific question",
+                        },
+                        ensure_ascii=False,
+                    )
+                )
+                return 3
             print(json.dumps({"decision": "allow", "paths": args.paths}, ensure_ascii=False))
             return 0
         payload = json.loads(sys.stdin.read())
-        allowed, reason = ai_decision(project_root, payload)
-        return 0 if allowed else emit_ai_denial(args.host, reason)
+        decision, reason = ai_decision(project_root, payload)
+        if decision == "deny":
+            return emit_ai_denial(args.host, reason)
+        if decision == "ask":
+            return emit_ai_confirmation(args.host, reason)
+        return 0
     except (GuardError, json.JSONDecodeError, OSError, ValueError) as exc:
         if args.command == "ai":
             return emit_ai_denial(args.host, str(exc))
