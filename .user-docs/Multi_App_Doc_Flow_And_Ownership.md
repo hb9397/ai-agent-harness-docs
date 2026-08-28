@@ -43,6 +43,8 @@
 [선택 운영 스킬 — 쓰기 권한을 구분해야 할 때만 명시 호출]
 project-write-access        관리자가 최초 설정과 이후 정책 변경을 수행한다.
                             admin·pm-pl·앱별 app-doc-lead를 문서 경로에 연결한다.
+                            승인된 Apply에서 현재 환경의 로컬 Git·AI 쓰기 가드를 함께 연결한다.
+                            세 CODEOWNERS를 만들되 원격 PR·MR 정책은 프로젝트가 별도로 운영한다.
 
 [권한 설정 뒤 계속하는 필수 스킬]
 3. design-doc               권한이 있는 계정으로 앱별 설계 기준을 작성한다.
@@ -79,6 +81,9 @@ project-write-access        관리자가 최초 설정과 이후 정책 변경�
 - 프로젝트에서 문서 쓰기 권한까지 나눠야 한다면 관리자가 `project-write-access`를 명시적으로 호출한다.
 
     - 기존 `.docs`가 있는 프로젝트는 공용 문서를 고치기 전에 실행하고, 새 프로젝트는 `harness-setup`과 모든 기여자가 `git-scoped-account`로 Git 계정 설정을 마친 뒤 `design-doc`과 `context-doc`보다 먼저 실행한다.
+    - 관리자가 적용 계획을 승인해 Apply까지 마치면 현재 작업 환경의 `pre-commit`·`pre-push`와 지원되는 AI 쓰기 가드를 같은 실행에서 연결한다.
+    - GitHub·GitLab·Gitea용 CODEOWNERS도 함께 만들지만, 원격 저장소의 브랜치·직접 push·PR·MR 정책은 바꾸지 않는다.
+    - 원격 계층의 병합 차단은 프로젝트가 직접 push를 제한하고 CODEOWNERS 승인을 요구하는 PR·MR 방식으로 별도 운영할 때 적용된다.
     - 권한 정책이 활성화된 뒤에는 프로젝트 전체의 `pm-pl`, 해당 앱에 지정된 `app-doc-lead`, 또는 추가 확인을 마친 `admin`만 자기 범위에 맞게 `design-doc`과 `context-doc`으로 앱 핵심 문서를 쓴다.
     - 이 스킬은 구조를 만드는 다섯 번째 필수 스킬이 아니라 권한 관리가 필요한 팀만 쓰는 선택 항목이다.
     - 사용하지 않는 프로젝트의 문서 생성 흐름은 그대로 동작한다. 자세한 적용 범위와 한계는 14절에서 설명한다.
@@ -1183,9 +1188,11 @@ cd .docs && git init && git add -A && git commit -m "init: 프로젝트 AI 문�
 
     - 문서 하네스를 만들거나 설계·구현 산출물을 생성하지 않는다.
     - 프로젝트별 Git 계정과 문서 경로를 쓰기 범위에 연결한다.
-    - 하나의 서명 정책을 원격 Git 서비스, 개발자 PC의 Git, AI 지침에 나눠 적용한다.
+    - 하나의 서명 정책에서 세 서비스용 CODEOWNERS, 개발자 PC의 Git 훅과 AI 쓰기 가드를 만든다.
     - 자동으로 실행되지 않는다.
     - 최초 설정, 정책 변경, 검증, 제거와 관리자 교체는 관리자가 명시적으로 호출한다.
+    - 관리자가 적용 계획을 승인해 Apply까지 마치면 현재 작업 환경의 로컬 Git과 AI 계층은 같은 실행에서 연결한다.
+    - 원격 Git 서비스에는 CODEOWNERS를 반영하지만 브랜치 보호, 직접 push 제한과 PR·MR 승인 정책은 변경하지 않는다.
 
 - 사람에게 등록하는 역할은 `admin`, `pm-pl`, `app-doc-lead` 세 가지다.
 
@@ -1251,6 +1258,13 @@ cd .docs && git init && git add -A && git commit -m "init: 프로젝트 AI 문�
 └── hooks/                     ← 개발자 PC에 설치할 Git 훅 원본
 ```
 
+- 승인된 Apply가 끝나면 스킬을 실행한 현재 작업 환경에 다음 항목을 함께 반영한다.
+
+    - 대상 저장소의 `core.hooksPath`를 연결하고 `pre-commit`·`pre-push`를 활성화한다.
+    - 앱별 instruction의 권한 관리 블록과 지원되는 Claude·Codex 쓰기 훅 설정을 연결한다.
+    - 세 서비스용 CODEOWNERS를 생성하거나 기존 관리 블록을 갱신한다.
+    - 한 작업 환경의 로컬 Git 설정이 다른 참여자의 PC까지 전달되지는 않는다. 각 clone과 AI host는 로컬 훅 연결·신뢰 상태를 별도로 확인해야 한다.
+
 - 두 번째 호출부터는 로컬 관리자 키의 지문과 공유 정책의 서명을 먼저 확인한다.
 
     - 검증된 관리자만 GitHub·GitLab·Gitea 계정을 역할에 연결할 수 있다.
@@ -1265,11 +1279,13 @@ cd .docs && git init && git add -A && git commit -m "init: 프로젝트 AI 문�
     - 공유 정책 파일을 지우는 것만으로 최초 설정 상태로 돌아가지 않는다.
     - 서명과 생성 파일 목록이 맞지 않으면 스킬은 변경을 거부하고 관리자에게 보고한다.
 
-### 14.2 1계층 — 원격 Git 서비스에서 막는다
+### 14.2 1계층 — 원격 Git 서비스의 PR·MR에서 막는다
 
-- 첫 번째 계층은 GitHub·GitLab·Gitea가 직접 집행한다.
+- 첫 번째 계층은 GitHub·GitLab·Gitea의 PR·MR 검토 과정에서 적용한다.
 
     - `project-write-access`는 하나의 서명 정책에서 세 서비스용 소유자 파일을 모두 생성한다.
+    - 원격 저장소의 브랜치 보호, 직접 push 제한, 필수 승인과 병합 정책은 프로젝트 관리자가 별도로 운영한다.
+    - 하네스는 특정 브랜치 이름이나 PR·MR 사용 여부를 정하지 않고 원격 Git 정책을 변경하지 않는다.
 
 ```text
 .github/CODEOWNERS
@@ -1281,6 +1297,8 @@ cd .docs && git init && git add -A && git commit -m "init: 프로젝트 AI 문�
 
     - 저장소에 커밋된 파일을 Git 서비스가 읽는 설정 파일이다.
     - 특정 경로의 검토 책임자를 PR 또는 MR에 자동으로 지정한다.
+    - 대상 브랜치가 직접 push를 허용하지 않고 CODEOWNERS 승인을 요구할 때 승인 없는 병합을 막는다.
+    - PR·MR을 사용하지 않거나 직접 push를 허용하면 원격 계층의 경로별 차단은 적용되지 않는다.
     - 세 파일을 모두 만들어 저장소가 다른 서비스로 옮겨져도 같은 소유권 원본을 사용할 수 있게 한다.
     - 실제로는 현재 연결된 서비스가 자신에게 맞는 파일만 사용한다.
 
@@ -1300,22 +1318,22 @@ cd .docs && git init && git add -A && git commit -m "init: 프로젝트 AI 문�
 
 - CODEOWNERS만으로 로컬 `git add`, `commit`, `push`를 막을 수는 없다.
 
-    - 소유자 승인을 요구하는 브랜치 보호, 직접 push 제한, 병합 권한 같은 서버 규칙이 함께 필요하다.
-    - `dev`나 `main`에서 어떤 동작을 막을지는 프로젝트별로 정한다.
+    - 소유자 승인을 요구하는 브랜치 보호, 직접 push 제한과 병합 권한 같은 원격 정책이 프로젝트에 별도로 설정돼 있어야 한다.
+    - `dev`, `main`, `prod` 같은 브랜치에서 어떤 동작을 막을지는 프로젝트가 정한다.
     - 이 문서에서는 하나의 브랜치 규칙 권장안을 고정하지 않는다.
-    - 예를 들어 `.docs/{앱}/instruction/**` 변경은 `pm-pl` 승인 없이 `dev`나 `main`에 병합할 수 없도록 별도 정책을 둘 수 있다.
+    - 예를 들어 프로젝트가 `.docs/{앱}/instruction/**` 변경을 PR·MR로만 받도록 운영하면 `pm-pl` 승인 없는 병합을 원격에서 막을 수 있다.
 
-- 스킬이 서버 규칙까지 조회하거나 적용하려면 저장소의 Git 서비스 관리자 권한과 API 인증이 필요하다.
+- `project-write-access`는 원격 Git 정책을 적용하거나 변경하지 않는다.
 
-    - 권한이 없으면 CODEOWNERS 생성과 적용 계획까지만 수행한다.
-    - 서버 설정은 `미적용`으로 보고한다.
-    - PR·MR 작성 자체를 허용할지 병합만 제한할지도 서버 기능과 프로젝트 정책에 따라 정한다.
+    - 현재 서비스가 CODEOWNERS 파일을 읽는지와 원격 승인 정책이 활성화됐는지는 조회 가능한 범위에서 확인한다.
+    - 확인 결과는 `원격 병합 차단 활성`, `CODEOWNERS만 구성`, `검증 불가`로 구분한다.
+    - PR·MR 작성 자체를 허용할지, 병합만 제한할지, 직접 push를 막을지는 서버 기능과 프로젝트 정책에 따라 정한다.
 
 ### 14.3 2계층 — 개발자 PC의 Git에서 일찍 막는다
 
 - 두 번째 계층은 GitHub·GitLab·Gitea 전용 설정이 아니라 표준 Git 훅이다.
 
-    - 스킬은 `.docs/harness/access-control/hooks/`의 원본을 기준으로 대상 저장소의 로컬 `core.hooksPath`를 연결한다.
+    - 관리자가 승인한 Apply에서 `.docs/harness/access-control/hooks/`의 원본을 기준으로 현재 대상 저장소의 로컬 `core.hooksPath`를 연결한다.
     - `pre-commit`은 스테이징된 경로를 역할·앱 배정·서명된 쓰기 범위와 비교한다.
     - `pre-push`는 원격으로 내보낼 커밋을 같은 정책으로 다시 검사한다.
     - 일반 기여자는 `team` 범위에 쓸 수 있다.
@@ -1328,7 +1346,7 @@ cd .docs && git init && git add -A && git commit -m "init: 프로젝트 AI 문�
     - 누락되거나 잘못된 로컬 설정은 `pre-push`에서 한 번 더 잡는다.
     - 로컬 훅은 `--no-verify`나 설정 변경으로 우회할 수 있다.
     - 따라서 최종 보안 경계가 아니라 실수를 조기에 줄이는 장치다.
-    - 우회된 변경의 최종 차단은 원격 Git 서비스 계층이 맡는다.
+    - 우회된 변경은 프로젝트가 직접 push를 제한하고 CODEOWNERS 승인을 요구하는 PR·MR 정책을 별도로 운영할 때만 원격 계층에서 최종 차단된다.
 
 - Git 설정 파일의 위치는 저장소 구조에 따라 달라진다.
 
@@ -1340,7 +1358,7 @@ cd .docs && git init && git add -A && git commit -m "init: 프로젝트 AI 문�
 
 - 세 번째 계층은 AI가 문서를 읽고 파일 도구를 호출하는 시점에 적용한다.
 
-    - `project-write-access`는 앱별 `agent-instruction.md`와 관련 `*-instruction.md`의 전용 관리 블록에 규칙을 반영한다.
+    - 관리자가 승인한 Apply에서 앱별 `agent-instruction.md`와 관련 `*-instruction.md`의 전용 관리 블록에 규칙을 반영하고 지원되는 AI 쓰기 훅을 연결한다.
     - 관리 블록은 `harness-kit:write-access:start`와 `harness-kit:write-access:end` 사이로 한정한다.
     - `pm-pl`과 해당 앱의 `app-doc-lead`가 관리하는 나머지 본문은 건드리지 않는다.
 
@@ -1366,18 +1384,19 @@ cd .docs && git init && git add -A && git commit -m "init: 프로젝트 AI 문�
 
 ### 14.5 세 계층을 함께 쓰는 이유
 
-| 계층 | 가장 잘 막는 지점 | 단독으로 해결하지 못하는 것 |
-|---|---|---|
-| 원격 Git 서비스 | 직접 push, 승인 없는 병합, 보호 브랜치 반영 | 로컬 편집과 스테이징 |
-| 개발자 PC의 Git | 권한 밖 문서의 commit·push를 조기에 중단 | `git add` 자체, `--no-verify` 우회, 다른 PC |
-| AI 지침·쓰기 훅 | 의도와 다른 편집·파일 생성·Git 명령을 실행 전에 중단 | 사람의 직접 편집, 훅을 쓰지 않는 도구 |
+| 계층 | 활성화 방식 | 가장 잘 막는 지점 | 단독으로 해결하지 못하는 것 |
+|---|---|---|---|
+| 원격 Git 서비스 | 스킬이 CODEOWNERS를 만들고 프로젝트가 PR·MR 승인 정책을 별도로 설정 | CODEOWNERS 승인 없는 PR·MR 병합 | 직접 push, 로컬 편집과 스테이징 |
+| 개발자 PC의 Git | 승인된 Apply가 현재 clone의 Git 훅을 연결 | 권한 밖 문서의 commit·push를 조기에 중단 | `git add` 자체, `--no-verify` 우회, 다른 PC |
+| AI 지침·쓰기 훅 | 승인된 Apply가 instruction과 지원 host의 쓰기 훅을 연결 | 의도와 다른 편집·파일 생성·Git 명령을 실행 전에 중단 | 사람의 직접 편집, 훅을 쓰지 않는 도구 |
 
 - 세 계층은 같은 `policy.json`에서 파생돼야 한다.
 
     - 서비스별 CODEOWNERS, 로컬 Git 훅, AI 지침을 따로 고치면 서로 다른 권한을 주장하게 된다.
     - 스킬은 적용 전에 차이를 보여준다.
     - 관리자 승인 뒤 자신이 생성한 영역만 갱신한다.
-    - 적용 후에는 세 계층을 다시 읽어 정책 해시와 계정 연결이 일치하는지 확인한다.
+    - 적용 후에는 CODEOWNERS, 로컬 Git 훅과 AI 지침이 같은 정책 해시와 계정 연결을 가리키는지 확인한다.
+    - 원격 PR·MR 정책은 하네스가 만들지 않으므로 별도 상태로 확인하고, 설정되지 않았다면 세 계층 전체가 활성화됐다고 표현하지 않는다.
 
 - 복수 레포 구조의 루트 `AGENTS.md`와 `CLAUDE.md`는 어떤 저장소에도 속하지 않는다.
 
@@ -1413,7 +1432,9 @@ cd .docs && git init && git add -A && git commit -m "init: 프로젝트 AI 문�
 2. Git 계정 확인            각 사용자 최초 1회, 이 레포의 로컬 계정 설정·출처 확인
 
 [선택 운영 스킬 — 쓰기 권한을 구분해야 할 때만 명시 호출]
-project-write-access        관리자가 문서 쓰기 경로와 역할을 연결하고 세 계층을 설정
+project-write-access        관리자가 문서 쓰기 경로와 역할을 연결한다.
+                            현재 환경의 로컬 Git·AI 가드를 연결하고 세 CODEOWNERS를 만든다.
+                            원격 PR·MR 정책은 프로젝트가 별도로 운영한다.
 
 [권한 설정 뒤 계속하는 필수 역할]
 3. design-doc               허용된 역할과 앱 범위에서 앱별 DESIGN.md 작성
