@@ -187,7 +187,7 @@ def check_portable_routing_bundle() -> None:
             raise AssertionError(f"missing portable-routing template: {template_name}")
 
     routing = json.loads(render_portable("artifact-routing.json.template", replacements))
-    if routing["schema_version"] != "1.0.0":
+    if routing["schema_version"] != "1.1.0":
         raise AssertionError("portable routing schema version drifted")
     if routing["mode"] not in {"single", "multi"}:
         raise AssertionError("portable routing mode must be single or multi")
@@ -200,6 +200,17 @@ def check_portable_routing_bundle() -> None:
         raise AssertionError("host hook states must remain pending-trust before G13")
     if routing.get("setup", {}).get("harness_kit_runtime_required") is not True:
         raise AssertionError("routing manifest must not claim runtime independence before host trust")
+    repository = routing.get("repositories", [None])[0]
+    if repository != {
+        "id": "app-source",
+        "provider": "github",
+        "host": "github.com",
+        "owner": "fixture",
+        "name": "application",
+        "purpose": "source",
+        "applications": ["application"],
+    }:
+        raise AssertionError("routing manifest lost provider repository-to-application mapping")
     if "C:\\Users\\" in json.dumps(routing):
         raise AssertionError("portable routing schema stores a user-specific path")
 
@@ -673,6 +684,10 @@ def check_setup_contract() -> None:
         "manual portable adoption",
         "G10",
         "`.codex/hooks.json`",
+        "## 선택 권한 정책 연계",
+        "`admin`은 앱 문서 권한을 상속하지 않는다",
+        "`write_access_guard.py check-path`",
+        "권한 정책을 자동 변경하거나 `project-write-access`를 자동 호출하지 않는다",
     ):
         require(skill_text, needle, SETUP_ROOT / "SKILL.md")
 
@@ -697,6 +712,8 @@ def check_setup_contract() -> None:
         "`.docs/archive/harness-setup/{timestamp}/{상대경로}`",
         "`unmanaged`",
         "`malformed`",
+        "앱 핵심 문서를 `admin`이 대신 만들지 않는다",
+        "`.docs/harness/artifact-routing.json`의 앱·repository 지도",
     ):
         require(update, needle, SETUP_ROOT / "prompts" / "update-mode.md")
     if "덮어써도 안전" in update:

@@ -188,5 +188,10 @@ Step 2에서 확인된 각 `{앱}` 폴더에 대해 현재 플랫폼의 파일 �
 `.docs/harness/`는 project-owned shared bundle이며, app id·source/docs root·prototype
 owner는 감지 결과를 사용하고 hardcoded BE/FE 정규식으로 만들지 않는다. 각 앱의
 `.docs/{앱}/instruction/artifact-output-routing-instruction.md`가 Layer 2 정본이다.
+`.docs`와 각 앱의 독립 Git 경계·remote를 모두 읽어 repository id, provider, host,
+owner/namespace, 저장소 이름, docs/source 용도와 연결 앱을
+`artifact-routing.json.repositories[]`에 기록한다. 하나의 논리 앱에 여러 저장소가
+매핑될 수 있으며 저장소 수를 앱 수와 같다고 가정하지 않는다. remote가 없는 저장소는
+provider를 추측하지 않고 확인 필요 상태로 남긴다.
 host-local Claude/Codex file은 `-Plan`으로만 current/proposed diff를 제시하고 G10
 승인 전에는 생성하지 않는다.

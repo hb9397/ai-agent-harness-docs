@@ -10,6 +10,7 @@
     "{{PROTOTYPE_OWNER}}": ".docs/prototype",
     "{{CANONICAL_CONTEXT}}": ".docs/context-base/DESIGN.md",
     "{{ROUTING_INSTRUCTION}}": ".docs/instruction/artifact-output-routing-instruction.md",
+    "{{REPOSITORY_ENTRIES}}": "[{\"id\":\"app-source\",\"provider\":\"github\",\"host\":\"github.com\",\"owner\":\"fixture\",\"name\":\"application\",\"purpose\":\"source\",\"applications\":[\"application\"]}]",
     "{{CODEX_HOOK_PATH}}": "D:/fixture/portable-routing-project/.codex/hooks/codex-pre-tool-use.ps1"
   }
 }

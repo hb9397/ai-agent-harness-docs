@@ -133,5 +133,9 @@
 `.docs/harness/`에 routing/format contract, README, installer와 shared hook core를
 생성한다. Layer 1은 routing manifest를 참조하고 Layer 2의
 `.docs/instruction/artifact-output-routing-instruction.md`를 상세 정본으로 둔다.
+현재 앱과 `.docs`의 Git 경계·remote를 읽어 repository id, provider, host,
+owner/namespace, 저장소 이름, docs/source 용도와 앱 매핑을
+`artifact-routing.json.repositories[]`에 기록한다. remote가 없는 `git init` 상태면
+빈 목록과 확인 필요 상태를 사용하고 provider를 추측하지 않는다.
 Claude·Codex host-local config와 adapter는 `install-routing.ps1 -Plan`에만 제안하며,
 G10 승인 전에는 생성하지 않는다.

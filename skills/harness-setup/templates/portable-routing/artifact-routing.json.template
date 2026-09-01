@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "kind": "portable-artifact-routing",
   "project_root": "{{PROJECT_ROOT}}",
   "mode": "{{PROJECT_MODE}}",
@@ -19,6 +19,7 @@
       "routing_instruction": "{{ROUTING_INSTRUCTION}}"
     }
   ],
+  "repositories": {{REPOSITORY_ENTRIES}},
   "write_guard": {
     "approval_marker_directory": ".docs/.harness/artifact-approvals",
     "one_shot_marker_ttl_seconds": 900,

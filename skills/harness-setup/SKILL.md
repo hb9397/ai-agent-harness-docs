@@ -33,7 +33,7 @@ design-doc, context-doc 등 후속 스킬 사용 가능
 |------|------|
 | 사용자 스킬 설치·업데이트 | `harness-kit` 플러그인 설치·업데이트가 담당 |
 | 프로젝트 `.docs/` 구조 | harness-setup이 생성·갱신 |
-| 루트 `AGENTS.md` | harness-setup이 공통 컨텍스트 정본의 뼈대를 생성·갱신하고, `context-doc`이 프로젝트 팩트와 instruction 인덱스를 보강 |
+| 루트 `AGENTS.md` | harness-setup이 공통 컨텍스트 정본과 앱·instruction 읽기 지도를 생성·갱신 |
 | 루트 `CLAUDE.md` | harness-setup이 `@AGENTS.md` bridge와 Claude 전용 delta만 생성 |
 | `.agents/skills`, `.claude/skills`, `skills`의 사용자 스킬 local copy | 생성·동기화 금지. 기존 `*/SKILL.md`만 읽기 전용으로 보고 |
 
@@ -74,6 +74,32 @@ design-doc, context-doc 등 후속 스킬 사용 가능
 
 ---
 
+## 선택 권한 정책 연계
+
+`project-write-access`는 선택 기능이다. `.docs/harness/access-control/policy.json`이
+없으면 이 스킬의 기존 초기 설정·갱신 흐름을 그대로 수행한다. 권한 설정을 필수
+선행조건으로 만들지 않는다.
+
+서명 정책이 있으면 파일 계획을 만들기 전에 다음 순서로 처리한다.
+
+1. `.docs/harness/access-control/write-access-instruction.md`를 읽는다.
+2. 로컬 Git의 `harness.writeAccess.provider`, `harness.writeAccess.host`,
+   `harness.writeAccess.account`를 현재 신원으로 읽는다.
+3. 프로젝트에 설치된 `write_access_guard.py check-path`로 이번 실행의 정확한 대상
+   경로를 검사한다. 정책·서명·생성 목록 검증에 실패하면 쓰지 않는다.
+4. `admin` 범위로 허용된 호출자만 루트 `AGENTS.md`·`CLAUDE.md`,
+   `.docs/root-context/**`, `.docs/harness/**`와 공용 안내의 관리 블록을 갱신한다.
+5. `admin`은 앱 문서 권한을 상속하지 않는다. 활성 정책이 있는 갱신에서
+   `DESIGN.md`, `*-context.md`, `*-instruction.md`를 만들거나 수정하지 않는다.
+   새 앱의 핵심 문서는 정책에 배정된 `pm-pl` 또는 `app-doc-lead`가 후속
+   `design-doc`·`context-doc`으로 만든다.
+
+권한이 없으면 권한 정책을 자동 변경하거나 `project-write-access`를 자동 호출하지 않는다.
+대상 경로와 필요한 역할만 보고한다. 사람의 직접 편집은 이 스킬이 막는다고 표현하지
+않는다.
+
+---
+
 ## Step 0 — 플랫폼 및 실행 방식 확인
 
 현재 플랫폼과 사용 가능한 실행 도구는 먼저 자동 감지한다. 이 작업은 파일 수가
@@ -96,6 +122,9 @@ design-doc, context-doc 등 후속 스킬 사용 가능
 감지 결과를 사용자에게 보여주고 **반드시 확인**받는다:
 
 > "현재 `{감지된 경로}`를 프로젝트 루트로 인식했습니다. 맞습니까?"
+
+프로젝트 루트가 확정되면 위 **선택 권한 정책 연계**를 수행한다. 정책이 있으면
+`admin` 판정이 끝나기 전 Step 2 이후의 쓰기 계획으로 진행하지 않는다.
 
 ---
 
@@ -210,6 +239,10 @@ Step 2 확인 결과에 따라 분기한다.
    - 루트 `CLAUDE.md`, `AGENTS.md` 를 `.docs/root-context/` 기준으로 갱신
 5. 갱신 전 사용자 확인
 
+권한 정책이 활성화된 경우 앱 핵심 문서의 생성·갱신은 이 목록에서 제외한다. 신규 앱은
+루트 지도와 하네스 라우팅에만 반영하고, 앱 `DESIGN.md`·컨텍스트·instruction은 앱 문서
+권한자가 후속 스킬로 작성하도록 넘긴다.
+
 > ✋ **확인 게이트**
 >
 > 갱신 대상:
@@ -238,6 +271,7 @@ Step 2 확인 결과에 따라 분기한다.
 6. 기존 local skill copy가 있으면 승인 전에는 변경하지 않았다는 안내
 7. 금지된 local skill 경로를 생성·갱신하지 않았다는 실행 후 검증 결과
 8. 다음 단계 안내
+9. 권한 정책 상태: 미설정 / admin 검증 완료 / 권한 부족 또는 검증 실패
 
 > **다음 단계:**
 > - 설계 시작: `design-doc` 스킬

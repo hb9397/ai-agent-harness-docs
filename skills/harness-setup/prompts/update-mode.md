@@ -8,6 +8,8 @@
 - SKILL.md Step 3에서 **갱신 모드**로 판정.
 - `.docs/` 또는 `AGENTS.md`가 존재.
 - 프로젝트 유형(단일/복수)은 Step 2에서 확정.
+- 권한 정책이 있으면 SKILL.md의 **선택 권한 정책 연계**에서 현재 계정의 `admin`
+  범위와 정확한 갱신 경로를 검증한 상태.
 
 ---
 
@@ -127,7 +129,8 @@ Markdown marker는
 ### 5-2. 신규 애플리케이션 감지
 
 Step 2 감지 결과에서 `.docs/{앱}-context.md`가 없는 새 앱 폴더가 발견되면 현재
-플랫폼의 파일 도구로 다음을 만든다.
+플랫폼의 파일 도구로 다음을 만든다. 단, 권한 정책이 활성화된 프로젝트에서는
+앱 핵심 문서를 `admin`이 대신 만들지 않는다.
 
 - `.docs/{앱}-context.md`
 - `.docs/{앱}/context-base/`
@@ -135,6 +138,13 @@ Step 2 감지 결과에서 `.docs/{앱}-context.md`가 없는 새 앱 폴더가 
 - `.docs/{앱}/impl-doc/`
 
 사용자에게 신규 앱 추가 사실을 알린다.
+
+권한 정책이 활성화된 경우에는 admin 범위인 루트 컨텍스트와
+`.docs/harness/artifact-routing.json`의 앱·repository 지도만 갱신한다.
+`.docs/{앱}-context.md`, `context-base/DESIGN.md`, `instruction/*.md`는 만들지 않고,
+정책에 새 앱과 `pm-pl` 또는 `app-doc-lead`가 배정돼 있는지 보고한다. 앱 문서 권한자가
+`design-doc`과 `context-doc`을 실행할 후속 작업으로 넘긴다. 정책이 없으면 기존 생성
+흐름을 유지한다.
 
 ---
 
