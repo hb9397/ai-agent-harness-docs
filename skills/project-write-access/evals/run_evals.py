@@ -219,9 +219,14 @@ def make_single_fixture(root: Path) -> Path:
 def assert_skill_contract() -> None:
     skill = (SKILL_ROOT / "SKILL.md").read_text(encoding="utf-8")
     openai = (SKILL_ROOT / "agents" / "openai.yaml").read_text(encoding="utf-8")
+    controller = CONTROLLER.read_text(encoding="utf-8")
     assert "disable-model-invocation: true" in skill
     assert "allow_implicit_invocation: false" in openai
     assert "일반 파일 편집" in skill
+    assert "import urllib" not in controller
+    assert '"gh", "api"' in controller
+    assert '"glab", "api"' in controller
+    assert '"tea", "--login"' in controller
     for path in (CONTROLLER, GUARD_ASSET):
         compile(path.read_text(encoding="utf-8"), str(path), "exec")
 

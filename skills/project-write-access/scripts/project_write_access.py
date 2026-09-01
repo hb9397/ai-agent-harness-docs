@@ -14,9 +14,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import urllib.error
-import urllib.parse
-import urllib.request
 from pathlib import Path
 from typing import Any
 
@@ -238,9 +235,9 @@ def validate_config(raw: dict[str, Any]) -> dict[str, Any]:
             raise AccessError("protected_branches must be an array of non-empty strings")
         if repo.get("server_policy", "externally-approved") not in {"externally-approved", "none"}:
             raise AccessError("server_policy must be externally-approved or none")
-        api_base_url = repo.get("api_base_url")
-        if api_base_url is not None and (not isinstance(api_base_url, str) or not re.fullmatch(r"https?://[^\s]+", api_base_url)):
-            raise AccessError(f"repository {repository_id} api_base_url must be http(s)")
+        cli_login = repo.get("cli_login")
+        if cli_login is not None and (not isinstance(cli_login, str) or not SAFE_ID.fullmatch(cli_login)):
+            raise AccessError(f"repository {repository_id} cli_login must be a safe CLI profile name")
 
     local_identity = raw.get("local_identity")
     if not isinstance(local_identity, dict) or local_identity.get("provider") not in PROVIDERS:
@@ -662,61 +659,47 @@ PERMISSION_RANK = {
 }
 
 
-def repository_api_base(repo: dict[str, Any]) -> str:
-    if repo.get("api_base_url"):
-        return str(repo["api_base_url"]).rstrip("/")
-    host = str(repo["host"])
-    if repo["provider"] == "github":
-        return "https://api.github.com" if host == "github.com" else f"https://{host}/api/v3"
-    if repo["provider"] == "gitlab":
-        return f"https://{host}/api/v4"
-    return f"https://{host}/api/v1"
+def quote_component(value: str) -> str:
+    safe = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~"
+    return "".join(chr(byte) if byte in safe else f"%{byte:02X}" for byte in value.encode("utf-8"))
 
 
-def provider_token(provider: str) -> str:
-    names = {
-        "github": ("GITHUB_TOKEN", "GH_TOKEN"),
-        "gitlab": ("GITLAB_TOKEN", "GLAB_TOKEN"),
-        "gitea": ("GITEA_TOKEN", "TEA_TOKEN"),
-    }[provider]
-    for name in names:
-        value = os.environ.get(name)
-        if value:
-            return value
-    raise AccessError(f"{provider} participant discovery requires one of: {', '.join(names)}")
-
-
-def api_json(url: str, headers: dict[str, str]) -> tuple[Any, dict[str, str]]:
-    request = urllib.request.Request(url, headers={"Accept": "application/json", "User-Agent": "harness-kit", **headers})
+def cli_api_json(provider: str, repo: dict[str, Any], endpoint: str) -> Any:
+    executable = {"github": "gh", "gitlab": "glab", "gitea": "tea"}[provider]
+    if shutil.which(executable) is None:
+        raise AccessError(f"{provider} participant discovery requires the authenticated {executable} CLI")
+    if provider == "github":
+        command = ["gh", "api", endpoint, "--hostname", repo["host"]]
+    elif provider == "gitlab":
+        command = ["glab", "api", endpoint, "--hostname", repo["host"]]
+    else:
+        cli_login = repo.get("cli_login")
+        if not cli_login:
+            raise AccessError("gitea participant discovery requires repository cli_login for an authenticated tea profile")
+        command = ["tea", "--login", str(cli_login), "api", endpoint]
+    result = run(command, check=False)
+    if result.returncode != 0:
+        detail = result.stderr.decode("utf-8", errors="replace").strip()[:300]
+        raise AccessError(f"{provider} CLI API request failed: {detail or 'no error detail'}")
     try:
-        with urllib.request.urlopen(request, timeout=20) as response:
-            return json.loads(response.read().decode("utf-8")), dict(response.headers.items())
-    except urllib.error.HTTPError as exc:
-        detail = exc.read().decode("utf-8", errors="replace")[:300]
-        raise AccessError(f"participant API returned HTTP {exc.code}: {detail}") from exc
-    except urllib.error.URLError as exc:
-        raise AccessError(f"participant API request failed: {exc.reason}") from exc
+        return json.loads(result.stdout.decode("utf-8"))
+    except json.JSONDecodeError as exc:
+        raise AccessError(f"{provider} CLI returned malformed JSON") from exc
 
 
-def paged_api(url: str, headers: dict[str, str], provider: str) -> list[dict[str, Any]]:
+def paged_cli_api(provider: str, repo: dict[str, Any], endpoint: str) -> list[dict[str, Any]]:
     records: list[dict[str, Any]] = []
     page = 1
     while True:
-        separator = "&" if "?" in url else "?"
-        page_url = f"{url}{separator}per_page=100&page={page}"
-        payload, response_headers = api_json(page_url, headers)
+        separator = "&" if "?" in endpoint else "?"
+        page_endpoint = f"{endpoint}{separator}per_page=100&page={page}"
+        payload = cli_api_json(provider, repo, page_endpoint)
         if not isinstance(payload, list):
             raise AccessError("participant API response must be an array")
         records.extend(item for item in payload if isinstance(item, dict))
-        if provider == "gitlab":
-            next_page = response_headers.get("X-Next-Page", "").strip()
-            if not next_page:
-                break
-            page = int(next_page)
-        elif len(payload) < 100:
+        if len(payload) < 100:
             break
-        else:
-            page += 1
+        page += 1
     return records
 
 
@@ -775,10 +758,8 @@ def merge_participant_records(records: list[dict[str, Any]]) -> list[dict[str, A
 
 def discover_repository_participants(repo: dict[str, Any]) -> list[dict[str, Any]]:
     provider = repo["provider"]
-    token = provider_token(provider)
-    base = repository_api_base(repo)
-    owner = urllib.parse.quote(str(repo["owner"]), safe="")
-    name = urllib.parse.quote(str(repo["name"]), safe="")
+    owner = quote_component(str(repo["owner"]))
+    name = quote_component(str(repo["name"]))
     records: list[dict[str, Any]] = []
 
     def add(account: dict[str, Any], permission: Any, source: str) -> None:
@@ -801,8 +782,7 @@ def discover_repository_participants(repo: dict[str, Any]) -> list[dict[str, Any
         )
 
     if provider == "github":
-        headers = {"Authorization": f"Bearer {token}", "X-GitHub-Api-Version": "2022-11-28"}
-        collaborators = paged_api(f"{base}/repos/{owner}/{name}/collaborators?affiliation=all", headers, provider)
+        collaborators = paged_cli_api(provider, repo, f"repos/{owner}/{name}/collaborators?affiliation=all")
         for item in collaborators:
             permission = item.get("role_name")
             if not permission:
@@ -810,28 +790,27 @@ def discover_repository_participants(repo: dict[str, Any]) -> list[dict[str, Any
                 permission = next((key for key in ("admin", "maintain", "push", "triage", "pull") if permissions.get(key)), "none")
             add(item, permission, "effective-collaborator")
     elif provider == "gitlab":
-        headers = {"PRIVATE-TOKEN": token}
-        project = urllib.parse.quote(f"{repo['owner']}/{repo['name']}", safe="")
-        members = paged_api(f"{base}/projects/{project}/members/all", headers, provider)
+        project = quote_component(f"{repo['owner']}/{repo['name']}")
+        members = paged_cli_api(provider, repo, f"projects/{project}/members/all")
         for item in members:
             add(item, item.get("access_level"), "effective-member")
     else:
-        headers = {"Authorization": f"token {token}"}
-        collaborators = paged_api(f"{base}/repos/{owner}/{name}/collaborators", headers, provider)
+        collaborators = paged_cli_api(provider, repo, f"repos/{owner}/{name}/collaborators")
         for item in collaborators:
             login = str(item.get("login") or item.get("username") or "")
-            permission_payload, _ = api_json(
-                f"{base}/repos/{owner}/{name}/collaborators/{urllib.parse.quote(login, safe='')}/permission",
-                headers,
+            permission_payload = cli_api_json(
+                provider,
+                repo,
+                f"repos/{owner}/{name}/collaborators/{quote_component(login)}/permission",
             )
             permission = permission_payload.get("permission") if isinstance(permission_payload, dict) else "none"
             add(item, permission, "effective-collaborator")
-        teams = paged_api(f"{base}/repos/{owner}/{name}/teams", headers, provider)
+        teams = paged_cli_api(provider, repo, f"repos/{owner}/{name}/teams")
         for team in teams:
             team_id = team.get("id")
             if team_id is None:
                 continue
-            members = paged_api(f"{base}/teams/{team_id}/members", headers, provider)
+            members = paged_cli_api(provider, repo, f"teams/{team_id}/members")
             for item in members:
                 add(item, team.get("permission", "none"), f"team:{team_id}")
     return records

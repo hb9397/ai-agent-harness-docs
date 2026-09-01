@@ -44,6 +44,7 @@ Plan과 Apply에 전달하는 JSON은 비밀정보를 담지 않는다. `subject
       "id": "docs-repo",
       "provider": "gitea",
       "host": "git.example.com:3000",
+      "cli_login": "keai-gitea",
       "owner": "example",
       "name": "example-docs",
       "purpose": "docs",
@@ -105,6 +106,9 @@ Plan과 Apply에 전달하는 JSON은 비밀정보를 담지 않는다. `subject
 - repository는 논리 프로젝트에 속한 모든 형상관리 단위를 기록한다. 저장소 수는 앱
   수보다 많을 수 있다. `purpose=docs`만 원격 문서 승인 정책 적용 후보이며 source
   저장소는 참여자 조회와 앱 매핑에 사용한다.
+- Gitea repository의 `cli_login`은 해당 host로 인증된 `tea` 로그인 프로필 이름이다.
+  토큰이 아니며 저장소마다 다른 프로필을 쓸 수 있다. 없으면 Gitea 참여자 조회는
+  실패 범위로 보고하되 기존 정책을 추측으로 채우지 않는다.
 - `protected_branches`는 프로젝트가 이미 정한 값만 넣는다. 스킬이 `dev`·`main`
   정책을 새로 정하지 않는다.
 - `path_rules`를 생략하면 앱과 문서 종류를 기준으로 기본 규칙을 만든다. 명시 규칙에
@@ -126,6 +130,8 @@ python {skill-root}/scripts/project_write_access.py discover-participants \
 - GitHub는 저장소의 모든 유효 collaborator와 권한을 조회한다.
 - GitLab은 `/members/all`로 직접·상속·초대·상위 그룹의 유효 구성원을 조회한다.
 - Gitea는 collaborator, 저장소 team, 사용자별 유효 permission을 합친다.
+- Python 네트워크 모듈이나 설정 JSON 속 토큰을 사용하지 않는다. 인증된 `gh api`,
+  `glab api`, `tea api`가 각 host의 자격 증명 저장소를 사용한다.
 - 모든 repository를 조회하고 provider·host·불변 account ID 기준으로 합친다.
 - bot, 비활성 계정, 읽기 전용 계정을 숨기지 않고 별도로 표시한다.
 - 결과가 partial 또는 failed면 누락 저장소를 알리고, 추측으로 역할을 배정하지 않는다.
