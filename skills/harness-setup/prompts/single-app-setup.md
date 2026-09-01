@@ -72,9 +72,9 @@
 단일 앱에서 루트 `AGENTS.md`는 공통 컨텍스트 정본이다.
 
 - 없으면 번들 리소스 `templates/root-context-single.template`을 읽고
-  `{{PROJECT_NAME}}`, `{{PROJECT_ROOT}}`를 확정값으로 치환해 생성한다.
+  `{{PROJECT_NAME}}`, `{{PROJECT_ROOT}}`, `{{APP_ID}}`를 확정값으로 치환해 생성한다.
 - 이미 있으면 사용자 내용을 보존한다. setup 관리 뼈대가 누락됐다는 이유로 기존
-  프로젝트 규칙을 덮어쓰지 않으며, `context-doc` 보강 후보로 보고한다.
+  프로젝트 규칙을 덮어쓰지 않으며, `harness-setup` 관리 블록 갱신 후보로 보고한다.
 
 루트 `CLAUDE.md`는 `@AGENTS.md` bridge만 둔다. 없으면 번들 리소스
 `templates/claude-bridge.template`을 읽어 생성한다. 이미 존재하지만 bridge가
@@ -104,14 +104,15 @@
 │   ├── README.md           ← harness-setup 생성 (구조·산출물 안내)
 │   ├── .gitignore          ← harness-setup 생성 (로컬 전용 영역 지정)
 │   └── _inbox/             ← 에이전트 임시 입력 공간 (내용 git 미추적)
-├── AGENTS.md               ← harness-setup이 뼈대 생성, context-doc이 보강
+├── AGENTS.md               ← harness-setup이 프로젝트 전체 읽기 지도 관리
 ├── CLAUDE.md               ← @AGENTS.md bridge
 └── (기존 소스코드)
 ```
 
 > 📌 단일 애플리케이션에서는:
 > - `AGENTS.md` 뼈대는 `harness-setup`이 만들고, 프로젝트 팩트와 instruction
->   인덱스는 `context-doc`이 보강한다.
+> - `context-doc`은 `.docs/{앱}-context.md`와 instruction을 만들고, 루트 읽기 지도
+>   반영은 `harness-setup`이 관리한다.
 > - `CLAUDE.md`는 `@AGENTS.md` bridge다.
 > - `.docs/` 이하 산출물은 소스코드와 함께 동일 git 레포에서 형상관리한다.
 > - 사용자 스킬은 프로젝트 local copy가 아니라 `harness-kit` 플러그인으로 사용한다.

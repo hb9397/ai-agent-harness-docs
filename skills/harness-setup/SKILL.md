@@ -178,7 +178,7 @@ Step 2 확인 결과에 따라 분기한다.
 
 핵심 작업:
 1. `.docs/` 안내·정책 파일 생성: `.docs/README.md`(구조·산출물 안내), `.docs/.gitignore`(로컬 전용 영역 지정), `.docs/_inbox/`(에이전트 임시 입력 공간, 내용 git 미추적), `.docs/instruction/artifact-output-routing-instruction.md` 참조 위치 예약
-2. 루트 `AGENTS.md`가 없으면 공통 컨텍스트 정본 뼈대 생성
+2. 루트 `AGENTS.md`가 없으면 `.docs/{앱}-context.md`와 instruction 위치를 가리키는 프로젝트 전체 읽기 지도 생성
 3. 루트 `CLAUDE.md`가 없으면 `@AGENTS.md` bridge 생성
 4. 기존 local skill copy가 있으면 읽기 전용 migration report만 출력
 

@@ -604,6 +604,7 @@ def materialize_single_fixture(project: Path) -> None:
             {
                 "{{PROJECT_NAME}}": project.name,
                 "{{PROJECT_ROOT}}": str(project.resolve()),
+                "{{APP_ID}}": project.name,
             },
         ),
         encoding="utf-8",
@@ -743,6 +744,9 @@ def check_setup_contract() -> None:
     single_template = read(SETUP_ROOT / "templates" / "root-context-single.template")
     require(single_template, "{{PROJECT_NAME}}", SETUP_ROOT / "templates" / "root-context-single.template")
     require(single_template, "{{PROJECT_ROOT}}", SETUP_ROOT / "templates" / "root-context-single.template")
+    require(single_template, "{{APP_ID}}-context.md", SETUP_ROOT / "templates" / "root-context-single.template")
+    if "context-doc`으로 보강" in single_template:
+        raise AssertionError("single-app root map still delegates admin-owned root content to context-doc")
 
     multi_template = read(SETUP_ROOT / "templates" / "root-context.template")
     if "HARNESS_REPO_NAME" in multi_template:
@@ -972,6 +976,7 @@ def check_filesystem_fixtures() -> None:
                     {
                         "{{PROJECT_NAME}}": update.name,
                         "{{PROJECT_ROOT}}": str(update.resolve()),
+                        "{{APP_ID}}": update.name,
                     },
                 ),
                 MARKDOWN_MARKERS,

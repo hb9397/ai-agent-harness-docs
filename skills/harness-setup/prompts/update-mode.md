@@ -97,7 +97,9 @@ Markdown marker는
 
 단일 앱:
 - `AGENTS.md`가 없으면 `templates/root-context-single.template` 기반 뼈대를
-  생성한다. 기존 파일은 관리 블록만 갱신하고 블록 밖의 프로젝트 규칙은 보존한다.
+  생성한다. `{{APP_ID}}`는 Step 2에서 확정한 단일 앱 식별자로 치환해
+  `.docs/{앱}-context.md`를 가리킨다. 기존 파일은 관리 블록만 갱신하고 블록 밖의
+  프로젝트 규칙은 보존한다.
 - `CLAUDE.md`가 없으면 bridge 템플릿으로 생성한다. 기존 파일은 관리 블록의
   `@AGENTS.md` bridge만 갱신하고 블록 밖 Claude 전용 차이를 보존한다.
 - marker가 없는 기존 파일은 Section 3의 `unmanaged` 규칙을 그대로 적용한다.
