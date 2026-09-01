@@ -18,7 +18,7 @@ from typing import Any
 
 
 NAMESPACE = "harness-kit-project-write-access"
-SCHEMA_VERSION = "2.0.0"
+SCHEMA_VERSION = "3.0.0"
 ROLES = {"admin", "pm-pl", "app-doc-lead", "developer"}
 WRITE_SCOPES = {"admin", "app-doc", "team"}
 CODEOWNERS_MARKERS = (
@@ -88,7 +88,7 @@ def run_git(root: Path, *args: str, check: bool = True, stdin: bytes | None = No
 
 
 def access_dir_from_project(project_root: Path) -> Path:
-    return project_root.resolve() / ".docs" / "harness" / "access-control"
+    return project_root.resolve() / ".ai-docs" / "harness" / "access-control"
 
 
 def load_verified_policy(project_root: Path) -> dict[str, Any]:
@@ -231,7 +231,7 @@ def rule_for_path(policy: dict[str, Any], path: str) -> dict[str, Any] | None:
 
 
 def is_protected_path(path: str) -> bool:
-    return path in {"AGENTS.md", "CLAUDE.md"} or path.startswith(".docs/")
+    return path in {"AGENTS.md", "CLAUDE.md"} or path.startswith(".ai-docs/")
 
 
 def permits(policy: dict[str, Any], rule: dict[str, Any], subject: dict[str, Any] | None) -> bool:
@@ -443,7 +443,7 @@ def paths_from_git_command(command: str, git_root: Path, policy: dict[str, Any])
     try:
         tokens = shlex.split(command, posix=os.name != "nt")
     except ValueError:
-        if ".docs" in command or "AGENTS.md" in command or "CLAUDE.md" in command:
+        if ".ai-docs" in command or "AGENTS.md" in command or "CLAUDE.md" in command:
             raise GuardError("dynamic command target could not be parsed safely")
         return []
     command_index = 0
@@ -495,7 +495,7 @@ def paths_from_git_command(command: str, git_root: Path, policy: dict[str, Any])
         return []
 
     if executable not in {"git", "git.exe"}:
-        if ".docs" in command or "AGENTS.md" in command or "CLAUDE.md" in command:
+        if ".ai-docs" in command or "AGENTS.md" in command or "CLAUDE.md" in command:
             raise GuardError("non-Git command targets protected documents and cannot be proven safe")
         return []
     index = command_index + 1
@@ -521,7 +521,7 @@ def paths_from_git_command(command: str, git_root: Path, policy: dict[str, Any])
         return [project_path_from_git(policy, item) for item in output.splitlines()]
     if action in {"push", "merge", "rebase"}:
         raise GuardError(f"AI {action} requires the standard Git hook and a separately verified branch state")
-    if ".docs" in command or "AGENTS.md" in command or "CLAUDE.md" in command:
+    if ".ai-docs" in command or "AGENTS.md" in command or "CLAUDE.md" in command:
         raise GuardError(f"Git {action} targets protected documents and cannot be proven safe")
     return []
 
@@ -529,7 +529,7 @@ def paths_from_git_command(command: str, git_root: Path, policy: dict[str, Any])
 def ai_decision(project_root: Path, payload: dict[str, Any]) -> tuple[str, str]:
     policy = load_verified_policy(project_root)
     cwd = Path(str(payload.get("cwd") or project_root)).resolve()
-    docs_root = project_root / ".docs"
+    docs_root = project_root / ".ai-docs"
     docs_git = run_git(docs_root, "rev-parse", "--show-toplevel", check=False) if docs_root.is_dir() else None
     if docs_git is not None and docs_git.returncode == 0 and Path(docs_git.stdout.decode().strip()).resolve() == docs_root.resolve():
         git_root = docs_root.resolve()
@@ -547,7 +547,7 @@ def ai_decision(project_root: Path, payload: dict[str, Any]) -> tuple[str, str]:
         try:
             normalized.append(normalize_project_path(path, project_root))
         except GuardError:
-            if any(token in str(path) for token in (".docs", "AGENTS.md", "CLAUDE.md")):
+            if any(token in str(path) for token in (".ai-docs", "AGENTS.md", "CLAUDE.md")):
                 raise
     denied = authorize_paths(policy, provider, host, account, normalized, project_root)
     if denied:

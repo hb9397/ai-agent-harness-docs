@@ -122,7 +122,7 @@ def test_fast_standard_and_redo_are_distinct() -> None:
 
 def test_protected_tokens_code_quotes_and_tables_are_preserved() -> None:
     original = (
-        "SFR-021은 2026-07-29에 .docs/api/SFR-021.md와 `결론적으로, 실행`을 사용합니다.\n"
+        "SFR-021은 2026-07-29에 .ai-docs/api/SFR-021.md와 `결론적으로, 실행`을 사용합니다.\n"
         "\"결론적으로, 인용을 통해 수행할 수 있습니다\"와 https://example.com/a?q=30을 보존합니다.\n"
         "| ID | 설명 |\n"
         "| --- | --- |\n"

@@ -32,11 +32,11 @@ def main() -> int:
         "`.claude/skills/`",
         "`skills/`는 생성·복사·동기화하지 않는다",
         "private 템플릿을 흉내 내거나 프로젝트에 스킬을 복사해",
-        "`.docs/README.md`, `.docs/.gitignore`, `.docs/_inbox/`",
+        "`.ai-docs/README.md`, `.ai-docs/.gitignore`, `.ai-docs/_inbox/`",
         "`prompts/interview.md`",
         "**단일 상세 계약**",
         "artifact_fingerprint",
-        "`.docs/.harness/humanize-handoffs.json`",
+        "`.ai-docs/.harness/humanize-handoffs.json`",
         "`proposed`, `skipped`, `rejected`, `applied`, `revalidated`",
         "원자적 replace",
         "`harness-kit:managed:start/end` marker",
@@ -46,7 +46,11 @@ def main() -> int:
         "앱 문서 단계",
         "`design-doc`과 `context-doc`이 자동 handoff된 실행에서도",
         "앱 설계·컨텍스트 문서 쓰기 확인",
-        "루트 `AGENTS.md`·`CLAUDE.md`와 `.docs/root-context/**`를 수정하지 않았는지 검증",
+        "루트 `AGENTS.md`·`CLAUDE.md`와 `.ai-docs/root-context/**`를 수정하지 않았는지 검증",
+        "## 문서 루트 계약",
+        "`.docs/`만 있거나 두 경로가 공존하면",
+        "`harness-setup`의 명시적 문서 루트 이관·충돌 해결",
+        "`.docs/`가 남지 않았다는 검증",
     ):
         require(skill, needle)
 

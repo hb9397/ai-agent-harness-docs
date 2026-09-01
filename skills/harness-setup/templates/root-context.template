@@ -14,7 +14,7 @@
 |------|------|------|
 | 프로젝트 루트 | `{{PROJECT_NAME}}/` | git 관리 안 함 |
 {{APP_LIST}}
-| AI 문서 | `.docs/` | 별도 git 레포 |
+| AI 문서 | `.ai-docs/` | 별도 git 레포 |
 
 ---
 
@@ -30,14 +30,14 @@
 
 {{APP_INSTRUCTION_ENTRIES}}
 
-- 공용 산출물 위치·소유권·인계: `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`
-- portable routing 상태·host별 설치 경계: `@.docs/harness/artifact-routing.json`
+- 공용 산출물 위치·소유권·인계: `@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md`
+- portable routing 상태·host별 설치 경계: `@.ai-docs/harness/artifact-routing.json`
 
 ### Portable routing을 참조하는 이유
 
-`.docs/harness/`는 `harness-setup`이 프로젝트 안에 만드는 **프로젝트 소유 산출물 계약**이다.
+`.ai-docs/harness/`는 `harness-setup`이 프로젝트 안에 만드는 **프로젝트 소유 산출물 계약**이다.
 이후 Harness Kit가 아닌 스킬·에이전트도 앱별 Layer 2 instruction을 읽고 따르면, 같은
-개념의 문서를 기존 `.docs/{앱}/` 정규 경로와 소유·인계 규칙에 맞춰 이어서 만들 수 있다.
+개념의 문서를 기존 `.ai-docs/{앱}/` 정규 경로와 소유·인계 규칙에 맞춰 이어서 만들 수 있다.
 따라서 도구가 바뀌어도 산출물 구조가 분산되지 않는다. 이 bundle은 스킬 자체를 대체하지
 않으며, 스킬 실행은 설치된 플러그인 또는 해당 도구가 담당한다.
 
@@ -61,15 +61,15 @@ manifest는 **계약 상태**, `install-routing.ps1 -Check`은 **실제 host-loc
 
 | 스킬 | 경로 |
 |------|------|
-| design-doc | `.docs/{앱}/context-base/DESIGN.md` |
-| context-doc | `.docs/{앱}-context.md` + `.docs/{앱}/instruction/*-instruction.md` |
-| impl-doc / impl-fe-be-doc | `.docs/{앱}/impl-doc/{사용자}/{기능}.md` |
-| design-prototype-docs / create-prototype | `.docs/prototype/{사용자}/{id}/` |
-| artifact-output-routing | `.docs/{앱}/instruction/artifact-output-routing-instruction.md` |
-| portable routing 상태 | `.docs/harness/artifact-routing.json` |
+| design-doc | `.ai-docs/{앱}/context-base/DESIGN.md` |
+| context-doc | `.ai-docs/{앱}-context.md` + `.ai-docs/{앱}/instruction/*-instruction.md` |
+| impl-doc / impl-fe-be-doc | `.ai-docs/{앱}/impl-doc/{사용자}/{기능}.md` |
+| design-prototype-docs / create-prototype | `.ai-docs/prototype/{사용자}/{id}/` |
+| artifact-output-routing | `.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md` |
+| portable routing 상태 | `.ai-docs/harness/artifact-routing.json` |
 
-> `.docs/` 구조·산출물 규칙은 `.docs/README.md`에 정리되어 있다.
-> `.docs/_inbox/`는 에이전트에게 읽힐 파일을 잠시 올려두는 **로컬 전용 공간**으로, 내용은 git에 올라가지 않는다 (`.docs/.gitignore`가 지정).
+> `.ai-docs/` 구조·산출물 규칙은 `.ai-docs/README.md`에 정리되어 있다.
+> `.ai-docs/_inbox/`는 에이전트에게 읽힐 파일을 잠시 올려두는 **로컬 전용 공간**으로, 내용은 git에 올라가지 않는다 (`.ai-docs/.gitignore`가 지정).
 
 ---
 
@@ -78,5 +78,5 @@ manifest는 **계약 상태**, `install-routing.ps1 -Check`은 **실제 host-loc
 - 이 파일(`AGENTS.md`)은 어떤 git 레포에도 속하지 않는다.
 - `CLAUDE.md`는 공통 본문을 복제하지 않고 `@AGENTS.md` bridge만 둔다.
 - `harness-setup` 스킬 재실행으로 관리 블록을 갱신한다.
-- 원본 복사본: `.docs/root-context/AGENTS.md`, `.docs/root-context/CLAUDE.md`
+- 원본 복사본: `.ai-docs/root-context/AGENTS.md`, `.ai-docs/root-context/CLAUDE.md`
 <!-- harness-kit:managed:end -->

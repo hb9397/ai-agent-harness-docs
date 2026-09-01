@@ -22,13 +22,13 @@
     {
       "id": 4,
       "prompt": "AI 문서가 전혀 없는 기존 프로젝트에서 harness-bootstrap을 실행해줘.",
-      "expected_output": "확정한 프로젝트 유형과 적용 경로를 공개 harness-setup workflow에 전달해 .docs와 AGENTS.md/CLAUDE.md 골격을 먼저 만든다. 권한 정책이 있으면 admin 하네스 단계와 pm-pl/app-doc-lead 앱 문서 단계를 분리하며 역할을 상속하지 않는다. 사용자 프로젝트에 .agents/skills, .claude/skills, skills를 생성하지 않는다.",
+      "expected_output": "확정한 프로젝트 유형과 적용 경로를 공개 harness-setup workflow에 전달해 .ai-docs와 AGENTS.md/CLAUDE.md 골격을 먼저 만든다. 권한 정책이 있으면 admin 하네스 단계와 pm-pl/app-doc-lead 앱 문서 단계를 분리하며 역할을 상속하지 않는다. 사용자 프로젝트에 .agents/skills, .claude/skills, skills를 생성하지 않는다.",
       "files": []
     },
     {
       "id": 5,
       "prompt": "직전 session에서 같은 bootstrap 산출물에 대한 문서 개선안을 이미 제안했고 새 session에서 다시 bootstrap을 실행했다.",
-      "expected_output": "최종 산출물 상대경로와 내용 SHA-256으로 동일 fingerprint를 계산하고 .docs/.harness/humanize-handoffs.json의 기존 proposed/skipped/rejected/applied/revalidated event를 확인한다. 동일 fingerprint에는 새 개선안을 제안하지 않으며 ledger 자체는 humanize 대상에서 제외한다.",
+      "expected_output": "최종 산출물 상대경로와 내용 SHA-256으로 동일 fingerprint를 계산하고 .ai-docs/.harness/humanize-handoffs.json의 기존 proposed/skipped/rejected/applied/revalidated event를 확인한다. 동일 fingerprint에는 새 개선안을 제안하지 않으며 ledger 자체는 humanize 대상에서 제외한다.",
       "files": []
     }
   ]

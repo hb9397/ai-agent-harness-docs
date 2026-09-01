@@ -69,7 +69,7 @@ def commit_all(root: Path, message: str) -> None:
 def base_config(path: Path, repo_path: str = ".", applications: list[str] | None = None) -> Path:
     application_ids = applications or ["web", "api"]
     config = {
-        "schema_version": "2.0.0",
+        "schema_version": "3.0.0",
         "project_id": "fixture-project",
         "applications": application_ids,
         "subjects": [
@@ -207,10 +207,10 @@ def make_single_fixture(root: Path) -> Path:
     write(project / "AGENTS.md", "# Agent map\n")
     write(project / "CLAUDE.md", "@AGENTS.md\n")
     for app in ("web", "api"):
-        write(project / ".docs" / app / "instruction" / "agent-instruction.md", f"# {app} rules\n\nTEAM-{app}\n")
-        (project / ".docs" / app / "impl-doc").mkdir(parents=True)
-    write(project / ".docs" / "README.md", "# Docs\n")
-    write(project / ".docs" / ".gitignore", "_inbox/*\n")
+        write(project / ".ai-docs" / app / "instruction" / "agent-instruction.md", f"# {app} rules\n\nTEAM-{app}\n")
+        (project / ".ai-docs" / app / "impl-doc").mkdir(parents=True)
+    write(project / ".ai-docs" / "README.md", "# Docs\n")
+    write(project / ".ai-docs" / ".gitignore", "_inbox/*\n")
     write(project / ".github" / "CODEOWNERS", "# TEAM-RULE\n/src/ @source-owner\n")
     commit_all(project, "baseline")
     return project
@@ -252,36 +252,36 @@ def test_single_repository(root: Path) -> None:
     assert key_a.read_bytes() == key_b.read_bytes()
     codeowners = (project / ".github" / "CODEOWNERS").read_text(encoding="utf-8")
     assert "TEAM-RULE" in codeowners
-    assert "/.docs/web/context-base/** @lead @web-doc-lead" in codeowners
-    assert "/.docs/api/context-base/** @lead" in codeowners
-    assert "/.docs/web/impl-doc/**" not in codeowners
-    assert "/.docs/ @owner" not in codeowners
-    instruction = (project / ".docs" / "web" / "instruction" / "agent-instruction.md").read_text(encoding="utf-8")
+    assert "/.ai-docs/web/context-base/** @lead @web-doc-lead" in codeowners
+    assert "/.ai-docs/api/context-base/** @lead" in codeowners
+    assert "/.ai-docs/web/impl-doc/**" not in codeowners
+    assert "/.ai-docs/ @owner" not in codeowners
+    instruction = (project / ".ai-docs" / "web" / "instruction" / "agent-instruction.md").read_text(encoding="utf-8")
     assert "TEAM-web" in instruction
     assert "harness-kit:write-access" not in instruction
     root_map = (project / "AGENTS.md").read_text(encoding="utf-8")
     assert "write-access-instruction.md" in root_map
-    access_instruction = (project / ".docs" / "harness" / "access-control" / "write-access-instruction.md").read_text(encoding="utf-8")
+    access_instruction = (project / ".ai-docs" / "harness" / "access-control" / "write-access-instruction.md").read_text(encoding="utf-8")
     assert "역할은 상속하지 않는다" in access_instruction
     assert "설계 기준" in access_instruction
-    assert git(project, "config", "--local", "--get", "core.hooksPath").stdout.strip() == ".docs/harness/access-control/hooks/git"
+    assert git(project, "config", "--local", "--get", "core.hooksPath").stdout.strip() == ".ai-docs/harness/access-control/hooks/git"
     assert git(project, "config", "--local", "--get", "harness.writeAccess.host").stdout.strip() == "github.com"
-    provider_state = json.loads((project / ".docs" / "harness" / "access-control" / "provider-state.json").read_text(encoding="utf-8"))
+    provider_state = json.loads((project / ".ai-docs" / "harness" / "access-control" / "provider-state.json").read_text(encoding="utf-8"))
     assert {item["id"] for item in provider_state["providers"]["github"]["repositories"]} == {"docs-repo", "web-source"}
 
-    guard = project / ".docs" / "harness" / "access-control" / "hooks" / "write_access_guard.py"
+    guard = project / ".ai-docs" / "harness" / "access-control" / "hooks" / "write_access_guard.py"
     common = [sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--provider-host", "github.com", "--account"]
-    allow_admin = command([*common, "@owner", ".docs/harness/access-control/policy.json"], check=False)
-    deny_admin_app = command([*common, "@owner", ".docs/web/context-base/DESIGN.md"], check=False)
-    deny_admin_doc = command([*common, "@dev-a", ".docs/harness/access-control/policy.json"], check=False)
-    allow_team_a = command([*common, "@dev-a", ".docs/web/impl-doc/dev-a/task.md"], check=False)
-    allow_team_b = command([*common, "@dev-a", ".docs/web/impl-doc/dev-b/task.md"], check=False)
-    confirm_pm_pl_all_apps = command([*common, "@lead", ".docs/api/context-base/DESIGN.md"], check=False)
-    confirm_app_lead = command([*common, "@web-doc-lead", ".docs/web/instruction/agent-instruction.md"], check=False)
-    deny_other_app = command([*common, "@web-doc-lead", ".docs/api/context-base/DESIGN.md"], check=False)
-    deny_app_lead_admin = command([*common, "@web-doc-lead", ".docs/README.md"], check=False)
-    allow_admin_unlisted = command([*common, "@owner", ".docs/new-admin-document.md"], check=False)
-    deny_dev_unlisted = command([*common, "@dev-a", ".docs/new-admin-document.md"], check=False)
+    allow_admin = command([*common, "@owner", ".ai-docs/harness/access-control/policy.json"], check=False)
+    deny_admin_app = command([*common, "@owner", ".ai-docs/web/context-base/DESIGN.md"], check=False)
+    deny_admin_doc = command([*common, "@dev-a", ".ai-docs/harness/access-control/policy.json"], check=False)
+    allow_team_a = command([*common, "@dev-a", ".ai-docs/web/impl-doc/dev-a/task.md"], check=False)
+    allow_team_b = command([*common, "@dev-a", ".ai-docs/web/impl-doc/dev-b/task.md"], check=False)
+    confirm_pm_pl_all_apps = command([*common, "@lead", ".ai-docs/api/context-base/DESIGN.md"], check=False)
+    confirm_app_lead = command([*common, "@web-doc-lead", ".ai-docs/web/instruction/agent-instruction.md"], check=False)
+    deny_other_app = command([*common, "@web-doc-lead", ".ai-docs/api/context-base/DESIGN.md"], check=False)
+    deny_app_lead_admin = command([*common, "@web-doc-lead", ".ai-docs/README.md"], check=False)
+    allow_admin_unlisted = command([*common, "@owner", ".ai-docs/new-admin-document.md"], check=False)
+    deny_dev_unlisted = command([*common, "@dev-a", ".ai-docs/new-admin-document.md"], check=False)
     allow_source_without_role = command([*common, "@unregistered", "src/app.py"], check=False)
     assert allow_admin.returncode == 0
     assert deny_admin_app.returncode == 1
@@ -299,7 +299,7 @@ def test_single_repository(root: Path) -> None:
     git(project, "config", "--local", "harness.writeAccess.account", "@lead")
     for host in ("claude", "codex"):
         app_prompt = ai_file_write(
-            guard, project, host, project / ".docs" / "web" / "context-base" / "DESIGN.md"
+            guard, project, host, project / ".ai-docs" / "web" / "context-base" / "DESIGN.md"
         )
         assert app_prompt.returncode == 0
         prompt_decision = json.loads(app_prompt.stdout)["hookSpecificOutput"]
@@ -307,7 +307,7 @@ def test_single_repository(root: Path) -> None:
         assert "설계 기준" in prompt_decision["permissionDecisionReason"]
 
     git(project, "config", "--local", "harness.writeAccess.account", "@owner")
-    instruction_path = project / ".docs" / "harness" / "access-control" / "write-access-instruction.md"
+    instruction_path = project / ".ai-docs" / "harness" / "access-control" / "write-access-instruction.md"
     original_instruction = instruction_path.read_text(encoding="utf-8")
     staged_tamper = original_instruction.replace("역할은 상속하지 않는다", "역할을 상속한다")
     assert staged_tamper != original_instruction
@@ -320,13 +320,13 @@ def test_single_repository(root: Path) -> None:
     git(project, "reset", "--", str(instruction_path))
 
     git(project, "config", "--local", "harness.writeAccess.account", "@dev-a")
-    team_path = project / ".docs" / "web" / "impl-doc" / "dev-b" / "team.md"
+    team_path = project / ".ai-docs" / "web" / "impl-doc" / "dev-b" / "team.md"
     write(team_path, "team\n")
     assert git(project, "add", str(team_path)).returncode == 0
     git(project, "commit", "-q", "-m", "unregistered contributor team document")
     assert (project / ".git" / "previous-hook-ran").is_file()
 
-    protected_path = project / ".docs" / "README.md"
+    protected_path = project / ".ai-docs" / "README.md"
     protected_text = protected_path.read_text(encoding="utf-8")
     write(protected_path, protected_text + "blocked\n")
     git(project, "add", str(protected_path))
@@ -363,7 +363,7 @@ def test_single_repository(root: Path) -> None:
 
     local_state = json.loads((project / ".git" / "harness-write-access.json").read_text(encoding="utf-8"))
     assert local_state["previous_hooks"]["pre-commit"] == str(previous_hook.resolve())
-    guard = project / ".docs" / "harness" / "access-control" / "hooks" / "write_access_guard.py"
+    guard = project / ".ai-docs" / "harness" / "access-control" / "hooks" / "write_access_guard.py"
     local_oid = git(project, "rev-parse", "HEAD").stdout.strip()
     push_input = f"refs/heads/main {local_oid} refs/heads/main {baseline_sha}\n"
     allowed_push = subprocess.run(
@@ -422,7 +422,7 @@ def test_single_repository(root: Path) -> None:
     apply(project, config, second_plan["plan_hash"], codex_keys, claude_keys)
     assert git(project, "status", "--porcelain").stdout == ""
 
-    signature = project / ".docs" / "harness" / "access-control" / "policy.sig"
+    signature = project / ".ai-docs" / "harness" / "access-control" / "policy.sig"
     valid_signature = signature.read_bytes()
     signature.write_text("tampered\n", encoding="utf-8")
     failed = controller("verify", "--project-root", str(project), check=False)
@@ -437,7 +437,7 @@ def test_single_repository(root: Path) -> None:
     write(config, json.dumps(updated_config, ensure_ascii=False, indent=2) + "\n")
     policy_update_plan = plan(project, config)
     apply(project, config, policy_update_plan["plan_hash"], codex_keys, claude_keys)
-    updated_guard = project / ".docs" / "harness" / "access-control" / "hooks" / "write_access_guard.py"
+    updated_guard = project / ".ai-docs" / "harness" / "access-control" / "hooks" / "write_access_guard.py"
     newly_allowed_app = command(
         [
             sys.executable,
@@ -451,7 +451,7 @@ def test_single_repository(root: Path) -> None:
             "github.com",
             "--account",
             "@web-doc-lead",
-            ".docs/api/context-base/DESIGN.md",
+            ".ai-docs/api/context-base/DESIGN.md",
         ],
         check=False,
     )
@@ -545,11 +545,11 @@ def test_single_repository(root: Path) -> None:
         "--delete-keys",
     )
     assert json.loads(removed.stdout)["status"] == "removed"
-    assert not (project / ".docs" / "harness" / "access-control" / "policy.json").exists()
+    assert not (project / ".ai-docs" / "harness" / "access-control" / "policy.json").exists()
     assert not (codex_keys / "fixture-project.key").exists()
     assert not (claude_keys / "fixture-project.key").exists()
     assert "TEAM-RULE" in (project / ".github" / "CODEOWNERS").read_text(encoding="utf-8")
-    assert "TEAM-web" in (project / ".docs" / "web" / "instruction" / "agent-instruction.md").read_text(encoding="utf-8")
+    assert "TEAM-web" in (project / ".ai-docs" / "web" / "instruction" / "agent-instruction.md").read_text(encoding="utf-8")
     assert git(project, "config", "--local", "--get", "core.hooksPath", check=False).returncode == 1
     assert previous_hook.is_file()
     assert not (project / ".git" / "harness-write-access.json").exists()
@@ -560,8 +560,8 @@ def test_single_application_defaults(root: Path) -> None:
     init_repo(project)
     write(project / "AGENTS.md", "# Agent map\n")
     write(project / "CLAUDE.md", "@AGENTS.md\n")
-    write(project / ".docs" / "instruction" / "agent-instruction.md", "# App rules\n")
-    write(project / ".docs" / "README.md", "# Docs\n")
+    write(project / ".ai-docs" / "instruction" / "agent-instruction.md", "# App rules\n")
+    write(project / ".ai-docs" / "README.md", "# Docs\n")
     commit_all(project, "baseline")
     config = base_config(root / "single-application-config.json", applications=["solo"])
     codex_keys = root / "single-application-codex-keys"
@@ -570,19 +570,19 @@ def test_single_application_defaults(root: Path) -> None:
     apply(project, config, current_plan["plan_hash"], codex_keys, claude_keys)
 
     policy = json.loads(
-        (project / ".docs" / "harness" / "access-control" / "policy.json").read_text(encoding="utf-8")
+        (project / ".ai-docs" / "harness" / "access-control" / "policy.json").read_text(encoding="utf-8")
     )
     rules = {rule["pattern"]: rule for rule in policy["path_rules"]}
-    assert rules[".docs/context-base/**"] == {
+    assert rules[".ai-docs/context-base/**"] == {
         "application": "solo",
-        "pattern": ".docs/context-base/**",
+        "pattern": ".ai-docs/context-base/**",
         "priority": 90,
         "write_scope": "app-doc",
     }
-    assert rules[".docs/instruction/**"]["write_scope"] == "app-doc"
-    assert rules[".docs/impl-doc/**"]["write_scope"] == "team"
+    assert rules[".ai-docs/instruction/**"]["write_scope"] == "app-doc"
+    assert rules[".ai-docs/impl-doc/**"]["write_scope"] == "team"
 
-    guard = project / ".docs" / "harness" / "access-control" / "hooks" / "write_access_guard.py"
+    guard = project / ".ai-docs" / "harness" / "access-control" / "hooks" / "write_access_guard.py"
     allow_unregistered_team = command(
         [
             sys.executable,
@@ -596,7 +596,7 @@ def test_single_application_defaults(root: Path) -> None:
             "github.com",
             "--account",
             "@unregistered",
-            ".docs/impl-doc/anyone/task.md",
+            ".ai-docs/impl-doc/anyone/task.md",
         ],
         check=False,
     )
@@ -613,7 +613,7 @@ def test_single_application_defaults(root: Path) -> None:
             "github.com",
             "--account",
             "@web-doc-lead",
-            ".docs/context-base/DESIGN.md",
+            ".ai-docs/context-base/DESIGN.md",
         ],
         check=False,
     )
@@ -631,8 +631,31 @@ def test_explicit_developer_and_multiple_roles(root: Path) -> None:
     value["role_assignments"].append({"subject_id": "owner", "role": "pm-pl"})
     write(config, json.dumps(value, ensure_ascii=False, indent=2) + "\n")
     current_plan = plan(project, config)
-    assert current_plan["schema_version"] == "2.0.0"
+    assert current_plan["schema_version"] == "3.0.0"
     assert current_plan["participant_discovery"] == "required-before-role-change"
+
+
+def test_legacy_document_roots_are_rejected(root: Path) -> None:
+    legacy = root / "legacy-docs-root"
+    init_repo(legacy)
+    write(legacy / ".docs" / "README.md", "# Legacy docs\n")
+    legacy_config = base_config(root / "legacy-docs-root-config.json")
+    rejected_legacy = controller(
+        "plan", "--project-root", str(legacy), "--config", str(legacy_config), check=False
+    )
+    assert rejected_legacy.returncode == 2
+    assert "legacy .docs exists without .ai-docs" in rejected_legacy.stderr
+
+    both = root / "conflicting-docs-roots"
+    init_repo(both)
+    write(both / ".docs" / "README.md", "# Legacy docs\n")
+    write(both / ".ai-docs" / "README.md", "# Canonical docs\n")
+    both_config = base_config(root / "conflicting-docs-roots-config.json")
+    rejected_both = controller(
+        "plan", "--project-root", str(both), "--config", str(both_config), check=False
+    )
+    assert rejected_both.returncode == 2
+    assert ".ai-docs and legacy .docs both exist" in rejected_both.stderr
 
 
 def test_participant_merge() -> None:
@@ -654,7 +677,7 @@ def test_participant_merge() -> None:
 
 def test_multi_repository(root: Path) -> None:
     project = root / "multi"
-    docs = project / ".docs"
+    docs = project / ".ai-docs"
     project.mkdir()
     init_repo(docs)
     write(project / "AGENTS.md", "# Untracked root map\n")
@@ -665,7 +688,7 @@ def test_multi_repository(root: Path) -> None:
     write(docs / ".gitignore", "_inbox/*\n")
     write(docs / "CODEOWNERS", "# Existing higher-priority GitLab and Gitea file\n")
     commit_all(docs, "baseline")
-    config = base_config(root / "multi-config.json", ".docs")
+    config = base_config(root / "multi-config.json", ".ai-docs")
     codex_keys = root / "multi-codex-keys"
     claude_keys = root / "multi-claude-keys"
     current_plan = plan(project, config)
@@ -689,10 +712,10 @@ def test_failed_apply_removes_new_keys(root: Path) -> None:
     init_repo(project)
     write(project / "AGENTS.md", "# Agent map\n")
     write(project / "CLAUDE.md", "@AGENTS.md\n")
-    write(project / ".docs" / "web" / "instruction" / "agent-instruction.md", "# Web\n")
-    write(project / ".docs" / "api" / "instruction" / "agent-instruction.md", "# API\n")
-    write(project / ".docs" / "README.md", "# Docs\n")
-    write(project / ".docs" / ".gitignore", "_inbox/*\n")
+    write(project / ".ai-docs" / "web" / "instruction" / "agent-instruction.md", "# Web\n")
+    write(project / ".ai-docs" / "api" / "instruction" / "agent-instruction.md", "# API\n")
+    write(project / ".ai-docs" / "README.md", "# Docs\n")
+    write(project / ".ai-docs" / ".gitignore", "_inbox/*\n")
     write(project / ".claude" / "settings.json", "{ malformed\n")
     commit_all(project, "baseline")
     config = base_config(root / "rollback-config.json")
@@ -703,7 +726,7 @@ def test_failed_apply_removes_new_keys(root: Path) -> None:
     assert failed.returncode == 2
     assert not (codex_keys / "fixture-project.key").exists()
     assert not (claude_keys / "fixture-project.key").exists()
-    assert not (project / ".docs" / "harness" / "access-control" / "policy.json").exists()
+    assert not (project / ".ai-docs" / "harness" / "access-control" / "policy.json").exists()
 
 
 def main() -> int:
@@ -713,6 +736,7 @@ def main() -> int:
         test_single_repository(root)
         test_single_application_defaults(root)
         test_explicit_developer_and_multiple_roles(root)
+        test_legacy_document_roots_are_rejected(root)
         test_participant_merge()
         test_multi_repository(root)
         test_failed_apply_removes_new_keys(root)

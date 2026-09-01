@@ -15,6 +15,15 @@ description: >
 allowed-tools: Read, Write, Glob, Grep, Agent
 ---
 
+## 문서 루트 계약
+
+이 스킬이 하네스 문서를 읽거나 쓸 때 사용하는 정본은 `.ai-docs/`뿐이다. 작업 전에
+`.ai-docs/`와 이전 `.docs/`의 존재를 확인한다. `.docs/`만 있거나 두 경로가 함께
+있으면 하네스 문서를 읽거나 쓰지 않고 `harness-setup`의 명시적 문서 루트 이관·충돌
+해결을 먼저 요청한다. 이전 경로를 호환 별칭으로 추측하지 않는다. 애플리케이션 소스
+작업 자체의 권한과 가능 여부는 이 문서 루트 판정으로 제한하지 않는다.
+
+
 # 범용 구현 지침서 (impl-doc)
 
 design-doc 스킬의 OUTPUT 또는 설계 문서를 입력받아
@@ -26,8 +35,8 @@ FE/BE 페어 다중 기능 또는 화면 다중 RFP가 아니면 이 스킬을 �
 생성 전 반드시 사용자 확인을 거친다. 파일을 무단으로 생성하지 않는다.
 
 계획서·roadmap index 저장 경로·소유권·인계는 단일 앱의
-`@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
-`@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를 따른다.
+`@.ai-docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
+`@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md`를 따른다.
 
 > impl-fe-be-doc은 **FE/BE 페어 다중 기능** 또는
 > **RFP/SFR 기반 다중 화면** 구현에 특화된 스킬이다.
@@ -43,9 +52,9 @@ design-doc OUTPUT (설계문서.md)
     ↓
 impl-doc  ← 지금 여기
     ↓
-(단일앱) .docs/impl-doc/{사용자}/{YYMMDD}-{seq}.{slug}-impl-{kind}.md
-(복수앱) .docs/{앱}/impl-doc/{사용자}/{YYMMDD}-{seq}.{slug}-impl-{kind}.md
-        예: .docs/app-backend/impl-doc/developer/260630-1.user-auth-impl-api.md
+(단일앱) .ai-docs/impl-doc/{사용자}/{YYMMDD}-{seq}.{slug}-impl-{kind}.md
+(복수앱) .ai-docs/{앱}/impl-doc/{사용자}/{YYMMDD}-{seq}.{slug}-impl-{kind}.md
+        예: .ai-docs/app-backend/impl-doc/developer/260630-1.user-auth-impl-api.md
     ├─→ 같은 디렉토리의 로드맵 인덱스 문서
     │   {YYMMDD}-0.{앱이름}-roadmap-impl-index.md 생성/갱신 (Step 8)
     ├─→ 실제 구현
@@ -127,11 +136,11 @@ impl-doc  ← 지금 여기
 구현계획서 초안을 만들기 전에 반드시 수행한다. Step 8의 사후 갱신만으로는 계획서가
 인덱스 없이 저장될 수 있으므로, 이 단계에서 scope를 확정하고 index를 예약한다.
 
-1. 사용자 식별자, 단일/복수 앱 유형, 앱 식별자·source root, repository root, `.docs`
+1. 사용자 식별자, 단일/복수 앱 유형, 앱 식별자·source root, repository root, `.ai-docs`
    root를 확인한다.
 2. `../impl-doc/{사용자 식별}/` 아래의 실제 `design-roadmap` 위치와 접근 가능한
-   `*-roadmap-impl-index.md`를 탐색한다. 단일 앱은 `.docs/impl-doc/{사용자}/`,
-   복수 앱은 `.docs/{앱}/impl-doc/{사용자}/`를 계획서 scope로 사용한다.
+   `*-roadmap-impl-index.md`를 탐색한다. 단일 앱은 `.ai-docs/impl-doc/{사용자}/`,
+   복수 앱은 `.ai-docs/{앱}/impl-doc/{사용자}/`를 계획서 scope로 사용한다.
 3. 대상 scope에 index가 없으면 계획서를 쓰기 **전에**
    `{YYMMDD}-0.{앱이름}-roadmap-impl-index.md`를 만들고 `implementation plan pending`,
    사용자·앱·예정 slug/kind·design-roadmap 경로·preflight 시각을 예약 행으로 기록한다.
@@ -269,8 +278,8 @@ PKG-XX  : 패키징 (빌드, 배포, 문서화)
 
 **④ 저장 디렉토리 결정** — 프로젝트 유형에 따라 분기한다.
 
-- **단일 앱**: `.docs/impl-doc/{사용자}/`
-- **복수 앱**: `.docs/{앱}/impl-doc/{사용자}/` (예: `.docs/app-backend/impl-doc/developer/`)
+- **단일 앱**: `.ai-docs/impl-doc/{사용자}/`
+- **복수 앱**: `.ai-docs/{앱}/impl-doc/{사용자}/` (예: `.ai-docs/app-backend/impl-doc/developer/`)
 
 디렉토리가 없으면 생성한다.
 
@@ -287,9 +296,9 @@ PKG-XX  : 패키징 (빌드, 배포, 문서화)
 - `{kind}` — ②에서 받은 구현 종류 한 단어.
 
 예시:
-- `.docs/app-backend/impl-doc/developer/260630-1.user-auth-impl-api.md`
-- `.docs/app-backend/impl-doc/developer/260630-2.user-auth-impl-db.md`
-- `.docs/app-frontend/impl-doc/developer/260630-3.search-result-impl-ui.md`
+- `.ai-docs/app-backend/impl-doc/developer/260630-1.user-auth-impl-api.md`
+- `.ai-docs/app-backend/impl-doc/developer/260630-2.user-auth-impl-db.md`
+- `.ai-docs/app-frontend/impl-doc/developer/260630-3.search-result-impl-ui.md`
 
 **⑥ 중복 검사 및 갱신 처리**
 
@@ -321,7 +330,7 @@ PKG-XX  : 패키징 (빌드, 배포, 문서화)
 ### Step 8 — 로드맵 인덱스 문서 생성·갱신
 
 Step 7 저장이 끝난 뒤 **반드시** 수행한다. 대상은 Step 7 ④에서 정한 저장 디렉토리
-(`.docs/impl-doc/{사용자}/` 또는 `.docs/{앱}/impl-doc/{사용자}/`) 안의
+(`.ai-docs/impl-doc/{사용자}/` 또는 `.ai-docs/{앱}/impl-doc/{사용자}/`) 안의
 **로드맵 인덱스 문서 1개**다. 이 문서는 impl-doc/impl-fe-be-doc이 함께 쓰는 공용 산출물이며,
 "이 디렉토리에 어떤 impl 문서들이 있고, 지금 어디까지 왔는가"를 한 곳에서 보여준다.
 
@@ -420,7 +429,7 @@ owner이고 억제되지 않았으며 아직 완료되지 않은 bundle에 대�
 producer가 owner이면 초안과 검증 결과만 반환한다.
 
 최종 검증된 계획서·인덱스의 정규화 상대경로와 각 파일 SHA-256, profile 이름을
-정렬해 `artifact_bundle_fingerprint`를 계산한다. `.docs/.harness/
+정렬해 `artifact_bundle_fingerprint`를 계산한다. `.ai-docs/.harness/
 humanize-handoffs.json` 원자적 ledger에 같은 fingerprint의 `proposed`, `skipped`,
 `rejected`, `applied`, `revalidated` 완료 기록이 있으면 새 session에서도
 재제안하지 않는다. 새 결정은 bundle ID, owner, 파일 hash, 시각과 함께 기록하고

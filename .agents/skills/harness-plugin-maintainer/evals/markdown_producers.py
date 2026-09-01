@@ -113,15 +113,15 @@ def test_persisted_paths_stay_inside_the_declared_contract() -> None:
         declared.update(item["artifacts"])
 
     for name, expected in (
-        ("ui-ux-pro-max", ".docs/design-system/{project-slug}/MASTER.md"),
-        ("motion-design", ".docs/design-system/{project-slug}/motion/{screen-or-component}.md"),
+        ("ui-ux-pro-max", ".ai-docs/design-system/{project-slug}/MASTER.md"),
+        ("motion-design", ".ai-docs/design-system/{project-slug}/motion/{screen-or-component}.md"),
     ):
         assert expected in declared, f"inventory does not declare {expected}"
         text = (ROOT / "skills" / name / "SKILL.md").read_text(encoding="utf-8")
         assert expected in text, f"{name} does not document its declared output path"
-        # Anything writing outside .docs would escape the harness output area.
-        for match in re.findall(r"^\.docs/[^\s`]+", text, re.MULTILINE):
-            assert match.startswith(".docs/"), match
+        # Anything writing outside .ai-docs would escape the harness output area.
+        for match in re.findall(r"^\.ai-docs/[^\s`]+", text, re.MULTILINE):
+            assert match.startswith(".ai-docs/"), match
 
 
 def main() -> int:

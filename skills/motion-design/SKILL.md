@@ -4,6 +4,15 @@ description: "화면의 진입·퇴장·페이지 전환·모달 전환을 설�
 allowed-tools: Read, Write, Glob, Grep
 ---
 
+## 문서 루트 계약
+
+이 스킬이 하네스 문서를 읽거나 쓸 때 사용하는 정본은 `.ai-docs/`뿐이다. 작업 전에
+`.ai-docs/`와 이전 `.docs/`의 존재를 확인한다. `.docs/`만 있거나 두 경로가 함께
+있으면 하네스 문서를 읽거나 쓰지 않고 `harness-setup`의 명시적 문서 루트 이관·충돌
+해결을 먼저 요청한다. 이전 경로를 호환 별칭으로 추측하지 않는다. 애플리케이션 소스
+작업 자체의 권한과 가능 여부는 이 문서 루트 판정으로 제한하지 않는다.
+
+
 # Motion Design
 
 모션의 **목적**을 먼저 정하고 타이밍, 이징, 속성, 안무, 접근성, 성능을
@@ -12,8 +21,8 @@ allowed-tools: Read, Write, Glob, Grep
 이 스킬은 **모션 명세**를 만든다. 제품 소스코드 구현은 하지 않는다.
 
 모션 명세 저장 경로·소유권·인계는 단일 앱의
-`@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
-`@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를 따른다.
+`@.ai-docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
+`@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md`를 따른다.
 
 ## STEP 0 — 모션이 필요한지 먼저 판단
 
@@ -156,10 +165,10 @@ Design 3와 Apple HIG의 공개 easing 값이 비교 목적으로 인용되어 �
 
 ```text
 # 단일 앱
-.docs/design-system/{project-slug}/motion/{screen-or-component}.md
+.ai-docs/design-system/{project-slug}/motion/{screen-or-component}.md
 
 # 복수 앱 — {앱}은 Step 0에서 확인한 대상 앱
-.docs/{앱}/design-system/{project-slug}/motion/{screen-or-component}.md
+.ai-docs/{앱}/design-system/{project-slug}/motion/{screen-or-component}.md
 ```
 
 `{project-slug}`와 `{screen-or-component}`는 소문자, 숫자, 하이픈만 쓴다. `..`,

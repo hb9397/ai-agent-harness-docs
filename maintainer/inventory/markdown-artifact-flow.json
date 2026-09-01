@@ -8,7 +8,7 @@
       "artifacts": [
         "AGENTS.md",
         "CLAUDE.md",
-        ".docs/README.md"
+        ".ai-docs/README.md"
       ],
       "structural_validator": "project layout allowlist, AGENTS canonical context, CLAUDE @AGENTS.md bridge",
       "handoff": "Outermost owner offers one humanize-korean document-refinement proposal after structural validation."
@@ -71,10 +71,10 @@
       "conditional": true,
       "condition": "Only when the user explicitly asks to persist the design system. The default is a chat report with no file write.",
       "artifacts": [
-        ".docs/design-system/{project-slug}/MASTER.md",
-        ".docs/design-system/{project-slug}/pages/{page-slug}.md",
-        ".docs/{앱}/design-system/{project-slug}/MASTER.md",
-        ".docs/{앱}/design-system/{project-slug}/pages/{page-slug}.md"
+        ".ai-docs/design-system/{project-slug}/MASTER.md",
+        ".ai-docs/design-system/{project-slug}/pages/{page-slug}.md",
+        ".ai-docs/{앱}/design-system/{project-slug}/MASTER.md",
+        ".ai-docs/{앱}/design-system/{project-slug}/pages/{page-slug}.md"
       ],
       "structural_validator": "required sections, token tables, slug-safe paths, MASTER/override split",
       "handoff": "Offer once only when directly invoked and the outermost producer; suppress when a parent owns the bundle."
@@ -84,8 +84,8 @@
       "conditional": true,
       "condition": "Only when the user explicitly asks to persist the motion spec. The default is a chat report with no file write.",
       "artifacts": [
-        ".docs/design-system/{project-slug}/motion/{screen-or-component}.md",
-        ".docs/{앱}/design-system/{project-slug}/motion/{screen-or-component}.md"
+        ".ai-docs/design-system/{project-slug}/motion/{screen-or-component}.md",
+        ".ai-docs/{앱}/design-system/{project-slug}/motion/{screen-or-component}.md"
       ],
       "structural_validator": "required spec fields, slug-safe paths, reduced-motion alternative present",
       "handoff": "Offer once only when directly invoked and the outermost producer; suppress when a parent owns the bundle."
@@ -101,7 +101,7 @@
       "suppress_child_handoff": true,
       "handoff_completed": "in-session state set after propose, skip, reject, apply, or revalidate",
       "artifact_bundle_fingerprint": "SHA-256 over the sorted normalized Markdown paths, each content SHA-256, and the profile name",
-      "persistent_ledger": ".docs/.harness/humanize-handoffs.json; atomically keyed by artifact_bundle_fingerprint so retries and new sessions do not offer unchanged content twice",
+      "persistent_ledger": ".ai-docs/.harness/humanize-handoffs.json; atomically keyed by artifact_bundle_fingerprint so retries and new sessions do not offer unchanged content twice",
       "ledger_states": [
         "proposed",
         "skipped",

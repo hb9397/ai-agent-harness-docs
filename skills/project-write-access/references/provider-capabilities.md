@@ -5,8 +5,8 @@
 
 생성기는 `admin`과 `app-doc`처럼 명시적인 문서 소유자가 있는 경로만 CODEOWNERS
 관리 블록에 넣는다. 역할 등록이 없는 일반 기여자에게 열린 `team` 경로에는 owner
-규칙을 만들지 않는다. 그래서 `.docs/**` 전체 관리자 fallback도 CODEOWNERS에는 넣지
-않고, 알려지지 않은 새 `.docs` 경로의 기본 관리자 판정은 서명 정책과 로컬·AI 가드가
+규칙을 만들지 않는다. 그래서 `.ai-docs/**` 전체 관리자 fallback도 CODEOWNERS에는 넣지
+않고, 알려지지 않은 새 `.ai-docs` 경로의 기본 관리자 판정은 서명 정책과 로컬·AI 가드가
 맡는다. 새 경로의 원격 승인까지 강제하려면 정책에 명시 경로를 추가해야 한다.
 
 ## GitHub
@@ -53,7 +53,7 @@
 - 패턴은 GitHub·GitLab glob이 아니라 Go 정규식이다.
 - Gitea는 적용 가능한 규칙을 조합하므로 GitHub·GitLab식 전체 fallback과 뒤쪽 override를
   그대로 쓰면 admin 승인까지 중복 요구할 수 있다. 생성기는 서명 정책에 열거된 경로만
-  정규식으로 만들며, 새 `.docs` 경로는 정책에 추가하기 전까지 원격 CODEOWNERS 완전
+  정규식으로 만들며, 새 `.ai-docs` 경로는 정책에 추가하기 전까지 원격 CODEOWNERS 완전
   보호 대상으로 주장하지 않는다.
 - branch protection에서 code owner approval을 켜야 PR 병합 제한이 생긴다.
 - 저장소 소유자·관리자 권한과 API 토큰이 필요하다. 설치 버전의 OpenAPI에서

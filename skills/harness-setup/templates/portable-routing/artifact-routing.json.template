@@ -21,7 +21,7 @@
   ],
   "repositories": {{REPOSITORY_ENTRIES}},
   "write_guard": {
-    "approval_marker_directory": ".docs/.harness/artifact-approvals",
+    "approval_marker_directory": ".ai-docs/.harness/artifact-approvals",
     "one_shot_marker_ttl_seconds": 900,
     "dynamic_shell_target": "bypass-with-evidence"
   },
@@ -45,15 +45,15 @@
     }
   },
   "managed_files": [
-    ".docs/harness/artifact-routing.json",
-    ".docs/harness/artifact-format-contract.json",
-    ".docs/harness/README.md",
-    ".docs/harness/install-routing.ps1",
-    ".docs/harness/normalize-artifact.ps1",
-    ".docs/harness/hooks/artifact-route-core.ps1",
-    ".docs/harness/hooks/claude-pre-tool-use.ps1",
-    ".docs/harness/hooks/codex-pre-tool-use.ps1",
-    ".docs/harness/hooks/approve-artifact.ps1",
+    ".ai-docs/harness/artifact-routing.json",
+    ".ai-docs/harness/artifact-format-contract.json",
+    ".ai-docs/harness/README.md",
+    ".ai-docs/harness/install-routing.ps1",
+    ".ai-docs/harness/normalize-artifact.ps1",
+    ".ai-docs/harness/hooks/artifact-route-core.ps1",
+    ".ai-docs/harness/hooks/claude-pre-tool-use.ps1",
+    ".ai-docs/harness/hooks/codex-pre-tool-use.ps1",
+    ".ai-docs/harness/hooks/approve-artifact.ps1",
     ".claude/settings.json",
     ".claude/hooks/claude-pre-tool-use.ps1",
     ".codex/hooks.json",

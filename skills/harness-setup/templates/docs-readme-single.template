@@ -1,5 +1,5 @@
 <!-- harness-kit:managed:start -->
-# .docs — AI 문서·산출물 저장소
+# .ai-docs — AI 문서·산출물 저장소
 
 > 이 디렉토리는 `harness-setup` 스킬이 생성하며, 이 애플리케이션의 AI 에이전트 산출물
 > (설계·컨텍스트·구현 지침·프로토타입)을 모아둔다.
@@ -12,7 +12,7 @@
 ## 디렉토리 구조
 
 ```
-.docs/
+.ai-docs/
 ├── README.md                   ← 이 파일 (harness-setup 생성)
 ├── .gitignore                  ← 로컬 전용 영역 지정 (harness-setup 생성)
 ├── _inbox/                     ← 에이전트가 읽을 파일을 잠시 올려두는 로컬 전용 공간 (git 미추적)
@@ -29,7 +29,7 @@
 ```
 
 > 위 산출물 디렉토리·파일은 해당 스킬을 처음 실행할 때 생성된다. 세팅 직후에는 비어 있을 수 있다.
-> `.docs/.harness/humanize-handoffs.json`은 첫 문서 개선 handoff 때 생성되는
+> `.ai-docs/.harness/humanize-handoffs.json`은 첫 문서 개선 handoff 때 생성되는
 > 기계 관리 JSON이며 Markdown 개선 대상이 아니다.
 
 ---
@@ -38,21 +38,21 @@
 
 | 스킬 | 산출물 | 위치 |
 |------|--------|------|
-| `harness-setup` | 이 README, `.gitignore`, `_inbox/` | `.docs/README.md`, `.docs/.gitignore`, `.docs/_inbox/` |
-| portable routing | 경로·format·host 설치 상태 | `.docs/harness/` |
-| `design-doc` | 설계 문서 | `.docs/context-base/DESIGN.md` |
-| `context-doc` | 컨텍스트 + instruction | `AGENTS.md`, `CLAUDE.md` bridge, `.docs/instruction/*-instruction.md` |
-| `impl-doc` / `impl-fe-be-doc` | 구현 지침 | `.docs/impl-doc/{사용자}/{기능}.md` |
-| `design-prototype-docs` | 프로토타입 설계 문서 | `.docs/prototype/{사용자}/{식별자}/design-doc.md` |
-| `create-prototype` | HTML 프로토타입 | `.docs/prototype/{사용자}/{PREFIX}-{번호}/` |
+| `harness-setup` | 이 README, `.gitignore`, `_inbox/` | `.ai-docs/README.md`, `.ai-docs/.gitignore`, `.ai-docs/_inbox/` |
+| portable routing | 경로·format·host 설치 상태 | `.ai-docs/harness/` |
+| `design-doc` | 설계 문서 | `.ai-docs/context-base/DESIGN.md` |
+| `context-doc` | 컨텍스트 + instruction | `AGENTS.md`, `CLAUDE.md` bridge, `.ai-docs/instruction/*-instruction.md` |
+| `impl-doc` / `impl-fe-be-doc` | 구현 지침 | `.ai-docs/impl-doc/{사용자}/{기능}.md` |
+| `design-prototype-docs` | 프로토타입 설계 문서 | `.ai-docs/prototype/{사용자}/{식별자}/design-doc.md` |
+| `create-prototype` | HTML 프로토타입 | `.ai-docs/prototype/{사용자}/{PREFIX}-{번호}/` |
 
 ---
 
 ## Portable routing — 빠른 운영 안내
 
-`.docs/harness/`는 산출물의 경로·형식·인계 계약을 프로젝트 안에 남기는 **project-owned
+`.ai-docs/harness/`는 산출물의 경로·형식·인계 계약을 프로젝트 안에 남기는 **project-owned
 bundle**이다. `harness-setup`이 이 계약을 먼저 정해 두면, 이후 Harness Kit가 아닌
-스킬·에이전트도 Layer 2 instruction을 읽고 같은 개념의 문서를 기존 `.docs` 정규 경로에
+스킬·에이전트도 Layer 2 instruction을 읽고 같은 개념의 문서를 기존 `.ai-docs` 정규 경로에
 이어 쓸 수 있다. 따라서 도구가 바뀌어도 산출물 구조가 분산되지 않는다.
 
 이 계약은 경로 결정을 공유하는 방식이며, 다른 도구의 쓰기를 자동으로 대체하거나 강제하지

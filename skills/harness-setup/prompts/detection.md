@@ -21,10 +21,12 @@
 
 2. 위 조건이 성립하면 → **하네스 관리 레포 내부**. 사용자에게 대상 프로젝트 루트 경로를 질문한다. 부모 폴더를 자동 적용하지 않는다.
 
-3. 위 조건 불충족 시, 현재 플랫폼의 파일 조회 도구로 현재 위치의 `.docs/` 또는
-   `AGENTS.md` 존재 여부를 확인한다.
+3. 위 조건 불충족 시, 현재 플랫폼의 파일 조회 도구로 현재 위치의 `.ai-docs/`,
+   이전 `.docs/`, `AGENTS.md` 존재 여부를 함께 확인한다.
 
-4. `.docs/` 또는 `AGENTS.md`가 존재하면 → **이미 하네스 문서가 있는 프로젝트**. 현재 위치를 프로젝트 루트로 설정.
+4. `.ai-docs/`, 이전 `.docs/` 또는 `AGENTS.md`가 존재하면 → **하네스 문서가 있거나
+   이관이 필요한 프로젝트**. 현재 위치를 프로젝트 루트로 설정한다. 두 문서 루트의
+   존재 조합은 [세팅 모드 판별]에서 별도로 결정한다.
 
 5. 위 모두 불충족 → 사용자에게 프로젝트 루트 경로를 직접 질문.
 
@@ -37,7 +39,7 @@ legacy/custom local skill 후보로만 기록하고, 실행 컨텍스트 판정�
 사용자에게 대상 프로젝트 루트 경로를 확인한다:
 
 > "하네스 관리 레포(`{현재 폴더}`) 안에서 실행 중입니다.
-> `.docs`와 루트 컨텍스트를 세팅할 대상 프로젝트 루트 경로를 알려주세요."
+> `.ai-docs`와 루트 컨텍스트를 세팅할 대상 프로젝트 루트 경로를 알려주세요."
 
 ---
 
@@ -55,7 +57,7 @@ legacy/custom local skill 후보로만 기록하고, 실행 컨텍스트 판정�
 **복수 애플리케이션 시그널** — 프로젝트 루트 아래에 여러 앱 루트가 존재:
 - 하위 디렉토리 각각이 위 매니페스트를 보유
 - 하위 디렉토리 각각이 독립 `.git/`을 보유
-- 프로젝트 루트 자체에는 매니페스트가 없음 (또는 하네스 레포/`.docs` 등 인프라만 있음)
+- 프로젝트 루트 자체에는 매니페스트가 없음 (또는 하네스 레포/`.ai-docs` 등 인프라만 있음)
 
 ### 감지 절차
 
@@ -64,7 +66,7 @@ legacy/custom local skill 후보로만 기록하고, 실행 컨텍스트 판정�
 
 1. 프로젝트 루트의 매니페스트 후보를 확인한다.
 2. 하위 1-depth 디렉토리별 매니페스트와 독립 `.git/` 존재 여부를 확인한다.
-3. `.docs/`, `.claude/`, `.agents/`, `node_modules/`, `.git/`, 관리 하네스
+3. `.ai-docs/`, 이전 `.docs/`, `.claude/`, `.agents/`, `node_modules/`, `.git/`, 관리 하네스
    저장소는 앱 후보에서 제외한다.
 4. 후보마다 근거가 된 매니페스트 또는 `.git/` 경계를 함께 기록한다.
 
@@ -86,15 +88,22 @@ legacy/custom local skill 후보로만 기록하고, 실행 컨텍스트 판정�
 프로젝트 루트(확정)에서 현재 플랫폼의 파일 조회 도구로 다음을 읽기 전용
 탐색한다.
 
-- `.docs/`와 그 안의 Markdown·`root-context/`
+- `.ai-docs/`와 그 안의 Markdown·`root-context/`
+- 이전 `.docs/`와 그 안의 `harness/access-control/` 정책·서명·훅
 - 루트 `AGENTS.md`, `CLAUDE.md`
 - `.claude/skills/*/SKILL.md`, `.agents/skills/*/SKILL.md`,
   `skills/*/SKILL.md` legacy/custom local copy 후보
 
 | 조건 | 모드 |
 |------|------|
-| `.docs/` 또는 `AGENTS.md`가 존재 | **갱신 모드** |
+| `.ai-docs/`와 이전 `.docs/`가 함께 존재 | **문서 루트 충돌** |
+| 이전 `.docs/`만 존재 | **이전 문서 루트 이관 모드** |
+| `.ai-docs/` 또는 `AGENTS.md`가 존재 | **갱신 모드** |
 | 위 조건 불충족 | **초기 세팅 모드** |
+
+문서 루트 충돌은 자동 병합하지 않는다. 이전 문서 루트 이관 모드는 `.docs/`의 Git
+경계와 서명 권한 정책 유무를 먼저 확인하고 `SKILL.md`의 **문서 루트 전환 계약**으로
+넘긴다. 이 판정이 끝나기 전 `.ai-docs/`를 새로 만들지 않는다.
 
 > `.claude/skills/`, `.agents/skills/` 또는 `skills/*/SKILL.md`만 있는 경우:
 > legacy/custom local skill 후보로 보고하되, 문서 하네스가 없으면 **초기 세팅**으로
@@ -102,7 +111,7 @@ legacy/custom local skill 후보로만 기록하고, 실행 컨텍스트 판정�
 
 ### Portable routing 상태 판별
 
-`.docs/harness/artifact-routing.json`이 있으면 manifest의 mode, app id와 host별
+`.ai-docs/harness/artifact-routing.json`이 있으면 manifest의 mode, app id와 host별
 status를 읽는다. bundle은 있으나 host adapter/config가 없거나 `uninstalled`이면
 **manual portable adoption**으로 분류한다. 이 분류는 `-Plan`/`-Check`만으로는
 바뀌지 않으며 host-local 적용은 G10 승인 뒤에만 제안한다.

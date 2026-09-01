@@ -226,15 +226,15 @@ def user_contract_fixture(root: Path) -> dict[str, Any]:
     run(root, [str(setup_eval)])
     with tempfile.TemporaryDirectory(prefix="harness-phase10-user-") as tmp:
         project = Path(tmp) / "project"
-        docs = project / ".docs" / "impl-doc" / "lhb9397"
+        docs = project / ".ai-docs" / "impl-doc" / "lhb9397"
         docs.mkdir(parents=True)
-        (project / "AGENTS.md").write_text("# Project Agent Context\n\n@.docs/instruction/agent-instruction.md\n", encoding="utf-8")
+        (project / "AGENTS.md").write_text("# Project Agent Context\n\n@.ai-docs/instruction/agent-instruction.md\n", encoding="utf-8")
         (project / "CLAUDE.md").write_text("# Claude Code Bridge\n\n@AGENTS.md\n", encoding="utf-8")
         artifact = docs / "260729-1.selector-recovery-impl-doc.md"
         original = (
             "# Selector Recovery\n\n"
             "Task ID: `CORE-07`\n\n"
-            "Path: `.docs/impl-doc/lhb9397/260729-1.selector-recovery-impl-doc.md`\n\n"
+            "Path: `.ai-docs/impl-doc/lhb9397/260729-1.selector-recovery-impl-doc.md`\n\n"
             "Command: `python -m pytest tests/test_selector.py`\n\n"
             "이 단계에서는 셀렉터 복구 로직을 구현한다.\n"
         )
@@ -243,7 +243,7 @@ def user_contract_fixture(root: Path) -> dict[str, Any]:
         completed = run(root, [str(script), "--file", str(artifact), "--profile", "document-refinement"])
         after = sha256_file(artifact)
         proposal = json.loads(completed.stdout)
-        protected = ["CORE-07", ".docs/impl-doc/lhb9397/260729-1.selector-recovery-impl-doc.md", "python -m pytest tests/test_selector.py"]
+        protected = ["CORE-07", ".ai-docs/impl-doc/lhb9397/260729-1.selector-recovery-impl-doc.md", "python -m pytest tests/test_selector.py"]
         approved_completed = run(
             root,
             [

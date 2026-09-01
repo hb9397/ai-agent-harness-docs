@@ -21,7 +21,7 @@ if (($payload.tool_name -in @('Bash', 'apply_patch')) -and [string]::IsNullOrWhi
 }
 
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\\..')).Path
-$corePath = Join-Path $projectRoot '.docs/harness/hooks/artifact-route-core.ps1'
+$corePath = Join-Path $projectRoot '.ai-docs/harness/hooks/artifact-route-core.ps1'
 try {
     $decision = (& $corePath -RuntimeHost codex -ProjectRoot $projectRoot -ToolName $payload.tool_name -ToolInput $payload.tool_input | ConvertFrom-Json)
 } catch {

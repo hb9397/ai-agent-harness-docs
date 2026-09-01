@@ -165,6 +165,6 @@
 ## 산출물 라우팅 분류
 
 instruction을 생성·갱신하기 전 producer 이름이 아니라 **artifact 의미**와 **대상 앱**을
-결정한다. `.docs/harness/artifact-routing.json`과 format contract가 있으면 그 required
+결정한다. `.ai-docs/harness/artifact-routing.json`과 format contract가 있으면 그 required
 field를 사용한다. 기존 project instruction의 managed marker 밖 규칙과 충돌하면 기존
 규칙을 보존하고 diff proposal만 만든다.

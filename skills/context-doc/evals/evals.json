@@ -22,7 +22,7 @@
     {
       "id": 4,
       "prompt": "외부 agent가 고정 형식 JSON/PDF bundle을 만들었다. 프로젝트의 context instruction으로 반영해줘.",
-      "expected_output": "producer/plugin 이름이 아니라 artifact 의미와 대상 앱을 먼저 판정한다. .docs/harness의 routing·format contract를 읽고, 불명확하거나 충돌하는 외부 bundle은 .docs/_inbox/{artifact-bundle-id}/artifact-manifest.json에 source hash와 proposal만 기록한다. G12 승인 전 canonical instruction을 만들거나 덮어쓰지 않는다.",
+      "expected_output": "producer/plugin 이름이 아니라 artifact 의미와 대상 앱을 먼저 판정한다. .ai-docs/harness의 routing·format contract를 읽고, 불명확하거나 충돌하는 외부 bundle은 .ai-docs/_inbox/{artifact-bundle-id}/artifact-manifest.json에 source hash와 proposal만 기록한다. G12 승인 전 canonical instruction을 만들거나 덮어쓰지 않는다.",
       "files": []
     }
   ]

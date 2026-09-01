@@ -6,9 +6,13 @@ Plan과 Apply에 전달하는 JSON은 비밀정보를 담지 않는다. `subject
 계정의 정체성을, `role_assignments`는 그 정체성이 맡는 역할을 나타낸다. 둘을 분리해
 한 사람이 여러 역할을 맡거나 여러 Git 서비스 계정을 하나의 사람으로 묶을 수 있다.
 
+스키마 `3.0.0`의 문서 루트는 `.ai-docs/`로 고정한다. 이전 `.docs/` 경로의 규칙은
+허용하지 않으며, 두 루트를 동시에 운영하지 않는다. 기존 서명 정책은 디렉토리만
+바꾸지 말고 관리자 확인을 거친 별도 이관 대상으로 분류한다.
+
 ```json
 {
-  "schema_version": "2.0.0",
+  "schema_version": "3.0.0",
   "project_id": "example-project",
   "applications": ["fe-exam-portal", "fe-exam-mobile", "be-exam-portal"],
   "subjects": [
@@ -66,13 +70,13 @@ Plan과 Apply에 전달하는 JSON은 비밀정보를 담지 않는다. `subject
   ],
   "path_rules": [
     {
-      "pattern": ".docs/fe-exam-mobile/context-base/**",
+      "pattern": ".ai-docs/fe-exam-mobile/context-base/**",
       "write_scope": "app-doc",
       "application": "fe-exam-mobile",
       "priority": 100
     },
     {
-      "pattern": ".docs/fe-exam-mobile/impl-doc/**",
+      "pattern": ".ai-docs/fe-exam-mobile/impl-doc/**",
       "write_scope": "team",
       "priority": 100
     }
@@ -112,7 +116,7 @@ Plan과 Apply에 전달하는 JSON은 비밀정보를 담지 않는다. `subject
 - `protected_branches`는 프로젝트가 이미 정한 값만 넣는다. 스킬이 `dev`·`main`
   정책을 새로 정하지 않는다.
 - `path_rules`를 생략하면 앱과 문서 종류를 기준으로 기본 규칙을 만든다. 명시 규칙에
-  잡히지 않은 새 `.docs` 보호 문서는 낮은 우선순위의 admin 기본 규칙이 맡는다.
+  잡히지 않은 새 `.ai-docs` 보호 문서는 낮은 우선순위의 admin 기본 규칙이 맡는다.
 - `write_scope`는 `admin`, `app-doc`, `team`이다. `app-doc`에는 대상 앱을 함께 적는다.
 - `priority`가 높은 규칙이 먼저 적용된다. `team`은 역할 등록이 없는 저장소 작성자도
   허용한다.
@@ -141,7 +145,7 @@ python {skill-root}/scripts/project_write_access.py discover-participants \
 ## 공유 산출물
 
 ```text
-.docs/harness/access-control/
+.ai-docs/harness/access-control/
 ├── trust.json
 ├── policy.json
 ├── policy.sig

@@ -91,17 +91,17 @@
 
 | 주제 | 파일 |
 |------|------|
-| 아키텍처 제약 | @.docs/instruction/architecture-instruction.md |
-| 코드 스타일 | @.docs/instruction/code-style-instruction.md |
-| 프레임워크/라이브러리 사용 규칙 | @.docs/instruction/framework-instruction.md |
-| API 설계 규약 | @.docs/instruction/api-instruction.md |
-| 통신 프로토콜 규약 | @.docs/instruction/comm-instruction.md |
-| 파일 생성 규칙 | @.docs/instruction/file-convention-instruction.md |
-| AI Agent 동작 규칙 | @.docs/instruction/agent-instruction.md |
-| 산출물 위치·소유권·인계 | @.docs/instruction/artifact-output-routing-instruction.md |
+| 아키텍처 제약 | @.ai-docs/instruction/architecture-instruction.md |
+| 코드 스타일 | @.ai-docs/instruction/code-style-instruction.md |
+| 프레임워크/라이브러리 사용 규칙 | @.ai-docs/instruction/framework-instruction.md |
+| API 설계 규약 | @.ai-docs/instruction/api-instruction.md |
+| 통신 프로토콜 규약 | @.ai-docs/instruction/comm-instruction.md |
+| 파일 생성 규칙 | @.ai-docs/instruction/file-convention-instruction.md |
+| AI Agent 동작 규칙 | @.ai-docs/instruction/agent-instruction.md |
+| 산출물 위치·소유권·인계 | @.ai-docs/instruction/artifact-output-routing-instruction.md |
 
 <!-- 설계 문서에 해당 주제가 없어서 생성하지 않은 파일은 이 표에서 제거한다. -->
 
-산출물 생성 전에는 `.docs/harness/artifact-routing.json`과
-`.docs/harness/artifact-format-contract.json`을 읽는다. producer/plugin 이름이 아닌
+산출물 생성 전에는 `.ai-docs/harness/artifact-routing.json`과
+`.ai-docs/harness/artifact-format-contract.json`을 읽는다. producer/plugin 이름이 아닌
 artifact 의미와 대상 앱으로 위치를 결정하며, 기존 managed marker 밖 규칙은 보존한다.

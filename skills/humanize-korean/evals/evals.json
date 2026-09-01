@@ -3,8 +3,8 @@
   "cases": [
     {
       "id": "preserve-ids-dates-paths",
-      "input": "SFR-021은 2026-07-29에 .docs/api/SFR-021.md를 통해 관리될 수 있습니다.",
-      "must_preserve": ["SFR-021", "2026-07-29", ".docs/api/SFR-021.md"]
+      "input": "SFR-021은 2026-07-29에 .ai-docs/api/SFR-021.md를 통해 관리될 수 있습니다.",
+      "must_preserve": ["SFR-021", "2026-07-29", ".ai-docs/api/SFR-021.md"]
     },
     {
       "id": "document-refinement-proposal-only",

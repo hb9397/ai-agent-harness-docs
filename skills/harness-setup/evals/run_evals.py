@@ -50,7 +50,7 @@ def sha256(path: Path) -> str:
 
 
 def artifact_fingerprint(project: Path, artifacts: list[Path]) -> tuple[str, list[dict[str, str]]]:
-    ledger = project / ".docs" / ".harness" / "humanize-handoffs.json"
+    ledger = project / ".ai-docs" / ".harness" / "humanize-handoffs.json"
     normalized: list[dict[str, str]] = []
     for path in artifacts:
         if path.resolve() == ledger.resolve():
@@ -124,7 +124,13 @@ def snapshot_files(root: Path) -> dict[str, str]:
 
 
 def detect_mode(project: Path) -> str:
-    return "update" if (project / ".docs").exists() or (project / "AGENTS.md").exists() else "initial"
+    canonical = (project / ".ai-docs").exists()
+    legacy = (project / ".docs").exists()
+    if canonical and legacy:
+        return "document-root-conflict"
+    if legacy:
+        return "legacy-document-root-migration"
+    return "update" if canonical or (project / "AGENTS.md").exists() else "initial"
 
 
 def replace_managed_block(existing: str, template: str, markers: tuple[str, str]) -> str:
@@ -234,13 +240,13 @@ def check_portable_routing_bundle() -> None:
     codex_adapter = render_portable("hooks/codex-pre-tool-use.ps1.template", replacements)
     if "$env:CLAUDE_PROJECT_DIR" not in claude_adapter or "tool_name" not in claude_adapter:
         raise AssertionError("Claude adapter no longer validates Claude PreToolUse input")
-    if "Join-Path $env:CLAUDE_PROJECT_DIR '.docs/harness/hooks/artifact-route-core.ps1'" not in claude_adapter:
+    if "Join-Path $env:CLAUDE_PROJECT_DIR '.ai-docs/harness/hooks/artifact-route-core.ps1'" not in claude_adapter:
         raise AssertionError("Claude adapter must use the shared project-owned core")
     if "Codex tool_input.command payload cannot be used" not in claude_adapter or "exit 2" not in claude_adapter:
         raise AssertionError("Claude adapter no longer rejects the Codex command input")
     if "tool_input.command" not in codex_adapter or "apply_patch" not in codex_adapter:
         raise AssertionError("Codex adapter no longer validates Codex PreToolUse input")
-    if "Join-Path $projectRoot '.docs/harness/hooks/artifact-route-core.ps1'" not in codex_adapter:
+    if "Join-Path $projectRoot '.ai-docs/harness/hooks/artifact-route-core.ps1'" not in codex_adapter:
         raise AssertionError("Codex adapter must use the shared project-owned core")
     if "$env:CLAUDE_PROJECT_DIR" in codex_adapter:
         raise AssertionError("Codex adapter incorrectly accepts Claude project input")
@@ -284,7 +290,7 @@ def check_portable_routing_bundle() -> None:
 
     with tempfile.TemporaryDirectory(prefix="portable-routing-plan-") as tmp:
         project = Path(tmp) / "clean-project"
-        bundle = project / ".docs" / "harness"
+        bundle = project / ".ai-docs" / "harness"
         bundle.mkdir(parents=True)
         install_replacements = dict(replacements)
         install_replacements["{{PROJECT_ROOT}}"] = project.resolve().as_posix()
@@ -371,27 +377,27 @@ def check_portable_routing_bundle() -> None:
         superpowers_code, superpowers, superpowers_stderr = invoke_codex(
             {"tool_name": "Write", "tool_input": {"file_path": "docs/superpowers/plans/external.md", "content": "blocked"}}
         )
-        if superpowers_code != 0 or superpowers.get("hookSpecificOutput", {}).get("permissionDecision") != "deny" or ".docs/instruction/artifact-output-routing-instruction.md" not in superpowers.get("hookSpecificOutput", {}).get("permissionDecisionReason", ""):
+        if superpowers_code != 0 or superpowers.get("hookSpecificOutput", {}).get("permissionDecision") != "deny" or ".ai-docs/instruction/artifact-output-routing-instruction.md" not in superpowers.get("hookSpecificOutput", {}).get("permissionDecisionReason", ""):
             raise AssertionError(f"Superpowers default path was not redirected to canonical routing: {superpowers} / {superpowers_stderr}")
 
-        existing = project / ".docs" / "instruction" / "existing.md"
+        existing = project / ".ai-docs" / "instruction" / "existing.md"
         existing.parent.mkdir(parents=True, exist_ok=True)
         existing.write_text("existing\n", encoding="utf-8")
         existing_code, existing_result, existing_stderr = invoke_codex(
-            {"tool_name": "Write", "tool_input": {"file_path": ".docs/instruction/existing.md", "content": "revised"}}
+            {"tool_name": "Write", "tool_input": {"file_path": ".ai-docs/instruction/existing.md", "content": "revised"}}
         )
         if existing_code != 0 or existing_result.get("decision") != "allow":
             raise AssertionError(f"existing canonical edit was not allowed: {existing_result} / {existing_stderr}")
 
         proposed_content = "approved new instruction"
-        new_payload = {"tool_name": "Write", "tool_input": {"file_path": ".docs/instruction/new.md", "content": proposed_content}}
+        new_payload = {"tool_name": "Write", "tool_input": {"file_path": ".ai-docs/instruction/new.md", "content": proposed_content}}
         new_code, new_result, new_stderr = invoke_codex(new_payload)
         if new_code != 0 or new_result.get("hookSpecificOutput", {}).get("permissionDecision") != "deny":
             raise AssertionError(f"new managed artifact without marker was not denied: {new_result} / {new_stderr}")
         approval = subprocess.run(
             [
                 "pwsh", "-NoProfile", "-File", str(bundle / "hooks" / "approve-artifact.ps1"),
-                "-ArtifactPath", ".docs/instruction/new.md",
+                "-ArtifactPath", ".ai-docs/instruction/new.md",
                 "-ContentSha256", hashlib.sha256(proposed_content.encode("utf-8")).hexdigest(),
                 "-Approve",
             ],
@@ -425,7 +431,7 @@ def check_portable_routing_bundle() -> None:
             raise AssertionError(f"Claude traversal write was not denied with exit 2: {claude_denied.stdout} / {claude_denied.stderr}")
         claude_allowed = subprocess.run(
             ["pwsh", "-NoProfile", "-File", str(claude_adapter_path)],
-            input=json.dumps({"tool_name": "Edit", "tool_input": {"file_path": ".docs/instruction/existing.md", "content": "revised again"}}),
+            input=json.dumps({"tool_name": "Edit", "tool_input": {"file_path": ".ai-docs/instruction/existing.md", "content": "revised again"}}),
             capture_output=True,
             text=True,
             encoding="utf-8",
@@ -483,35 +489,35 @@ def check_portable_routing_bundle() -> None:
 
         text_input = project / "external.mdx"
         text_input.write_text("<!-- harness-kit:managed:start -->\nNEW-MANAGED\n<!-- harness-kit:managed:end -->\n", encoding="utf-8", newline="\n")
-        text_target = project / ".docs" / "instruction" / "external.mdx"
+        text_target = project / ".ai-docs" / "instruction" / "external.mdx"
         text_target.write_text("<!-- harness-kit:managed:start -->\nOLD-MANAGED\n<!-- harness-kit:managed:end -->\nUSER-EXTENSION\n", encoding="utf-8", newline="\n")
         normalizer_path = bundle / "normalize-artifact.ps1"
         normalizer_plan = subprocess.run(
-            ["pwsh", "-NoProfile", "-File", str(normalizer_path), "-InputPath", str(text_input), "-ArtifactBundleId", "external-text", "-TargetPath", ".docs/instruction/external.mdx", "-Plan"],
+            ["pwsh", "-NoProfile", "-File", str(normalizer_path), "-InputPath", str(text_input), "-ArtifactBundleId", "external-text", "-TargetPath", ".ai-docs/instruction/external.mdx", "-Plan"],
             capture_output=True, text=True, encoding="utf-8", errors="replace", check=False,
         )
         if normalizer_plan.returncode != 0 or json.loads(normalizer_plan.stdout).get("status") != "proposal-only":
             raise AssertionError(f"text normalization plan failed: {normalizer_plan.stdout} / {normalizer_plan.stderr}")
         normalizer_denied = subprocess.run(
-            ["pwsh", "-NoProfile", "-File", str(normalizer_path), "-InputPath", str(text_input), "-ArtifactBundleId", "external-text", "-TargetPath", ".docs/instruction/external.mdx", "-Promote"],
+            ["pwsh", "-NoProfile", "-File", str(normalizer_path), "-InputPath", str(text_input), "-ArtifactBundleId", "external-text", "-TargetPath", ".ai-docs/instruction/external.mdx", "-Promote"],
             capture_output=True, text=True, encoding="utf-8", errors="replace", check=False,
         )
         if normalizer_denied.returncode == 0:
             raise AssertionError("text promotion without G12 approval must fail")
         normalizer_promoted = subprocess.run(
-            ["pwsh", "-NoProfile", "-File", str(normalizer_path), "-InputPath", str(text_input), "-ArtifactBundleId", "external-text", "-TargetPath", ".docs/instruction/external.mdx", "-Promote", "-ApprovePromotion"],
+            ["pwsh", "-NoProfile", "-File", str(normalizer_path), "-InputPath", str(text_input), "-ArtifactBundleId", "external-text", "-TargetPath", ".ai-docs/instruction/external.mdx", "-Promote", "-ApprovePromotion"],
             capture_output=True, text=True, encoding="utf-8", errors="replace", check=False,
         )
         if normalizer_promoted.returncode != 0 or "NEW-MANAGED" not in read(text_target) or "USER-EXTENSION" not in read(text_target):
             raise AssertionError(f"approved marker-aware text promotion failed: {normalizer_promoted.stdout} / {normalizer_promoted.stderr}")
         fixed_input = project / "external.pdf"
         fixed_input.write_bytes(b"not-a-real-pdf")
-        fixed_target = project / ".docs" / "instruction" / "external.pdf"
+        fixed_target = project / ".ai-docs" / "instruction" / "external.pdf"
         fixed_promoted = subprocess.run(
-            ["pwsh", "-NoProfile", "-File", str(normalizer_path), "-InputPath", str(fixed_input), "-ArtifactBundleId", "external-fixed", "-TargetPath", ".docs/instruction/external.pdf", "-Promote", "-ApprovePromotion"],
+            ["pwsh", "-NoProfile", "-File", str(normalizer_path), "-InputPath", str(fixed_input), "-ArtifactBundleId", "external-fixed", "-TargetPath", ".ai-docs/instruction/external.pdf", "-Promote", "-ApprovePromotion"],
             capture_output=True, text=True, encoding="utf-8", errors="replace", check=False,
         )
-        fixed_manifest = project / ".docs" / "_inbox" / "external-fixed" / "artifact-manifest.json"
+        fixed_manifest = project / ".ai-docs" / "_inbox" / "external-fixed" / "artifact-manifest.json"
         if fixed_promoted.returncode != 0 or fixed_target.exists() or json.loads(read(fixed_manifest)).get("status") != "fixed-format-inbox-only":
             raise AssertionError(f"fixed-format promotion must remain inbox-only: {fixed_promoted.stdout} / {fixed_promoted.stderr}")
         removed = subprocess.run(
@@ -534,7 +540,7 @@ def check_portable_routing_lifecycle_contract() -> None:
             raise AssertionError(f"portable installer lifecycle operation missing: {token}")
     for template_name in ("root-context-single.template", "root-context.template", "claude-bridge.template"):
         template = read(SETUP_ROOT / "templates" / template_name)
-        if ".docs/harness/artifact-routing.json" not in template:
+        if ".ai-docs/harness/artifact-routing.json" not in template:
             raise AssertionError(f"{template_name}: missing portable routing Layer 1 summary")
 
 
@@ -577,7 +583,7 @@ def assert_allowed_outputs(project: Path, before: dict[str, str]) -> None:
         if not (
             path == "AGENTS.md"
             or path == "CLAUDE.md"
-            or path.startswith(".docs/")
+            or path.startswith(".ai-docs/")
         )
     )
     if invalid:
@@ -585,7 +591,7 @@ def assert_allowed_outputs(project: Path, before: dict[str, str]) -> None:
 
 
 def materialize_single_fixture(project: Path) -> None:
-    docs = project / ".docs"
+    docs = project / ".ai-docs"
     inbox = docs / "_inbox"
     inbox.mkdir(parents=True)
     (docs / "README.md").write_text(
@@ -616,7 +622,7 @@ def materialize_single_fixture(project: Path) -> None:
 
 
 def materialize_multi_fixture(project: Path) -> None:
-    docs = project / ".docs"
+    docs = project / ".ai-docs"
     inbox = docs / "_inbox"
     root_context = docs / "root-context"
     inbox.mkdir(parents=True)
@@ -642,8 +648,8 @@ def materialize_multi_fixture(project: Path) -> None:
         {
             "{{PROJECT_NAME}}": project.name,
             "{{APP_LIST}}": "| API | `api/` | fixture |\n| Web | `web/` | fixture |",
-            "{{APP_CONTEXT_ENTRIES}}": "- `@.docs/api-context.md`\n- `@.docs/web-context.md`",
-            "{{APP_INSTRUCTION_ENTRIES}}": "- `@.docs/api/instruction/*-instruction.md`\n- `@.docs/web/instruction/*-instruction.md`",
+            "{{APP_CONTEXT_ENTRIES}}": "- `@.ai-docs/api-context.md`\n- `@.ai-docs/web-context.md`",
+            "{{APP_INSTRUCTION_ENTRIES}}": "- `@.ai-docs/api/instruction/*-instruction.md`\n- `@.ai-docs/web/instruction/*-instruction.md`",
         },
     )
     bridge = render("claude-bridge.template")
@@ -670,13 +676,13 @@ def check_setup_contract() -> None:
             require(text, forbidden_path, path)
 
     skill_text = setup_texts[SETUP_ROOT / "SKILL.md"]
-    require(skill_text, "허용되는 생성·갱신 범위는 `.docs/**`, 루트 `AGENTS.md`, 루트 `CLAUDE.md`뿐이다.", SETUP_ROOT / "SKILL.md")
+    require(skill_text, "허용되는 생성·갱신 범위는 `.ai-docs/**`, 루트 `AGENTS.md`, 루트 `CLAUDE.md`뿐이다.", SETUP_ROOT / "SKILL.md")
     require(skill_text, "플러그인 리소스 해석 계약", SETUP_ROOT / "SKILL.md")
-    require(skill_text, "`.docs/`와 `AGENTS.md`가 모두 없음", SETUP_ROOT / "SKILL.md")
-    require(skill_text, "`.docs/` 또는 `AGENTS.md` 중 하나 이상 존재", SETUP_ROOT / "SKILL.md")
+    require(skill_text, "`.ai-docs/`와 `AGENTS.md`가 모두 없음", SETUP_ROOT / "SKILL.md")
+    require(skill_text, "`.ai-docs/` 또는 `AGENTS.md` 중 하나 이상 존재", SETUP_ROOT / "SKILL.md")
     for needle in (
         "artifact_fingerprint",
-        "`.docs/.harness/humanize-handoffs.json`",
+        "`.ai-docs/.harness/humanize-handoffs.json`",
         "`proposed`, `skipped`, `rejected`, `applied`, `revalidated`",
         "원자적 replace",
         "ledger는 Markdown이 아니며",
@@ -689,17 +695,22 @@ def check_setup_contract() -> None:
         "`admin`은 앱 문서 권한을 상속하지 않는다",
         "`write_access_guard.py check-path`",
         "권한 정책을 자동 변경하거나 `project-write-access`를 자동 호출하지 않는다",
+        "## 문서 루트 전환 계약",
+        "`.docs/`만 있으면 **이전 문서 루트 이관 모드**",
+        "`.docs/`와 `.ai-docs/`가 함께 있으면",
+        "서명 권한 정책이 있으면 디렉토리를 옮기지 않는다",
     ):
         require(skill_text, needle, SETUP_ROOT / "SKILL.md")
 
     detection = read(SETUP_ROOT / "prompts" / "detection.md")
-    require(detection, "`.docs/` 또는 `AGENTS.md`가 존재", SETUP_ROOT / "prompts" / "detection.md")
+    require(detection, "이전 `.docs/`만 존재", SETUP_ROOT / "prompts" / "detection.md")
+    require(detection, "`.ai-docs/`와 이전 `.docs/`가 함께 존재", SETUP_ROOT / "prompts" / "detection.md")
     require(detection, "위 조건 불충족", SETUP_ROOT / "prompts" / "detection.md")
     require(detection, "manual portable adoption", SETUP_ROOT / "prompts" / "detection.md")
 
     for path, needle in (
-        (SETUP_ROOT / "prompts" / "single-app-setup.md", ".docs/harness/"),
-        (SETUP_ROOT / "prompts" / "multi-app-setup.md", ".docs/harness/"),
+        (SETUP_ROOT / "prompts" / "single-app-setup.md", ".ai-docs/harness/"),
+        (SETUP_ROOT / "prompts" / "multi-app-setup.md", ".ai-docs/harness/"),
         (SETUP_ROOT / "prompts" / "update-mode.md", "current/proposed diff"),
         (SETUP_ROOT / "prompts" / "update-mode.md", "G10"),
     ):
@@ -710,11 +721,11 @@ def check_setup_contract() -> None:
         "관리 블록만",
         "앞뒤 사용자 내용을 byte-preserve",
         "동시 수정",
-        "`.docs/archive/harness-setup/{timestamp}/{상대경로}`",
+        "`.ai-docs/archive/harness-setup/{timestamp}/{상대경로}`",
         "`unmanaged`",
         "`malformed`",
         "앱 핵심 문서를 `admin`이 대신 만들지 않는다",
-        "`.docs/harness/artifact-routing.json`의 앱·repository 지도",
+        "`.ai-docs/harness/artifact-routing.json`의 앱·repository 지도",
     ):
         require(update, needle, SETUP_ROOT / "prompts" / "update-mode.md")
     if "덮어써도 안전" in update:
@@ -859,12 +870,12 @@ def check_filesystem_fixtures() -> None:
         materialize_single_fixture(single)
         assert_allowed_outputs(single, before)
         artifacts = [
-            single / ".docs" / "README.md",
+            single / ".ai-docs" / "README.md",
             single / "AGENTS.md",
             single / "CLAUDE.md",
         ]
         fingerprint, artifact_manifest = artifact_fingerprint(single, artifacts)
-        ledger = single / ".docs" / ".harness" / "humanize-handoffs.json"
+        ledger = single / ".ai-docs" / ".harness" / "humanize-handoffs.json"
         append_ledger_event(ledger, fingerprint, artifact_manifest, "proposed")
         stored = json.loads(ledger.read_text(encoding="utf-8"))
         if stored["records"][0]["artifact_fingerprint"] != fingerprint:
@@ -926,20 +937,30 @@ def check_filesystem_fixtures() -> None:
                 raise AssertionError(f"multi fixture created forbidden path: {rel}")
 
         partial_docs = root / "partial-docs"
-        (partial_docs / ".docs").mkdir(parents=True)
+        (partial_docs / ".ai-docs").mkdir(parents=True)
         if detect_mode(partial_docs) != "update":
-            raise AssertionError(".docs-only project must use update/recovery mode")
+            raise AssertionError(".ai-docs-only project must use update/recovery mode")
         partial_agents = root / "partial-agents"
         partial_agents.mkdir()
         (partial_agents / "AGENTS.md").write_text("# Existing\n", encoding="utf-8")
         if detect_mode(partial_agents) != "update":
             raise AssertionError("AGENTS-only project must use update/recovery mode")
 
+        legacy_root = root / "legacy-document-root"
+        (legacy_root / ".docs").mkdir(parents=True)
+        if detect_mode(legacy_root) != "legacy-document-root-migration":
+            raise AssertionError("legacy .docs project must use explicit document-root migration mode")
+        conflicting_roots = root / "conflicting-document-roots"
+        (conflicting_roots / ".docs").mkdir(parents=True)
+        (conflicting_roots / ".ai-docs").mkdir()
+        if detect_mode(conflicting_roots) != "document-root-conflict":
+            raise AssertionError("coexisting document roots must stop as a conflict")
+
         update = root / "update-project"
         materialize_single_fixture(update)
         custom_tokens = {
-            update / ".docs" / "README.md": "TEAM-README-EXTENSION",
-            update / ".docs" / ".gitignore": "team-private.cache",
+            update / ".ai-docs" / "README.md": "TEAM-README-EXTENSION",
+            update / ".ai-docs" / ".gitignore": "team-private.cache",
             update / "AGENTS.md": "TEAM-AGENT-RULE",
             update / "CLAUDE.md": "TEAM-CLAUDE-DELTA",
         }
@@ -962,11 +983,11 @@ def check_filesystem_fixtures() -> None:
         before = snapshot_files(update)
 
         replacement_templates = {
-            update / ".docs" / "README.md": (
+            update / ".ai-docs" / "README.md": (
                 render("docs-readme-single.template"),
                 MARKDOWN_MARKERS,
             ),
-            update / ".docs" / ".gitignore": (
+            update / ".ai-docs" / ".gitignore": (
                 render("docs-gitignore.template"),
                 GITIGNORE_MARKERS,
             ),

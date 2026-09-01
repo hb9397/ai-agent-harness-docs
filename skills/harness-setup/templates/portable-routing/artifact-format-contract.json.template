@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "kind": "artifact-format-contract",
-  "routing_schema": ".docs/harness/artifact-routing.json",
+  "routing_schema": ".ai-docs/harness/artifact-routing.json",
   "required_fields": [
     "artifact_id",
     "artifact_type",
@@ -21,7 +21,7 @@
     "fields": ["producer", "input_fingerprint", "source_context"]
   },
   "inbox": {
-    "manifest_path": ".docs/_inbox/artifact-manifest.json",
+    "manifest_path": ".ai-docs/_inbox/artifact-manifest.json",
     "canonicalization": "proposal only; do not replace a canonical artifact without explicit approval"
   },
   "normalization": {

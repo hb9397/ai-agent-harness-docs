@@ -65,7 +65,7 @@ def test_prototype_output_is_never_promoted_to_product_source() -> None:
     assert "프로토타입 코드는 재사용하지 않는다" in frontend
 
     verify = read("impl-verify")
-    assert "`.docs/prototype/**` 코드가 제품 소스로 복사되지 않음" in verify
+    assert "`.ai-docs/prototype/**` 코드가 제품 소스로 복사되지 않음" in verify
 
 
 def test_both_branches_end_in_verification() -> None:

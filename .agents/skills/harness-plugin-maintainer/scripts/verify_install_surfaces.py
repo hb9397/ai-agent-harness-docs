@@ -123,7 +123,7 @@ def verify_humanize_proposal(root: Path) -> dict:
     env["PYTHONIOENCODING"] = "utf-8"
     with tempfile.TemporaryDirectory() as tmp:
         sample = Path(tmp) / "sample.md"
-        original = "결론적으로, SFR-021은 2026-07-29에 .docs/api/SFR-021.md를 통해 관리될 수 있습니다."
+        original = "결론적으로, SFR-021은 2026-07-29에 .ai-docs/api/SFR-021.md를 통해 관리될 수 있습니다."
         sample.write_text(original, encoding="utf-8")
         completed = subprocess.run(
             [sys.executable, str(script), "--file", str(sample), "--profile", "document-refinement"],
@@ -138,7 +138,7 @@ def verify_humanize_proposal(root: Path) -> dict:
         return {
             "proposal_only": result["proposal_only"],
             "file_unchanged": sample.read_text(encoding="utf-8") == original,
-            "protected_tokens_preserved": all(token in result["refined_text"] for token in ["SFR-021", "2026-07-29", ".docs/api/SFR-021.md"]),
+            "protected_tokens_preserved": all(token in result["refined_text"] for token in ["SFR-021", "2026-07-29", ".ai-docs/api/SFR-021.md"]),
             "change_rate": result["change_rate"],
         }
 
@@ -169,7 +169,7 @@ def legacy_migration_readonly_fixture() -> dict:
                 "destructive_action_requires": "not eligible for automatic removal",
             },
         ],
-        "backup_target": ".docs/archive/legacy-agent-skills/{timestamp}/",
+        "backup_target": ".ai-docs/archive/legacy-agent-skills/{timestamp}/",
         "rollback": "restore archived active root after user approval",
     }
 
@@ -332,7 +332,7 @@ def render_release_checklist(evidence: dict) -> str:
 
 {pending_cli}- 직접 테스트 기록: `{MANUAL_SURFACE_TEMPLATE_REL.as_posix()}`를 `maintainer/plugin/manual-evidence/YYYYMMDD/{{surface}}.md`로 복사하고 인터페이스마다 새로운 픽스처 하나를 보존한다.
 - 네 인터페이스 모두: `harness-setup`과 `humanize-korean`을 호출하고, 제안 전용 동작과 생성된 허용 목록을 검증하며, `.agents/skills`, `.claude/skills`, `skills`가 생성되지 않았는지 확인하고 관리 블록 확장을 보존한다.
-- 네 인터페이스 모두: 새 작업/세션을 다시 열어 같은 산출물 지문을 다시 제안하지 않는지 확인하고 `.docs/.harness/humanize-handoffs.json` 이벤트를 보존한다.
+- 네 인터페이스 모두: 새 작업/세션을 다시 열어 같은 산출물 지문을 다시 제안하지 않는지 확인하고 `.ai-docs/.harness/humanize-handoffs.json` 이벤트를 보존한다.
 - 네 인터페이스 모두: 제안된 쓰기 전에 취소하고 원본 해시와 사용자 감시 토큰이 보존되는지 확인한다.
 - Codex 앱: 후보 마켓플레이스를 설치하고 재시작/새 작업에서 표식/버전을 확인한 뒤 vN+1로 업데이트한다.
 - Claude 앱: 로컬 호스트의 캐시/버전을 확인하고 앱을 재시작해 새 세션을 연다. SSH를 지원 인터페이스로 선언한 경우에만 SSH에서도 반복한다. 지원하지 않는 클라우드/WSL 경로를 문서화한다.

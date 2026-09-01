@@ -36,8 +36,8 @@
 [ ] private prompts/templates는 자기 스킬 번들 안에서만 참조하는가?
     → 다른 스킬과의 연계는 공개 스킬명·입출력 계약으로만 표현
 [ ] 산출물 경로가 C-2 표준을 따르는가? (해당 시)
-    → 스킬 유형별 실제 경로가 다름 (예: design-doc → .docs/context-base/DESIGN.md, context-doc → 루트 CLAUDE.md + .docs/instruction/, impl-doc → .docs/impl-doc/{사용자}/{기능명}.md)
-    → 복수앱은 .docs/{앱}/context-base/DESIGN.md, .docs/{앱}-context.md, .docs/{앱}/, .docs/root-context/ 등으로 추가 분기
+    → 스킬 유형별 실제 경로가 다름 (예: design-doc → .ai-docs/context-base/DESIGN.md, context-doc → 루트 CLAUDE.md + .ai-docs/instruction/, impl-doc → .ai-docs/impl-doc/{사용자}/{기능명}.md)
+    → 복수앱은 .ai-docs/{앱}/context-base/DESIGN.md, .ai-docs/{앱}-context.md, .ai-docs/{앱}/, .ai-docs/root-context/ 등으로 추가 분기
     → 리팩토링 작업 계획서.md §3-2 C-2 경로 표준 표를 참조할 것
 [ ] C-1 확인 단계 필요 스킬이면 STEP 0에 프로젝트 유형 감지 + 사용자 확인이 있는가?
 [ ] 작업의 변동성·실패 비용에 맞춰 지침 자유도(높음/중간/낮음)를 정했는가?

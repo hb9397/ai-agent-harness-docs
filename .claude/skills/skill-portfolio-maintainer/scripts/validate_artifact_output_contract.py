@@ -66,10 +66,10 @@ def main() -> int:
     assert manager == live_skills("maintainer/skills"), "manager skill manifest mismatch"
 
     instruction = data["instruction"]
-    assert instruction["single_app_path"] == ".docs/instruction/artifact-output-routing-instruction.md"
-    assert instruction["multi_app_path"] == ".docs/{앱}/instruction/artifact-output-routing-instruction.md"
-    assert instruction["single_app_ref"] == "@.docs/instruction/artifact-output-routing-instruction.md"
-    assert instruction["multi_app_ref"] == "@.docs/{앱}/instruction/artifact-output-routing-instruction.md"
+    assert instruction["single_app_path"] == ".ai-docs/instruction/artifact-output-routing-instruction.md"
+    assert instruction["multi_app_path"] == ".ai-docs/{앱}/instruction/artifact-output-routing-instruction.md"
+    assert instruction["single_app_ref"] == "@.ai-docs/instruction/artifact-output-routing-instruction.md"
+    assert instruction["multi_app_ref"] == "@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md"
 
     for entry in entries:
         assert set(entry) >= REQUIRED_FIELDS, f"{entry.get('skill')} missing manifest fields"
@@ -85,22 +85,22 @@ def main() -> int:
         )
         if entry["skill"] in {"impl-doc", "impl-fe-be-doc"}:
             assert "roadmap" in entry["evidence"] and "{사용자}" in entry["single_app_path"]
-            assert ".docs/{앱}/" in entry["multi_app_path"]
+            assert ".ai-docs/{앱}/" in entry["multi_app_path"]
         if entry["skill"] in {"design-prototype-docs", "create-prototype", "ui-ux-pro-max", "motion-design"}:
-            assert ".docs/{앱}/" in entry["multi_app_path"], f"multi-app path is not app-scoped: {entry['skill']}"
+            assert ".ai-docs/{앱}/" in entry["multi_app_path"], f"multi-app path is not app-scoped: {entry['skill']}"
         if entry["artifact_class"] in {"report-only", "chat-only"}:
             assert "no file" in entry["persistence"].lower() or "chat" in entry["single_app_path"].lower()
         if entry["scope"] == "manager":
             assert "maintainer" in entry["single_app_path"] or "plugins" in entry["single_app_path"]
-            assert ".docs" not in entry["single_app_path"] and ".docs" not in entry["multi_app_path"]
+            assert ".ai-docs" not in entry["single_app_path"] and ".ai-docs" not in entry["multi_app_path"]
 
     for skill in ROUTING_REQUIRED:
         skill_text = (ROOT / "skills" / skill / "SKILL.md").read_text(encoding="utf-8")
         assert "artifact-output-routing-instruction" in skill_text, (
             f"output-producing skill does not consume routing instruction: {skill}"
         )
-        assert "@.docs/instruction/artifact-output-routing-instruction.md" in skill_text
-        assert "@.docs/{앱}/instruction/artifact-output-routing-instruction.md" in skill_text
+        assert "@.ai-docs/instruction/artifact-output-routing-instruction.md" in skill_text
+        assert "@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md" in skill_text
 
     # A live skill that gained a write-capable surface must be added to the manifest.
     # The exact set assertion above is the primary guard; this scan provides a useful

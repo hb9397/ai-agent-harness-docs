@@ -1,7 +1,7 @@
 # 앱 context 추출 기준 (analysis-claude)
 
-`.docs/{앱}-context.md`는 **얇은 애플리케이션 팩트 + 지침 인덱스** 정본이다.
-루트 `AGENTS.md`·`CLAUDE.md`와 `.docs/root-context/**`에는 이 분석 결과를 직접 쓰지
+`.ai-docs/{앱}-context.md`는 **얇은 애플리케이션 팩트 + 지침 인덱스** 정본이다.
+루트 `AGENTS.md`·`CLAUDE.md`와 `.ai-docs/root-context/**`에는 이 분석 결과를 직접 쓰지
 않는다.
 설계 문서에서 아래 항목만 추출한다. 규칙/금지사항은 여기 넣지 않는다.
 
@@ -44,7 +44,7 @@
 - 일반적인 코딩 규칙·금지 패턴은 instruction 파일로.
 
 ### 8. 지침 인덱스 (Instruction Index)
-Step 3-B에서 생성하기로 확정된 `.docs/instruction/*-instruction.md` 파일 목록을
+Step 3-B에서 생성하기로 확정된 `.ai-docs/instruction/*-instruction.md` 파일 목록을
 **표 형태 인덱스**로 삽입한다. 생성하지 않는 파일은 인덱스에 넣지 않는다.
 
 ---

@@ -148,5 +148,5 @@ grep 키워드: `websocket`, `WebSocket`, `\.on\(['\"]message`, `@WebSocketGatew
 
 스캔 결과로 producer 이름보다 먼저 **artifact 의미**와 **대상 앱**을 판정한다.
 단일/복수 앱 경계가 모호하면 새 경로를 추정하지 않고 사용자 확인으로 남긴다. 이후
-`harness-setup`이 생성·갱신하는 `.docs/harness/artifact-routing.json`과 format contract를
+`harness-setup`이 생성·갱신하는 `.ai-docs/harness/artifact-routing.json`과 format contract를
 사용하며, bootstrap은 host installer나 plugin 이름 디렉토리를 만들지 않는다.

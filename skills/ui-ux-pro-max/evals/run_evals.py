@@ -42,7 +42,7 @@ def test_skill_contract_wording() -> None:
         "STEP 0 — 적용 범위 확인",
         "기존 시스템이 있으면 그 규칙이 이 스킬의 추천보다 **우선**한다",
         "사용자 승인 없이\n프로젝트 파일을 만들지 않는다",
-        ".docs/design-system/{project-slug}/MASTER.md",
+        ".ai-docs/design-system/{project-slug}/MASTER.md",
         "승인 전에는 덮어쓰지 않는다",
         "스택을 **임의로 가정하지 않는다.**",
         "0건 검색을 데이터가 나온 것처럼 제시하지 않는다",
@@ -112,30 +112,30 @@ def test_zero_result_search_refuses_to_fabricate() -> None:
 def test_persist_writes_only_under_requested_output_dir() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         base = Path(tmp)
-        (base / ".docs").mkdir()
+        (base / ".ai-docs").mkdir()
         completed = run(
             ["medical booking accessibility", "--design-system", "--persist",
-             "-p", "Clinic", "--output-dir", ".docs"],
+             "-p", "Clinic", "--output-dir", ".ai-docs"],
             base,
         )
         assert completed.returncode == 0, completed.stderr
-        master = base / ".docs" / "design-system" / "clinic" / "MASTER.md"
-        assert master.is_file(), "persist must follow the .docs/design-system contract path"
-        outside = [p for p in base.rglob("*") if p.is_file() and ".docs" not in p.parts]
+        master = base / ".ai-docs" / "design-system" / "clinic" / "MASTER.md"
+        assert master.is_file(), "persist must follow the .ai-docs/design-system contract path"
+        outside = [p for p in base.rglob("*") if p.is_file() and ".ai-docs" not in p.parts]
         assert not outside, f"persist wrote outside the requested output dir: {outside}"
 
 
 def test_persist_does_not_silently_overwrite_prior_decisions() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         base = Path(tmp)
-        (base / ".docs").mkdir()
+        (base / ".ai-docs").mkdir()
         args = ["medical booking accessibility", "--design-system", "--persist",
-                "-p", "Clinic", "--output-dir", ".docs"]
+                "-p", "Clinic", "--output-dir", ".ai-docs"]
         assert run(args, base).returncode == 0
-        master = base / ".docs" / "design-system" / "clinic" / "MASTER.md"
+        master = base / ".ai-docs" / "design-system" / "clinic" / "MASTER.md"
         before = master.read_bytes()
         second = run(["fintech trading terminal dense", "--design-system", "--persist",
-                      "-p", "Clinic", "--output-dir", ".docs"], base)
+                      "-p", "Clinic", "--output-dir", ".ai-docs"], base)
         assert second.returncode == 0, second.stderr
         assert master.read_bytes() == before, "existing MASTER.md must survive an unforced rerun"
         assert "already exists" in second.stdout
@@ -145,9 +145,9 @@ def test_project_slug_cannot_escape_the_output_dir() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         base = Path(tmp)
         target = base / "workspace"
-        (target / ".docs").mkdir(parents=True)
+        (target / ".ai-docs").mkdir(parents=True)
         completed = run(
-            ["test", "--design-system", "--persist", "-p", "../../escaped", "--output-dir", ".docs"],
+            ["test", "--design-system", "--persist", "-p", "../../escaped", "--output-dir", ".ai-docs"],
             target,
         )
         assert completed.returncode == 0, completed.stderr

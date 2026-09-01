@@ -1,6 +1,6 @@
 ---
 name: project-write-access
-description: "사용자가 프로젝트 문서 쓰기 권한 설정·변경·검증·제거·관리자 교체를 명시적으로 요청할 때만 사용한다. `.docs/**`와 루트 AGENTS.md·CLAUDE.md를 관리자, 전역 PM·PL, 앱별 문서 책임자, 등록 없는 팀 작성 범위에 연결하고 GitHub·GitLab·Gitea CODEOWNERS, 표준 Git 훅, Codex·Claude 쓰기 가드를 하나의 서명 정책에서 계획·적용한다. 일반 문서 생성·편집·커밋 요청에는 사용하지 않는다."
+description: "사용자가 프로젝트 문서 쓰기 권한 설정·변경·검증·제거·관리자 교체를 명시적으로 요청할 때만 사용한다. `.ai-docs/**`와 루트 AGENTS.md·CLAUDE.md를 관리자, 전역 PM·PL, 앱별 문서 책임자, 등록 없는 팀 작성 범위에 연결하고 GitHub·GitLab·Gitea CODEOWNERS, 표준 Git 훅, Codex·Claude 쓰기 가드를 하나의 서명 정책에서 계획·적용한다. 일반 문서 생성·편집·커밋 요청에는 사용하지 않는다."
 allowed-tools: Read, Write, Glob, Grep
 disable-model-invocation: true
 ---
@@ -17,12 +17,23 @@ disable-model-invocation: true
 
 일반 파일 편집, 문서 생성, 구현, 커밋에서 이 스킬을 자동으로 연결하지 않는다.
 
+## 문서 루트 계약
+
+권한 정책의 유일한 문서 루트는 `.ai-docs/`다. 실행 전에 `.ai-docs/`와 이전 이름
+`.docs/`를 함께 확인한다. `.docs/`만 있거나 두 경로가 함께 있으면 정책을 만들거나
+고치지 않고 `harness-setup`의 명시적 문서 루트 이관·충돌 해결을 먼저 요청한다.
+`.docs/`를 호환 별칭으로 간주하거나 두 위치에 정책을 나누어 만들지 않는다.
+
+기존 `.docs/harness/access-control/`에 서명 정책이 있는 프로젝트는 일반 폴더처럼
+옮기지 않는다. 이전 정책·Git 훅·AI 훅을 관리자 키로 검증하고, 이관 계획에 따라
+정책 스키마와 경로를 다시 생성하는 별도 관리자 작업이 필요하다고 보고한다.
+
 ## 권한 모델
 
 이 스킬은 사람·서비스 계정과 역할 배정을 분리한다. 역할은 상속하지 않으며, 한 사람이
 여러 역할을 맡으면 각 역할을 명시적으로 배정한다.
 
-- `admin`: 루트 에이전트 지도, `.docs/harness/**`, `.docs/root-context/**`, 권한 정책,
+- `admin`: 루트 에이전트 지도, `.ai-docs/harness/**`, `.ai-docs/root-context/**`, 권한 정책,
   CODEOWNERS와 AI·Git 훅 설정만 관리한다. 앱 핵심 문서 권한을 자동으로 상속하지 않는다.
 - `pm-pl`: 프로젝트의 모든 앱에 대해 `DESIGN.md`, 앱 컨텍스트와 앱 instruction 같은
   핵심 문서를 관리한다.
@@ -32,7 +43,7 @@ disable-model-invocation: true
   편집 권한을 만들거나 제한하지 않으며, 기존 미등록 기여자와 같은 문서 권한을 갖는다.
 
 `developer`를 배정하지 않은 계정도 기존 저장소 쓰기 권한이 있으면 `impl-doc/**`,
-`prototype/**`, `_inbox/**` 같은 `team` 범위에 쓸 수 있다. 이 스킬은 `.docs/**`,
+`prototype/**`, `_inbox/**` 같은 `team` 범위에 쓸 수 있다. 이 스킬은 `.ai-docs/**`,
 루트 지도, CODEOWNERS와 훅 설정만 보호하며 애플리케이션 소스 코드는 차단하지 않는다.
 
 `app-doc-lead`의 지정·해제는 서명 정책 변경이다. 현재 정책을 검증할 수 있는
@@ -55,6 +66,7 @@ disable-model-invocation: true
 | 제거 | Step 0 → 1 → 2 → 제거 계획 → 별도 승인 → 5 |
 | 관리자 교체 | Step 0 → 1 → 2 → 교체 계획 → 기존 키 승인 → 별도 승인 → 5 |
 | 키 분실 | Step 0 → 1 → 2. 백업 키가 없으면 변경 없이 종료 |
+| `.docs/` 이전 경로 감지 | Step 0에서 중단 → `harness-setup` 문서 루트 이관 또는 충돌 해결 |
 
 ## Step 0 — 범위와 실행 환경 확인
 
@@ -63,11 +75,15 @@ disable-model-invocation: true
 
 - 단일 앱·단일 저장소
 - 복수 앱·단일 저장소
-- 복수 앱·복수 저장소: `.docs`가 별도 저장소이고 컨테이너 루트는 Git 밖
+- 복수 앱·복수 저장소: `.ai-docs`가 별도 저장소이고 컨테이너 루트는 Git 밖
 
-프로젝트 루트, `.docs` 저장소 경계, 애플리케이션 목록, 보호할 루트
+프로젝트 루트, `.ai-docs` 저장소 경계, 애플리케이션 목록, 보호할 루트
 `AGENTS.md`·`CLAUDE.md`의 Git 포함 여부를 보여주고 확인받는다. 소스코드는 보호
 범위에 넣지 않는다.
+
+`.docs/`만 있거나 `.docs/`와 `.ai-docs/`가 함께 있으면 Plan을 생성하지 않는다.
+특히 이전 경로에 서명 정책이 있으면 파일 이동이나 새 정책 초기화를 추측해서 수행하지
+않고, 관리자에게 기존 정책을 포함한 이관이 필요하다고 알린다.
 
 프로젝트 파일을 만드는 작업이므로 이 확인을 생략하지 않는다.
 
@@ -77,7 +93,7 @@ disable-model-invocation: true
 
 다음을 읽기 전용으로 확인한다.
 
-1. 기존 `.docs/harness/access-control/` 정책·서명·생성 목록
+1. 기존 `.ai-docs/harness/access-control/` 정책·서명·생성 목록
 2. Git 작업 폴더, upstream, 앞섬·뒤처짐·분기 상태
 3. 세 서비스의 CODEOWNERS 탐색 우선순위와 기존 파일
 4. `core.hooksPath`와 기존 `pre-commit`·`pre-push`

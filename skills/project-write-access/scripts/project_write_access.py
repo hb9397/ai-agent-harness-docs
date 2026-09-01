@@ -21,7 +21,9 @@ from typing import Any
 SKILL_ROOT = Path(__file__).resolve().parents[1]
 RUNTIME_ROOT = SKILL_ROOT / "assets" / "runtime"
 NAMESPACE = "harness-kit-project-write-access"
-SCHEMA_VERSION = "2.0.0"
+SCHEMA_VERSION = "3.0.0"
+DOCS_ROOT_NAME = ".ai-docs"
+LEGACY_DOCS_ROOT_NAME = ".docs"
 ROLES = {"admin", "pm-pl", "app-doc-lead", "developer"}
 WRITE_SCOPES = {"admin", "app-doc", "team"}
 PROVIDERS = ("github", "gitlab", "gitea")
@@ -189,7 +191,7 @@ def validate_config(raw: dict[str, Any]) -> dict[str, Any]:
                 ".claude/settings.json",
                 ".codex/hooks.json",
             }
-            if not isinstance(pattern, str) or not (pattern.startswith(".docs/") or pattern in allowed_control_paths):
+            if not isinstance(pattern, str) or not (pattern.startswith(".ai-docs/") or pattern in allowed_control_paths):
                 raise AccessError("path_rules may protect only document-harness and write-access control paths")
             if "\\" in pattern or any(part == ".." for part in pattern.split("/")):
                 raise AccessError("path_rules may not contain backslashes or parent traversal")
@@ -288,10 +290,19 @@ def is_git_root(path: Path) -> bool:
 
 
 def detect_layout(project_root: Path) -> dict[str, Any]:
-    docs_root = project_root / ".docs"
+    docs_root = project_root / DOCS_ROOT_NAME
+    legacy_docs_root = project_root / LEGACY_DOCS_ROOT_NAME
+    if docs_root.exists() and legacy_docs_root.exists():
+        raise AccessError(
+            ".ai-docs and legacy .docs both exist; resolve the document-root conflict with harness-setup before configuring access"
+        )
+    if legacy_docs_root.exists():
+        raise AccessError(
+            "legacy .docs exists without .ai-docs; run the explicit harness-setup document-root migration before configuring access"
+        )
     if docs_root.is_dir() and is_git_root(docs_root):
         git_root = docs_root
-        git_root_relative = ".docs"
+        git_root_relative = DOCS_ROOT_NAME
         topology = "multi-repository"
     elif is_git_root(project_root):
         git_root = project_root
@@ -310,7 +321,7 @@ def detect_layout(project_root: Path) -> dict[str, Any]:
 
 
 def path_rules(config: dict[str, Any], layout: dict[str, Any]) -> list[dict[str, Any]]:
-    docs = ".docs"
+    docs = DOCS_ROOT_NAME
     rules: list[dict[str, Any]] = []
 
     def add(pattern: str, write_scope: str, priority: int, application: str | None = None) -> None:
@@ -483,7 +494,7 @@ def render_codeowners_block(policy: dict[str, Any], provider: str, layout: dict[
     lines.append("# coverage: explicit owner paths only; team-write paths intentionally have no CODEOWNERS rule")
     rendered = 0
     for rule in sorted(policy["path_rules"], key=lambda item: int(item["priority"])):
-        if rule["pattern"] == ".docs/**" and rule["write_scope"] == "admin":
+        if rule["pattern"] == ".ai-docs/**" and rule["write_scope"] == "admin":
             continue
         relative = path_in_git(rule["pattern"], layout)
         if relative is None:
@@ -557,8 +568,8 @@ def render_instruction_block(policy_core_hash: str) -> str:
             start,
             "## 문서 쓰기 권한 확인",
             "",
-            f"- 정책: `@.docs/harness/access-control/policy.json` (`{policy_core_hash}`)",
-            "- 쓰기 전에 `@.docs/harness/access-control/write-access-instruction.md`를 반드시 읽고 서명 정책과 현재 Git 계정을 확인한다.",
+            f"- 정책: `@.ai-docs/harness/access-control/policy.json` (`{policy_core_hash}`)",
+            "- 쓰기 전에 `@.ai-docs/harness/access-control/write-access-instruction.md`를 반드시 읽고 서명 정책과 현재 Git 계정을 확인한다.",
             "- 이 블록은 `project-write-access`만 갱신한다. 블록 밖의 설계·개발 지침은 원래 소유자가 관리한다.",
             end,
             "",
@@ -569,12 +580,12 @@ def render_instruction_block(policy_core_hash: str) -> str:
 def render_access_instruction(policy_core_hash: str) -> bytes:
     return (
         "# 프로젝트 문서 쓰기 권한\n\n"
-        f"정본 정책은 `@.docs/harness/access-control/policy.json`이며 현재 정책 본문 해시는 `{policy_core_hash}`다. "
+        f"정본 정책은 `@.ai-docs/harness/access-control/policy.json`이며 현재 정책 본문 해시는 `{policy_core_hash}`다. "
         "이 파일과 정책은 `project-write-access`만 갱신한다.\n\n"
         "## 적용 원칙\n\n"
         "- 모든 참여자는 문서를 읽을 수 있다. 앱 소스 코드와 일반 개발 파일은 이 정책의 보호 대상이 아니다.\n"
         "- 역할은 상속하지 않는다. 한 사람이 여러 역할을 맡으려면 정책에 각 역할을 명시적으로 배정한다.\n"
-        "- `admin`은 루트 컨텍스트, `.docs/harness/`, CODEOWNERS와 권한 설정만 관리한다.\n"
+        "- `admin`은 루트 컨텍스트, `.ai-docs/harness/`, CODEOWNERS와 권한 설정만 관리한다.\n"
         "- `pm-pl`은 모든 앱의 `DESIGN.md`, `*-context.md`, `*-instruction.md`를 관리한다.\n"
         "- `app-doc-lead`는 배정된 앱에서만 같은 종류의 핵심 문서를 관리한다.\n"
         "- `developer`는 일반 기여자임을 명시하는 표기다. 이 역할이 없거나 등록되지 않은 저장소 작성자도 `team` 범위의 구현 지침, 프로토타입, 임시 입력 문서를 쓸 수 있다.\n"
@@ -608,7 +619,7 @@ def merge_hook_config(path: Path, host: str, project_root: Path) -> tuple[bytes,
             "type": "command",
             "command": "python",
             "args": [
-                "${CLAUDE_PROJECT_DIR}/.docs/harness/access-control/hooks/write_access_guard.py",
+                "${CLAUDE_PROJECT_DIR}/.ai-docs/harness/access-control/hooks/write_access_guard.py",
                 "ai",
                 "--host",
                 "claude",
@@ -618,7 +629,7 @@ def merge_hook_config(path: Path, host: str, project_root: Path) -> tuple[bytes,
         }
         matcher = "Write|Edit|Bash|PowerShell"
     else:
-        guard = project_root / ".docs" / "harness" / "access-control" / "hooks" / "write_access_guard.py"
+        guard = project_root / ".ai-docs" / "harness" / "access-control" / "hooks" / "write_access_guard.py"
         command = f'python "{guard}" ai --host codex --project-root "{project_root}"'
         handler = {"type": "command", "command": command, "commandWindows": command}
         matcher = "apply_patch|Edit|Write|Bash|PowerShell|MCP|.*"
@@ -869,7 +880,7 @@ def make_plan(project_root: Path, config: dict[str, Any], operation: str = "appl
             if shadow:
                 conflicts.append({"provider": provider, "type": "shadowed-codeowners", "path": shadow})
     else:
-        conflicts.append({"provider": "all", "type": "no-git-repository", "path": ".docs"})
+        conflicts.append({"provider": "all", "type": "no-git-repository", "path": ".ai-docs"})
 
     block = render_instruction_block(policy_core_hash)
     desired_instruction_targets = instruction_targets(project_root)
@@ -880,7 +891,7 @@ def make_plan(project_root: Path, config: dict[str, Any], operation: str = "appl
     for target, reduced in stale_instruction_outputs(project_root, desired_instruction_targets).items():
         changes.append({"path": relative(project_root, target), "action": "delete" if reduced is None else "modify"})
 
-    access_dir = project_root / ".docs" / "harness" / "access-control"
+    access_dir = project_root / ".ai-docs" / "harness" / "access-control"
     for name in ("trust.json", "policy.json", "policy.sig", "provider-state.json", "generated-manifest.json", "write-access-instruction.md", "hooks/write_access_guard.py", "hooks/git/pre-commit", "hooks/git/pre-push"):
         target = access_dir / name
         changes.append({"path": relative(project_root, target), "action": "modify" if target.exists() else "create"})
@@ -1140,7 +1151,7 @@ def install_git_hooks(project_root: Path, git_root: Path, layout: dict[str, Any]
     hook_path = Path(previous_hooks_path)
     if not hook_path.is_absolute():
         hook_path = git_root / hook_path
-    ours_relative = ".docs/harness/access-control/hooks/git" if layout["git_root_relative"] == "." else "harness/access-control/hooks/git"
+    ours_relative = ".ai-docs/harness/access-control/hooks/git" if layout["git_root_relative"] == "." else "harness/access-control/hooks/git"
     previous_hooks: dict[str, str] = {}
     if hook_path.resolve() != (git_root / ours_relative).resolve():
         for name in ("pre-commit", "pre-push"):
@@ -1194,7 +1205,7 @@ def json_handler_hash(path: Path) -> str:
 
 
 def verify_bundle(project_root: Path) -> dict[str, Any]:
-    access_dir = project_root / ".docs" / "harness" / "access-control"
+    access_dir = project_root / ".ai-docs" / "harness" / "access-control"
     required = {name: access_dir / name for name in ("policy.json", "trust.json", "policy.sig", "generated-manifest.json")}
     for name, path in required.items():
         if not path.is_file():
@@ -1241,7 +1252,7 @@ def remove_managed_block(content: bytes, markers: tuple[str, str]) -> bytes:
 
 def stale_instruction_outputs(project_root: Path, desired_targets: list[Path]) -> dict[Path, bytes | None]:
     """Remove v1 blocks that were copied into every app instruction during a v2 migration."""
-    manifest_path = project_root / ".docs" / "harness" / "access-control" / "generated-manifest.json"
+    manifest_path = project_root / ".ai-docs" / "harness" / "access-control" / "generated-manifest.json"
     if not manifest_path.is_file():
         return {}
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -1276,13 +1287,13 @@ def remove_json_handler(content: bytes) -> bytes:
 
 def make_remove_plan(project_root: Path, delete_keys: bool) -> dict[str, Any]:
     verified = verify_bundle(project_root)
-    access_dir = project_root / ".docs" / "harness" / "access-control"
+    access_dir = project_root / ".ai-docs" / "harness" / "access-control"
     manifest = json.loads((access_dir / "generated-manifest.json").read_text(encoding="utf-8"))
     policy = json.loads((access_dir / "policy.json").read_text(encoding="utf-8"))
     paths = sorted({entry["path"] for entry in manifest["files"]} | {
-        ".docs/harness/access-control/policy.json",
-        ".docs/harness/access-control/policy.sig",
-        ".docs/harness/access-control/generated-manifest.json",
+        ".ai-docs/harness/access-control/policy.json",
+        ".ai-docs/harness/access-control/policy.sig",
+        ".ai-docs/harness/access-control/generated-manifest.json",
     })
     basis = {
         "schema_version": SCHEMA_VERSION,
@@ -1301,7 +1312,7 @@ def remove_access_control(project_root: Path, approved_hash: str, codex_dir: Pat
     plan = make_remove_plan(project_root, delete_keys)
     if plan["plan_hash"] != approved_hash:
         raise AccessError("approved removal plan hash does not match the current plan")
-    access_dir = project_root / ".docs" / "harness" / "access-control"
+    access_dir = project_root / ".ai-docs" / "harness" / "access-control"
     policy = json.loads((access_dir / "policy.json").read_text(encoding="utf-8"))
     trust = json.loads((access_dir / "trust.json").read_text(encoding="utf-8"))
     key_path = locate_admin_key(policy["project_id"], codex_dir, claude_dir, backup_key)
@@ -1358,7 +1369,7 @@ def remove_access_control(project_root: Path, approved_hash: str, codex_dir: Pat
                 state_path.unlink()
             else:
                 current = git(git_root, "config", "--local", "--get", "core.hooksPath", check=False)
-                ours = ".docs/harness/access-control/hooks/git" if layout["git_root_relative"] == "." else "harness/access-control/hooks/git"
+                ours = ".ai-docs/harness/access-control/hooks/git" if layout["git_root_relative"] == "." else "harness/access-control/hooks/git"
                 if current.returncode == 0 and current.stdout.decode().strip() == ours:
                     raise AccessError("local Git hook recovery state is missing")
 
@@ -1408,7 +1419,7 @@ def apply(project_root: Path, config: dict[str, Any], approved_hash: str, codex_
     remote_verification = "verified" if evidence else "local-only"
     policy_core = build_policy_core(config, layout, remote_verification)
     policy_core_hash = sha256_bytes(canonical_json(policy_core))
-    access_dir = project_root / ".docs" / "harness" / "access-control"
+    access_dir = project_root / ".ai-docs" / "harness" / "access-control"
     initial = not (access_dir / "policy.json").is_file()
     if not initial:
         verify_bundle(project_root)
@@ -1591,7 +1602,7 @@ def main() -> int:
             elif args.command == "remove-plan":
                 result = make_remove_plan(project_root, args.delete_keys)
             elif args.command == "remove":
-                policy = json.loads((project_root / ".docs" / "harness" / "access-control" / "policy.json").read_text(encoding="utf-8"))
+                policy = json.loads((project_root / ".ai-docs" / "harness" / "access-control" / "policy.json").read_text(encoding="utf-8"))
                 codex_dir = Path(args.codex_key_dir).resolve() if args.codex_key_dir else Path.home() / ".codex" / "harness-kit" / "admin-keys"
                 claude_dir = Path(args.claude_key_dir).resolve() if args.claude_key_dir else Path.home() / ".claude" / "harness-kit" / "admin-keys"
                 backup = Path(args.admin_key).resolve() if args.admin_key else None

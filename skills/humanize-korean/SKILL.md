@@ -4,6 +4,15 @@ description: "AI·번역투·기계적 문체가 섞인 한국어 문서를 의�
 allowed-tools: Read, Write, Edit
 ---
 
+## 문서 루트 계약
+
+이 스킬이 하네스 문서를 읽거나 쓸 때 사용하는 정본은 `.ai-docs/`뿐이다. 작업 전에
+`.ai-docs/`와 이전 `.docs/`의 존재를 확인한다. `.docs/`만 있거나 두 경로가 함께
+있으면 하네스 문서를 읽거나 쓰지 않고 `harness-setup`의 명시적 문서 루트 이관·충돌
+해결을 먼저 요청한다. 이전 경로를 호환 별칭으로 추측하지 않는다. 애플리케이션 소스
+작업 자체의 권한과 가능 여부는 이 문서 루트 판정으로 제한하지 않는다.
+
+
 # Humanize Korean
 
 `im-not-ai` v2.3.0을 참고해 하네스 사용자 플러그인 안에 포함한 한국어 문서 윤문 스킬이다. 목적은 “AI 탐지 회피”가 아니라 프로젝트 산출물의 한국어 품질 개선이다.
@@ -79,8 +88,8 @@ allowed-tools: Read, Write, Edit
 예:
 
 ```bash
-python "{skill_dir}/scripts/humanize_korean.py" --file .docs/example.md --profile document-refinement
-python "{skill_dir}/scripts/humanize_korean.py" --file .docs/example.md --mode redo --redo-range 12:18
+python "{skill_dir}/scripts/humanize_korean.py" --file .ai-docs/example.md --profile document-refinement
+python "{skill_dir}/scripts/humanize_korean.py" --file .ai-docs/example.md --mode redo --redo-range 12:18
 ```
 
 ## 참고 자료

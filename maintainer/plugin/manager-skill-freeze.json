@@ -15,7 +15,7 @@
         },
         {
           "path": "maintainer/skills/custom-skill-design/prompts/checklist.md",
-          "sha256": "84e0a1d41ac0e7293603c0161904ea6228dd0b03b44f679108f80de8c24205cc"
+          "sha256": "1a9cf9326bfb90587f5a7c25481691cbdbc2baece863286e6093692adaf2efd8"
         },
         {
           "path": "maintainer/skills/custom-skill-design/prompts/description-optimizer.md",
@@ -53,7 +53,7 @@
       "files": [
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/design_workflow.py",
-          "sha256": "54ffc3c389ba220ab7d96f88dd27890baca92cea4ee4033377e5c3f66559cfe4"
+          "sha256": "4c595c02ba0d82f56583fb114c23949413ecb536bf908f83b0c43a68723b675c"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/fixtures/README.md",
@@ -69,7 +69,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/markdown_producers.py",
-          "sha256": "75487d6390d8a51a7227c1adb658c8f900fe246ddfb1f5ee11c3736359bc0ea0"
+          "sha256": "bafa36140fb696882f2ce9da20c878b8f0e6317543fe2566b71be33af1bf8322"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/run_evals.py",
@@ -97,7 +97,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/run_release_regression.py",
-          "sha256": "6e699c3c5d2c4f99bef35ea1ef8827e7666a8e4185598d28e9ee05d28abc9213"
+          "sha256": "bc2e5c17753205e7142413c5b66147f2abfd3f5cc438ed9f7762eb8e6bc7b71b"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/smoke_cli_install.py",
@@ -113,11 +113,11 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/verify_install_surfaces.py",
-          "sha256": "5808426d8386d3d43becb2029ca4f1e26df0bbe0d225bd08023a64ac51a72d20"
+          "sha256": "fc04f26b9775e11916e069e83439c30b2b777d2bd50ba8cb7cc5c5f76b738aea"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/SKILL.md",
-          "sha256": "c4c0d60698d0e0ed20b4231bbb41b390988c6db352b046a99f6e03c39692bb45"
+          "sha256": "6003337be522a54f85e55df329f82df13abcb9e9c75c8a4ffacb0f7aaf4cf6dc"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/templates/claude-agent.md",
@@ -211,7 +211,7 @@
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/validate_artifact_output_contract.py",
-          "sha256": "85d0038c1151ee8adb68b5a33da6c70c9d99596c1726fa92941119f68755c379"
+          "sha256": "e7ddc973492952b118803568ac96965f0f531600fca635cc6f39db47c45e0fd2"
         },
         {
           "path": "maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py",

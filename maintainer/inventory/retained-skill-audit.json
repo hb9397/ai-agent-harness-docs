@@ -26,7 +26,7 @@
     {
       "skill": "harness-setup",
       "writer_type": "required",
-      "artifact_contract": ".docs scaffolding, root AGENTS.md canonical context, CLAUDE.md bridge"
+      "artifact_contract": ".ai-docs scaffolding, root AGENTS.md canonical context, CLAUDE.md bridge"
     },
     {
       "skill": "harness-bootstrap",
