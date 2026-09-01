@@ -11,6 +11,15 @@ description: >
 allowed-tools: Read, Glob, Grep, Write, Agent
 ---
 
+## 문서 루트 계약
+
+이 스킬이 하네스 문서를 읽거나 쓸 때 사용하는 정본은 `.ai-docs/`뿐이다. 작업 전에
+`.ai-docs/`와 이전 `.docs/`의 존재를 확인한다. `.docs/`만 있거나 두 경로가 함께
+있으면 하네스 문서를 읽거나 쓰지 않고 `harness-setup`의 명시적 문서 루트 이관·충돌
+해결을 먼저 요청한다. 이전 경로를 호환 별칭으로 추측하지 않는다. 애플리케이션 소스
+작업 자체의 권한과 가능 여부는 이 문서 루트 판정으로 제한하지 않는다.
+
+
 # FE/BE 및 화면 중심 작업지침서 생성 (impl-fe-be-doc)
 
 design-doc 스킬의 OUTPUT 또는 별도 설계 문서를 입력받아
@@ -19,8 +28,8 @@ AI Agent 및 개발자가 참조하는 FE/BE 페어 기능 단위 또는 화면 
 생성 전 반드시 사용자 확인을 거친다. 파일을 무단으로 수정하지 않는다.
 
 계획서·roadmap index 저장 경로·소유권·인계는 단일 앱의
-`@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
-`@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를 따른다.
+`@.ai-docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
+`@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md`를 따른다.
 
 > 이 문서는 AI Agent가 코드를 작성하는 순서와 기준이 된다.
 > Phase 경계, 태스크 의존 관계, 검증 시나리오가 불명확하면
@@ -95,7 +104,7 @@ design-doc OUTPUT의 각 섹션은 아래와 같이 매핑된다.
 
 1. 현재 프로젝트 루트와 대상 앱을 확정한 뒤 `design-roadmap` 디렉토리를 탐색한다.
 2. 사용자 식별자 `{사용자}`를 정하고 `../impl-doc/{사용자}/` 후보와 앱별
-   `.docs/{앱}/impl-doc/{사용자}/`를 모두 스캔한다.
+   `.ai-docs/{앱}/impl-doc/{사용자}/`를 모두 스캔한다.
 3. 기존 `*-roadmap-impl-index.md`를 검색한다. 정확히 하나면 기준으로 채택하고,
    없으면 계획서 저장 전에 `{YYMMDD}-0.{앱이름}-roadmap-impl-index.md`를
    먼저 만든다. 둘 이상이거나 경로가 모호하면 저장을 중단하고 사용자에게
@@ -226,8 +235,8 @@ Phase 설계 초안을 내부적으로 확정한 뒤 Step 3으로 진행한다.
 
 **④ 저장 디렉토리 결정** — 프로젝트 유형에 따라 분기한다.
 
-- **단일 앱**: `.docs/impl-doc/{사용자}/`
-- **복수 앱**: `.docs/{앱}/impl-doc/{사용자}/` (예: `.docs/app-frontend/impl-doc/developer/`)
+- **단일 앱**: `.ai-docs/impl-doc/{사용자}/`
+- **복수 앱**: `.ai-docs/{앱}/impl-doc/{사용자}/` (예: `.ai-docs/app-frontend/impl-doc/developer/`)
 
 디렉토리가 없으면 생성한다.
 
@@ -244,9 +253,9 @@ Phase 설계 초안을 내부적으로 확정한 뒤 Step 3으로 진행한다.
 - `{kind}` — ②에서 받은 구현 종류 한 단어.
 
 예시:
-- `.docs/app-frontend/impl-doc/developer/260630-1.checkout-flow-impl-pair.md`
-- `.docs/app-frontend/impl-doc/developer/260630-2.admin-dashboard-impl-screen.md`
-- `.docs/app-frontend/impl-doc/developer/260630-3.checkout-flow-impl-e2e.md`
+- `.ai-docs/app-frontend/impl-doc/developer/260630-1.checkout-flow-impl-pair.md`
+- `.ai-docs/app-frontend/impl-doc/developer/260630-2.admin-dashboard-impl-screen.md`
+- `.ai-docs/app-frontend/impl-doc/developer/260630-3.checkout-flow-impl-e2e.md`
 
 > 📌 이 네이밍 규칙은 `impl-doc` 스킬과 **완전히 동일**하다. 두 스킬 산출물은 같은 디렉토리에 섞여도 시간순으로 정렬되며, 작성 스킬 구분은 문서 머리말의 `생성 스킬:` 표기로만 한다.
 
@@ -280,7 +289,7 @@ Phase 설계 초안을 내부적으로 확정한 뒤 Step 3으로 진행한다.
 ### Step 8 — 로드맵 인덱스 문서 생성·갱신
 
 Step 7 저장이 끝난 뒤 **반드시** 수행한다. 대상은 Step 7 ④에서 정한 저장 디렉토리
-(`.docs/impl-doc/{사용자}/` 또는 `.docs/{앱}/impl-doc/{사용자}/`) 안의
+(`.ai-docs/impl-doc/{사용자}/` 또는 `.ai-docs/{앱}/impl-doc/{사용자}/`) 안의
 **로드맵 인덱스 문서 1개**다. 이 문서는 impl-doc/impl-fe-be-doc이 함께 쓰는 공용 산출물이며,
 "이 디렉토리에 어떤 impl 문서들이 있고, 지금 어디까지 왔는가"를 한 곳에서 보여준다.
 `impl-doc`으로 만든 산출물과 같은 디렉토리에 섞여도 인덱스는 하나만 유지한다.
@@ -337,7 +346,7 @@ owner이고 억제되지 않았으며 아직 완료되지 않은 bundle에 대�
 producer가 owner이면 초안과 검증 결과만 반환한다.
 
 최종 검증된 계획서·인덱스의 정규화 상대경로와 각 파일 SHA-256, profile 이름을
-정렬해 `artifact_bundle_fingerprint`를 계산한다. `.docs/.harness/
+정렬해 `artifact_bundle_fingerprint`를 계산한다. `.ai-docs/.harness/
 humanize-handoffs.json` 원자적 ledger에서 같은 fingerprint의 완료 상태
 (`proposed`, `skipped`, `rejected`, `applied`, `revalidated`)를 찾으면 새
 session에서도 재제안하지 않는다. 새 결정은 bundle ID, owner, 파일 hash, 시각과

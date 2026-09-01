@@ -11,16 +11,18 @@
 | 대상 repo 찾기 | [탐지] |
 | 설정 적용 | [적용] |
 | 적용 확인 | [검증] |
+| 문서 권한 로컬 등록 | [project-write-access 연결] |
 | 공통 규칙 | [경로·안전 규칙] |
 
 ---
 
 ## [입력 수집]
 
-### 🔴 필수 (추론 불가 시에만 질문, 한 번에 최대 2개)
+### 🔴 필수 (추론 불가 시에만 질문, 한 번에 최대 3개)
 
-1. **프로젝트 최상위(컨테이너) 디렉토리 경로** — 이 폴더 자체는 git repo가 아니며, 바로 아래 애플리케이션 repo들에 적용한다. (예: `C:\dev\project-a`)
+1. **프로젝트 루트** — 단일 Git 저장소이거나 바로 아래에 여러 저장소를 둔 비-Git 컨테이너다. (예: `C:\dev\project-a`)
 2. **git 계정** — `user.name`과 `user.email`.
+3. **원격 계정 식별자** — 대상 저장소별 `provider`(`github`·`gitlab`·`gitea`), `host`, `@login`. remote URL과 공식 CLI 로그인 정보로 추론할 수 없을 때만 묻는다.
 
 ### 추론 우선
 
@@ -32,7 +34,9 @@
 
 ## [탐지]
 
-프로젝트 최상위(컨테이너) 디렉토리 자체는 git repo가 아니어야 하며 적용 대상에도 넣지 않는다. 바로 아래 **1단계** 폴더 중 `.git`이 있는 애플리케이션 repo만 찾는다. 재귀하지 않는다.
+프로젝트 루트 자체가 Git 저장소면 그 저장소 하나만 대상으로 한다. 그렇지 않으면 바로
+아래 **1단계** 폴더 중 `.git`이 있는 저장소를 찾는다. `.ai-docs/`가 별도 Git 저장소면
+문서 권한의 Git 경계이므로 대상에 포함한다. 재귀하지 않는다.
 
 ### PowerShell (win32 기본)
 
@@ -40,26 +44,29 @@
 $base = "C:\dev\project-a"
 
 if (Test-Path (Join-Path $base ".git")) {
-  Write-Output "WARN: 기준 디렉토리 자체가 git repo입니다. 이 스킬은 git으로 관리하지 않는 프로젝트 최상위 폴더 아래의 애플리케이션 repo들에 적용합니다."
+  (Resolve-Path -LiteralPath $base).Path
+} else {
+  Get-ChildItem -LiteralPath $base -Directory |
+    Where-Object { Test-Path (Join-Path $_.FullName ".git") } |
+    Select-Object -ExpandProperty FullName
 }
-
-Get-ChildItem -LiteralPath $base -Directory |
-  Where-Object { Test-Path (Join-Path $_.FullName ".git") } |
-  Select-Object -ExpandProperty FullName
 ```
 
 ### POSIX (Bash 대안)
 
 ```bash
 base="/c/dev/project-a"
-[ -e "$base/.git" ] && printf '%s\n' "WARN: 기준 디렉토리 자체가 git repo입니다. 이 스킬은 git으로 관리하지 않는 프로젝트 최상위 폴더 아래의 애플리케이션 repo들에 적용합니다."
-for d in "$base"/*/; do
-  [ -e "$d/.git" ] && printf '%s\n' "${d%/}"
-done
+if [ -e "$base/.git" ]; then
+  printf '%s\n' "$base"
+else
+  for d in "$base"/*/; do
+    [ -e "$d/.git" ] && printf '%s\n' "${d%/}"
+  done
+fi
 ```
 
-> 결과 0건이면 "프로젝트 최상위 폴더 바로 아래 1단계에 git repo가 없습니다"라고 알리고 종료한다.
-> 기준 디렉토리 자체와 2단계 이상 중첩 repo에는 적용하지 않는다.
+> 결과 0건이면 "프로젝트 루트 또는 바로 아래 1단계에 git repo가 없습니다"라고 알리고 종료한다.
+> 단일 저장소를 찾았으면 하위 저장소를 추가 탐지하지 않는다. 비-Git 컨테이너에서는 2단계 이상 중첩 repo를 제외한다.
 > 전체 트리 재귀 스캔으로 fallback 하지 않는다.
 
 ---
@@ -150,7 +157,26 @@ esac
 
 위 코드는 repo 한 개에 대한 원자 연산 예시다. 실제 일괄 적용에서는 각 명령의 종료 코드를 검사하고, 실패 즉시 아래 롤백을 수행한다.
 
-### 4) 실패 시 전체 롤백
+### 4) 프로젝트·원격 계정 표식 기록
+
+각 대상 저장소의 실제 로컬 config에 다음 키를 정확히 하나씩 기록한다. `projectRoot`는
+단일 저장소와 복수 저장소 모두 사용자가 확인한 논리 프로젝트 루트다. `configPath`는
+공통 config의 슬래시 절대경로다. provider·host·account는 해당 저장소 원격과 현재
+로그인 계정에 맞아야 한다.
+
+```text
+harness.gitScopedAccount.projectRoot = {absolute-project-root}
+harness.gitScopedAccount.configPath = {shared-config-absolute-path}
+harness.gitScopedAccount.provider = {github|gitlab|gitea}
+harness.gitScopedAccount.host = {provider-host}
+harness.gitScopedAccount.account = {@login}
+```
+
+같은 키가 여러 개면 해당 키만 `--local --unset-all`로 제거하고 확인한 값을 한 번
+기록한다. 토큰·비밀번호·SSH 개인키는 넣지 않는다. 이 다섯 키와 `include.path`도 전체
+스냅샷·롤백 대상이다.
+
+### 5) 실패 시 전체 롤백
 
 공통 config 생성·교체, repo 로컬 config 쓰기, 값/출처 검증 중 하나라도 실패하면:
 
@@ -166,7 +192,8 @@ esac
 
 ## [검증]
 
-각 repo에서 실제 적용된 user 정보와 그 **출처 파일**을 확인한다.
+각 repo에서 실제 적용된 user 정보와 그 **출처 파일**, 다섯 개의
+`harness.gitScopedAccount.*` 로컬 값을 확인한다.
 
 ### PowerShell
 
@@ -190,11 +217,37 @@ git -C "/c/dev/project-a/repo-api" config --show-origin --get user.email
 
 ---
 
+## [project-write-access 연결]
+
+검증이 끝나면 프로젝트 루트의
+`.ai-docs/harness/access-control/{policy.json,trust.json,policy.sig,generated-manifest.json}`
+존재 여부를 확인한다. 복수 저장소 구조에서도 경로 기준은 논리 프로젝트 루트다.
+
+네 파일이 모두 있으면 공개 스킬 `project-write-access`로 다음 Plan과 Apply를 이어서
+수행한다. 여기에는 관리자 키와 정책 설정 JSON이 필요하지 않다.
+
+```text
+python {project-write-access-skill-root}/scripts/project_write_access.py local-enroll-plan \
+  --project-root {project-root}
+
+python {project-write-access-skill-root}/scripts/project_write_access.py local-enroll \
+  --project-root {project-root} \
+  --approve-plan-hash {local-enrollment-plan-hash}
+```
+
+Plan에는 서명 정책 검증 결과, 현재 provider·host·account, 정책 subject와 역할, 바뀌는
+로컬 Git 설정만 보여준다. Apply 전에는 별도 승인을 받는다. 공유 정책, CODEOWNERS,
+관리자 키와 원격 서비스 규칙이 `변경 없음`인지 확인한다. 정책 파일이 일부만 있으면
+등록하지 않고 복구 필요 상태로 보고한다.
+
+---
+
 ## [경로·안전 규칙]
 
 - 전역(`--global`)·시스템(`--system`) 설정은 절대 수정하지 않는다. 항상 `--local`만 쓴다.
 - `include.path`에는 슬래시(`/`) 절대경로만 넣는다.
 - 기존의 관련 없는 `include.path`를 제거·재정렬하지 않는다. 제거는 승인된 정확한 값에만 `--fixed-value`를 사용한다.
 - 공통 config에는 user.name/email만 둔다. 토큰·비밀번호는 넣지 않는다.
+- provider·host·account와 프로젝트 연결 표식은 공통 config가 아니라 각 저장소의 로컬 config에 둔다.
 - 적용 전 대상 목록을 사용자에게 보여주고 승인 게이트를 통과해야 한다.
 - 명령 인자에 경로와 값을 직접 전달하고, 사용자 입력을 셸 코드로 조합하거나 평가하지 않는다.

@@ -728,6 +728,8 @@ def check_setup_contract() -> None:
         "`malformed`",
         "앱 핵심 문서를 `admin`이 대신 만들지 않는다",
         "`.ai-docs/harness/artifact-routing.json`의 앱·repository 지도",
+        "`.ai-docs/root-context/AGENTS.md`가 Git 관리 원본",
+        "루트 실행본을 관리 원본에 자동 역반영하지 않는다",
     ):
         require(update, needle, SETUP_ROOT / "prompts" / "update-mode.md")
     if "덮어써도 안전" in update:
@@ -764,6 +766,9 @@ def check_setup_contract() -> None:
     multi_template = read(SETUP_ROOT / "templates" / "root-context.template")
     if "HARNESS_REPO_NAME" in multi_template:
         raise AssertionError("removed clone-era HARNESS_REPO_NAME remains")
+    require(multi_template, ".ai-docs/root-context/AGENTS.md`가 Git 관리 원본", SETUP_ROOT / "templates" / "root-context.template")
+    if "원본 복사본" in multi_template:
+        raise AssertionError("multi-app root template still calls the management source a copy")
 
     for template_name in (
         "docs-readme-single.template",

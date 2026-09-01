@@ -46,7 +46,7 @@ Markdown marker는
 > | 유형 | 대상 | 상태 | 처리 |
 > |------|------|------|------|
 > | `.ai-docs` 안내·정책 | README/.gitignore/_inbox | {new/managed/unmanaged/malformed} | {생성/관리 블록 갱신/보존} |
-> | 루트 컨텍스트 | AGENTS.md 정본, CLAUDE.md bridge | {상태} | {처리} |
+> | 루트 컨텍스트 | 단일 앱 AGENTS.md 정본 또는 복수 앱 root-context 관리 원본·루트 실행본, CLAUDE.md bridge | {상태} | {처리} |
 > | legacy local skill copy | 읽기 전용 report만 출력 |
 >
 > 진행하시겠습니까? **(승인 / 수정 / 취소)**
@@ -95,7 +95,9 @@ Markdown marker는
 
 ## 4. 루트 컨텍스트 갱신
 
-`AGENTS.md`가 공통 정본이다. `CLAUDE.md`는 `@AGENTS.md` bridge와 Claude 전용 차이만 둔다.
+단일 앱은 루트 `AGENTS.md`가 공통 정본이다. 복수 앱은
+`.ai-docs/root-context/AGENTS.md`가 Git 관리 원본이고 루트 `AGENTS.md`는 실행본이다.
+`CLAUDE.md`는 `@AGENTS.md` bridge와 Claude 전용 차이만 둔다.
 
 단일 앱:
 - `AGENTS.md`가 없으면 `templates/root-context-single.template` 기반 뼈대를
@@ -107,11 +109,12 @@ Markdown marker는
 - marker가 없는 기존 파일은 Section 3의 `unmanaged` 규칙을 그대로 적용한다.
 
 복수 앱:
-- `.ai-docs/root-context/AGENTS.md`와 루트 `AGENTS.md`의 관리 블록을 비교하고,
-  최신 관리 블록만 양쪽에 반영한다. 어느 쪽의 사용자 확장도 다른 쪽에
-  전체 복사해 덮어쓰지 않는다.
+- `.ai-docs/root-context/AGENTS.md`의 관리 블록을 검증한 뒤 루트 `AGENTS.md`의 같은
+  관리 블록에 반영한다. 루트 실행본을 관리 원본에 자동 역반영하지 않는다.
 - 두 위치 모두 없으면 `templates/root-context.template`을 확정된 앱 목록으로
   치환해 양쪽에 생성한다.
+- 관리 원본만 없고 루트 실행본만 있으면 자동 승격하지 않는다. 실행본에서 관리 원본을
+  복구할 diff를 보여주고 별도 승인을 받은 뒤 생성한다.
 - `CLAUDE.md`도 bridge 관리 블록만 동기화하고 각 위치의 블록 밖 Claude 전용
   차이를 보존한다.
 
@@ -125,7 +128,7 @@ Markdown marker는
 
 `.ai-docs/root-context/AGENTS.md`, `.ai-docs/root-context/CLAUDE.md`를 다시 읽어
 관리 블록을 검증한 뒤, 루트 파일의 같은 관리 블록에만 반영한다. 파일 전체를
-복사하지 않으며 루트와 복사본 각각의 블록 밖 사용자 확장을 보존한다.
+복사하지 않으며 관리 원본과 루트 실행본 각각의 블록 밖 사용자 확장을 보존한다.
 
 > 만약 `.ai-docs/root-context/` 파일이 존재하지 않으면 (다른 스킬에 의해 아직 안 만들어졌거나 삭제된 경우),
 > 갱신하지 않고 사용자에게 알린다.

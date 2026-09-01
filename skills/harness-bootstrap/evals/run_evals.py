@@ -12,6 +12,8 @@ EVALS_FILE = Path(__file__).with_name("evals.json")
 INTERVIEW_FILE = SKILL_ROOT / "prompts" / "interview.md"
 CODE_SCAN_FILE = SKILL_ROOT / "prompts" / "code-scan.md"
 EXTRACTION_FILE = SKILL_ROOT / "prompts" / "extraction-mapping.md"
+DESIGN_SKILL_FILE = SKILL_ROOT.parent / "design-doc" / "SKILL.md"
+CONTEXT_SKILL_FILE = SKILL_ROOT.parent / "context-doc" / "SKILL.md"
 
 
 def require(text: str, needle: str) -> None:
@@ -51,8 +53,26 @@ def main() -> int:
         "`.docs/`만 있거나 두 경로가 공존하면",
         "`harness-setup`의 명시적 문서 루트 이관·충돌 해결",
         "`.docs/`가 남지 않았다는 검증",
+        "confirmed_scope = {Step 0-B에서 승인받은 범위 객체}",
+        "`agent-instruction.md`",
+        "@.ai-docs/instruction/artifact-output-routing-instruction.md",
+        "@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md",
+        "{project}/.ai-docs/{앱}/context-base/DESIGN.md",
     ):
         require(skill, needle)
+
+    if "저장 경로는 `.ai-docs/context-base/DESIGN.md`" in skill:
+        raise AssertionError("bootstrap still presents a single-app path for every project type")
+
+    for child_skill in (DESIGN_SKILL_FILE, CONTEXT_SKILL_FILE):
+        child_text = child_skill.read_text(encoding="utf-8")
+        for needle in (
+            "confirmed_scope",
+            "같은 질문을 반복하지",
+            "대신하지 않는다",
+        ):
+            if needle not in child_text:
+                raise AssertionError(f"{child_skill}: missing confirmed scope handoff contract: {needle}")
 
     if not INTERVIEW_FILE.is_file():
         raise AssertionError(f"missing protected interview prompt: {INTERVIEW_FILE}")

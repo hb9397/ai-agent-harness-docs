@@ -48,7 +48,7 @@
 5. `maintainer/plugin/release.json`: 특정 plugin artifact의 skill 수, 패키징 upstream과 release 상태의 정본
 6. `maintainer/upstreams/provenance/**`: license, NOTICE, file-map, 제3자 권리 판정과 promotion evidence의 정본
 
-문서에 숫자나 날짜를 독립적으로 고정해 machine source를 대체하지 않는다. 현재 사용자 skill과 `0.5.0` payload는 `project-write-access`를 포함해 20개다. 이전 artifact의 inventory는 historical immutable archive 증적이지 현행 source inventory가 아니다.
+문서에 숫자나 날짜를 독립적으로 고정해 machine source를 대체하지 않는다. 현재 사용자 skill과 `0.6.0` payload는 `project-write-access`를 포함해 20개다. 이전 artifact의 inventory는 historical immutable archive 증적이지 현행 source inventory가 아니다.
 
 <a id="source-and-evidence-model"></a>
 ## 출처 mode, lifecycle, evidence state
@@ -100,7 +100,7 @@
 - `ui-ux-pro-max`와 `motion-design`은 보존 자산과 수정 `SKILL.md`를 file-map에서 파일별로 구분한다. 두 runtime source는 이미 plugin NOTICE와 license bundle에 포함된다.
 - `reference` 관계는 파일을 복사하지 않으므로 그 관계 자체가 license payload를 만들지 않는다. 같은 upstream의 별도 `adapted` runtime 관계가 있으면 그 관계의 재배포 의무만 적용한다.
 
-현재 `0.5.0` artifact의 `packaged_upstreams`는 `anthropic-frontend-design`, `im-not-ai`, `ui-ux-pro-max-runtime`, `lottiefiles-motion-design-runtime` 네 source다. `THIRD_PARTY_NOTICES.md`와 `licenses/`는 네 source를 모두 닫는다. 관리자 전용 `skill-creator-guides`와 concept/behavior-only `reference`는 사용자 payload에 넣지 않는다.
+현재 `0.6.0` artifact의 `packaged_upstreams`는 `anthropic-frontend-design`, `im-not-ai`, `ui-ux-pro-max-runtime`, `lottiefiles-motion-design-runtime` 네 source다. `THIRD_PARTY_NOTICES.md`와 `licenses/`는 네 source를 모두 닫는다. 관리자 전용 `skill-creator-guides`와 concept/behavior-only `reference`는 사용자 payload에 넣지 않는다.
 
 Motion Design의 upstream 참조 자료에는 Material Design 3, Apple Human Interface Guidelines와 Disney 애니메이션 원칙이 언급된다. upstream 최상위 MIT license는 upstream 저작자가 보유하지 않은 제3자 권리를 허가하지 못한다. `maintainer/upstreams/provenance/lottiefiles-motion-design/NOTICE.md`의 파일별 판정을 유지하며 외부 지침의 설명문이나 표 전체로 반입 범위를 확대하지 않는다.
 
@@ -291,7 +291,7 @@ python maintainer/upstreams/provenance/im-not-ai/tests/test_humanize_korean.py
 
 명시적으로 superseded 또는 historical 처리한 사실:
 
-- "사용자 skill 20개"는 Phase 1 정본 19개로 superseded했다.
+- 통합 당시의 "사용자 skill 20개"는 Phase 1에서 정본 19개로 한 차례 superseded했다. 현재 `0.6.0` 정본은 `project-write-access`를 포함해 다시 20개다.
 - UI/UX Pro Max와 Motion Design의 "패키징 대기/예정"은 payload·NOTICE 포함 완료로 superseded했다.
 - 패키징 NOTICE가 im-not-ai와 Anthropic만 포함한다는 설명은 UI/UX·Motion을 포함한 모든 패키징 direct source 고지로 superseded했다.
 - 모든 출처를 2026-07-30 하나의 확인일로 묶지 않고 lock의 source별 확인일을 쓴다.

@@ -25,7 +25,7 @@ if ([string]::IsNullOrWhiteSpace($env:CLAUDE_PROJECT_DIR)) {
     exit 2
 }
 
-$corePath = Join-Path $env:CLAUDE_PROJECT_DIR '.docs/harness/hooks/artifact-route-core.ps1'
+$corePath = Join-Path $env:CLAUDE_PROJECT_DIR '.ai-docs/harness/hooks/artifact-route-core.ps1'
 try {
     $decision = (& $corePath -RuntimeHost claude -ProjectRoot $env:CLAUDE_PROJECT_DIR -ToolName $payload.tool_name -ToolInput $payload.tool_input | ConvertFrom-Json)
 } catch {

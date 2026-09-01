@@ -162,10 +162,12 @@ harness-bootstrap 스킬
         ├─ Step 1~4: 코드 스캔 + 최소 인터뷰
         │
         ├─ Step 5: design-doc OUTPUT_V2 산출
-        │            └── 저장: {project}/.ai-docs/context-base/DESIGN.md (또는 사용자 지정)
+        │            ├── 단일 앱: {project}/.ai-docs/context-base/DESIGN.md
+        │            └── 복수 앱: {project}/.ai-docs/{앱}/context-base/DESIGN.md
         │
         └─ Step 6~7: context-doc 파이프라인 실행
-                     └── 저장: *-context.md + .ai-docs/instruction/*-instruction.md
+                     ├── 단일 앱: *-context.md + .ai-docs/instruction/*-instruction.md
+                     └── 복수 앱: *-context.md + .ai-docs/{앱}/instruction/*-instruction.md
 ```
 
 이후 작업은 정규 플로우를 따른다.
@@ -206,6 +208,20 @@ harness-bootstrap 스킬
 4. 확인된 범위 밖은 건드리지 않는다.
 5. `.docs/`와 `.ai-docs/`의 존재 조합을 확인한다. 이전 경로가 감지되면 앱 문서
    단계로 진행하지 않고 `harness-setup`의 문서 루트 전환 결과를 기다린다.
+6. 승인된 프로젝트 루트·프로젝트 유형·대상 앱에 따라 `DESIGN.md`와 instruction
+   루트를 확정하고 아래 `confirmed_scope`를 만든다.
+
+```text
+confirmed_scope.project_root = {정규화한 프로젝트 루트}
+confirmed_scope.project_type = single-app | multi-app
+confirmed_scope.target_app = {애플리케이션 식별자}
+confirmed_scope.design_path = {.ai-docs 아래 정규화 상대경로}
+confirmed_scope.instruction_root = {.ai-docs 아래 정규화 상대경로}
+confirmed_scope.user_approved = true
+```
+
+이 값은 공개 child workflow의 범위 재확인만 생략한다. 파일 덮어쓰기와 Step 7의 앱
+핵심 문서 쓰기 승인은 별도 게이트이므로 재사용하지 않는다.
 
 > ✋ **확인 게이트**
 >
@@ -353,6 +369,7 @@ handoff 입력에는 Step 2 인벤토리, Step 3 답변, Step 4 매핑 결과와
 artifact_bundle_id = {Step 0에서 만든 값}
 handoff_owner = harness-bootstrap
 suppress_child_handoff = true
+confirmed_scope = {Step 0-B에서 승인받은 범위 객체}
 ```
 
 이 handoff에서는 준비된 관찰·답변을 입력으로 사용하고 추가 인터뷰나 자식
@@ -372,7 +389,7 @@ suppress_child_handoff = true
 
 > "위 설계 문서를 검토해 주세요.
 > 수정할 부분이 있으면 말씀해 주시고, 이상 없으면 바로 `context-doc` 단계까지 이어서 초안을 완성하겠습니다.
-> 저장 경로는 `.ai-docs/context-base/DESIGN.md` 로 하겠습니다. 변경 원하시면 알려주세요."
+> 저장 경로는 `{confirmed_scope.design_path}`로 하겠습니다. 변경 원하시면 알려주세요."
 
 ---
 
@@ -387,12 +404,15 @@ handoff에는 다음 실행 컨텍스트를 전달한다.
 artifact_bundle_id = {Step 0에서 만든 값}
 handoff_owner = harness-bootstrap
 suppress_child_handoff = true
+confirmed_scope = {Step 0-B에서 승인받은 범위 객체}
 ```
 
 - `.ai-docs/{앱}-context.md`에 들어갈 애플리케이션 팩트 + 지침 인덱스 초안 작성
 - `context-doc`의 공개 workflow로 주제별 instruction 파일 분류
 - 앱 context + 각 `*-instruction.md` 구조 활용
-- 모노레포 감지 시 `.ai-docs/instruction/` 배치 질문 (context-doc의 Step 2와 동일)
+- `confirmed_scope.instruction_root`에 따라 instruction 배치를 확정하고 같은 배치 질문을
+  반복하지 않는다. 현재 구조가 승인값과 달라졌으면 자동 보정하지 않고 Step 0-B로
+  돌아가 범위를 다시 확인한다.
 
 이 단계에서는 **새로운 인터뷰를 추가하지 않는다**. Step 3 답변 + Step 5 OUTPUT으로 충분하다.
 단, 활성 권한 정책의 쓰기 승인 질문은 인터뷰가 아니므로 Step 7에서 반드시 수행한다.
@@ -414,16 +434,17 @@ suppress_child_handoff = true
 1. `.ai-docs/context-base/DESIGN.md` (또는 사용자 지정 경로)
 2. `.ai-docs/{앱}-context.md`
 3. `.ai-docs/instruction/*-instruction.md` (해당 주제와 항상 생성되는
-   `@.ai-docs/instruction/artifact-output-routing-instruction.md` 포함)
+   `agent-instruction.md`, `@.ai-docs/instruction/artifact-output-routing-instruction.md` 포함)
 
 **복수 애플리케이션:**
 1. `.ai-docs/{앱}/context-base/DESIGN.md`
 2. `.ai-docs/{앱}-context.md`
 3. `.ai-docs/{앱}/instruction/*-instruction.md` (해당 주제와 항상 생성되는
-   `@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md` 포함)
+   `agent-instruction.md`, `@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md` 포함)
 
 (단, 설계 문서에 해당 주제가 없으면 일반 주제 instruction 파일은 생성하지 않는다.
-artifact-output-routing-instruction은 산출물 경계 정본이므로 항상 생성한다.)
+`agent-instruction.md`와 `artifact-output-routing-instruction.md`는 각각 AI 동작 규칙과
+산출물 경계의 기본 정본이므로 항상 생성한다.)
 
 bootstrap이 `DESIGN.md`와 context 초안을 만든 뒤에는 installer나 host 설정을 복제하지
 않는다. `.ai-docs/harness/artifact-routing.json`이 있으면 이를 읽고, 없으면 공개 스킬 이름

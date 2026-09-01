@@ -58,7 +58,7 @@ def test_motion_is_conditional_not_self_decided() -> None:
 def test_prototype_code_is_not_promoted() -> None:
     skill = skill_text()
     assert "프로토타입 코드는 재사용하지 않는다" in skill
-    assert ".docs/prototype/**" in skill
+    assert ".ai-docs/prototype/**" in skill
 
 
 def test_permissions_and_source_notice_stay_bounded() -> None:

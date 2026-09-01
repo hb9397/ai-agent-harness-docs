@@ -3,15 +3,15 @@
   "files": [
     {
       "path": ".claude-plugin/plugin.json",
-      "sha256": "714c0c2602ca42a0e76336aa060d56bca11b37d5b85f4f528bd045bc6007c2ee"
+      "sha256": "df018706375e44c3ec27a412e7b91e72f789f48b05ed18a836abc3c24a615c2f"
     },
     {
       "path": ".codex-plugin/plugin.json",
-      "sha256": "4f5ca853603a7e22c61b9324c673cc3f2a8a4a6827b88598ffbe00e9d0065e36"
+      "sha256": "8c8bce9075bb16edc3b5ac03563caf3f0fb72fd4ca6be944fbc69747052fa482"
     },
     {
       "path": "CAPABILITIES.json",
-      "sha256": "9bb4f182e602b6547d63e57dbf520e00593f37646fb3f1a83964a210aec76487"
+      "sha256": "2840211f94473f2167911d278fbcb147de1fa297b76ab29bbca96ce878d91809"
     },
     {
       "path": "LICENSE",
@@ -27,7 +27,7 @@
     },
     {
       "path": "UPSTREAMS.lock.json",
-      "sha256": "5fee365e4a0a800887cf25b9b42f0de805b8d01785c71cb4ec52ae067ca49d63"
+      "sha256": "ba84239644f9a31547de70c99e921c5fa0018ee3ccfb41f0934cf06713d098b5"
     },
     {
       "path": "licenses/anthropic-frontend-design-LICENSE",
@@ -79,23 +79,23 @@
     },
     {
       "path": "runtime/claude/skills/context-doc/SKILL.md",
-      "sha256": "286d9fa10ce66452fd330bbbfc0defdf15bfa7604d64cad9e897f7906765c972"
+      "sha256": "cbcea92894b2d879e3c40643da3184c08f419becb91b41a369de88f01eea122a"
     },
     {
       "path": "runtime/claude/skills/context-doc/evals/evals.json",
-      "sha256": "ab4b22ace83d500edf407b5bb7559054598ea57f5703a5b565baebae27a132f3"
+      "sha256": "2c647636139a4d9f392d3ac9b7a70eba4a5d5e69df2d21e63081a70b5a684c54"
     },
     {
       "path": "runtime/claude/skills/context-doc/evals/run_evals.py",
-      "sha256": "9a9771cc48b78eacab811975897556051b1bfd690ded4ed9e74924e1e394ee82"
+      "sha256": "d9ffeb5247fd35f94db3ee0a8d5521ef65555184bb33112528623c999e33a841"
     },
     {
       "path": "runtime/claude/skills/context-doc/prompts/analysis-claude.md",
-      "sha256": "a0463217e50a3c0da88949252ab44a797fc4bdeeee30a4172e7f5952094d6c7f"
+      "sha256": "0eb80d713da91a6b4ac4b36fa8292813501f59774faa964821bb5d6327807a63"
     },
     {
       "path": "runtime/claude/skills/context-doc/prompts/analysis-instruction.md",
-      "sha256": "6c7eb31a06877b0d12bc759561effede2cb3b74765e6158c4ab5a067ff7ff807"
+      "sha256": "70e2d793b3cf8f6298cdb97ec2c57d07cb641887a7beab1da322f12ccbbb5780"
     },
     {
       "path": "runtime/claude/skills/context-doc/prompts/parallel-setup.md",
@@ -103,7 +103,7 @@
     },
     {
       "path": "runtime/claude/skills/context-doc/templates/AGENTS.md.template",
-      "sha256": "7c95db0994d8afac1ba289c31ed9730a86895dbb71b94e5d88b190746177f0f8"
+      "sha256": "1ff3e184c6301fe473b33ff32ba7039e546e8b1cde0cbd1247126ffde2abc25b"
     },
     {
       "path": "runtime/claude/skills/context-doc/templates/CLAUDE.md.template",
@@ -123,7 +123,7 @@
     },
     {
       "path": "runtime/claude/skills/context-doc/templates/artifact-output-routing-instruction.md.template",
-      "sha256": "0cbf75641494405e6f80ca978b68a1efa8162ed48ad9dc00276205d68f601ee7"
+      "sha256": "b1671ca18dabc562a28d678b925a236202113d5b29cd34f44a56b108062498f4"
     },
     {
       "path": "runtime/claude/skills/context-doc/templates/code-style-instruction.md.template",
@@ -143,7 +143,7 @@
     },
     {
       "path": "runtime/claude/skills/create-prototype/SKILL.md",
-      "sha256": "44c8ef179957af736c32e6e768a58a5cfe4d29596bbc67cea7e39db35136fe62"
+      "sha256": "a999a4352af1d582fe27319013d5d1e653dd6696efe0fccca089f39aa9116aff"
     },
     {
       "path": "runtime/claude/skills/create-prototype/evals/run_evals.py",
@@ -167,7 +167,7 @@
     },
     {
       "path": "runtime/claude/skills/design-doc/SKILL.md",
-      "sha256": "6b060886eaad45e2dc6e208148bd1649d795a8725467ed43893f3411b97402b0"
+      "sha256": "993de820cb92432dac799f0773dce19e6eb483de15451e6b1f9b817967aad0bb"
     },
     {
       "path": "runtime/claude/skills/design-doc/prompts/interview.md",
@@ -207,11 +207,11 @@
     },
     {
       "path": "runtime/claude/skills/design-prototype-docs/SKILL.md",
-      "sha256": "8748746a8b45bf79a3f5eb1512ebd3b1edd8d51e03b955f166d61f2401e89318"
+      "sha256": "82d747df7bd52cafce65ae11e76000f9e37687772d5c456bb495649284d7108d"
     },
     {
       "path": "runtime/claude/skills/design-prototype-docs/evals/run_evals.py",
-      "sha256": "512800bf7726930535cd2171b0ab190edefc70181dc301fa583444f5e7ec480f"
+      "sha256": "5f6a9d4c2aaab804ed2f2a4678077a41515d1539984496ba67899c6af1a60c49"
     },
     {
       "path": "runtime/claude/skills/design-prototype-docs/example/mock_output.md",
@@ -219,7 +219,7 @@
     },
     {
       "path": "runtime/claude/skills/doc-audit/SKILL.md",
-      "sha256": "ec596aaa3d48976ea525ec5602415ee20befac2ea6a98ac61aac3e2254f71518"
+      "sha256": "ebe6d4cfd8291dc7c9ec865db959a8c0b44d3bc44a6c85824082eb15e802a4a3"
     },
     {
       "path": "runtime/claude/skills/doc-audit/audit-report.md",
@@ -239,7 +239,7 @@
     },
     {
       "path": "runtime/claude/skills/doc-audit/prompts/rulecheck-audit.md",
-      "sha256": "574ecf06260037c62f87e8c7fb7b28a75716d4f22d03072295b53fe2485af26a"
+      "sha256": "3caedb8cc98d6d9f1b091b1f134eedf62dd922d12ff96643d43ba56894593989"
     },
     {
       "path": "runtime/claude/skills/doc-audit/templates/audit-report.md",
@@ -247,27 +247,27 @@
     },
     {
       "path": "runtime/claude/skills/frontend-design/SKILL.md",
-      "sha256": "0929cf8d9ab7039a920f5c0462f0f0594fdf11fd70dfa1dc581bc2b6e9aaf76e"
+      "sha256": "9c64dd024cb025d804c04fc8186525a8b7346dbb6099d36ac18b5f8c37942572"
     },
     {
       "path": "runtime/claude/skills/frontend-design/evals/run_evals.py",
-      "sha256": "096237c8ab4e5d00fe79c421e702e58da01e0ff12a8e362f1770473c99e39854"
+      "sha256": "47655fa9540c5c7ce3eb5c2618bcdff8b65ea19c4fee210e88ffe24103222131"
     },
     {
       "path": "runtime/claude/skills/git-scoped-account/SKILL.md",
-      "sha256": "7ff74c7d7d4850035561c06ef9ce4e8ec19d860aa71026092eeb55f1b047bc9b"
+      "sha256": "a5a5b5125f6afca7d3db5dacfbc777b9cf9a01a480bc8c6dabeed3fd9e603e55"
     },
     {
       "path": "runtime/claude/skills/git-scoped-account/evals/evals.json",
-      "sha256": "c55f43f49929917b3237c654528a3e20a97507682d0855cad5ae5a57eac080d7"
+      "sha256": "6c60020fd9b2c50533aa410cdda63607462847d20812f628ae1d03a91bd6ccfb"
     },
     {
       "path": "runtime/claude/skills/git-scoped-account/evals/run_evals.py",
-      "sha256": "70465cd022d8d47ffe40587c34a18527b7c099aeabc26aa81b62e55bd280c51a"
+      "sha256": "3fe446aedc46a99e4a0858c849c4f75078f9c19d0cbb10c7101dd7820326cfd8"
     },
     {
       "path": "runtime/claude/skills/git-scoped-account/prompts/commands.md",
-      "sha256": "6319576166a426158c9f48d6cc5d0e47991080223346e2f57ce952121fb4f9ca"
+      "sha256": "f8438c6c48ff889f82d5113d404921b4259b08688aaf086bea8d279ca1699bb5"
     },
     {
       "path": "runtime/claude/skills/git-scoped-account/templates/gitconfig-shared.md",
@@ -275,23 +275,23 @@
     },
     {
       "path": "runtime/claude/skills/git-scoped-account/templates/verify-report.md",
-      "sha256": "4a7fc9ebddc0fab333106ad26824de8907e2d07443abdbadb57b2698c8a25593"
+      "sha256": "523d5a2288c636f968e6258da19e29145355893d8d23a4826bba87b9fed5e0bc"
     },
     {
       "path": "runtime/claude/skills/harness-bootstrap/SKILL.md",
-      "sha256": "a255727fcffbb6b6ffdda60b523d5847c427b56669437f2d44a914fa102d6f00"
+      "sha256": "adf523be2a6fc5fcea6f9171df3eaa2a874cb66a4e4f4597891c50cb5b67bfd0"
     },
     {
       "path": "runtime/claude/skills/harness-bootstrap/evals/evals.json",
-      "sha256": "c1335c28105d1a10cd6186baaa204dd0b9191fb7965923b904e2da16b4df7d27"
+      "sha256": "c27c9d4851ac7d11600cb731398729bc5e7329255c06655eb509f657e9cae838"
     },
     {
       "path": "runtime/claude/skills/harness-bootstrap/evals/run_evals.py",
-      "sha256": "add161bb46ee71af7b559e0aad5fb937b6e9a800ce7e3dcd0395eef60a82dc37"
+      "sha256": "e98f5c87052d793e47740341f3520e214d7533e192420feaa25f5320863319d7"
     },
     {
       "path": "runtime/claude/skills/harness-bootstrap/prompts/code-scan.md",
-      "sha256": "6a757b3b4b24c69f8bb980ef0a00b3c8d64d37f5ac8f2746b48b38a68605e148"
+      "sha256": "41aa74e7632c20e89ce0963b35aab8d0875334033a50e36fc4a2dfea065d51da"
     },
     {
       "path": "runtime/claude/skills/harness-bootstrap/prompts/extraction-mapping.md",
@@ -307,7 +307,7 @@
     },
     {
       "path": "runtime/claude/skills/harness-setup/SKILL.md",
-      "sha256": "96735f6a67384afde16005be6974c2d52df20f9783ce48c29e00653aeeb25509"
+      "sha256": "9b706b6aa4e3b0a13b08e7e38ce1cf0c2bfcc107d5970cb0a5a7a62cc5838e24"
     },
     {
       "path": "runtime/claude/skills/harness-setup/evals/fixtures/portable-routing-baseline.json",
@@ -315,7 +315,7 @@
     },
     {
       "path": "runtime/claude/skills/harness-setup/evals/fixtures/portable-routing-bundle.json",
-      "sha256": "ec9eeedf8fa1275acaf85059386072f47dd084e8add7917959c3308a5f1a6896"
+      "sha256": "424656f40b95116710fee1f3f34bba57a793aff1075d7516488b03151fe6a07f"
     },
     {
       "path": "runtime/claude/skills/harness-setup/evals/fixtures/portable-routing-coverage.json",
@@ -323,55 +323,55 @@
     },
     {
       "path": "runtime/claude/skills/harness-setup/evals/run_evals.py",
-      "sha256": "6a75fdcf0267b33c21fa9c672adc2bb35c6a7160ba3178109921e05641ddedb2"
+      "sha256": "2b1503fe0615f1ccbbee2880eec0084976835a5f206d4a67130163d45303bdea"
     },
     {
       "path": "runtime/claude/skills/harness-setup/prompts/detection.md",
-      "sha256": "e0219c06bdfa482f6eec4bc5f06f6679483444f7f37f411dfb7bc3af9b85086a"
+      "sha256": "a7ce52845eac3a0487ce96132428055c44246f1bef25d66cc19472d070e5e1eb"
     },
     {
       "path": "runtime/claude/skills/harness-setup/prompts/multi-app-setup.md",
-      "sha256": "a6dfd3aee453ef73ed8cdaf41e742614cc29c68d4fc60ec60d61a76ab3b0ade6"
+      "sha256": "9a9384808793bd527f448182100a927294052663301bbc994b96b791064c74d4"
     },
     {
       "path": "runtime/claude/skills/harness-setup/prompts/single-app-setup.md",
-      "sha256": "48fd539aa3fc45be3d47f76463ea563130fe89eaf58f53381e308c2bd45e5554"
+      "sha256": "83b9f669813c08869dc66bc60edba0dd80c1d378db584ad01b5d9d7ed8deb095"
     },
     {
       "path": "runtime/claude/skills/harness-setup/prompts/update-mode.md",
-      "sha256": "a08e1ad4d2d2fcf6a2f421103cc8f1c0dc035c003f90bffcc4e29057e54bcb71"
+      "sha256": "cdf220d9eeb564bcef7849a5a27f40226cd3d3f637ac735e08a440c464fddb1e"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/claude-bridge.template",
-      "sha256": "22d012017b80f0c5b8450975c0aee39201609e20759a0d009a8734db10cf03a6"
+      "sha256": "91cd88c16e1e36029f022571a7e46235213cfdc947573d3d8704e5fd4913135d"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/docs-gitignore.template",
-      "sha256": "cdf482a14163f45656e71aac592422c4f2f3c755a51123e146ac0f56aed9c4bc"
+      "sha256": "77e4ad39d304d986307cf46cb40bab6399059788c84d64dcf20420c5e953df0a"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/docs-readme-multi.template",
-      "sha256": "81a0eb0395060efb97fb4f391ab7eee519b0871ec66dd6c7e64399627bda6ec0"
+      "sha256": "84ecaae0a7a78bb5e7e479b079363d9fbab283bf1b30e2067f4d593e58718bce"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/docs-readme-single.template",
-      "sha256": "a00b31b1c8e15124bc04f45da6ca10fd35899806dadfd4154fede53687d7d22e"
+      "sha256": "4e2d6eeb5161b171d7079c566cc5b77b653bfc478230624b34b6bb67004e8833"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/inbox-readme.template",
-      "sha256": "bae4928fcdca5abb912e9014c7e8e0492d63cb91eb21a9dfcf7d344b0f9ed96d"
+      "sha256": "9c090b44520caab5edda21314f8724b13fd34a011f86940e16805729e34ecaf2"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/portable-routing/README.md.template",
-      "sha256": "8e7b686d8d0244b147b9ab2d4d70b97d3501405b1f781a9f265e528583376167"
+      "sha256": "32da6317b95708bbee7e193966a63fca1d19837a6dfc141669876cb46dad4b94"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/portable-routing/artifact-format-contract.json.template",
-      "sha256": "1130b774a63d1f66bc0f69b6f58f5de49cd108fb89b6e3ce1115619463592d9f"
+      "sha256": "aec1accda1f3ae7da9fc6cbad4201e7b6e6e328a04c36fcaa1e33e85ca76b538"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/portable-routing/artifact-routing.json.template",
-      "sha256": "e9830c86a150ce320352f98b60a2da0512a0927d227b30249ff81091ff2f38b9"
+      "sha256": "87f2f7fd20dc560a94082a8991dfbe41e4ba3b5074d7fe72821300d5f6e6e8e0"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/portable-routing/claude-settings-hook.json.template",
@@ -383,19 +383,19 @@
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/portable-routing/hooks/approve-artifact.ps1.template",
-      "sha256": "085ae79f763b6af30ce8479f4a84a66d7c60b05911a19008033c1156ce4d0efe"
+      "sha256": "6859c2d110fa4b7b6a862505c8f952934b771606492aac51e4b125e806f69cc0"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/portable-routing/hooks/artifact-route-core.ps1.template",
-      "sha256": "59c19656e220afacf6169bbd7b5bed59aa3f6b552c57478aaebe47de8fb97455"
+      "sha256": "2ccd6f32c04fc63bd07d6b63aa6f008d0ab1d3fa21cdc8c41afbcd73728c2fcd"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/portable-routing/hooks/claude-pre-tool-use.ps1.template",
-      "sha256": "b6e504276025cb846a3a22862c991e71e9f54749755cae4b3492798d50441571"
+      "sha256": "b5173c5846c150bd54b12f45cf4d59b07e5dc40b783ef2267f734b67fc04cd9b"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/portable-routing/hooks/codex-pre-tool-use.ps1.template",
-      "sha256": "448c272bb789c1a168ebbaa587d393fe049b45208d7e7153b9167e5729478ca0"
+      "sha256": "242527db544ab173ffd4205face76afbaf892feab0d62d67d29181df9375b79f"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/portable-routing/inbox-artifact-manifest.json.template",
@@ -407,31 +407,31 @@
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/portable-routing/normalize-artifact.ps1.template",
-      "sha256": "b5c0f8ab56c9d2ea2cc46cdd076f197c75b8c184e3c2fd52c6839fb0ff5c906e"
+      "sha256": "4dcfbf93f83640abe2301a656e484d239a4ffe49cdb51d31551d577d75cbab2e"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/root-context-single.template",
-      "sha256": "720db5347fd67a4925ad971b07d3b0dc06dfd42e93509517dd486e1b145ace9e"
+      "sha256": "3a5cbab5843be5d44d6129da316f6744ff3d029cd1bfab8660a901c49327cb72"
     },
     {
       "path": "runtime/claude/skills/harness-setup/templates/root-context.template",
-      "sha256": "1e9d19acf7f5ce2f4f990ab61236579621a2ff5b02fe753145a0915573ad25db"
+      "sha256": "3a26037d940af6972240fa1134e3dbf9c9c5fe13969db01177b4e9f8419bdfa4"
     },
     {
       "path": "runtime/claude/skills/humanize-korean/SKILL.md",
-      "sha256": "5f52c6b76ce0ba0464f09f6f3ed74722c556bd41a671610a765cd3168e88971e"
+      "sha256": "31c305d3a6aa7421c59486294f9874e25205aeb96e992221b5ebb5f814c25c82"
     },
     {
       "path": "runtime/claude/skills/humanize-korean/evals/evals.json",
-      "sha256": "28fc2dd7f6c9032232a415c3ed8522b5643881ae8ebc8ea7d2f7f10a89ff0a61"
+      "sha256": "30bfbce3676b53bf217ce752c564ab879b44cc41167fb6f015e7ac33535a50b8"
     },
     {
       "path": "runtime/claude/skills/humanize-korean/evals/run_evals.py",
-      "sha256": "7659781d2462a9273d4d1a16508fc64cb48a4cf85050114d8366a50793eeb63c"
+      "sha256": "5fcc3445143b75224aaa17c2b4157fa6fdf1d7fa343cce8e880964e5f57da151"
     },
     {
       "path": "runtime/claude/skills/humanize-korean/references/document-refinement.md",
-      "sha256": "3de17900f1761c8a47d729384ea036f14d153b52c8f111c8fdef8dc3742e3587"
+      "sha256": "c3a0c9276462d6bc04d3d4ec270ba413544d4d77c8bc9b5d48fb94de65252a1c"
     },
     {
       "path": "runtime/claude/skills/humanize-korean/references/taxonomy.md",
@@ -443,7 +443,7 @@
     },
     {
       "path": "runtime/claude/skills/impl-doc/SKILL.md",
-      "sha256": "34dba36348f65dfbf7b9f591ad26de082352c064d080a20d958e5eab34d1f0a9"
+      "sha256": "3d299a40d65d1b558586e97a469bd3a835fcc97b9228378b3fd1530e8132f90a"
     },
     {
       "path": "runtime/claude/skills/impl-doc/prompts/analysis.md",
@@ -471,7 +471,7 @@
     },
     {
       "path": "runtime/claude/skills/impl-fe-be-doc/SKILL.md",
-      "sha256": "891eeadece8ef2640e3cc3f9b360ca610b9e4a74f9b4f1a34862c77c3b3b02aa"
+      "sha256": "ed3afebde53256b51eb01d65e6aea1f1a789c7c6e93c5baaf41474cef6785f5b"
     },
     {
       "path": "runtime/claude/skills/impl-fe-be-doc/prompts/analysis.md",
@@ -511,7 +511,7 @@
     },
     {
       "path": "runtime/claude/skills/impl-reuse-scan/SKILL.md",
-      "sha256": "320511ef292e19da596cf69c86ce9088361c701ca5f43df61bd8ac99b65ab683"
+      "sha256": "ead9ce312019ed59767c39535082888899d1056758a4d7f341f3709cb60867ce"
     },
     {
       "path": "runtime/claude/skills/impl-reuse-scan/prompts/decision-interview.md",
@@ -543,11 +543,11 @@
     },
     {
       "path": "runtime/claude/skills/impl-verify/SKILL.md",
-      "sha256": "b70bcb7f1b5ed977bf1c2b29d9e170e2c01167ccbc0c0a04a23f536c9643a968"
+      "sha256": "b44c2c1826e949f5756bf5a093442b4eb3fea54a52a8741b2a130e57d1688e8f"
     },
     {
       "path": "runtime/claude/skills/impl-verify/evals/run_evals.py",
-      "sha256": "c9a2779f911583920c6be4f0068e31558ba4ede0b9263b7513e9268fb4252f26"
+      "sha256": "7cfcf86c0159558cd8426fe9eb7df5cd3ebbd71c851ec40405fbdab0e1d22a05"
     },
     {
       "path": "runtime/claude/skills/impl-verify/prompts/classify-checks.md",
@@ -579,7 +579,7 @@
     },
     {
       "path": "runtime/claude/skills/motion-design/SKILL.md",
-      "sha256": "1c07fc88d1e087c10a447366604a3283dff3ca44ec6b9d89a4e9b8579792f8b8"
+      "sha256": "47e70ba2eab0a4af12606956a5ab5e1680e89fc477c5e708739cf3d222837ec7"
     },
     {
       "path": "runtime/claude/skills/motion-design/director/choreography.md",
@@ -615,7 +615,7 @@
     },
     {
       "path": "runtime/claude/skills/motion-design/evals/run_evals.py",
-      "sha256": "789bfd0189fd11a0fff31dfb181d5448b4bb7905a37f9295752273f6fde69d72"
+      "sha256": "19972e1731b07d0919e96118cf585b589653a81a315c018a27ff164a4273d24b"
     },
     {
       "path": "runtime/claude/skills/motion-design/patterns/ambient-continuous.md",
@@ -679,7 +679,7 @@
     },
     {
       "path": "runtime/claude/skills/project-write-access/SKILL.md",
-      "sha256": "603ca84b747dfb6f23de65ed9b7b6332286d438ee7871a96ece7479be81c7cd1"
+      "sha256": "e235edb5fc0a35aee104ce400885b6b3ea950ade3be10edd401562954a3c501b"
     },
     {
       "path": "runtime/claude/skills/project-write-access/agents/openai.yaml",
@@ -687,47 +687,47 @@
     },
     {
       "path": "runtime/claude/skills/project-write-access/assets/runtime/pre-commit",
-      "sha256": "472c21bcef9a8ff80cff253748a653fc8c5791cb3a7e83ca2d081e5b8f986966"
+      "sha256": "766c70f2db6351e2fdf4c4027c6666f378cea604998f81785f091b582f0d7f16"
     },
     {
       "path": "runtime/claude/skills/project-write-access/assets/runtime/pre-push",
-      "sha256": "cfb301e113a4d9490ecd19e2957e4432e16eb7f712609baedf5fc9951833066b"
+      "sha256": "cca92c0a5944581bb21cbece197ed56c223512a92de562f333944d43da791b91"
     },
     {
       "path": "runtime/claude/skills/project-write-access/assets/runtime/write_access_guard.py",
-      "sha256": "8aa450aaeec24c7c24017c64387f8ed554ad74fb208249684e3b8d857a36e0e6"
+      "sha256": "8d1efc558889a9fcb2400ca0bce85b58c14fc940cb203d9fc42a30b4a2031796"
     },
     {
       "path": "runtime/claude/skills/project-write-access/evals/evals.json",
-      "sha256": "e43f528cf44b6a7583634814547624037e1c0930a584a938dd7c24e5bf61521c"
+      "sha256": "5c8c3b39b2ef76979e9e04bbd5cd2bd7bf9e20faf9c3fe3cf267ce175bc7f399"
     },
     {
       "path": "runtime/claude/skills/project-write-access/evals/run_evals.py",
-      "sha256": "3d339382c198d9bb8e6c20f6d6d7b104bc55cc757d9c14c04f64875a9a9ca521"
+      "sha256": "bcbe73b9032b6d4b8af9ad506d23b73384212729a1484ff255c57b33fd1f211c"
     },
     {
       "path": "runtime/claude/skills/project-write-access/prompts/workflow.md",
-      "sha256": "ee71b8beee211e752defd7d2663a36199048e5aea4d49e4cb1dd2d67a23b8591"
+      "sha256": "536fa16c8d92da0f65be5ccd1c5eb213dab76f2e9949c2e1ba9fcf3a9bb6dedf"
     },
     {
       "path": "runtime/claude/skills/project-write-access/references/policy-schema.md",
-      "sha256": "81684f42bcf35be13994cf4519d26304d16bd86d835a83cb6628f36d9658379f"
+      "sha256": "4cf8bdb58606ec9abb0937fdda7f22b4b255fd18fb793c13e22b21fc5d24cc47"
     },
     {
       "path": "runtime/claude/skills/project-write-access/references/provider-capabilities.md",
-      "sha256": "139d1836442e7d2689aed44c02256390a13688a649fccc74572a51446df8280e"
+      "sha256": "d84fe296d150c5dbc1cc607f1b8d438f82a7056a5dfee04809af0af055ee3ac8"
     },
     {
       "path": "runtime/claude/skills/project-write-access/references/security-contract.md",
-      "sha256": "089191074106fd9689095c0fcdd56823755d2436cb59b0413f0e61b417410fc7"
+      "sha256": "915bcc095a52b502d84e3d6e072ef73b2344279a234e80fd7347e280575c2f9a"
     },
     {
       "path": "runtime/claude/skills/project-write-access/scripts/project_write_access.py",
-      "sha256": "2be28e272d27a67c51ab46eb1535f465c86ae1a59d52e67b7be6fb70a1a51081"
+      "sha256": "f4e1fa9f171eb23a670b6345bab94de105a0921fa75f07e8896fdc7522c09252"
     },
     {
       "path": "runtime/claude/skills/ui-ux-pro-max/SKILL.md",
-      "sha256": "92e3eb2b9f6cb8411ce97fc7f10a483a87e237789d3d34628f28b3b045068ed1"
+      "sha256": "fcc18dd49d621e4ce9ddf834b5bc6bfcd1bf6015f00c4345657b706362585312"
     },
     {
       "path": "runtime/claude/skills/ui-ux-pro-max/data/app-interface.csv",
@@ -871,7 +871,7 @@
     },
     {
       "path": "runtime/claude/skills/ui-ux-pro-max/evals/run_evals.py",
-      "sha256": "e1ef416a31948af39cf72d09d1e83e82c7db9feac250c8051abc49e3ea460a71"
+      "sha256": "3ea9c9c89e3c9aa8fc0644871b222b6eaffc7a83419920419f16cb08bfbcd2d8"
     },
     {
       "path": "runtime/claude/skills/ui-ux-pro-max/references/pro-rules.md",
@@ -939,23 +939,23 @@
     },
     {
       "path": "runtime/codex/skills/context-doc/SKILL.md",
-      "sha256": "286d9fa10ce66452fd330bbbfc0defdf15bfa7604d64cad9e897f7906765c972"
+      "sha256": "cbcea92894b2d879e3c40643da3184c08f419becb91b41a369de88f01eea122a"
     },
     {
       "path": "runtime/codex/skills/context-doc/evals/evals.json",
-      "sha256": "ab4b22ace83d500edf407b5bb7559054598ea57f5703a5b565baebae27a132f3"
+      "sha256": "2c647636139a4d9f392d3ac9b7a70eba4a5d5e69df2d21e63081a70b5a684c54"
     },
     {
       "path": "runtime/codex/skills/context-doc/evals/run_evals.py",
-      "sha256": "9a9771cc48b78eacab811975897556051b1bfd690ded4ed9e74924e1e394ee82"
+      "sha256": "d9ffeb5247fd35f94db3ee0a8d5521ef65555184bb33112528623c999e33a841"
     },
     {
       "path": "runtime/codex/skills/context-doc/prompts/analysis-claude.md",
-      "sha256": "a0463217e50a3c0da88949252ab44a797fc4bdeeee30a4172e7f5952094d6c7f"
+      "sha256": "0eb80d713da91a6b4ac4b36fa8292813501f59774faa964821bb5d6327807a63"
     },
     {
       "path": "runtime/codex/skills/context-doc/prompts/analysis-instruction.md",
-      "sha256": "6c7eb31a06877b0d12bc759561effede2cb3b74765e6158c4ab5a067ff7ff807"
+      "sha256": "70e2d793b3cf8f6298cdb97ec2c57d07cb641887a7beab1da322f12ccbbb5780"
     },
     {
       "path": "runtime/codex/skills/context-doc/prompts/parallel-setup.md",
@@ -963,7 +963,7 @@
     },
     {
       "path": "runtime/codex/skills/context-doc/templates/AGENTS.md.template",
-      "sha256": "7c95db0994d8afac1ba289c31ed9730a86895dbb71b94e5d88b190746177f0f8"
+      "sha256": "1ff3e184c6301fe473b33ff32ba7039e546e8b1cde0cbd1247126ffde2abc25b"
     },
     {
       "path": "runtime/codex/skills/context-doc/templates/CLAUDE.md.template",
@@ -983,7 +983,7 @@
     },
     {
       "path": "runtime/codex/skills/context-doc/templates/artifact-output-routing-instruction.md.template",
-      "sha256": "0cbf75641494405e6f80ca978b68a1efa8162ed48ad9dc00276205d68f601ee7"
+      "sha256": "b1671ca18dabc562a28d678b925a236202113d5b29cd34f44a56b108062498f4"
     },
     {
       "path": "runtime/codex/skills/context-doc/templates/code-style-instruction.md.template",
@@ -1003,7 +1003,7 @@
     },
     {
       "path": "runtime/codex/skills/create-prototype/SKILL.md",
-      "sha256": "44c8ef179957af736c32e6e768a58a5cfe4d29596bbc67cea7e39db35136fe62"
+      "sha256": "a999a4352af1d582fe27319013d5d1e653dd6696efe0fccca089f39aa9116aff"
     },
     {
       "path": "runtime/codex/skills/create-prototype/evals/run_evals.py",
@@ -1027,7 +1027,7 @@
     },
     {
       "path": "runtime/codex/skills/design-doc/SKILL.md",
-      "sha256": "6b060886eaad45e2dc6e208148bd1649d795a8725467ed43893f3411b97402b0"
+      "sha256": "993de820cb92432dac799f0773dce19e6eb483de15451e6b1f9b817967aad0bb"
     },
     {
       "path": "runtime/codex/skills/design-doc/prompts/interview.md",
@@ -1067,11 +1067,11 @@
     },
     {
       "path": "runtime/codex/skills/design-prototype-docs/SKILL.md",
-      "sha256": "8748746a8b45bf79a3f5eb1512ebd3b1edd8d51e03b955f166d61f2401e89318"
+      "sha256": "82d747df7bd52cafce65ae11e76000f9e37687772d5c456bb495649284d7108d"
     },
     {
       "path": "runtime/codex/skills/design-prototype-docs/evals/run_evals.py",
-      "sha256": "512800bf7726930535cd2171b0ab190edefc70181dc301fa583444f5e7ec480f"
+      "sha256": "5f6a9d4c2aaab804ed2f2a4678077a41515d1539984496ba67899c6af1a60c49"
     },
     {
       "path": "runtime/codex/skills/design-prototype-docs/example/mock_output.md",
@@ -1079,7 +1079,7 @@
     },
     {
       "path": "runtime/codex/skills/doc-audit/SKILL.md",
-      "sha256": "ec596aaa3d48976ea525ec5602415ee20befac2ea6a98ac61aac3e2254f71518"
+      "sha256": "ebe6d4cfd8291dc7c9ec865db959a8c0b44d3bc44a6c85824082eb15e802a4a3"
     },
     {
       "path": "runtime/codex/skills/doc-audit/audit-report.md",
@@ -1099,7 +1099,7 @@
     },
     {
       "path": "runtime/codex/skills/doc-audit/prompts/rulecheck-audit.md",
-      "sha256": "574ecf06260037c62f87e8c7fb7b28a75716d4f22d03072295b53fe2485af26a"
+      "sha256": "3caedb8cc98d6d9f1b091b1f134eedf62dd922d12ff96643d43ba56894593989"
     },
     {
       "path": "runtime/codex/skills/doc-audit/templates/audit-report.md",
@@ -1107,27 +1107,27 @@
     },
     {
       "path": "runtime/codex/skills/frontend-design/SKILL.md",
-      "sha256": "0929cf8d9ab7039a920f5c0462f0f0594fdf11fd70dfa1dc581bc2b6e9aaf76e"
+      "sha256": "9c64dd024cb025d804c04fc8186525a8b7346dbb6099d36ac18b5f8c37942572"
     },
     {
       "path": "runtime/codex/skills/frontend-design/evals/run_evals.py",
-      "sha256": "096237c8ab4e5d00fe79c421e702e58da01e0ff12a8e362f1770473c99e39854"
+      "sha256": "47655fa9540c5c7ce3eb5c2618bcdff8b65ea19c4fee210e88ffe24103222131"
     },
     {
       "path": "runtime/codex/skills/git-scoped-account/SKILL.md",
-      "sha256": "7ff74c7d7d4850035561c06ef9ce4e8ec19d860aa71026092eeb55f1b047bc9b"
+      "sha256": "a5a5b5125f6afca7d3db5dacfbc777b9cf9a01a480bc8c6dabeed3fd9e603e55"
     },
     {
       "path": "runtime/codex/skills/git-scoped-account/evals/evals.json",
-      "sha256": "c55f43f49929917b3237c654528a3e20a97507682d0855cad5ae5a57eac080d7"
+      "sha256": "6c60020fd9b2c50533aa410cdda63607462847d20812f628ae1d03a91bd6ccfb"
     },
     {
       "path": "runtime/codex/skills/git-scoped-account/evals/run_evals.py",
-      "sha256": "70465cd022d8d47ffe40587c34a18527b7c099aeabc26aa81b62e55bd280c51a"
+      "sha256": "3fe446aedc46a99e4a0858c849c4f75078f9c19d0cbb10c7101dd7820326cfd8"
     },
     {
       "path": "runtime/codex/skills/git-scoped-account/prompts/commands.md",
-      "sha256": "6319576166a426158c9f48d6cc5d0e47991080223346e2f57ce952121fb4f9ca"
+      "sha256": "f8438c6c48ff889f82d5113d404921b4259b08688aaf086bea8d279ca1699bb5"
     },
     {
       "path": "runtime/codex/skills/git-scoped-account/templates/gitconfig-shared.md",
@@ -1135,23 +1135,23 @@
     },
     {
       "path": "runtime/codex/skills/git-scoped-account/templates/verify-report.md",
-      "sha256": "4a7fc9ebddc0fab333106ad26824de8907e2d07443abdbadb57b2698c8a25593"
+      "sha256": "523d5a2288c636f968e6258da19e29145355893d8d23a4826bba87b9fed5e0bc"
     },
     {
       "path": "runtime/codex/skills/harness-bootstrap/SKILL.md",
-      "sha256": "a255727fcffbb6b6ffdda60b523d5847c427b56669437f2d44a914fa102d6f00"
+      "sha256": "adf523be2a6fc5fcea6f9171df3eaa2a874cb66a4e4f4597891c50cb5b67bfd0"
     },
     {
       "path": "runtime/codex/skills/harness-bootstrap/evals/evals.json",
-      "sha256": "c1335c28105d1a10cd6186baaa204dd0b9191fb7965923b904e2da16b4df7d27"
+      "sha256": "c27c9d4851ac7d11600cb731398729bc5e7329255c06655eb509f657e9cae838"
     },
     {
       "path": "runtime/codex/skills/harness-bootstrap/evals/run_evals.py",
-      "sha256": "add161bb46ee71af7b559e0aad5fb937b6e9a800ce7e3dcd0395eef60a82dc37"
+      "sha256": "e98f5c87052d793e47740341f3520e214d7533e192420feaa25f5320863319d7"
     },
     {
       "path": "runtime/codex/skills/harness-bootstrap/prompts/code-scan.md",
-      "sha256": "6a757b3b4b24c69f8bb980ef0a00b3c8d64d37f5ac8f2746b48b38a68605e148"
+      "sha256": "41aa74e7632c20e89ce0963b35aab8d0875334033a50e36fc4a2dfea065d51da"
     },
     {
       "path": "runtime/codex/skills/harness-bootstrap/prompts/extraction-mapping.md",
@@ -1167,7 +1167,7 @@
     },
     {
       "path": "runtime/codex/skills/harness-setup/SKILL.md",
-      "sha256": "96735f6a67384afde16005be6974c2d52df20f9783ce48c29e00653aeeb25509"
+      "sha256": "9b706b6aa4e3b0a13b08e7e38ce1cf0c2bfcc107d5970cb0a5a7a62cc5838e24"
     },
     {
       "path": "runtime/codex/skills/harness-setup/evals/fixtures/portable-routing-baseline.json",
@@ -1175,7 +1175,7 @@
     },
     {
       "path": "runtime/codex/skills/harness-setup/evals/fixtures/portable-routing-bundle.json",
-      "sha256": "ec9eeedf8fa1275acaf85059386072f47dd084e8add7917959c3308a5f1a6896"
+      "sha256": "424656f40b95116710fee1f3f34bba57a793aff1075d7516488b03151fe6a07f"
     },
     {
       "path": "runtime/codex/skills/harness-setup/evals/fixtures/portable-routing-coverage.json",
@@ -1183,55 +1183,55 @@
     },
     {
       "path": "runtime/codex/skills/harness-setup/evals/run_evals.py",
-      "sha256": "6a75fdcf0267b33c21fa9c672adc2bb35c6a7160ba3178109921e05641ddedb2"
+      "sha256": "2b1503fe0615f1ccbbee2880eec0084976835a5f206d4a67130163d45303bdea"
     },
     {
       "path": "runtime/codex/skills/harness-setup/prompts/detection.md",
-      "sha256": "e0219c06bdfa482f6eec4bc5f06f6679483444f7f37f411dfb7bc3af9b85086a"
+      "sha256": "a7ce52845eac3a0487ce96132428055c44246f1bef25d66cc19472d070e5e1eb"
     },
     {
       "path": "runtime/codex/skills/harness-setup/prompts/multi-app-setup.md",
-      "sha256": "a6dfd3aee453ef73ed8cdaf41e742614cc29c68d4fc60ec60d61a76ab3b0ade6"
+      "sha256": "9a9384808793bd527f448182100a927294052663301bbc994b96b791064c74d4"
     },
     {
       "path": "runtime/codex/skills/harness-setup/prompts/single-app-setup.md",
-      "sha256": "48fd539aa3fc45be3d47f76463ea563130fe89eaf58f53381e308c2bd45e5554"
+      "sha256": "83b9f669813c08869dc66bc60edba0dd80c1d378db584ad01b5d9d7ed8deb095"
     },
     {
       "path": "runtime/codex/skills/harness-setup/prompts/update-mode.md",
-      "sha256": "a08e1ad4d2d2fcf6a2f421103cc8f1c0dc035c003f90bffcc4e29057e54bcb71"
+      "sha256": "cdf220d9eeb564bcef7849a5a27f40226cd3d3f637ac735e08a440c464fddb1e"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/claude-bridge.template",
-      "sha256": "22d012017b80f0c5b8450975c0aee39201609e20759a0d009a8734db10cf03a6"
+      "sha256": "91cd88c16e1e36029f022571a7e46235213cfdc947573d3d8704e5fd4913135d"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/docs-gitignore.template",
-      "sha256": "cdf482a14163f45656e71aac592422c4f2f3c755a51123e146ac0f56aed9c4bc"
+      "sha256": "77e4ad39d304d986307cf46cb40bab6399059788c84d64dcf20420c5e953df0a"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/docs-readme-multi.template",
-      "sha256": "81a0eb0395060efb97fb4f391ab7eee519b0871ec66dd6c7e64399627bda6ec0"
+      "sha256": "84ecaae0a7a78bb5e7e479b079363d9fbab283bf1b30e2067f4d593e58718bce"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/docs-readme-single.template",
-      "sha256": "a00b31b1c8e15124bc04f45da6ca10fd35899806dadfd4154fede53687d7d22e"
+      "sha256": "4e2d6eeb5161b171d7079c566cc5b77b653bfc478230624b34b6bb67004e8833"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/inbox-readme.template",
-      "sha256": "bae4928fcdca5abb912e9014c7e8e0492d63cb91eb21a9dfcf7d344b0f9ed96d"
+      "sha256": "9c090b44520caab5edda21314f8724b13fd34a011f86940e16805729e34ecaf2"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/portable-routing/README.md.template",
-      "sha256": "8e7b686d8d0244b147b9ab2d4d70b97d3501405b1f781a9f265e528583376167"
+      "sha256": "32da6317b95708bbee7e193966a63fca1d19837a6dfc141669876cb46dad4b94"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/portable-routing/artifact-format-contract.json.template",
-      "sha256": "1130b774a63d1f66bc0f69b6f58f5de49cd108fb89b6e3ce1115619463592d9f"
+      "sha256": "aec1accda1f3ae7da9fc6cbad4201e7b6e6e328a04c36fcaa1e33e85ca76b538"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/portable-routing/artifact-routing.json.template",
-      "sha256": "e9830c86a150ce320352f98b60a2da0512a0927d227b30249ff81091ff2f38b9"
+      "sha256": "87f2f7fd20dc560a94082a8991dfbe41e4ba3b5074d7fe72821300d5f6e6e8e0"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/portable-routing/claude-settings-hook.json.template",
@@ -1243,19 +1243,19 @@
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/portable-routing/hooks/approve-artifact.ps1.template",
-      "sha256": "085ae79f763b6af30ce8479f4a84a66d7c60b05911a19008033c1156ce4d0efe"
+      "sha256": "6859c2d110fa4b7b6a862505c8f952934b771606492aac51e4b125e806f69cc0"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/portable-routing/hooks/artifact-route-core.ps1.template",
-      "sha256": "59c19656e220afacf6169bbd7b5bed59aa3f6b552c57478aaebe47de8fb97455"
+      "sha256": "2ccd6f32c04fc63bd07d6b63aa6f008d0ab1d3fa21cdc8c41afbcd73728c2fcd"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/portable-routing/hooks/claude-pre-tool-use.ps1.template",
-      "sha256": "b6e504276025cb846a3a22862c991e71e9f54749755cae4b3492798d50441571"
+      "sha256": "b5173c5846c150bd54b12f45cf4d59b07e5dc40b783ef2267f734b67fc04cd9b"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/portable-routing/hooks/codex-pre-tool-use.ps1.template",
-      "sha256": "448c272bb789c1a168ebbaa587d393fe049b45208d7e7153b9167e5729478ca0"
+      "sha256": "242527db544ab173ffd4205face76afbaf892feab0d62d67d29181df9375b79f"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/portable-routing/inbox-artifact-manifest.json.template",
@@ -1267,31 +1267,31 @@
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/portable-routing/normalize-artifact.ps1.template",
-      "sha256": "b5c0f8ab56c9d2ea2cc46cdd076f197c75b8c184e3c2fd52c6839fb0ff5c906e"
+      "sha256": "4dcfbf93f83640abe2301a656e484d239a4ffe49cdb51d31551d577d75cbab2e"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/root-context-single.template",
-      "sha256": "720db5347fd67a4925ad971b07d3b0dc06dfd42e93509517dd486e1b145ace9e"
+      "sha256": "3a5cbab5843be5d44d6129da316f6744ff3d029cd1bfab8660a901c49327cb72"
     },
     {
       "path": "runtime/codex/skills/harness-setup/templates/root-context.template",
-      "sha256": "1e9d19acf7f5ce2f4f990ab61236579621a2ff5b02fe753145a0915573ad25db"
+      "sha256": "3a26037d940af6972240fa1134e3dbf9c9c5fe13969db01177b4e9f8419bdfa4"
     },
     {
       "path": "runtime/codex/skills/humanize-korean/SKILL.md",
-      "sha256": "5f52c6b76ce0ba0464f09f6f3ed74722c556bd41a671610a765cd3168e88971e"
+      "sha256": "31c305d3a6aa7421c59486294f9874e25205aeb96e992221b5ebb5f814c25c82"
     },
     {
       "path": "runtime/codex/skills/humanize-korean/evals/evals.json",
-      "sha256": "28fc2dd7f6c9032232a415c3ed8522b5643881ae8ebc8ea7d2f7f10a89ff0a61"
+      "sha256": "30bfbce3676b53bf217ce752c564ab879b44cc41167fb6f015e7ac33535a50b8"
     },
     {
       "path": "runtime/codex/skills/humanize-korean/evals/run_evals.py",
-      "sha256": "7659781d2462a9273d4d1a16508fc64cb48a4cf85050114d8366a50793eeb63c"
+      "sha256": "5fcc3445143b75224aaa17c2b4157fa6fdf1d7fa343cce8e880964e5f57da151"
     },
     {
       "path": "runtime/codex/skills/humanize-korean/references/document-refinement.md",
-      "sha256": "3de17900f1761c8a47d729384ea036f14d153b52c8f111c8fdef8dc3742e3587"
+      "sha256": "c3a0c9276462d6bc04d3d4ec270ba413544d4d77c8bc9b5d48fb94de65252a1c"
     },
     {
       "path": "runtime/codex/skills/humanize-korean/references/taxonomy.md",
@@ -1303,7 +1303,7 @@
     },
     {
       "path": "runtime/codex/skills/impl-doc/SKILL.md",
-      "sha256": "34dba36348f65dfbf7b9f591ad26de082352c064d080a20d958e5eab34d1f0a9"
+      "sha256": "3d299a40d65d1b558586e97a469bd3a835fcc97b9228378b3fd1530e8132f90a"
     },
     {
       "path": "runtime/codex/skills/impl-doc/prompts/analysis.md",
@@ -1331,7 +1331,7 @@
     },
     {
       "path": "runtime/codex/skills/impl-fe-be-doc/SKILL.md",
-      "sha256": "891eeadece8ef2640e3cc3f9b360ca610b9e4a74f9b4f1a34862c77c3b3b02aa"
+      "sha256": "ed3afebde53256b51eb01d65e6aea1f1a789c7c6e93c5baaf41474cef6785f5b"
     },
     {
       "path": "runtime/codex/skills/impl-fe-be-doc/prompts/analysis.md",
@@ -1371,7 +1371,7 @@
     },
     {
       "path": "runtime/codex/skills/impl-reuse-scan/SKILL.md",
-      "sha256": "320511ef292e19da596cf69c86ce9088361c701ca5f43df61bd8ac99b65ab683"
+      "sha256": "ead9ce312019ed59767c39535082888899d1056758a4d7f341f3709cb60867ce"
     },
     {
       "path": "runtime/codex/skills/impl-reuse-scan/prompts/decision-interview.md",
@@ -1403,11 +1403,11 @@
     },
     {
       "path": "runtime/codex/skills/impl-verify/SKILL.md",
-      "sha256": "b70bcb7f1b5ed977bf1c2b29d9e170e2c01167ccbc0c0a04a23f536c9643a968"
+      "sha256": "b44c2c1826e949f5756bf5a093442b4eb3fea54a52a8741b2a130e57d1688e8f"
     },
     {
       "path": "runtime/codex/skills/impl-verify/evals/run_evals.py",
-      "sha256": "c9a2779f911583920c6be4f0068e31558ba4ede0b9263b7513e9268fb4252f26"
+      "sha256": "7cfcf86c0159558cd8426fe9eb7df5cd3ebbd71c851ec40405fbdab0e1d22a05"
     },
     {
       "path": "runtime/codex/skills/impl-verify/prompts/classify-checks.md",
@@ -1439,7 +1439,7 @@
     },
     {
       "path": "runtime/codex/skills/motion-design/SKILL.md",
-      "sha256": "1c07fc88d1e087c10a447366604a3283dff3ca44ec6b9d89a4e9b8579792f8b8"
+      "sha256": "47e70ba2eab0a4af12606956a5ab5e1680e89fc477c5e708739cf3d222837ec7"
     },
     {
       "path": "runtime/codex/skills/motion-design/director/choreography.md",
@@ -1475,7 +1475,7 @@
     },
     {
       "path": "runtime/codex/skills/motion-design/evals/run_evals.py",
-      "sha256": "789bfd0189fd11a0fff31dfb181d5448b4bb7905a37f9295752273f6fde69d72"
+      "sha256": "19972e1731b07d0919e96118cf585b589653a81a315c018a27ff164a4273d24b"
     },
     {
       "path": "runtime/codex/skills/motion-design/patterns/ambient-continuous.md",
@@ -1539,7 +1539,7 @@
     },
     {
       "path": "runtime/codex/skills/project-write-access/SKILL.md",
-      "sha256": "603ca84b747dfb6f23de65ed9b7b6332286d438ee7871a96ece7479be81c7cd1"
+      "sha256": "e235edb5fc0a35aee104ce400885b6b3ea950ade3be10edd401562954a3c501b"
     },
     {
       "path": "runtime/codex/skills/project-write-access/agents/openai.yaml",
@@ -1547,47 +1547,47 @@
     },
     {
       "path": "runtime/codex/skills/project-write-access/assets/runtime/pre-commit",
-      "sha256": "472c21bcef9a8ff80cff253748a653fc8c5791cb3a7e83ca2d081e5b8f986966"
+      "sha256": "766c70f2db6351e2fdf4c4027c6666f378cea604998f81785f091b582f0d7f16"
     },
     {
       "path": "runtime/codex/skills/project-write-access/assets/runtime/pre-push",
-      "sha256": "cfb301e113a4d9490ecd19e2957e4432e16eb7f712609baedf5fc9951833066b"
+      "sha256": "cca92c0a5944581bb21cbece197ed56c223512a92de562f333944d43da791b91"
     },
     {
       "path": "runtime/codex/skills/project-write-access/assets/runtime/write_access_guard.py",
-      "sha256": "8aa450aaeec24c7c24017c64387f8ed554ad74fb208249684e3b8d857a36e0e6"
+      "sha256": "8d1efc558889a9fcb2400ca0bce85b58c14fc940cb203d9fc42a30b4a2031796"
     },
     {
       "path": "runtime/codex/skills/project-write-access/evals/evals.json",
-      "sha256": "e43f528cf44b6a7583634814547624037e1c0930a584a938dd7c24e5bf61521c"
+      "sha256": "5c8c3b39b2ef76979e9e04bbd5cd2bd7bf9e20faf9c3fe3cf267ce175bc7f399"
     },
     {
       "path": "runtime/codex/skills/project-write-access/evals/run_evals.py",
-      "sha256": "3d339382c198d9bb8e6c20f6d6d7b104bc55cc757d9c14c04f64875a9a9ca521"
+      "sha256": "bcbe73b9032b6d4b8af9ad506d23b73384212729a1484ff255c57b33fd1f211c"
     },
     {
       "path": "runtime/codex/skills/project-write-access/prompts/workflow.md",
-      "sha256": "ee71b8beee211e752defd7d2663a36199048e5aea4d49e4cb1dd2d67a23b8591"
+      "sha256": "536fa16c8d92da0f65be5ccd1c5eb213dab76f2e9949c2e1ba9fcf3a9bb6dedf"
     },
     {
       "path": "runtime/codex/skills/project-write-access/references/policy-schema.md",
-      "sha256": "81684f42bcf35be13994cf4519d26304d16bd86d835a83cb6628f36d9658379f"
+      "sha256": "4cf8bdb58606ec9abb0937fdda7f22b4b255fd18fb793c13e22b21fc5d24cc47"
     },
     {
       "path": "runtime/codex/skills/project-write-access/references/provider-capabilities.md",
-      "sha256": "139d1836442e7d2689aed44c02256390a13688a649fccc74572a51446df8280e"
+      "sha256": "d84fe296d150c5dbc1cc607f1b8d438f82a7056a5dfee04809af0af055ee3ac8"
     },
     {
       "path": "runtime/codex/skills/project-write-access/references/security-contract.md",
-      "sha256": "089191074106fd9689095c0fcdd56823755d2436cb59b0413f0e61b417410fc7"
+      "sha256": "915bcc095a52b502d84e3d6e072ef73b2344279a234e80fd7347e280575c2f9a"
     },
     {
       "path": "runtime/codex/skills/project-write-access/scripts/project_write_access.py",
-      "sha256": "2be28e272d27a67c51ab46eb1535f465c86ae1a59d52e67b7be6fb70a1a51081"
+      "sha256": "f4e1fa9f171eb23a670b6345bab94de105a0921fa75f07e8896fdc7522c09252"
     },
     {
       "path": "runtime/codex/skills/ui-ux-pro-max/SKILL.md",
-      "sha256": "92e3eb2b9f6cb8411ce97fc7f10a483a87e237789d3d34628f28b3b045068ed1"
+      "sha256": "fcc18dd49d621e4ce9ddf834b5bc6bfcd1bf6015f00c4345657b706362585312"
     },
     {
       "path": "runtime/codex/skills/ui-ux-pro-max/data/app-interface.csv",
@@ -1731,7 +1731,7 @@
     },
     {
       "path": "runtime/codex/skills/ui-ux-pro-max/evals/run_evals.py",
-      "sha256": "e1ef416a31948af39cf72d09d1e83e82c7db9feac250c8051abc49e3ea460a71"
+      "sha256": "3ea9c9c89e3c9aa8fc0644871b222b6eaffc7a83419920419f16cb08bfbcd2d8"
     },
     {
       "path": "runtime/codex/skills/ui-ux-pro-max/references/pro-rules.md",

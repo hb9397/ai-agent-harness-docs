@@ -85,7 +85,7 @@ def test_existing_product_language_wins() -> None:
 def test_output_contract_is_approval_gated() -> None:
     skill = skill_text()
     for required in (
-        ".docs/design-system/{project-slug}/motion/{screen-or-component}.md",
+        ".ai-docs/design-system/{project-slug}/motion/{screen-or-component}.md",
         "승인 전에는 덮어쓰지 않는다",
         "사용자 승인 없이 프로젝트 파일을 만들지 않는다",
         "최외곽 산출물 생성자",

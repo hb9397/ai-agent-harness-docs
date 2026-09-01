@@ -104,8 +104,24 @@ guard의 `decision=confirm`은 권한은 있으나 앱 핵심 문서 쓰기 전�
 
 1. 현재 수행 위치에서 프로젝트 구조를 탐색한다 (git repo 경계, 하위 앱 폴더 후보 스캔).
 2. **단일 애플리케이션 프로젝트**인지 **복수 애플리케이션 프로젝트**인지 판정한다.
-3. 판정 결과 + 적용 대상 애플리케이션(폴더)을 사용자에게 **반드시 재확인**한다.
-4. 확인된 범위 밖은 건드리지 않는다.
+3. 상위 공개 workflow가 `confirmed_scope`를 전달했다면 프로젝트 루트, 단일·복수 앱
+   판정, 대상 앱, `DESIGN.md` 경로가 현재 탐색 결과와 모두 일치하는지 확인한다.
+4. 일치하는 `confirmed_scope`에는 이미 받은 범위 승인을 재사용하고 같은 질문을 반복하지
+   않는다. 값이 없거나 하나라도 다르면 판정 결과와 적용 대상 애플리케이션을 사용자에게
+   **반드시 재확인**한다.
+5. 확인된 범위 밖은 건드리지 않는다.
+
+`confirmed_scope`는 아래 필드를 모두 가진 공개 handoff 계약이다. 이 계약은 범위 확인만
+재사용하며 Step 4의 일반 저장 승인과 권한 정책의 앱 핵심 문서 별도 승인을 대신하지 않는다.
+
+```text
+confirmed_scope.project_root = {정규화한 프로젝트 루트}
+confirmed_scope.project_type = single-app | multi-app
+confirmed_scope.target_app = {애플리케이션 식별자}
+confirmed_scope.design_path = {.ai-docs 아래 정규화 상대경로}
+confirmed_scope.instruction_root = {.ai-docs 아래 정규화 상대경로}
+confirmed_scope.user_approved = true
+```
 
 > ✋ **확인 게이트**
 >

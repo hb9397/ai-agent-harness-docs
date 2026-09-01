@@ -12,6 +12,8 @@ EVALS_FILE = Path(__file__).with_name("evals.json")
 INTERVIEW_FILE = SKILL_ROOT / "prompts" / "interview.md"
 CODE_SCAN_FILE = SKILL_ROOT / "prompts" / "code-scan.md"
 EXTRACTION_FILE = SKILL_ROOT / "prompts" / "extraction-mapping.md"
+DESIGN_SKILL_FILE = SKILL_ROOT.parent / "design-doc" / "SKILL.md"
+CONTEXT_SKILL_FILE = SKILL_ROOT.parent / "context-doc" / "SKILL.md"
 
 
 def require(text: str, needle: str) -> None:
@@ -32,16 +34,45 @@ def main() -> int:
         "`.claude/skills/`",
         "`skills/`는 생성·복사·동기화하지 않는다",
         "private 템플릿을 흉내 내거나 프로젝트에 스킬을 복사해",
-        "`.docs/README.md`, `.docs/.gitignore`, `.docs/_inbox/`",
+        "`.ai-docs/README.md`, `.ai-docs/.gitignore`, `.ai-docs/_inbox/`",
         "`prompts/interview.md`",
         "**단일 상세 계약**",
         "artifact_fingerprint",
-        "`.docs/.harness/humanize-handoffs.json`",
+        "`.ai-docs/.harness/humanize-handoffs.json`",
         "`proposed`, `skipped`, `rejected`, `applied`, `revalidated`",
         "원자적 replace",
         "`harness-kit:managed:start/end` marker",
+        "## 선택 권한 정책 연계와 단계 분리",
+        "`admin`만 가진 계정은 앱 문서를 저장할 수 없다",
+        "하네스 단계",
+        "앱 문서 단계",
+        "`design-doc`과 `context-doc`이 자동 handoff된 실행에서도",
+        "앱 설계·컨텍스트 문서 쓰기 확인",
+        "루트 `AGENTS.md`·`CLAUDE.md`와 `.ai-docs/root-context/**`를 수정하지 않았는지 검증",
+        "## 문서 루트 계약",
+        "`.docs/`만 있거나 두 경로가 공존하면",
+        "`harness-setup`의 명시적 문서 루트 이관·충돌 해결",
+        "`.docs/`가 남지 않았다는 검증",
+        "confirmed_scope = {Step 0-B에서 승인받은 범위 객체}",
+        "`agent-instruction.md`",
+        "@.ai-docs/instruction/artifact-output-routing-instruction.md",
+        "@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md",
+        "{project}/.ai-docs/{앱}/context-base/DESIGN.md",
     ):
         require(skill, needle)
+
+    if "저장 경로는 `.ai-docs/context-base/DESIGN.md`" in skill:
+        raise AssertionError("bootstrap still presents a single-app path for every project type")
+
+    for child_skill in (DESIGN_SKILL_FILE, CONTEXT_SKILL_FILE):
+        child_text = child_skill.read_text(encoding="utf-8")
+        for needle in (
+            "confirmed_scope",
+            "같은 질문을 반복하지",
+            "대신하지 않는다",
+        ):
+            if needle not in child_text:
+                raise AssertionError(f"{child_skill}: missing confirmed scope handoff contract: {needle}")
 
     if not INTERVIEW_FILE.is_file():
         raise AssertionError(f"missing protected interview prompt: {INTERVIEW_FILE}")
@@ -63,6 +94,8 @@ def main() -> int:
         raise AssertionError(f"unexpected eval ids: {ids}")
     if "/harness-bootstrap" in EVALS_FILE.read_text(encoding="utf-8"):
         raise AssertionError("platform-specific standalone slash invocation remains")
+    if "context 단계에서도 새 질문 없이" in EVALS_FILE.read_text(encoding="utf-8"):
+        raise AssertionError("eval contract incorrectly suppresses mandatory access approval")
 
     print("harness bootstrap contract evals passed")
     return 0

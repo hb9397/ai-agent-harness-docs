@@ -6,7 +6,7 @@
 
 ## 1. 문서에서 규칙 목록 추출
 
-`README.md`, `CLAUDE.md`, `AGENTS.md`, `.docs/instruction/**/*.md` 에서
+`README.md`, `CLAUDE.md`, `AGENTS.md`, `.ai-docs/instruction/**/*.md` 에서
 금지(❌ / 금지 / 절대 / MUST NOT) 및 필수(✅ / 반드시 / MUST) 항목을 추출한다.
 
 ## 2. 코드에서 위반 사례 탐지

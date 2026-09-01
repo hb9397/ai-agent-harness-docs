@@ -2,8 +2,8 @@
 
 > 이 파일은 `context-doc`·`harness-setup`·`harness-bootstrap`이 생성하는 공용
 > artifact routing instruction이다.
-> 단일 앱은 이 파일을 `.docs/instruction/artifact-output-routing-instruction.md`,
-> 복수 앱은 `.docs/{앱}/instruction/artifact-output-routing-instruction.md`에 둔다.
+> 단일 앱은 이 파일을 `.ai-docs/instruction/artifact-output-routing-instruction.md`,
+> 복수 앱은 `.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md`에 둔다.
 
 ## 1. 읽기 규칙과 적용 범위
 
@@ -12,15 +12,15 @@
   bridge만 유지한다.
 - 복수 앱에서는 `{앱}`을 실제 애플리케이션 식별자로 치환한다. 앱 식별자나 source
   root가 모호하면 파일을 만들거나 수정하지 않고 사용자에게 확인한다.
-- manager 스킬의 `maintainer/**`, `plugins/**` 산출물과 사용자 프로젝트의 `.docs/**`
+- manager 스킬의 `maintainer/**`, `plugins/**` 산출물과 사용자 프로젝트의 `.ai-docs/**`
   산출물을 서로 교차 작성하지 않는다.
 
 ## 2. 단일 앱·복수 앱 토폴로지
 
 | 범위 | 설계·context | 구현 계획 | prototype | design system |
 |---|---|---|---|---|
-| 단일 앱 | `.docs/context-base/DESIGN.md`, root `AGENTS.md`·`CLAUDE.md` | `.docs/impl-doc/{사용자}/` | `.docs/prototype/{사용자}/{식별자}/` | `.docs/design-system/{project-slug}/` |
-| 복수 앱 | `.docs/{앱}/context-base/DESIGN.md`, `.docs/{앱}-context.md` | `.docs/{앱}/impl-doc/{사용자}/` | `.docs/{앱}/prototype/{사용자}/{식별자}/` | `.docs/{앱}/design-system/{project-slug}/` |
+| 단일 앱 | `.ai-docs/context-base/DESIGN.md`, root `AGENTS.md`·`CLAUDE.md` | `.ai-docs/impl-doc/{사용자}/` | `.ai-docs/prototype/{사용자}/{식별자}/` | `.ai-docs/design-system/{project-slug}/` |
+| 복수 앱 | `.ai-docs/{앱}/context-base/DESIGN.md`, `.ai-docs/{앱}-context.md` | `.ai-docs/{앱}/impl-doc/{사용자}/` | `.ai-docs/{앱}/prototype/{사용자}/{식별자}/` | `.ai-docs/{앱}/design-system/{project-slug}/` |
 
 복수 앱 root에 앱별 산출물을 평평하게 쓰지 않는다. 이미 공통 경로에 있는 문서를
 앱별 위치로 이동해야 하면 migration map·사용자 승인·hash·link 검증을 먼저 남긴다.
@@ -40,7 +40,7 @@
   실제 제품 source로 복사하지 않는다.
 - `ui-ux-pro-max`·`motion-design` → design-system 문서. 명시적 저장 승인 전에는
   파일을 만들지 않는다.
-- `frontend-design`·`code-comment` → 실제 source root. 제품 source를 `.docs`에
+- `frontend-design`·`code-comment` → 실제 source root. 제품 source를 `.ai-docs`에
   복제하지 않는다.
 - `humanize-korean` → outer producer가 소유한 입력 artifact 원위치. 독립 경로를
   만들지 않는다.
@@ -58,17 +58,17 @@
 3. 계획서·roadmap index·producer bundle의 상대 경로와 SHA-256을 evidence에 연결한다.
 4. report-only 결과의 `passed`는 실제 report reference나 사용자 확인 없이는 기록하지
    않는다.
-5. 앱 A에서 앱 B, manager repository, `.docs` 밖에 쓰는 경로는 금지한다.
+5. 앱 A에서 앱 B, manager repository, `.ai-docs` 밖에 쓰는 경로는 금지한다.
 6. 경로가 존재하지 않거나 `@` 참조가 실제 파일과 1:1로 맞지 않으면 저장하지 않고
    경로를 먼저 고친다.
 
 ## 5. Portable bundle·외부 producer 처리
 
-- `.docs/harness/artifact-routing.json`과 `.docs/harness/artifact-format-contract.json`을
+- `.ai-docs/harness/artifact-routing.json`과 `.ai-docs/harness/artifact-format-contract.json`을
   함께 읽어 app ownership, required field, host 상태를 확인한다. producer 이름이나
   plugin 이름이 아니라 artifact 의미와 대상 app으로 경로를 결정한다.
 - 외부 fixed-format bundle(JSON/YAML/이미지/PDF 등)은
-  `.docs/_inbox/{artifact-bundle-id}/artifact-manifest.json`에 원본 hash·producer·제안
+  `.ai-docs/_inbox/{artifact-bundle-id}/artifact-manifest.json`에 원본 hash·producer·제안
   target을 기록한다. G12 승인 전에는 canonical artifact를 만들거나 덮어쓰지 않는다.
 - 기존 instruction의 managed marker 밖 규칙이 routing contract와 충돌하면 기존 규칙을
   보존하고 차이와 migration proposal만 사용자에게 제시한다.

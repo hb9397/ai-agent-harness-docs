@@ -44,7 +44,6 @@ CODEX_MANIFEST_FIELDS = {
 }
 CLAUDE_MANIFEST_FIELDS = {
     "name",
-    "displayName",
     "version",
     "description",
     "author",
@@ -95,8 +94,8 @@ def validate_manifest(root: Path, errors: list[str]) -> None:
             interface = manifest.get("interface")
             if not isinstance(interface, dict) or interface.get("displayName") != PLUGIN_DISPLAY_NAME:
                 error(errors, "codex manifest interface.displayName mismatch")
-        elif manifest.get("displayName") != PLUGIN_DISPLAY_NAME:
-            error(errors, "claude manifest displayName mismatch")
+        elif "displayName" in manifest:
+            error(errors, "claude manifest contains unsupported displayName field")
         if any(key in manifest for key in {"id", "generated_by", "im_not_ai_root"}):
             error(errors, f"{name} manifest contains legacy non-schema fields")
 
@@ -411,8 +410,17 @@ def validate_manual_surface_contract(root: Path, errors: list[str]) -> None:
     for fragment in required_fragments:
         if fragment not in template:
             error(errors, f"manual surface test contract missing: {fragment}")
+    if ".ai-docs/" not in template:
+        error(errors, "manual surface test contract must use the current .ai-docs root")
+    if ".docs/" in template:
+        error(errors, "manual surface test contract contains the retired .docs root")
     if template.count("A·B·C·D") < 4:
         error(errors, "all four direct surfaces must execute scenarios A-D")
+
+    for relative in (Path("AGENTS.md"), Path("CLAUDE.md")):
+        content = (root / relative).read_text(encoding="utf-8")
+        if "@.docs/" in content:
+            error(errors, f"{relative.as_posix()} contains the retired routed document root")
 
 
 def validate_notices(root: Path, errors: list[str]) -> None:
@@ -505,8 +513,8 @@ def validate_marketplace(root: Path, errors: list[str]) -> None:
                 error(errors, "claude marketplace description missing")
             if source != f"./{PLUGIN_ROOT_REL.as_posix()}":
                 error(errors, "claude marketplace local source mismatch")
-            if entry.get("displayName") != PLUGIN_DISPLAY_NAME:
-                error(errors, "claude marketplace displayName mismatch")
+            if "displayName" in entry:
+                error(errors, "claude marketplace contains unsupported displayName field")
             source_path = source if isinstance(source, str) else None
         if source_path:
             resolved = (root / source_path[2:]).resolve() if source_path.startswith("./") else None

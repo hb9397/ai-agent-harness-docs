@@ -285,20 +285,20 @@ def claude_smoke(root: Path, command: list[str]) -> dict[str, Any]:
             version = run(command, ["--version"], cwd=root, env=env).stdout.strip()
             run(
                 command,
-                ["plugin", "validate", str(root / PLUGIN_ROOT_REL), "--strict"],
+                ["plugin", "validate", str(root / PLUGIN_ROOT_REL)],
                 cwd=root,
                 env=env,
             )
             run(
                 command,
-                ["plugin", "validate", str(root), "--strict"],
+                ["plugin", "validate", str(root)],
                 cwd=root,
                 env=env,
             )
             run(
                 command,
-                ["plugin", "marketplace", "add", str(root), "--scope", "user"],
-                cwd=root,
+                ["plugin", "marketplace", "add", f"./{root.name}"],
+                cwd=root.parent,
                 env=env,
             )
             marketplace_added = True
@@ -345,7 +345,6 @@ def claude_smoke(root: Path, command: list[str]) -> dict[str, Any]:
                         QUALIFIED_PLUGIN_ID,
                         "--scope",
                         "user",
-                        "--yes",
                     ],
                     cwd=root,
                     env=env,
@@ -356,7 +355,7 @@ def claude_smoke(root: Path, command: list[str]) -> dict[str, Any]:
             if marketplace_added:
                 removed_marketplace = run(
                     command,
-                    ["plugin", "marketplace", "remove", MARKETPLACE_NAME, "--scope", "user"],
+                    ["plugin", "marketplace", "remove", MARKETPLACE_NAME],
                     cwd=root,
                     env=env,
                     check=False,

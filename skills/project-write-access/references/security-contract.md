@@ -73,7 +73,8 @@ canonical `policy.json`을 서명한다.
 - 공유 정책과 CODEOWNERS 쓰기는 저장소 파일 승인 범위다.
 - `core.hooksPath` 변경은 각 개발자 PC의 Git 설정 승인 범위다.
 - `.claude/settings.json`·`.codex/hooks.json` 변경은 host 설정 승인 범위다.
-- 브랜치 보호·승인 규칙 API 변경은 저장소 관리자 권한과 별도 승인 범위다.
+- 브랜치 보호·승인·병합 규칙은 이 스킬 밖에서 프로젝트 관리자가 운영하는 범위다. 이
+  스킬은 관련 API로 원격 설정을 만들거나 바꾸지 않는다.
 - 키 생성·교체·폐기는 다른 변경과 묶지 않는 별도 승인 범위다.
 - `git-scoped-account` 뒤의 현재 PC 로컬 등록은 공유 정책 변경과 분리한 승인 범위다.
   서명 정책을 공개키로 검증하고 `core.hooksPath`·`harness.writeAccess.*`만 연결하며,

@@ -145,7 +145,7 @@ AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 
 
 | 스킬 | 역할 | 언제 쓰는가 |
 |------|------|-------------|
-| `harness-setup` | `.ai-docs` 골격, `AGENTS.md` 정본, `CLAUDE.md` bridge와 `.ai-docs/harness/` portable routing bundle 생성·복구; 별도 승인 시 Claude·Codex write guard 설치 | 모든 참여자가 자기 작업 환경에서 최초 1회, 공지가 요구한 갱신·앱 경계 변경·골격 복구 때 |
+| `harness-setup` | `.ai-docs` 골격, `AGENTS.md` 정본, `CLAUDE.md` bridge와 `.ai-docs/harness/` portable routing bundle 생성·복구; 별도 승인 시 Claude·Codex write guard 설치 | 모든 참여자가 자기 작업 환경에서 최초 1회. 서명 정책 활성 뒤 공유 루트·하네스 갱신은 `admin`이 수행 |
 | `harness-bootstrap` | 기존 코드를 스캔해 설계·컨텍스트 역추출 | 하네스 문서가 없는 기존 코드 |
 | `git-scoped-account` | 단일·복수 repo의 Git 작성자와 provider·host·login을 프로젝트 범위로 지정하고 정책이 있으면 현재 PC를 로컬 등록 | 모든 참여자가 PC별 최초 1회, 새 PC·새 clone·계정·repo 변경 때 |
 | `project-write-access` | `.ai-docs`와 Git에 포함된 루트 컨텍스트의 공유 역할 정책, CODEOWNERS와 PC별 Git·AI 가드를 연결 | 관리자는 공유 정책 설정·변경, 각 참여자는 PC별 로컬 등록 |
@@ -576,7 +576,7 @@ $doc-audit
 
 ## 10. 추천하는 최초 도입 순서
 
-관리 저장소의 사용자 스킬 정본과 현재 main `0.5.0` runtime은 모두 20종이다. `project-write-access`도 이 runtime에 포함되지만 권한을 쓰지 않는 프로젝트에서는 호출하지 않는다. 프로젝트 수행자가 모든 스킬을 한꺼번에 사용할 필요는 없다.
+관리 저장소의 사용자 스킬 정본과 현재 main `0.6.0` runtime은 모두 20종이다. `project-write-access`도 이 runtime에 포함되지만 권한을 쓰지 않는 프로젝트에서는 호출하지 않는다. 프로젝트 수행자가 모든 스킬을 한꺼번에 사용할 필요는 없다.
 
 ### 0단계 — 설치와 문서 골격
 

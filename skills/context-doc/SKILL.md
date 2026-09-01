@@ -70,6 +70,8 @@ guard의 `decision=confirm`은 권한은 있으나 앱 핵심 문서 쓰기 전�
 
 - `artifact_bundle_id`가 있으면 그 값과 `handoff_owner`를 그대로 보존한다.
 - `handoff_owner != context-doc`이면 `suppress_child_handoff = true`로 유지한다.
+- 상위 공개 workflow가 `confirmed_scope`를 전달했다면 값을 바꾸지 않고 STEP 0-B의
+  현재 탐색 결과와 대조한다.
 - 전달된 컨텍스트가 없으면 직접 호출로 표시하고, STEP 0-B에서 프로젝트 루트를
   확정한 직후 다음 값을 만든다.
 
@@ -95,12 +97,22 @@ handoff_completed = false
 
 1. 현재 수행 위치에서 프로젝트 구조를 탐색한다 (git repo 경계, 하위 앱 폴더 후보 스캔).
 2. **단일 애플리케이션 프로젝트**인지 **복수 애플리케이션 프로젝트**인지 판정한다.
-3. 판정 결과 + 적용 대상 애플리케이션(폴더)을 사용자에게 **반드시 재확인**한다.
-4. 설계 문서(`.ai-docs/context-base/DESIGN.md` 또는 `.ai-docs/{앱}/context-base/DESIGN.md`) 위치를 확인하여 참조 설정을 명시한다.
-5. 확인된 범위 밖은 건드리지 않는다.
-6. `.ai-docs/harness/artifact-routing.json`과 `artifact-format-contract.json`이 있으면 함께
+3. 설계 문서(`.ai-docs/context-base/DESIGN.md` 또는
+   `.ai-docs/{앱}/context-base/DESIGN.md`)와 instruction 루트 위치를 확인한다.
+4. 상위 공개 workflow가 `confirmed_scope`를 전달했다면 프로젝트 루트, 단일·복수 앱
+   판정, 대상 앱, 설계 경로와 instruction 루트가 현재 탐색 결과와 모두 일치하는지
+   확인한다.
+5. 일치하는 `confirmed_scope`에는 이미 받은 범위 승인을 재사용하고 같은 질문을 반복하지
+   않는다. 값이 없거나 하나라도 다르면 판정 결과와 적용 대상 애플리케이션을 사용자에게
+   **반드시 재확인**한다.
+6. 확인된 범위 밖은 건드리지 않는다.
+7. `.ai-docs/harness/artifact-routing.json`과 `artifact-format-contract.json`이 있으면 함께
    읽어 artifact 의미·대상 앱·필수 형식을 결정한다. 없으면 경로를 추정 생성하지 않고
    `harness-setup` 실행을 안내한다.
+
+`confirmed_scope`는 `design-doc`과 같은 공개 handoff 계약을 사용한다. 이 계약은 범위
+확인만 재사용하며 Step 5의 일반 저장 승인과 권한 정책의 앱 핵심 문서 별도 승인을
+대신하지 않는다.
 
 > ✋ **확인 게이트**
 >
@@ -162,8 +174,9 @@ AI Agent가 개발에 활용할 수 있는 Context 문서 세트를 생성한다
 3. **규칙은 주제별로 분리한다.** Agent가 필요한 주제만 찾아 참조할 수 있게 한다.
 4. **프레임워크를 하드코딩하지 않는다.** 설계 문서에 등장한 라이브러리·주제를 그대로 반영한다.
 5. **설계 문서에 없는 주제는 파일을 만들지 않는다.** 단,
-   `artifact-output-routing-instruction.md`는 산출물 경계 정본이므로 이 원칙의
-   유일한 항상 생성 예외다. 빈 주제 파일·추측 규칙은 금지한다.
+   `agent-instruction.md`와 `artifact-output-routing-instruction.md`는 각각 AI 동작
+   규칙과 산출물 경계의 기본 정본이므로 항상 생성한다. 그 밖의 빈 주제 파일·추측
+   규칙은 금지한다.
 6. **금지 항목은 삼위일체(패턴·이유·대안)로 작성한다.**
 
 ## 스킬 연계
@@ -205,6 +218,7 @@ design-doc OUTPUT의 각 섹션은 아래와 같이 매핑된다.
 | `comm-instruction.md` | WebSocket·메시지큐·RPC 등 통신 프로토콜 규약이 있을 때 |
 | `file-convention-instruction.md` | 파일 위치·네이밍·디렉토리 추가 기준이 있을 때 |
 | `agent-instruction.md` | 항상 생성 (AI가 사람과 다르게 행동해야 할 규칙 집합) |
+| `artifact-output-routing-instruction.md` | 항상 생성 (산출물 위치·소유권·승인·인계 정본) |
 
 ---
 
@@ -369,7 +383,8 @@ STEP 0에서 확정한 프로젝트 유형에 따라 저장 경로와 검증 범
 
 1. `.ai-docs/instruction/` 디렉토리가 없으면 생성한다.
 2. `.ai-docs/{앱}-context.md`, `.ai-docs/instruction/*-instruction.md` 파일을 저장한다.
-3. `artifact-output-routing-instruction.md`를 설계 주제 유무와 관계없이 저장한다.
+3. `agent-instruction.md`와 `artifact-output-routing-instruction.md`를 설계 주제 유무와
+   관계없이 저장한다.
 4. 검증:
    - `.ai-docs/{앱}-context.md` 인덱스의 `@.ai-docs/instruction/*-instruction.md` 참조가 실제 파일과 1:1 일치
    - 루트 `AGENTS.md`·`CLAUDE.md`와 `.ai-docs/root-context/**`를 수정하지 않았는지 확인

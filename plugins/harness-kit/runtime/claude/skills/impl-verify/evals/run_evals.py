@@ -51,7 +51,7 @@ def main() -> int:
         "승인된 명세 범위 안에 있고",
         "목적 없이 계속 돌지 않음",
         "layout thrashing",
-        "`.docs/prototype/**` 코드가 제품 소스로 복사되지 않음",
+        "`.ai-docs/prototype/**` 코드가 제품 소스로 복사되지 않음",
     ):
         assert required in skill, f"UI verification item missing: {required!r}"
 

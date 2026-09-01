@@ -21,7 +21,7 @@ $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\\..\\..')).Path
 $target = [IO.Path]::GetFullPath((Join-Path $projectRoot $ArtifactPath))
 if (-not $target.StartsWith($projectRoot.TrimEnd([char]92) + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw 'ArtifactPath must stay inside the project root.' }
 $relative = $target.Substring($projectRoot.Length).TrimStart([char]92, [char]47).Replace([char]92, [char]47)
-$markerDir = Join-Path $projectRoot '.docs/.harness/artifact-approvals'
+$markerDir = Join-Path $projectRoot '.ai-docs/.harness/artifact-approvals'
 New-Item -ItemType Directory -Force -Path $markerDir | Out-Null
 $nonce = [guid]::NewGuid().ToString('N')
 $marker = [ordered]@{

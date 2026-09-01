@@ -137,6 +137,21 @@ def main() -> int:
     with tempfile.TemporaryDirectory(prefix="harness-plugin-check-eval-") as tmp:
         fixture_root = Path(tmp)
         build_plugin.build(ROOT, output_root=fixture_root)
+        claude_manifest = json.loads(
+            (
+                fixture_root
+                / PLUGIN_ROOT_REL
+                / ".claude-plugin"
+                / "plugin.json"
+            ).read_text(encoding="utf-8")
+        )
+        assert "displayName" not in claude_manifest
+        claude_marketplace = json.loads(
+            (fixture_root / ".claude-plugin" / "marketplace.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        assert "displayName" not in claude_marketplace["plugins"][0]
         drifted = fixture_root / PLUGIN_ROOT_REL / ".codex-plugin" / "plugin.json"
         drifted.write_text('{"name":"drift-must-survive-check"}\n', encoding="utf-8", newline="\n")
         before = drifted.read_bytes()

@@ -73,9 +73,9 @@ projection에는 관리자 3종만 있어야 한다.
 - 관련 `.user-docs/**`
 
 실제 사용자 프로젝트에서 산출물을 만드는 경우에는 생성된
-`@.docs/instruction/artifact-output-routing-instruction.md`를 단일 앱의
+`@.ai-docs/instruction/artifact-output-routing-instruction.md`를 단일 앱의
 경로·소유권·인계 정본으로 사용한다. 복수 앱은 각 앱의
-`@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를 사용하며,
+`@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md`를 사용하며,
 이 관리자 저장소 자체의 `maintainer/**` 산출물과 교차 쓰지 않는다.
 
 역사 문서인 `improvement_plan/20260627/**`는 byte-preserve 대상이다. 수정하지 않고 현행 문서에서 새 기준을 설명한다.

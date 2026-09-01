@@ -93,12 +93,12 @@ function Test-Approval([string]$RelativePath, [string]$Operation, [string]$Conte
 
 $project = Get-NormalizedPath $ProjectRoot $ProjectRoot
 if ($null -eq $project) { throw 'project root cannot be normalized' }
-$routingPath = Join-Path $project '.docs/harness/artifact-routing.json'
+$routingPath = Join-Path $project '.ai-docs/harness/artifact-routing.json'
 if (-not (Test-Path -LiteralPath $routingPath -PathType Leaf)) { throw "portable routing contract is missing: $routingPath" }
 $routing = Get-Content -LiteralPath $routingPath -Raw | ConvertFrom-Json
 if ($routing.hosts.$RuntimeHost.status -notin @('pending-trust', 'active')) { throw "unsupported host routing state: $($routing.hosts.$RuntimeHost.status)" }
 
-$docsRoot = Join-Path $project '.docs'
+$docsRoot = Join-Path $project '.ai-docs'
 $inboxRoot = Join-Path $docsRoot '_inbox'
 $markerDirectory = Join-Path $docsRoot '.harness/artifact-approvals'
 $sourceRoots = @($routing.apps | ForEach-Object { Get-NormalizedPath ([string]$_.source_root) $project })

@@ -26,7 +26,7 @@ def test_design_system_input_is_checked_first() -> None:
     skill = skill_text()
     for required in (
         "STEP 0-E — 디자인 시스템 입력 확인",
-        ".docs/design-system/**",
+        ".ai-docs/design-system/**",
         "색·타이포그래피·간격 체계를 새로 발명하지 않는다",
         "기존 제품 디자인 시스템 → 승인된 `ui-ux-pro-max` 결정",
     ):

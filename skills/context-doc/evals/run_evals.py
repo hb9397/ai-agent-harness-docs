@@ -31,7 +31,12 @@ def main() -> int:
         "다른 스킬이 `context-doc`을 선택한 경우에도",
         "앱 컨텍스트와 작업 지침 편집 확인",
         "루트 `AGENTS.md`/`CLAUDE.md`와 `.ai-docs/root-context/**`는 생성하지 않는다",
+        "`agent-instruction.md`와 `artifact-output-routing-instruction.md`",
+        "confirmed_scope",
     )
+    skill_text = (SKILL_ROOT / "SKILL.md").read_text(encoding="utf-8")
+    if "유일한 항상 생성 예외" in skill_text:
+        raise AssertionError("context-doc still contradicts the two always-generated instructions")
     require(
         SKILL_ROOT / "templates" / "artifact-output-routing-instruction.md.template",
         "artifact 의미와 대상 app",

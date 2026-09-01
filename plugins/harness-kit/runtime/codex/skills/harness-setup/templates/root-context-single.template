@@ -1,9 +1,10 @@
 <!-- harness-kit:managed:start -->
 # {{PROJECT_NAME}} — AI Agent 컨텍스트
 
-> 이 파일은 `harness-setup`이 만든 공통 컨텍스트 정본의 뼈대다.
+> 이 파일은 `harness-setup`이 관리하는 프로젝트 전체 읽기 지도다.
 > Claude Code에서는 루트 `CLAUDE.md`가 이 파일을 `@AGENTS.md`로 가져온다.
-> 프로젝트 팩트와 세부 instruction은 `context-doc`으로 보강한다.
+> 애플리케이션의 설계·기술 맥락과 세부 instruction은 앱 문서에서 읽으며 이 파일에
+> 본문을 복제하지 않는다.
 
 ---
 
@@ -11,22 +12,23 @@
 
 - 프로젝트 루트: `{{PROJECT_ROOT}}`
 - 프로젝트 유형: 단일 애플리케이션
-- AI 문서 루트: `.docs/`
+- AI 문서 루트: `.ai-docs/`
 
 ## 컨텍스트와 산출물
 
-- 설계 문서: `@.docs/context-base/DESIGN.md`
-- 주제별 instruction: `@.docs/instruction/*-instruction.md`
-- 산출물 위치·소유권·인계: `@.docs/instruction/artifact-output-routing-instruction.md`
-- portable routing 상태·host별 설치 경계: `@.docs/harness/artifact-routing.json`
-- 구현 계획: `.docs/impl-doc/{사용자}/{기능}.md`
-- 프로토타입: `.docs/prototype/{사용자}/{id}/`
+- 애플리케이션 컨텍스트: `@.ai-docs/{{APP_ID}}-context.md`
+- 설계 문서: `@.ai-docs/context-base/DESIGN.md`
+- 주제별 instruction: `@.ai-docs/instruction/*-instruction.md`
+- 산출물 위치·소유권·인계: `@.ai-docs/instruction/artifact-output-routing-instruction.md`
+- portable routing 상태·host별 설치 경계: `@.ai-docs/harness/artifact-routing.json`
+- 구현 계획: `.ai-docs/impl-doc/{사용자}/{기능}.md`
+- 프로토타입: `.ai-docs/prototype/{사용자}/{id}/`
 
 ### Portable routing을 참조하는 이유
 
-`.docs/harness/`는 `harness-setup`이 프로젝트 안에 만드는 **프로젝트 소유 산출물 계약**이다.
+`.ai-docs/harness/`는 `harness-setup`이 프로젝트 안에 만드는 **프로젝트 소유 산출물 계약**이다.
 이후 Harness Kit가 아닌 스킬·에이전트도 Layer 2 instruction을 읽고 따르면, 같은 개념의
-문서를 기존 `.docs` 정규 경로와 소유·인계 규칙에 맞춰 이어서 만들 수 있다. 따라서 도구가
+문서를 기존 `.ai-docs` 정규 경로와 소유·인계 규칙에 맞춰 이어서 만들 수 있다. 따라서 도구가
 바뀌어도 산출물 구조가 분산되지 않는다. 이 bundle은 스킬 자체를 대체하지 않으며, 스킬
 실행은 설치된 플러그인 또는 해당 도구가 담당한다.
 
@@ -53,7 +55,7 @@ manifest는 **계약 상태**, `install-routing.ps1 -Check`은 **실제 host-loc
   플러그인에서 제공한다.
 - 프로젝트에 `.agents/skills/`, `.claude/skills/`, `skills/` 사용자 스킬
   projection을 만들거나 동기화하지 않는다.
-- 공통 규칙은 이 파일에 두고 `CLAUDE.md`에는 Claude 전용 차이만 둔다.
+- 프로젝트 전체 읽기·라우팅 규칙은 이 파일에 두고 `CLAUDE.md`에는 Claude 전용 차이만 둔다.
 - Claude/Codex host hook은 routing manifest가 `pending-trust`이면 활성화하지 않으며,
   각 host의 별도 신뢰 절차가 끝난 뒤에만 사용한다.
 - 기존 파일과 사용자 코드를 변경하기 전에 적용 범위를 확인한다.

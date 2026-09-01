@@ -1,7 +1,9 @@
 <!-- harness-kit:managed:start -->
 # {{PROJECT_NAME}} — AI Agent 컨텍스트
 
-> 이 파일은 `harness-setup` 스킬이 생성·갱신하는 공통 컨텍스트 정본이다.
+> 이 관리 블록은 `harness-setup` 스킬이 생성·갱신한다. 복수 앱에서는
+> `.ai-docs/root-context/AGENTS.md`가 Git 관리 원본이고 프로젝트 루트
+> `AGENTS.md`는 이 원본을 반영한 실행본이다.
 > Claude Code에서는 `CLAUDE.md` bridge가 이 파일을 `@AGENTS.md`로 가져온다.
 > 직접 수정이 필요하면 앱별 컨텍스트 파일을 먼저 수정한 뒤 `harness-setup`
 > 스킬을 재실행한다.
@@ -75,8 +77,8 @@ manifest는 **계약 상태**, `install-routing.ps1 -Check`은 **실제 host-loc
 
 ## 관리 원칙
 
-- 이 파일(`AGENTS.md`)은 어떤 git 레포에도 속하지 않는다.
+- 프로젝트 루트의 실행용 `AGENTS.md`는 어떤 git 레포에도 속하지 않는다.
 - `CLAUDE.md`는 공통 본문을 복제하지 않고 `@AGENTS.md` bridge만 둔다.
 - `harness-setup` 스킬 재실행으로 관리 블록을 갱신한다.
-- 원본 복사본: `.ai-docs/root-context/AGENTS.md`, `.ai-docs/root-context/CLAUDE.md`
+- Git 관리 원본: `.ai-docs/root-context/AGENTS.md`, `.ai-docs/root-context/CLAUDE.md`
 <!-- harness-kit:managed:end -->

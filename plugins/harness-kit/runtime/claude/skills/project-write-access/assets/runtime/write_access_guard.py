@@ -18,7 +18,8 @@ from typing import Any
 
 
 NAMESPACE = "harness-kit-project-write-access"
-ROLES = {"admin", "pm-pl", "app-doc-lead"}
+SCHEMA_VERSION = "3.0.0"
+ROLES = {"admin", "pm-pl", "app-doc-lead", "developer"}
 WRITE_SCOPES = {"admin", "app-doc", "team"}
 CODEOWNERS_MARKERS = (
     "# harness-kit:write-access:start",
@@ -87,7 +88,7 @@ def run_git(root: Path, *args: str, check: bool = True, stdin: bytes | None = No
 
 
 def access_dir_from_project(project_root: Path) -> Path:
-    return project_root.resolve() / ".docs" / "harness" / "access-control"
+    return project_root.resolve() / ".ai-docs" / "harness" / "access-control"
 
 
 def load_verified_policy(project_root: Path) -> dict[str, Any]:
@@ -105,6 +106,8 @@ def load_verified_policy(project_root: Path) -> dict[str, Any]:
     trust = json.loads(trust_path.read_text(encoding="utf-8"))
     if policy.get("project_id") != trust.get("project_id"):
         raise GuardError("project identity does not match trust.json")
+    if policy.get("schema_version") != SCHEMA_VERSION:
+        raise GuardError(f"unsupported access policy schema: {policy.get('schema_version')}")
 
     public_key = str(trust.get("admin_public_key", "")).strip()
     if not public_key.startswith("ssh-ed25519 "):
@@ -196,13 +199,27 @@ def normalize_project_path(value: str, project_root: Path) -> str:
     return normalized
 
 
-def principal_for(policy: dict[str, Any], provider: str, account: str) -> dict[str, Any] | None:
-    wanted = account.casefold()
-    for principal in policy.get("principals", []):
-        actual = str(principal.get("accounts", {}).get(provider, "")).casefold()
-        if actual and actual == wanted:
-            return principal
+def subject_for(policy: dict[str, Any], provider: str, host: str, account: str) -> dict[str, Any] | None:
+    wanted = (provider, host.casefold(), account.casefold())
+    for subject in policy.get("subjects", []):
+        for configured in subject.get("accounts", []):
+            actual = (
+                str(configured.get("provider", "")),
+                str(configured.get("host", "")).casefold(),
+                str(configured.get("login", "")).casefold(),
+            )
+            if actual == wanted:
+                return subject
     return None
+
+
+def has_role(policy: dict[str, Any], subject_id: str, role: str, application: str | None = None) -> bool:
+    for assignment in policy.get("role_assignments", []):
+        if assignment.get("subject_id") != subject_id or assignment.get("role") != role:
+            continue
+        if role != "app-doc-lead" or application in assignment.get("applications", []):
+            return True
+    return False
 
 
 def rule_for_path(policy: dict[str, Any], path: str) -> dict[str, Any] | None:
@@ -214,28 +231,26 @@ def rule_for_path(policy: dict[str, Any], path: str) -> dict[str, Any] | None:
 
 
 def is_protected_path(path: str) -> bool:
-    return path in {"AGENTS.md", "CLAUDE.md"} or path.startswith(".docs/")
+    return path in {"AGENTS.md", "CLAUDE.md"} or path.startswith(".ai-docs/")
 
 
-def permits(rule: dict[str, Any], principal: dict[str, Any] | None) -> bool:
+def permits(policy: dict[str, Any], rule: dict[str, Any], subject: dict[str, Any] | None) -> bool:
     write_scope = str(rule.get("write_scope"))
     if write_scope == "team":
         return True
-    if write_scope not in WRITE_SCOPES or principal is None:
+    if write_scope not in WRITE_SCOPES or subject is None:
         return False
-    role = str(principal.get("role"))
-    if role not in ROLES:
-        return False
+    subject_id = str(subject.get("id"))
     if write_scope == "admin":
-        return role == "admin"
+        return has_role(policy, subject_id, "admin")
     application = rule.get("application")
-    return role in {"admin", "pm-pl"} or (
-        role == "app-doc-lead" and application in principal.get("applications", [])
+    return has_role(policy, subject_id, "pm-pl") or (
+        has_role(policy, subject_id, "app-doc-lead", application)
     )
 
 
-def authorize_paths(policy: dict[str, Any], provider: str, account: str, paths: list[str], project_root: Path) -> list[str]:
-    principal = principal_for(policy, provider, account)
+def authorize_paths(policy: dict[str, Any], provider: str, host: str, account: str, paths: list[str], project_root: Path) -> list[str]:
+    subject = subject_for(policy, provider, host, account)
     denied: list[str] = []
     for raw in paths:
         path = normalize_project_path(raw, project_root)
@@ -244,33 +259,99 @@ def authorize_paths(policy: dict[str, Any], provider: str, account: str, paths: 
             if is_protected_path(path):
                 denied.append(path)
             continue
-        if not permits(rule, principal):
+        if not permits(policy, rule, subject):
             denied.append(path)
     return sorted(set(denied))
 
 
-def admin_app_confirmation_paths(
-    policy: dict[str, Any], provider: str, account: str, paths: list[str], project_root: Path
+def app_doc_confirmation_paths(
+    policy: dict[str, Any], provider: str, host: str, account: str, paths: list[str], project_root: Path
 ) -> list[str]:
-    principal = principal_for(policy, provider, account)
-    if principal is None or principal.get("role") != "admin":
+    subject = subject_for(policy, provider, host, account)
+    if subject is None:
         return []
     required: list[str] = []
     for raw in paths:
         path = normalize_project_path(raw, project_root)
         rule = rule_for_path(policy, path)
-        if rule is not None and rule.get("write_scope") == "app-doc":
+        if rule is not None and rule.get("write_scope") == "app-doc" and permits(policy, rule, subject):
             required.append(path)
     return sorted(set(required))
 
 
-def git_identity(git_root: Path) -> tuple[str, str]:
+def git_identity(git_root: Path) -> tuple[str, str, str]:
     provider = run_git(git_root, "config", "--local", "--get", "harness.writeAccess.provider", check=False)
+    host = run_git(git_root, "config", "--local", "--get", "harness.writeAccess.host", check=False)
     account = run_git(git_root, "config", "--local", "--get", "harness.writeAccess.account", check=False)
     return (
         provider.stdout.decode("utf-8", errors="replace").strip(),
+        host.stdout.decode("utf-8", errors="replace").strip().casefold(),
         account.stdout.decode("utf-8", errors="replace").strip(),
     )
+
+
+def local_config_value(git_root: Path, key: str) -> str:
+    result = run_git(git_root, "config", "--local", "--get-all", key, check=False)
+    values = result.stdout.decode("utf-8", errors="replace").splitlines() if result.returncode == 0 else []
+    return values[0].strip() if len(values) == 1 else ""
+
+
+def normalized_config_origin(value: str) -> str:
+    return value.removeprefix("file:").strip().replace("\\", "/").casefold()
+
+
+def local_enrollment_ready(git_root: Path, project_root: Path) -> bool:
+    scoped = (
+        local_config_value(git_root, "harness.gitScopedAccount.provider").casefold(),
+        local_config_value(git_root, "harness.gitScopedAccount.host").casefold(),
+        local_config_value(git_root, "harness.gitScopedAccount.account").casefold(),
+    )
+    write_access = tuple(value.casefold() for value in git_identity(git_root))
+    scoped_root = local_config_value(git_root, "harness.gitScopedAccount.projectRoot")
+    scoped_config = local_config_value(git_root, "harness.gitScopedAccount.configPath").replace("\\", "/")
+    write_root = local_config_value(git_root, "harness.writeAccess.projectRoot")
+    if not all((*scoped, *write_access, scoped_root, scoped_config, write_root)):
+        return False
+    try:
+        roots_match = Path(scoped_root).resolve() == project_root.resolve() == Path(write_root).resolve()
+    except OSError:
+        return False
+    included = run_git(
+        git_root,
+        "config",
+        "--local",
+        "--fixed-value",
+        "--get-all",
+        "include.path",
+        scoped_config,
+        check=False,
+    )
+    if included.returncode != 0 or included.stdout.decode("utf-8", errors="replace").splitlines() != [scoped_config]:
+        return False
+    for key in ("user.name", "user.email"):
+        origin = run_git(git_root, "config", "--show-origin", "--get", key, check=False)
+        if origin.returncode != 0:
+            return False
+        source = origin.stdout.decode("utf-8", errors="replace").split(maxsplit=1)[0]
+        if normalized_config_origin(source) != normalized_config_origin(scoped_config):
+            return False
+    return roots_match and scoped == write_access
+
+
+def policy_git_root(policy: dict[str, Any], project_root: Path) -> Path:
+    relative = str(policy.get("git_root_relative", "."))
+    return project_root if relative == "." else project_root / relative
+
+
+def enrollment_denials(paths: list[str], project_root: Path, ready: bool) -> list[str]:
+    if ready:
+        return []
+    denied: set[str] = set()
+    for raw in paths:
+        normalized = normalize_project_path(raw, project_root)
+        if is_protected_path(normalized):
+            denied.add(normalized)
+    return sorted(denied)
 
 
 def project_path_from_git(policy: dict[str, Any], git_path: str) -> str:
@@ -333,11 +414,15 @@ def invoke_previous_hook(git_root: Path, hook_name: str, args: list[str], stdin:
 def pre_commit(project_root: Path) -> int:
     policy = load_verified_policy(project_root)
     git_root = Path.cwd().resolve()
-    provider, account = git_identity(git_root)
+    provider, host, account = git_identity(git_root)
     changed = run_git(git_root, "diff", "--cached", "--name-only").stdout.decode().splitlines()
     paths = [project_path_from_git(policy, item) for item in changed]
     verify_staged_generated_entries(project_root, policy, git_root, paths)
-    denied = authorize_paths(policy, provider, account, paths, project_root)
+    not_enrolled = enrollment_denials(paths, project_root, local_enrollment_ready(git_root, project_root))
+    if not_enrolled:
+        print("project-write-access: run git-scoped-account local enrollment before writing .ai-docs: " + ", ".join(not_enrolled), file=sys.stderr)
+        return 1
+    denied = authorize_paths(policy, provider, host, account, paths, project_root)
     if denied:
         print("project-write-access: commit denied for " + ", ".join(denied), file=sys.stderr)
         return 1
@@ -375,17 +460,34 @@ def infer_provider(remote_url: str) -> str | None:
     return None
 
 
+def infer_host(remote_url: str) -> str | None:
+    match = re.search(r"(?:https?://|ssh://(?:[^@]+@)?)([^/:]+(?::[0-9]+)?)", remote_url)
+    if match:
+        return match.group(1).casefold()
+    match = re.match(r"(?:[^@]+@)?([^:]+):", remote_url)
+    return match.group(1).casefold() if match else None
+
+
 def pre_push(project_root: Path, remote_name: str, remote_url: str, stdin: bytes) -> int:
     policy = load_verified_policy(project_root)
     git_root = Path.cwd().resolve()
-    configured_provider, account = git_identity(git_root)
+    configured_provider, configured_host, account = git_identity(git_root)
     inferred_provider = infer_provider(remote_url)
+    inferred_host = infer_host(remote_url)
     if configured_provider and inferred_provider and configured_provider != inferred_provider:
         print("project-write-access: configured provider does not match push remote", file=sys.stderr)
         return 1
     provider = configured_provider or inferred_provider or ""
+    host = configured_host or inferred_host or ""
+    if configured_host and inferred_host and configured_host != inferred_host:
+        print("project-write-access: configured provider host does not match push remote", file=sys.stderr)
+        return 1
     paths = [project_path_from_git(policy, item) for item in changed_paths_for_push(git_root, remote_name, stdin)]
-    denied = authorize_paths(policy, provider, account, paths, project_root)
+    not_enrolled = enrollment_denials(paths, project_root, local_enrollment_ready(git_root, project_root))
+    if not_enrolled:
+        print("project-write-access: run git-scoped-account local enrollment before pushing .ai-docs: " + ", ".join(not_enrolled), file=sys.stderr)
+        return 1
+    denied = authorize_paths(policy, provider, host, account, paths, project_root)
     if denied:
         print("project-write-access: push denied for " + ", ".join(denied), file=sys.stderr)
         return 1
@@ -413,7 +515,7 @@ def paths_from_git_command(command: str, git_root: Path, policy: dict[str, Any])
     try:
         tokens = shlex.split(command, posix=os.name != "nt")
     except ValueError:
-        if ".docs" in command or "AGENTS.md" in command or "CLAUDE.md" in command:
+        if ".ai-docs" in command or "AGENTS.md" in command or "CLAUDE.md" in command:
             raise GuardError("dynamic command target could not be parsed safely")
         return []
     command_index = 0
@@ -465,7 +567,7 @@ def paths_from_git_command(command: str, git_root: Path, policy: dict[str, Any])
         return []
 
     if executable not in {"git", "git.exe"}:
-        if ".docs" in command or "AGENTS.md" in command or "CLAUDE.md" in command:
+        if ".ai-docs" in command or "AGENTS.md" in command or "CLAUDE.md" in command:
             raise GuardError("non-Git command targets protected documents and cannot be proven safe")
         return []
     index = command_index + 1
@@ -491,7 +593,7 @@ def paths_from_git_command(command: str, git_root: Path, policy: dict[str, Any])
         return [project_path_from_git(policy, item) for item in output.splitlines()]
     if action in {"push", "merge", "rebase"}:
         raise GuardError(f"AI {action} requires the standard Git hook and a separately verified branch state")
-    if ".docs" in command or "AGENTS.md" in command or "CLAUDE.md" in command:
+    if ".ai-docs" in command or "AGENTS.md" in command or "CLAUDE.md" in command:
         raise GuardError(f"Git {action} targets protected documents and cannot be proven safe")
     return []
 
@@ -499,14 +601,15 @@ def paths_from_git_command(command: str, git_root: Path, policy: dict[str, Any])
 def ai_decision(project_root: Path, payload: dict[str, Any]) -> tuple[str, str]:
     policy = load_verified_policy(project_root)
     cwd = Path(str(payload.get("cwd") or project_root)).resolve()
-    docs_root = project_root / ".docs"
+    docs_root = project_root / ".ai-docs"
     docs_git = run_git(docs_root, "rev-parse", "--show-toplevel", check=False) if docs_root.is_dir() else None
     if docs_git is not None and docs_git.returncode == 0 and Path(docs_git.stdout.decode().strip()).resolve() == docs_root.resolve():
         git_root = docs_root.resolve()
     else:
         git_root_result = run_git(cwd, "rev-parse", "--show-toplevel", check=False)
         git_root = Path(git_root_result.stdout.decode().strip()).resolve() if git_root_result.returncode == 0 else project_root
-    provider, account = git_identity(git_root)
+    identity_root = policy_git_root(policy, project_root)
+    provider, provider_host, account = git_identity(identity_root)
     tool_input = payload.get("tool_input") or {}
     paths = collect_paths(tool_input)
     command = tool_input.get("command") if isinstance(tool_input, dict) else None
@@ -517,16 +620,20 @@ def ai_decision(project_root: Path, payload: dict[str, Any]) -> tuple[str, str]:
         try:
             normalized.append(normalize_project_path(path, project_root))
         except GuardError:
-            if any(token in str(path) for token in (".docs", "AGENTS.md", "CLAUDE.md")):
+            if any(token in str(path) for token in (".ai-docs", "AGENTS.md", "CLAUDE.md")):
                 raise
-    denied = authorize_paths(policy, provider, account, normalized, project_root)
+    not_enrolled = enrollment_denials(normalized, project_root, local_enrollment_ready(identity_root, project_root))
+    if not_enrolled:
+        return "deny", "git-scoped-account local enrollment is required for: " + ", ".join(not_enrolled)
+    denied = authorize_paths(policy, provider, provider_host, account, normalized, project_root)
     if denied:
         return "deny", "write denied for: " + ", ".join(denied)
-    confirmation = admin_app_confirmation_paths(policy, provider, account, normalized, project_root)
+    confirmation = app_doc_confirmation_paths(policy, provider, provider_host, account, normalized, project_root)
     if confirmation:
         return (
             "ask",
-            "관리자가 앱 문서 소유 범위를 대신 수정합니다. 대상 앱·정확한 파일·원래 소유 범위·수정 요약과 이유를 확인한 뒤 이 변경에 한해 승인하세요: "
+            "권한이 있는 사용자가 앱 핵심 문서를 편집하려 합니다. 대상 앱·정확한 파일·문서 종류와 역할·수정 요약과 이유·현재 역할을 확인한 뒤 이 변경에 한해 승인하세요. "
+            "DESIGN.md는 설계 기준, *-context.md는 앱의 기술·설계 맥락, *-instruction.md는 해당 주제의 작업 규칙입니다: "
             + ", ".join(confirmation),
         )
     return "allow", "allowed"
@@ -571,6 +678,7 @@ def main() -> int:
     check = sub.add_parser("check-path")
     check.add_argument("--project-root", required=True)
     check.add_argument("--provider", choices=("github", "gitlab", "gitea"), required=True)
+    check.add_argument("--provider-host", required=True)
     check.add_argument("--account", required=True)
     check.add_argument("paths", nargs="+")
     args = parser.parse_args()
@@ -584,12 +692,21 @@ def main() -> int:
             return pre_push(project_root, args.remote_name, args.remote_url, stdin)
         if args.command == "check-path":
             policy = load_verified_policy(project_root)
-            denied = authorize_paths(policy, args.provider, args.account, args.paths, project_root)
+            identity_root = policy_git_root(policy, project_root)
+            not_enrolled = enrollment_denials(
+                args.paths,
+                project_root,
+                local_enrollment_ready(identity_root, project_root),
+            )
+            if not_enrolled:
+                print(json.dumps({"decision": "deny", "paths": not_enrolled, "reason": "git-scoped-account local enrollment is required"}, ensure_ascii=False))
+                return 1
+            denied = authorize_paths(policy, args.provider, args.provider_host, args.account, args.paths, project_root)
             if denied:
                 print(json.dumps({"decision": "deny", "paths": denied}, ensure_ascii=False))
                 return 1
-            confirmation = admin_app_confirmation_paths(
-                policy, args.provider, args.account, args.paths, project_root
+            confirmation = app_doc_confirmation_paths(
+                policy, args.provider, args.provider_host, args.account, args.paths, project_root
             )
             if confirmation:
                 print(
@@ -597,7 +714,7 @@ def main() -> int:
                         {
                             "decision": "confirm",
                             "paths": confirmation,
-                            "reason": "admin is crossing into app-doc ownership; ask one additional access-specific question",
+                            "reason": "authorized app-doc write; explain the document and ask one change-specific question",
                         },
                         ensure_ascii=False,
                     )

@@ -9,14 +9,23 @@ description: >
 allowed-tools: Read, Write, Glob, Grep
 ---
 
+## 문서 루트 계약
+
+이 스킬이 하네스 문서를 읽거나 쓸 때 사용하는 정본은 `.ai-docs/`뿐이다. 작업 전에
+`.ai-docs/`와 이전 `.docs/`의 존재를 확인한다. `.docs/`만 있거나 두 경로가 함께
+있으면 하네스 문서를 읽거나 쓰지 않고 `harness-setup`의 명시적 문서 루트 이관·충돌
+해결을 먼저 요청한다. 이전 경로를 호환 별칭으로 추측하지 않는다. 애플리케이션 소스
+작업 자체의 권한과 가능 여부는 이 문서 루트 판정으로 제한하지 않는다.
+
+
 # 프론트엔드 디자인 (frontend-design)
 
 이 스킬은 클리셰 UI를 피하고, 맥락에 맞는 개성 있는 프론트엔드 구현을 목표로 한다.
 결과물은 실제로 동작하는 프로덕션급 코드여야 한다.
 
 제품 소스 변경 범위와 앱 소유권은 단일 앱의
-`@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
-`@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를 확인한 뒤
+`@.ai-docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
+`@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md`를 확인한 뒤
 승인된 앱 소스에만 반영한다.
 
 ---
@@ -28,7 +37,7 @@ allowed-tools: Read, Write, Glob, Grep
 | 사용자의 최종 산출물 | 담당 스킬 |
 |---|---|
 | 화면 구조·요구사항·흐름을 담은 Markdown 설계 문서 | `design-prototype-docs` |
-| `.docs/prototype/` 아래에서 폐기 가능한 HTML/CSS/JS 검증 시안 | `create-prototype` |
+| `.ai-docs/prototype/` 아래에서 폐기 가능한 HTML/CSS/JS 검증 시안 | `create-prototype` |
 | 애플리케이션 소스에 반영할 페이지·컴포넌트·스타일 | `frontend-design` |
 
 요청에 “화면”, “UI”, “프로토타입”이라는 단어가 있다는 이유만으로 선택하지 않는다.
@@ -50,7 +59,7 @@ allowed-tools: Read, Write, Glob, Grep
 1순위와 2순위가 충돌하면 **구현하지 말고** 차이와 근거를 보고한다. 제품 코드의
 현실이 설계 제안보다 우선한다.
 
-프로토타입 코드는 재사용하지 않는다. `.docs/prototype/**`에서 복사하지 말고
+프로토타입 코드는 재사용하지 않는다. `.ai-docs/prototype/**`에서 복사하지 말고
 승인된 디자인 결정과 화면 명세만 다시 해석해 제품 구조에 맞게 구현한다.
 
 ---

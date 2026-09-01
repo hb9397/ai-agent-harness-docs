@@ -1,12 +1,13 @@
-# AGENTS.md 추출 기준 (analysis-claude)
+# 앱 context 추출 기준 (analysis-claude)
 
-AGENTS.md는 **얇은 프로젝트 팩트 + 지침 인덱스** 정본이다.
-CLAUDE.md는 `@AGENTS.md` bridge이므로 이 분석 결과를 복제하지 않는다.
+`.ai-docs/{앱}-context.md`는 **얇은 애플리케이션 팩트 + 지침 인덱스** 정본이다.
+루트 `AGENTS.md`·`CLAUDE.md`와 `.ai-docs/root-context/**`에는 이 분석 결과를 직접 쓰지
+않는다.
 설계 문서에서 아래 항목만 추출한다. 규칙/금지사항은 여기 넣지 않는다.
 
 ---
 
-## 추출 항목 (프로젝트 팩트만)
+## 추출 항목 (애플리케이션 팩트만)
 
 ### 1. 프로젝트 개요
 - 프로젝트명 및 부제 (한 줄 설명)
@@ -43,14 +44,14 @@ CLAUDE.md는 `@AGENTS.md` bridge이므로 이 분석 결과를 복제하지 않�
 - 일반적인 코딩 규칙·금지 패턴은 instruction 파일로.
 
 ### 8. 지침 인덱스 (Instruction Index)
-Step 3-B에서 생성하기로 확정된 `.docs/instruction/*-instruction.md` 파일 목록을
+Step 3-B에서 생성하기로 확정된 `.ai-docs/instruction/*-instruction.md` 파일 목록을
 **표 형태 인덱스**로 삽입한다. 생성하지 않는 파일은 인덱스에 넣지 않는다.
 
 ---
 
 ## 추출하지 않는 항목
 
-아래 항목은 **AGENTS.md에 넣지 않는다**. instruction 파일로 넘긴다.
+아래 항목은 **앱 context에 넣지 않는다**. instruction 파일로 넘긴다.
 
 - 레이어 간 의존 방향 규칙 → `architecture-instruction.md`
 - 코딩 컨벤션·네이밍 → `code-style-instruction.md`
@@ -61,8 +62,8 @@ Step 3-B에서 생성하기로 확정된 `.docs/instruction/*-instruction.md` �
 - AI Agent 전용 행동 규칙 → `agent-instruction.md`
 
 단, **API 엔드포인트 카탈로그 자체**와 **WebSocket 엔드포인트 목록**은
-사실 목록으로서 AGENTS.md에 실어도 되고, `api-instruction.md` / `comm-instruction.md`에
-실어도 된다. 본 스킬은 **규약(규칙)은 instruction에, 팩트(목록)만 AGENTS.md 가능**을 기본으로 한다.
+사실 목록으로서 앱 context에 실어도 되고, `api-instruction.md` / `comm-instruction.md`에
+실어도 된다. 본 스킬은 **규약(규칙)은 instruction에, 팩트(목록)만 앱 context 가능**을 기본으로 한다.
 
 ---
 

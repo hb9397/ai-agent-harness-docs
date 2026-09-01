@@ -23,6 +23,6 @@
       "destructive_action_requires": "not eligible for automatic removal"
     }
   ],
-  "backup_target": ".docs/archive/legacy-agent-skills/{timestamp}/",
+  "backup_target": ".ai-docs/archive/legacy-agent-skills/{timestamp}/",
   "rollback": "restore archived active root after user approval"
 }

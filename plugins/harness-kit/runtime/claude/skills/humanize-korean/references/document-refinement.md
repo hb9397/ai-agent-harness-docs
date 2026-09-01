@@ -21,7 +21,7 @@
 
 ### 디자인 시스템 문서에서 추가로 보호할 값
 
-`.docs/design-system/**` 문서를 다룰 때 아래 값은 그대로 둔다.
+`.ai-docs/design-system/**` 문서를 다룰 때 아래 값은 그대로 둔다.
 
 - hex, RGB, HSL 색상값
 - CSS 변수명과 디자인 토큰 이름
@@ -31,7 +31,7 @@
 
 ### 모션 명세 문서에서 추가로 보호할 값
 
-`.docs/design-system/**/motion/**` 문서를 다룰 때 아래 값은 그대로 둔다.
+`.ai-docs/design-system/**/motion/**` 문서를 다룰 때 아래 값은 그대로 둔다.
 
 - duration, delay 값
 - easing curve 이름과 cubic-bezier 계수

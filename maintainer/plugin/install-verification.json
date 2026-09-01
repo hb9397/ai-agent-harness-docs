@@ -4,10 +4,10 @@
   "plugin": {
     "plugin_root": "plugins/harness-kit",
     "plugin_id": "harness-kit",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "codex_manifest_matches_claude": true,
-    "archive": "plugins/harness-kit-0.5.0.zip",
-    "archive_sha256": "3d9c244c5f8788eb0bd010bc37098ae1910b4dd1a0b960afe01059af3dad1b62",
+    "archive": "plugins/harness-kit-0.6.0.zip",
+    "archive_sha256": "05254286fb1ed8266843230ae6839dbaeadd3088791adb660f17749204445a2f",
     "archive_sha256_matches_release": true,
     "logical_user_skills": 20,
     "codex_physical_skills": 20,
@@ -56,7 +56,7 @@
         "destructive_action_requires": "not eligible for automatic removal"
       }
     ],
-    "backup_target": ".docs/archive/legacy-agent-skills/{timestamp}/",
+    "backup_target": ".ai-docs/archive/legacy-agent-skills/{timestamp}/",
     "rollback": "restore archived active root after user approval"
   },
   "manual_surface_test": {
@@ -102,10 +102,10 @@
         "--help"
       ],
       "available": true,
-      "status": "failed-to-start",
-      "exit_code": null,
-      "stdout_excerpt": "",
-      "stderr_excerpt": "[WinError 2] 지정된 파일을 찾을 수 없습니다"
+      "status": "ok",
+      "exit_code": 0,
+      "stdout_excerpt": "Usage: claude [options] [command] [prompt]\n\nClaude Code - starts an interactive session by default, use -p/--print for\nnon-interactive output\n\nArguments:\n  prompt                                            Your prompt\n\nOptions:\n  --add-dir <directories...>                        Additional directories to allow tool access to\n  --agent <agent>                                   Agent for the current session. Overrides the 'agent' setting.\n  --agents <json>                                   JSON object defining custom agents (e.g. '{\"reviewer\": {\"description\": \"Reviews code\", \"prompt\": \"You are a code reviewer\"}}')\n  --allow-dangerously-skip-permissions              Enable bypassing all permission checks as an option, without it being enabled by default. Recommended only for sandboxes with no internet access.\n  --allowedTools, --allowed-tools <tools...>        Comma or space-separated list of tool names to allow (e.g. \"Bash(git:*) Edit\")\n  --append-system-prompt <prompt>                  ",
+      "stderr_excerpt": ""
     }
   },
   "cli_smoke": {
@@ -119,13 +119,13 @@
     "platforms": {
       "codex": {
         "status": "passed",
-        "cli_version": "codex-cli 0.146.0",
+        "cli_version": "codex-cli 0.151.0-alpha.7.2",
         "marketplace": "hb9397",
         "plugin_id": "harness-kit@hb9397",
         "evidence_level": "marketplace-install-and-cache-smoke",
         "model_invocation_verified": false,
         "installed_payload": {
-          "version": "0.5.0",
+          "version": "0.6.0",
           "skill_count": 20,
           "agent_count": 0,
           "required_skills": [
@@ -140,13 +140,13 @@
       },
       "claude": {
         "status": "passed",
-        "cli_version": "2.1.220 (Claude Code)",
+        "cli_version": "2.1.50 (Claude Code)",
         "marketplace": "hb9397",
         "plugin_id": "harness-kit@hb9397",
         "evidence_level": "marketplace-install-and-cache-smoke",
         "model_invocation_verified": false,
         "installed_payload": {
-          "version": "0.5.0",
+          "version": "0.6.0",
           "skill_count": 20,
           "agent_count": 0,
           "required_skills": [

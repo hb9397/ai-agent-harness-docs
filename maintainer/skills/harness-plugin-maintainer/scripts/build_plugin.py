@@ -132,8 +132,6 @@ def manifest(platform: str) -> dict:
             "capabilities": ["Read", "Write"],
             "websiteURL": REPOSITORY_URL,
         }
-    else:
-        payload["displayName"] = PLUGIN_DISPLAY_NAME
     return payload
 
 
@@ -168,7 +166,6 @@ def marketplace(platform: str) -> dict:
             {
                 "name": PLUGIN_ID,
                 "source": f"./{PLUGIN_ROOT_REL.as_posix()}",
-                "displayName": PLUGIN_DISPLAY_NAME,
                 "description": PLUGIN_DESCRIPTION,
                 "version": PLUGIN_VERSION,
             }

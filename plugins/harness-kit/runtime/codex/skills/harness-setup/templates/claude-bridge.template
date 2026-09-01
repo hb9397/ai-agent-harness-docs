@@ -4,7 +4,7 @@
 ## Claude Code 전용 차이
 
 - 공통 프로젝트 컨텍스트와 작업 규칙은 `AGENTS.md`를 따른다.
-- portable routing과 Claude host hook 상태는 `@.docs/harness/artifact-routing.json`을
+- portable routing과 Claude host hook 상태는 `@.ai-docs/harness/artifact-routing.json`을
   확인한다. 이 manifest는 프로젝트 소유 bundle의 Layer 1 상태 정본이며, 실제 산출물
   위치·소유권·인계는 앱별 `artifact-output-routing-instruction.md`를 따른다.
 - bundle 생성만으로 Claude 설정·hook을 활성화하지 않는다. `pending-trust` 상태의 hook은

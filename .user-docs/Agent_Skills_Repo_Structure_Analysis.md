@@ -6,7 +6,7 @@
 >
 > 현재 source 구성은 사용자 스킬 20종과 관리자 스킬 3종으로 분리되어 있다.
 > 사용자 정본은 `skills/`에서 관리해 plugin build의 입력으로 사용한다. 현재 main
-> `0.5.0` payload도 20종이며, 게시된 최신 stable `v0.4.3`과 이전 archive는 historical
+> `0.6.0` payload도 20종이며, 게시된 최신 stable `v0.4.3`과 이전 archive는 historical
 > 비교 증적으로 보존한다. 관리자 스킬은 `maintainer/skills/`와 repo-local `.agents/skills`,
 > `.claude/skills` projection에서만 사용한다.
 >

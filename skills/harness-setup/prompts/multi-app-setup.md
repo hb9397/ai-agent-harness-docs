@@ -107,14 +107,15 @@ Step 2에서 확인된 각 `{앱}` 폴더에 대해 현재 플랫폼의 파일 �
 | `{{APP_CONTEXT_ENTRIES}}` | 앱별 `.ai-docs/{앱}-context.md` 참조 목록 |
 | `{{APP_INSTRUCTION_ENTRIES}}` | 앱별 `.ai-docs/{앱}/instruction/` 참조 목록 |
 
-### `.ai-docs/root-context/`에 복사본 보관
+### `.ai-docs/root-context/`에 Git 관리 원본 보관
 
-루트 파일을 검증한 뒤 같은 내용을 현재 플랫폼의 파일 도구로
-`.ai-docs/root-context/AGENTS.md`, `.ai-docs/root-context/CLAUDE.md`에 쓴다.
+확정한 관리 블록을 현재 플랫폼의 파일 도구로
+`.ai-docs/root-context/AGENTS.md`, `.ai-docs/root-context/CLAUDE.md`에 먼저 쓴 뒤,
+같은 관리 블록을 프로젝트 루트의 실행용 `AGENTS.md`와 `CLAUDE.md`에 반영한다.
 
 > **원칙**: 다른 스킬(context-doc 등)이 `.ai-docs/` 내부의 앱별 컨텍스트를 변경해도,
 > 프로젝트 최상위 `AGENTS.md`/`CLAUDE.md`는 **이 스킬(harness-setup) 재실행**으로만 갱신한다.
-> `.ai-docs/root-context/`의 복사본이 갱신 시 원본 역할을 한다.
+> `.ai-docs/root-context/`가 형상관리되는 관리 원본이며 프로젝트 최상위 파일은 실행본이다.
 
 ---
 
@@ -145,8 +146,8 @@ Step 2에서 확인된 각 `{앱}` 폴더에 대해 현재 플랫폼의 파일 �
 │   ├── .gitignore              ← harness-setup 생성 (로컬 전용 영역 지정)
 │   ├── _inbox/                 ← 에이전트 임시 입력 공간 (내용 git 미추적)
 │   ├── root-context/
-│   │   ├── CLAUDE.md            ← 루트 컨텍스트 복사본 (원본 역할)
-│   │   └── AGENTS.md
+│   │   ├── CLAUDE.md            ← bridge의 Git 관리 원본
+│   │   └── AGENTS.md            ← 루트 컨텍스트의 Git 관리 원본
 │   ├── {앱1}-context.md
 │   ├── {앱1}/
 │   │   ├── context-base/         ← design-doc 산출물 (DESIGN.md)
@@ -166,7 +167,7 @@ Step 2에서 확인된 각 `{앱}` 폴더에 대해 현재 플랫폼의 파일 �
 > - 프로젝트 최상위 폴더에는 `git init`을 하지 않는다.
 > - `.ai-docs`, 각 애플리케이션이 **각각 독립 git 레포**로 관리된다.
 > - 루트 `AGENTS.md`/`CLAUDE.md`는 어떤 git에도 속하지 않으며 harness-setup이 단독 관리한다.
-> - `.ai-docs/root-context/`에 복사본을 두어 갱신 시 원본으로 활용한다.
+> - `.ai-docs/root-context/`를 Git 관리 원본으로 두고 루트 실행본은 여기서 갱신한다.
 > - 사용자 스킬은 `harness-kit` 플러그인으로 사용한다.
 > - `.agents/skills/`, `.claude/skills/`, `skills/`에는 사용자 스킬을 생성하거나
 >   동기화하지 않는다.

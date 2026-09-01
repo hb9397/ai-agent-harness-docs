@@ -31,7 +31,7 @@ $fixedExtensions = @('.json', '.yaml', '.yml', '.png', '.jpg', '.jpeg', '.gif', 
 if ($extension -notin ($textExtensions + $fixedExtensions)) { throw "Unsupported artifact format: $extension" }
 $bytes = [IO.File]::ReadAllBytes((Resolve-Path -LiteralPath $InputPath))
 $sourceHash = ([Security.Cryptography.SHA256]::HashData($bytes) | ForEach-Object { $_.ToString('x2') }) -join ''
-$inbox = Join-Path $projectRoot ".docs/_inbox/$ArtifactBundleId"
+$inbox = Join-Path $projectRoot ".ai-docs/_inbox/$ArtifactBundleId"
 $manifestPath = Join-Path $inbox 'artifact-manifest.json'
 $isText = $extension -in $textExtensions
 

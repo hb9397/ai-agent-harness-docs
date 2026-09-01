@@ -11,7 +11,7 @@
 | 문서 | 역할 |
 |------|------|
 | [Plugin_Installation_Guide.md](./Plugin_Installation_Guide.md) | Codex CLI·앱, Claude Code CLI·앱 설치·확인·업데이트·제거 기준과 예시 화면 |
-| [Harness_Engineering.md](./Harness_Engineering.md) | 사용자 스킬 정본과 현재 main `0.5.0` runtime 20종, 관리자 3종, 플러그인 흐름, `.ai-docs`·컨텍스트·권한·Markdown 후처리 운영 정본 |
+| [Harness_Engineering.md](./Harness_Engineering.md) | 사용자 스킬 정본과 현재 main `0.6.0` runtime 20종, 관리자 3종, 플러그인 흐름, `.ai-docs`·컨텍스트·권한·Markdown 후처리 운영 정본 |
 | [Harness_Engineering_Intro.md](./Harness_Engineering_Intro.md) | 플러그인 기반 하네스 도입 배경과 실제 프로젝트 사용·권한 분기 예시 |
 | [Multi_App_Doc_Flow_And_Ownership.md](./Multi_App_Doc_Flow_And_Ownership.md) | 복수 앱 프로젝트의 AI 문서 흐름, 문서 소유권, 선택형 3계층 쓰기 권한 제어 |
 
@@ -29,7 +29,7 @@
 → 권한 정책이 없으면 기존 설계·컨텍스트 흐름을 그대로 사용
 ```
 
-`harness-setup`은 플러그인 공지가 하네스 갱신을 요구하거나 앱 경계가 바뀌거나 골격 복구가 필요할 때 다시 실행한다. `project-write-access`는 `0.5.0` runtime에 포함되지만 자동 실행되지 않는다. 공유 정책은 관리자가 명시적으로 설정하고, 참여자 PC의 로컬 등록은 관리자 키 없이 각 참여자가 수행한다. 정책이 있는데 현재 PC의 `git-scoped-account` 또는 로컬 등록이 없거나 계정이 다르면 지원되는 AI 가드는 `.ai-docs/**` 쓰기를 거부하며, 애플리케이션 소스코드 권한은 그대로 둔다.
+`harness-setup`은 플러그인 공지가 하네스 갱신을 요구하거나 앱 경계가 바뀌거나 골격 복구가 필요할 때 다시 실행한다. 서명 권한 정책이 활성화된 뒤 공유 루트·하네스 파일의 실제 갱신은 `admin`이 수행하고, 다른 참여자는 갱신된 파일과 자기 PC의 로컬 연결 상태를 확인한다. `project-write-access`는 `0.6.0` runtime에 포함되지만 자동 실행되지 않는다. 공유 정책은 관리자가 명시적으로 설정하고, 참여자 PC의 로컬 등록은 관리자 키 없이 각 참여자가 수행한다. 정책이 있는데 현재 PC의 `git-scoped-account` 또는 로컬 등록이 없거나 계정이 다르면 지원되는 AI 가드는 `.ai-docs/**` 쓰기를 거부하며, 애플리케이션 소스코드 권한은 그대로 둔다.
 
 ---
 

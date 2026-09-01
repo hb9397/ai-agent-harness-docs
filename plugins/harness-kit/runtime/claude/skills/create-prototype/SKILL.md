@@ -10,14 +10,23 @@ description: >
 allowed-tools: Read, Write, Glob, Grep, Agent
 ---
 
+## 문서 루트 계약
+
+이 스킬이 하네스 문서를 읽거나 쓸 때 사용하는 정본은 `.ai-docs/`뿐이다. 작업 전에
+`.ai-docs/`와 이전 `.docs/`의 존재를 확인한다. `.docs/`만 있거나 두 경로가 함께
+있으면 하네스 문서를 읽거나 쓰지 않고 `harness-setup`의 명시적 문서 루트 이관·충돌
+해결을 먼저 요청한다. 이전 경로를 호환 별칭으로 추측하지 않는다. 애플리케이션 소스
+작업 자체의 권한과 가능 여부는 이 문서 루트 판정으로 제한하지 않는다.
+
+
 # Create Prototype — HTML UI 프로토타입 생성기
 
 요구사항 번호(기본 PREFIX: `SFR`, 커스텀 PREFIX 허용)를 기반으로 인터랙티브 UI 프로토타입을 생성하는 스킬이다.
 Tailwind CSS CDN과 Noto Sans KR 폰트를 사용하며, `file://` 직접 열기로 확인 가능하다.
 
 프로토타입 저장 경로·소유권·인계는 단일 앱의
-`@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
-`@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를 따른다.
+`@.ai-docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
+`@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md`를 따른다.
 
 > **산출물 구조 원칙**: 모든 HTML은 `display/`, CSS는 `css/`, JSON은 `data/`, JS는 `script/`, 문서는 `docs/`에만 존재한다.
 > 각 HTML은 반드시 CSS 1개 + JS 1개 + JSON 1개와 짝을 이룬다.
@@ -32,7 +41,7 @@ Tailwind CSS CDN과 Noto Sans KR 폰트를 사용하며, `file://` 직접 열기
 | 최종 산출물 | 담당 스킬 |
 |---|---|
 | 화면 요구사항·흐름·컴포넌트 배치를 설명하는 Markdown | `design-prototype-docs` |
-| 단일 `.docs/prototype/` 또는 복수 `.docs/{앱}/prototype/` 아래 검증용 HTML/CSS/JS/JSON | `create-prototype` |
+| 단일 `.ai-docs/prototype/` 또는 복수 `.ai-docs/{앱}/prototype/` 아래 검증용 HTML/CSS/JS/JSON | `create-prototype` |
 | 실제 앱 디렉터리에 반영할 제품 코드 | `frontend-design` |
 
 프로토타입은 요구사항 검증을 위한 폐기 가능한 산출물이다. 사용자가 실제 앱 적용을
@@ -43,7 +52,7 @@ handoff한다.
 
 이 스킬의 산출물은 **폐기 가능한 검증 자료**다. 제품 소스로 승격하지 않는다.
 
-- 단일 앱 `.docs/prototype/**` 또는 복수 앱 `.docs/{앱}/prototype/**`의 HTML·CSS·JS를
+- 단일 앱 `.ai-docs/prototype/**` 또는 복수 앱 `.ai-docs/{앱}/prototype/**`의 HTML·CSS·JS를
   제품 디렉터리로 복사하지 않는다.
 - 프로토타입 승인 후 실제 구현으로 넘어갈 때는 **승인된 디자인 결정과 화면
   명세만** 전달한다. 코드는 전달하지 않는다.
@@ -393,12 +402,12 @@ function renderData(data) {
 
 프로젝트 유형(STEP 0-B)과 사용자(STEP 0-C)에 따라 산출물 디렉토리 위치를 결정한다:
 
-- **단일 앱**: `.docs/prototype/{사용자}/{PREFIX}-{번호}/` 하위에 생성
-- **복수 앱**: `.docs/{앱}/prototype/{사용자}/{PREFIX}-{번호}/` 하위에 생성
+- **단일 앱**: `.ai-docs/prototype/{사용자}/{PREFIX}-{번호}/` 하위에 생성
+- **복수 앱**: `.ai-docs/{앱}/prototype/{사용자}/{PREFIX}-{번호}/` 하위에 생성
 
 예시 (단일앱):
 ```
-.docs/prototype/developer/SFR-019/
+.ai-docs/prototype/developer/SFR-019/
 ├── display/
 ├── data/
 ├── css/
@@ -409,7 +418,7 @@ function renderData(data) {
 복수 앱 예시는 대상 앱을 경로에 반드시 포함한다:
 
 ```
-.docs/portal/prototype/developer/SFR-019/
+.ai-docs/portal/prototype/developer/SFR-019/
 ```
 
 - 같은 경로에 디렉토리가 이미 존재하면 **갱신 여부를 사용자에게 확인**한다.

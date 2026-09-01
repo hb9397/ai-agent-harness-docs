@@ -11,14 +11,23 @@ description: >
 allowed-tools: Read, Glob, Write, Agent
 ---
 
+## 문서 루트 계약
+
+이 스킬이 하네스 문서를 읽거나 쓸 때 사용하는 정본은 `.ai-docs/`뿐이다. 작업 전에
+`.ai-docs/`와 이전 `.docs/`의 존재를 확인한다. `.docs/`만 있거나 두 경로가 함께
+있으면 하네스 문서를 읽거나 쓰지 않고 `harness-setup`의 명시적 문서 루트 이관·충돌
+해결을 먼저 요청한다. 이전 경로를 호환 별칭으로 추측하지 않는다. 애플리케이션 소스
+작업 자체의 권한과 가능 여부는 이 문서 루트 판정으로 제한하지 않는다.
+
+
 # 설계 문서 도출 (design-doc)
 
 이 스킬이 호출되면 아래 워크플로우를 순서대로 실행한다.
 결과 문서는 대화창에 바로 출력한다. (별도 .md 파일 생성 금지 — 사용자가 요청할 때만 저장)
 
 파일 저장이 승인되면 산출물 위치·소유권·인계는
-`@.docs/instruction/artifact-output-routing-instruction.md`를 따른다.
-복수 앱은 `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를
+`@.ai-docs/instruction/artifact-output-routing-instruction.md`를 따른다.
+복수 앱은 `@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md`를
 읽고 대상 앱 범위를 유지한다.
 
 > 이 스킬의 OUTPUT은 AI Agent가 개발에 활용하는 Context 문서 / Instruction / Rule / PRD가 될 수 있음을 항상 염두에 두고 작성한다.
@@ -32,7 +41,7 @@ allowed-tools: Read, Glob, Write, Agent
 
 ```
 design-doc OUTPUT
-    ├─→ context-doc      →  CLAUDE.md + AGENTS.md + .docs/instruction/*-instruction.md
+    ├─→ context-doc      →  앱 context + .ai-docs/{앱}/instruction/*-instruction.md
     ├─→ impl-fe-be-doc   →  FE/BE 페어 또는 화면 중심 작업지침서
     ├─→ impl-doc         →  범용 단계별 구현 지침서
     ├─→ impl-reuse-scan  →  Phase/태스크 시작 직전 공통 자산 발견·보고(자동 반영 금지)
@@ -47,10 +56,36 @@ OUTPUT 문서를 저장했다면 해당 파일을 그대로 다음 스킬에 넘
 ## 저장 위치 원칙
 
 - 설계 문서를 파일로 저장할 때는 반드시 대상 프로젝트 루트를 먼저 확정한다.
-- **단일 애플리케이션**: `{project}/.docs/context-base/DESIGN.md`
-- **복수 애플리케이션**: `{project}/.docs/{앱 디렉토리명}/context-base/DESIGN.md` (예: `.docs/fe-acro-portal/context-base/DESIGN.md`)
+- **단일 애플리케이션**: `{project}/.ai-docs/context-base/DESIGN.md`
+- **복수 애플리케이션**: `{project}/.ai-docs/{앱 디렉토리명}/context-base/DESIGN.md` (예: `.ai-docs/fe-acro-portal/context-base/DESIGN.md`)
 - 사용자가 다른 파일명을 지정해도 위 `context-base/` 하위에 저장한다.
 - 상위 워크스페이스 루트에서 실행 중이어도, 대상 프로젝트가 따로 있으면 상위 루트에 저장하지 않는다.
+
+---
+
+## 선택 권한 정책 연계
+
+`.ai-docs/harness/access-control/policy.json`이 없으면 기존 설계·저장 흐름을 그대로
+수행한다. `project-write-access`는 선택 기능이며 이 스킬이 자동 호출하거나 권한
+설정을 요구하지 않는다.
+
+서명 정책이 있으면 Step 0-1에서 대상 앱과 `DESIGN.md` 경로를 확정한 직후 다음을
+수행한다.
+
+1. `.ai-docs/harness/access-control/write-access-instruction.md`를 읽는다.
+2. `.ai-docs`를 추적하는 Git 경계의 `harness.writeAccess.provider`,
+   `harness.writeAccess.host`, `harness.writeAccess.account`를 현재 신원으로 읽는다.
+3. 프로젝트에 설치된 `write_access_guard.py check-path`에 대상 `DESIGN.md`의 정확한
+   경로와 현재 provider·host·account를 전달한다. guard가 정책 서명과 생성 목록까지
+   검증하지 못하면 저장하지 않는다.
+4. `pm-pl`은 모든 앱, `app-doc-lead`는 정책에 배정된 앱에서만 진행한다. `admin`은
+   앱 문서 권한을 상속하지 않으므로 `admin`만 가진 계정은 거부한다. 같은 사람이
+   `pm-pl`도 맡는다면 두 역할이 정책에 각각 있어야 한다.
+5. 권한이 없으면 정책을 고치거나 역할을 추측하지 않고, 대상 앱·파일과 필요한 역할을
+   알려준 뒤 초안만 대화창에 반환한다.
+
+guard의 `decision=confirm`은 권한은 있으나 앱 핵심 문서 쓰기 전에 별도 승인이
+필요하다는 뜻이다. 이 승인은 Step 4의 일반 문서 검토·저장 질문과 합치지 않는다.
 
 ---
 ## 워크플로우
@@ -69,8 +104,24 @@ OUTPUT 문서를 저장했다면 해당 파일을 그대로 다음 스킬에 넘
 
 1. 현재 수행 위치에서 프로젝트 구조를 탐색한다 (git repo 경계, 하위 앱 폴더 후보 스캔).
 2. **단일 애플리케이션 프로젝트**인지 **복수 애플리케이션 프로젝트**인지 판정한다.
-3. 판정 결과 + 적용 대상 애플리케이션(폴더)을 사용자에게 **반드시 재확인**한다.
-4. 확인된 범위 밖은 건드리지 않는다.
+3. 상위 공개 workflow가 `confirmed_scope`를 전달했다면 프로젝트 루트, 단일·복수 앱
+   판정, 대상 앱, `DESIGN.md` 경로가 현재 탐색 결과와 모두 일치하는지 확인한다.
+4. 일치하는 `confirmed_scope`에는 이미 받은 범위 승인을 재사용하고 같은 질문을 반복하지
+   않는다. 값이 없거나 하나라도 다르면 판정 결과와 적용 대상 애플리케이션을 사용자에게
+   **반드시 재확인**한다.
+5. 확인된 범위 밖은 건드리지 않는다.
+
+`confirmed_scope`는 아래 필드를 모두 가진 공개 handoff 계약이다. 이 계약은 범위 확인만
+재사용하며 Step 4의 일반 저장 승인과 권한 정책의 앱 핵심 문서 별도 승인을 대신하지 않는다.
+
+```text
+confirmed_scope.project_root = {정규화한 프로젝트 루트}
+confirmed_scope.project_type = single-app | multi-app
+confirmed_scope.target_app = {애플리케이션 식별자}
+confirmed_scope.design_path = {.ai-docs 아래 정규화 상대경로}
+confirmed_scope.instruction_root = {.ai-docs 아래 정규화 상대경로}
+confirmed_scope.user_approved = true
+```
 
 > ✋ **확인 게이트**
 >
@@ -142,9 +193,27 @@ OUTPUT 초안을 대화창에 출력하고 사용자에게 확인을 요청한�
 > "위 설계 문서를 검토해 주세요. 수정할 부분이 있으면 말씀해 주세요. 파일로 저장할까요?"
 
 수정 요청 시 해당 섹션만 재작성한다. 파일 저장은 승인 후 진행한다.
+권한 정책이 활성화되어 guard가 `decision=confirm`을 반환했다면 저장 도구를 호출하기
+직전에 다음 내용을 보여주고 이 변경에 한해 별도 승인을 받는다. 직접 호출뿐 아니라
+다른 스킬이 `design-doc`을 선택한 경우에도 생략하지 않는다.
+
+> **앱 설계 기준 문서 편집 확인**
+>
+> - 대상 앱: `{애플리케이션}`
+> - 대상 파일: `{정확한 DESIGN.md 경로}`
+> - 문서 역할: `DESIGN.md`는 앱의 요구사항, 범위, 아키텍처, 데이터와 인수 기준을
+>   정하는 설계 기준 문서입니다.
+> - 현재 권한: `{pm-pl / app-doc-lead와 앱 범위}`
+> - 변경 내용과 이유: `{신규 작성 또는 갱신 요약}`
+>
+> 위 변경을 이 파일에 반영할까요? **(승인 / 수정 / 취소)**
+
+대상 경로·내용 요약·현재 역할이 달라지면 이전 답변을 재사용하지 않는다. AI 훅의
+`permissionDecision=ask`도 같은 확인을 요구하므로 생략하지 않는다.
+
 저장 승인 시:
-- **단일 앱**: 기본 경로 `{project}/.docs/context-base/DESIGN.md`
-- **복수 앱**: 기본 경로 `{project}/.docs/{앱 디렉토리명}/context-base/DESIGN.md`
+- **단일 앱**: 기본 경로 `{project}/.ai-docs/context-base/DESIGN.md`
+- **복수 앱**: 기본 경로 `{project}/.ai-docs/{앱 디렉토리명}/context-base/DESIGN.md`
 - `context-base/` 디렉토리가 없으면 생성한다.
 - 동일 경로에 파일이 이미 있으면 **갱신**(덮어쓰기 전 사용자 확인)한다.
 
@@ -166,7 +235,7 @@ handoff_completed = false
 `suppress_child_handoff = true`로 유지하고 초안과 Step 4 검증 결과만 반환한다.
 
 최종 검증된 Markdown의 정규화 상대경로와 각 파일 SHA-256, profile 이름을 정렬해
-`artifact_bundle_fingerprint`를 계산한다. `.docs/.harness/humanize-handoffs.json`
+`artifact_bundle_fingerprint`를 계산한다. `.ai-docs/.harness/humanize-handoffs.json`
 원자적 ledger에 같은 fingerprint의 `proposed`, `skipped`, `rejected`, `applied`,
 `revalidated` 완료 기록이 있으면 새 session에서도 다시 제안하지 않는다. 결정 시
 bundle ID, owner, 파일 hash, 시각을 기록하고 승인 반영 뒤에는 `applied`와

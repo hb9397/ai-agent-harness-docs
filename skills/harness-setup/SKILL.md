@@ -33,7 +33,7 @@ design-doc, context-doc 등 후속 스킬 사용 가능
 |------|------|
 | 사용자 스킬 설치·업데이트 | `harness-kit` 플러그인 설치·업데이트가 담당 |
 | 프로젝트 `.ai-docs/` 구조 | harness-setup이 생성·갱신 |
-| 루트 `AGENTS.md` | harness-setup이 공통 컨텍스트 정본과 앱·instruction 읽기 지도를 생성·갱신 |
+| 루트 `AGENTS.md` | harness-setup이 실행용 공통 컨텍스트와 앱·instruction 읽기 지도를 생성·갱신. 복수 앱의 Git 관리 원본은 `.ai-docs/root-context/AGENTS.md` |
 | 루트 `CLAUDE.md` | harness-setup이 `@AGENTS.md` bridge와 Claude 전용 delta만 생성 |
 | `.agents/skills`, `.claude/skills`, `skills`의 사용자 스킬 local copy | 생성·동기화 금지. 기존 `*/SKILL.md`만 읽기 전용으로 보고 |
 
@@ -216,10 +216,10 @@ Step 2 확인 결과에 따라 분기한다.
 2. `.ai-docs/` 디렉토리 생성 (별도 git 레포로 관리 예정)
 3. 앱별 빈 컨텍스트 파일 생성: `.ai-docs/{앱}-context.md`
 4. 앱별 하위 구조 생성: `.ai-docs/{앱}/instruction/`
-5. `.ai-docs/root-context/` 생성 (루트 컨텍스트 파일 복사본 보관용)
-6. 루트 `AGENTS.md` 생성 (git 미관리, 이 스킬이 단독 관리)
+5. `.ai-docs/root-context/` 생성 (루트 컨텍스트의 Git 관리 원본 보관용)
+6. 루트 `AGENTS.md` 실행본 생성 (git 미관리, 이 스킬이 단독 관리)
 7. 루트 `CLAUDE.md` bridge 생성 (git 미관리, 이 스킬이 단독 관리)
-8. `.ai-docs/root-context/AGENTS.md`, `.ai-docs/root-context/CLAUDE.md` 복사본 생성
+8. `.ai-docs/root-context/AGENTS.md`, `.ai-docs/root-context/CLAUDE.md` Git 관리 원본 생성
 9. `.ai-docs/` 안내·정책 파일 생성: `.ai-docs/README.md`(구조·산출물 안내), `.ai-docs/.gitignore`(로컬 전용 영역 지정), `.ai-docs/_inbox/`(에이전트 임시 입력 공간, 내용 git 미추적), 앱별 `artifact-output-routing-instruction.md` 참조 위치 예약
 
 루트 `CLAUDE.md`/`AGENTS.md` 작성 시 `templates/root-context.template` 참조.
@@ -244,7 +244,8 @@ Step 2 확인 결과에 따라 분기한다.
 >
 > 📌 멀티플랫폼 안내:
 > - 스킬은 프로젝트 local copy가 아니라 `harness-kit` 플러그인으로 사용합니다.
-> - `AGENTS.md`는 공통 정본, `CLAUDE.md`는 `@AGENTS.md` bridge입니다.
+> - 복수 앱의 `.ai-docs/root-context/AGENTS.md`는 Git 관리 원본이고, 루트
+>   `AGENTS.md`는 이 원본을 반영한 실행본입니다. `CLAUDE.md`는 `@AGENTS.md` bridge입니다.
 > - `.agents/skills/`, `.claude/skills/`, `skills/`에는 사용자 스킬을 만들거나 동기화하지 않았습니다.
 
 → Step 6으로 이동.

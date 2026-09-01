@@ -14,7 +14,7 @@ format. It remains readable after any setup tool or plugin has been removed.
 
 ## Host-local adapters
 
-The shared bundle is under `.docs/harness/`; host-local files are intentionally
+The shared bundle is under `.ai-docs/harness/`; host-local files are intentionally
 separate:
 
 - Claude: `.claude/settings.json` and `.claude/hooks/claude-pre-tool-use.ps1`
@@ -27,7 +27,7 @@ it emits the identical proposed local targets and does not write files.
 ## Write guard boundary
 
 The adapters share a project-owned path guard. It permits existing canonical
-documents, approved app source, `.docs/_inbox/**`, and declared exceptions. A
+documents, approved app source, `.ai-docs/_inbox/**`, and declared exceptions. A
 new managed document requires a path-bound, content-hash-bound, one-shot marker
 created with `approve-artifact.ps1 -Approve`; it expires and is consumed after
 one exact write. Dynamic shell targets are recorded as bypass evidence, not
@@ -41,12 +41,12 @@ best-effort limits rather than a complete security boundary.
 `-Promote -ApprovePromotion`, text formats (`.md`, `.mdx`, `.txt`, `.rst`,
 `.adoc`, `.asciidoc`) are UTF-8 normalized and use a marker-aware merge that
 preserves existing unmanaged text. JSON/YAML, images, and PDF stay in
-`.docs/_inbox/{artifact-bundle-id}/artifact-manifest.json`; the tool refuses a
+`.ai-docs/_inbox/{artifact-bundle-id}/artifact-manifest.json`; the tool refuses a
 lossy automatic conversion or canonical promotion for those fixed formats.
 
 ## Recovery and review
 
 Do not copy an adapter or configuration from one host to the other. Inspect the
 host-specific input contract in its adapter, review the plan, then apply the
-approved host-specific merge workflow. A proposal from `.docs/_inbox/` remains
+approved host-specific merge workflow. A proposal from `.ai-docs/_inbox/` remains
 non-canonical until its provenance and target path are explicitly approved.

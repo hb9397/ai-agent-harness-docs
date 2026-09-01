@@ -1,7 +1,9 @@
 # Git 서비스와 host 지원 범위
 
-필요한 provider·host 섹션만 읽는다. 기능은 서비스 요금제와 설치 버전에 따라 달라질
-수 있으므로 Apply 직전에 공식 문서를 다시 확인한다.
+필요한 provider·host 섹션만 읽는다. 이 문서는 CODEOWNERS 동작, 참여자 조회와 외부
+관리 정책의 한계를 확인하기 위한 참고 자료다. `project-write-access`는 원격 브랜치
+보호·검토·병합 설정을 변경하지 않는다. 프로젝트 관리자가 서비스 설정을 별도로
+운영할 때는 요금제와 설치 버전에 맞는 공식 문서를 다시 확인한다.
 
 생성기는 `admin`과 `app-doc`처럼 명시적인 문서 소유자가 있는 경로만 CODEOWNERS
 관리 블록에 넣는다. 역할 등록이 없는 일반 기여자에게 열린 `team` 경로에는 owner
@@ -16,7 +18,8 @@
 - PR에서 code owner 승인을 요구하려면 브랜치 보호 또는 ruleset의 해당 규칙이
   필요하다.
 - code owner 사용자·팀은 저장소 write 권한이 있어야 한다.
-- 서버 설정 조회·변경은 저장소 관리자 권한과 API 인증이 필요하다.
+- 서버 설정 조회·변경에는 저장소 관리자 권한과 API 인증이 필요하지만, 이 스킬은
+  참여자·호출자 권한 조회만 수행하고 설정 변경 API는 호출하지 않는다.
 - 참여자는 `List repository collaborators`의 `affiliation=all`과 유효 permission으로
   조회한다. 조직·팀을 통해 접근한 사용자도 결과에 포함되며 페이지를 끝까지 읽는다.
 
@@ -56,8 +59,10 @@
   정규식으로 만들며, 새 `.ai-docs` 경로는 정책에 추가하기 전까지 원격 CODEOWNERS 완전
   보호 대상으로 주장하지 않는다.
 - branch protection에서 code owner approval을 켜야 PR 병합 제한이 생긴다.
-- 저장소 소유자·관리자 권한과 API 토큰이 필요하다. 설치 버전의 OpenAPI에서
-  `block_on_codeowner_reviews`, push·merge allowlist 필드 지원을 확인한다.
+- 저장소 소유자·관리자 권한과 API 토큰이 있어야 서버 규칙을 조회·변경할 수 있다.
+  프로젝트 관리자가 별도로 설정할 때는 설치 버전의 OpenAPI에서
+  `block_on_codeowner_reviews`, push·merge allowlist 필드 지원을 확인한다. 이 스킬은
+  해당 변경 API를 호출하지 않는다.
 - 참여자는 collaborator, 저장소에 연결된 team과 team member, 사용자별 repository
   permission을 합쳐 조회한다. team 목록만 사람 목록으로 사용하지 않는다.
 

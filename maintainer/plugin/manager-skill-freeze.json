@@ -73,7 +73,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/run_evals.py",
-          "sha256": "016a0155eb428b5dfc9504f7f241264f73a1bb3db2f951c3034fe7a3c0d6aa10"
+          "sha256": "a8e73bcc4a50534c23024c6e50dec533b6df51f696bac81e83a416678b77ba4f"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/references/plugin-structure.md",
@@ -81,7 +81,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/build_plugin.py",
-          "sha256": "2ce47881c6fac3a0011847ce7c7b47c0bd5c02456de0427a45d31234669126b3"
+          "sha256": "0b5f2d5dd30440aaf9c0ba972e5df38857bc81d36fdf498b36ff53e7d3c3b978"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/freeze_manager_inventory.py",
@@ -89,7 +89,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/plugin_common.py",
-          "sha256": "22fa5c96fd7b99f9a65ecab9a86d680218c42978fbb0f4459badd50e5bb8de65"
+          "sha256": "6e7b3a4b936390740a3c148a9ce0fe19ee5a50ecb483b5f9e04484fa01a9eb27"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/run_all_skill_evals.py",
@@ -101,7 +101,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/smoke_cli_install.py",
-          "sha256": "fa918bffda4d939651991e4a1c626bc37eab1efed1595cfb78a731a931e4438e"
+          "sha256": "099a867ac2f02a63c14b51d4b7596b04e9ece281056f77db0ad89da8d595b830"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/sync_manager_projections.py",
@@ -109,7 +109,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/validate_plugin.py",
-          "sha256": "0682016f1e95ae000d740ce333504d74601ec03c1e3def04958a5d652bb63c31"
+          "sha256": "2d3b9d5831449aea4ee82ac92b9f226b783d2a1df8f84e1414ecfaedd3fe469c"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/verify_install_surfaces.py",

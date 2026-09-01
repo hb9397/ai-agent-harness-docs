@@ -9,6 +9,15 @@ description: >
 allowed-tools: Read, Write, Glob, Agent
 ---
 
+## 문서 루트 계약
+
+이 스킬이 하네스 문서를 읽거나 쓸 때 사용하는 정본은 `.ai-docs/`뿐이다. 작업 전에
+`.ai-docs/`와 이전 `.docs/`의 존재를 확인한다. `.docs/`만 있거나 두 경로가 함께
+있으면 하네스 문서를 읽거나 쓰지 않고 `harness-setup`의 명시적 문서 루트 이관·충돌
+해결을 먼저 요청한다. 이전 경로를 호환 별칭으로 추측하지 않는다. 애플리케이션 소스
+작업 자체의 권한과 가능 여부는 이 문서 루트 판정으로 제한하지 않는다.
+
+
 # Design Prototype Docs — 프로토타입 화면 설계 문서 생성기
 
 기능요구사항, RFP/SFR 원문, 사용자가 정리한 요구사항을 분석하여,
@@ -16,8 +25,8 @@ allowed-tools: Read, Write, Glob, Agent
 생성하는 스킬이다.
 
 저장 경로·소유권·인계는 단일 앱의
-`@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
-`@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를 따른다.
+`@.ai-docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
+`@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md`를 따른다.
 
 직접 호출할 때는 Codex에서 `$design-prototype-docs`, Claude Code에서
 `/harness-kit:design-prototype-docs`를 사용한다.
@@ -65,7 +74,7 @@ design-prototype-docs OUTPUT (.md)
 화면을 명세하기 전에 참조할 디자인 시스템이 있는지 확인한다.
 
 1. 기존 제품의 디자인 토큰, 테마, 컴포넌트 라이브러리를 찾는다.
-2. 단일 앱은 `.docs/design-system/**`, 복수 앱은 `.docs/{앱}/design-system/**`에
+2. 단일 앱은 `.ai-docs/design-system/**`, 복수 앱은 `.ai-docs/{앱}/design-system/**`에
    이미 정해진 결정이 있으면 읽고 그대로 따른다.
 3. 둘 다 없고 디자인 방향부터 정해야 하면 `ui-ux-pro-max` 결과를 입력으로
    받는다. 이 문서에서 색·타이포그래피·간격 체계를 새로 발명하지 않는다.
@@ -369,12 +378,12 @@ STEP 0-C에서 확인한 식별자를 폴더명에 사용한다.
 
 프로젝트 유형(STEP 0-B)과 사용자(STEP 0-D)에 따라 분기한다:
 
-- **단일 앱**: `.docs/prototype/{사용자}/{식별자}/design-doc.md`
-- **복수 앱**: `.docs/{앱}/prototype/{사용자}/{식별자}/design-doc.md`
+- **단일 앱**: `.ai-docs/prototype/{사용자}/{식별자}/design-doc.md`
+- **복수 앱**: `.ai-docs/{앱}/prototype/{사용자}/{식별자}/design-doc.md`
 
 예시:
-- 단일앱: `.docs/prototype/developer/SFR-019/design-doc.md`
-- 복수앱: `.docs/portal/prototype/developer/SFR-019/design-doc.md`
+- 단일앱: `.ai-docs/prototype/developer/SFR-019/design-doc.md`
+- 복수앱: `.ai-docs/portal/prototype/developer/SFR-019/design-doc.md`
 
 ### 저장 시 규칙
 
@@ -417,7 +426,7 @@ bundle에 대해서만 `humanize-korean`의 `document-refinement` 프로필을 �
 제안한다.
 
 최종 검증된 Markdown의 정규화 상대경로와 각 파일 SHA-256, profile 이름을 정렬해
-`artifact_bundle_fingerprint`를 계산한다. `.docs/.harness/humanize-handoffs.json`
+`artifact_bundle_fingerprint`를 계산한다. `.ai-docs/.harness/humanize-handoffs.json`
 원자적 ledger에서 같은 fingerprint의 완료 상태(`proposed`, `skipped`, `rejected`,
 `applied`, `revalidated`)를 찾으면 새 session에서도 재제안하지 않는다. 새 결정은
 bundle ID, owner, 파일 hash, 시각과 함께 기록하고 승인 적용 뒤에는 `applied`와

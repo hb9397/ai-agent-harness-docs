@@ -5,9 +5,9 @@
 ## 릴리스 후보
 
 - 플러그인 ID: `harness-kit`
-- 버전: `0.5.0`
-- 아카이브: `plugins/harness-kit-0.5.0.zip`
-- 아카이브 SHA-256: `3d9c244c5f8788eb0bd010bc37098ae1910b4dd1a0b960afe01059af3dad1b62`
+- 버전: `0.6.0`
+- 아카이브: `plugins/harness-kit-0.6.0.zip`
+- 아카이브 SHA-256: `05254286fb1ed8266843230ae6839dbaeadd3088791adb660f17749204445a2f`
 - Codex 물리 스킬 수: 20
 - Codex 물리 에이전트 수: 0
 - Claude 물리 스킬 수: 20
@@ -50,7 +50,7 @@
 
 - 직접 테스트 기록: `maintainer/plugin/manual-surface-test-template.md`를 `maintainer/plugin/manual-evidence/YYYYMMDD/{surface}.md`로 복사하고 인터페이스마다 새로운 픽스처 하나를 보존한다.
 - 네 인터페이스 모두: `harness-setup`과 `humanize-korean`을 호출하고, 제안 전용 동작과 생성된 허용 목록을 검증하며, `.agents/skills`, `.claude/skills`, `skills`가 생성되지 않았는지 확인하고 관리 블록 확장을 보존한다.
-- 네 인터페이스 모두: 새 작업/세션을 다시 열어 같은 산출물 지문을 다시 제안하지 않는지 확인하고 `.docs/.harness/humanize-handoffs.json` 이벤트를 보존한다.
+- 네 인터페이스 모두: 새 작업/세션을 다시 열어 같은 산출물 지문을 다시 제안하지 않는지 확인하고 `.ai-docs/.harness/humanize-handoffs.json` 이벤트를 보존한다.
 - 네 인터페이스 모두: 제안된 쓰기 전에 취소하고 원본 해시와 사용자 감시 토큰이 보존되는지 확인한다.
 - Codex 앱: 후보 마켓플레이스를 설치하고 재시작/새 작업에서 표식/버전을 확인한 뒤 vN+1로 업데이트한다.
 - Claude 앱: 로컬 호스트의 캐시/버전을 확인하고 앱을 재시작해 새 세션을 연다. SSH를 지원 인터페이스로 선언한 경우에만 SSH에서도 반복한다. 지원하지 않는 클라우드/WSL 경로를 문서화한다.

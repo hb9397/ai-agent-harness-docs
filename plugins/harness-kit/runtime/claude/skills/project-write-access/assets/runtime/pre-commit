@@ -5,4 +5,4 @@ if [ -z "$project_root" ]; then
   echo "project-write-access: harness.writeAccess.projectRoot is missing" >&2
   exit 2
 fi
-exec python "$project_root/.docs/harness/access-control/hooks/write_access_guard.py" pre-commit --project-root "$project_root"
+exec python "$project_root/.ai-docs/harness/access-control/hooks/write_access_guard.py" pre-commit --project-root "$project_root"

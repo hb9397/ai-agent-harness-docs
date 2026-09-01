@@ -1,8 +1,17 @@
 ---
 name: doc-audit
-description: "프로젝트 문서와 실제 코드의 괴리, 의존성·아키텍처·규칙 drift를 읽기 전용으로 감사하고 AGENTS.md·CLAUDE.md·.docs 최신화 제안을 만들 때 사용한다. 사용자가 '문서와 코드가 맞는지 감사', '의존성/아키텍처 규칙 drift 확인', '에이전트 문서 최신화 제안'을 요청하면 적용하며, 승인 전에는 문서를 수정하지 않는다."
+description: "프로젝트 문서와 실제 코드의 괴리, 의존성·아키텍처·규칙 drift를 읽기 전용으로 감사하고 AGENTS.md·CLAUDE.md·.ai-docs 최신화 제안을 만들 때 사용한다. 사용자가 '문서와 코드가 맞는지 감사', '의존성/아키텍처 규칙 drift 확인', '에이전트 문서 최신화 제안'을 요청하면 적용하며, 승인 전에는 문서를 수정하지 않는다."
 allowed-tools: Read, Glob, Grep, Agent
 ---
+
+## 문서 루트 계약
+
+이 스킬이 하네스 문서를 읽거나 쓸 때 사용하는 정본은 `.ai-docs/`뿐이다. 작업 전에
+`.ai-docs/`와 이전 `.docs/`의 존재를 확인한다. `.docs/`만 있거나 두 경로가 함께
+있으면 하네스 문서를 읽거나 쓰지 않고 `harness-setup`의 명시적 문서 루트 이관·충돌
+해결을 먼저 요청한다. 이전 경로를 호환 별칭으로 추측하지 않는다. 애플리케이션 소스
+작업 자체의 권한과 가능 여부는 이 문서 루트 판정으로 제한하지 않는다.
+
 
 # 문서 감사 (doc-audit)
 
@@ -36,8 +45,8 @@ allowed-tools: Read, Glob, Grep, Agent
 4. 확인된 범위 밖은 건드리지 않는다.
 
 복수 앱인 경우 분석 대상 문서 경로가 달라진다:
-- (단일앱) `.docs/instruction/**/*.md`, `CLAUDE.md`, `AGENTS.md`
-- (복수앱) `.docs/{앱}/instruction/**/*.md`, `.docs/root-context/CLAUDE.md`, `.docs/root-context/AGENTS.md`, 루트 `CLAUDE.md`/`AGENTS.md`
+- (단일앱) `.ai-docs/instruction/**/*.md`, `CLAUDE.md`, `AGENTS.md`
+- (복수앱) `.ai-docs/{앱}/instruction/**/*.md`, `.ai-docs/root-context/CLAUDE.md`, `.ai-docs/root-context/AGENTS.md`, 루트 `CLAUDE.md`/`AGENTS.md`
 
 ---
 
@@ -55,7 +64,7 @@ allowed-tools: Read, Glob, Grep, Agent
 | `README.md` | 프로젝트 개요 및 전체 구조 (핵심) |
 | `AGENTS.md` | 공통 Agent 지침 정본 |
 | `CLAUDE.md` | Claude Code bridge (`@AGENTS.md` + Claude 전용 차이) |
-| `.docs/instruction/**/*.md` | 세부 코딩 규칙, 아키텍처 가이드 등 (있는 경우) |
+| `.ai-docs/instruction/**/*.md` | 세부 코딩 규칙, 아키텍처 가이드 등 (있는 경우) |
 
 ---
 

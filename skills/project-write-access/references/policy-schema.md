@@ -117,13 +117,14 @@ Plan과 Apply에 전달하는 JSON은 비밀정보를 담지 않는다. `subject
 - `developer`는 참여자를 명시적으로 보여주기 위한 표기다. 배정하지 않았다는 이유로
   앱 소스 코드나 `team` 문서 범위를 차단하지 않는다.
 - repository는 논리 프로젝트에 속한 모든 형상관리 단위를 기록한다. 저장소 수는 앱
-  수보다 많을 수 있다. `purpose=docs`만 원격 문서 승인 정책 적용 후보이며 source
-  저장소는 참여자 조회와 앱 매핑에 사용한다.
+  수보다 많을 수 있다. `purpose=docs`의 `protected_branches`와 `server_policy`는
+  프로젝트 관리자가 외부에서 정한 원격 정책을 설명하는 메타데이터일 뿐, 스킬이 적용할
+  명령이 아니다. source 저장소는 참여자 조회와 앱 매핑에 사용한다.
 - Gitea repository의 `cli_login`은 해당 host로 인증된 `tea` 로그인 프로필 이름이다.
   토큰이 아니며 저장소마다 다른 프로필을 쓸 수 있다. 없으면 Gitea 참여자 조회는
   실패 범위로 보고하되 기존 정책을 추측으로 채우지 않는다.
-- `protected_branches`는 프로젝트가 이미 정한 값만 넣는다. 스킬이 `dev`·`main`
-  정책을 새로 정하지 않는다.
+- `protected_branches`는 프로젝트가 이미 정한 값만 기록한다. 스킬이 `dev`·`main`
+  정책이나 PR·MR 병합 방식을 새로 정하거나 원격 서비스에 적용하지 않는다.
 - `path_rules`를 생략하면 앱과 문서 종류를 기준으로 기본 규칙을 만든다. 명시 규칙에
   잡히지 않은 새 `.ai-docs` 보호 문서는 낮은 우선순위의 admin 기본 규칙이 맡는다.
 - `write_scope`는 `admin`, `app-doc`, `team`이다. `app-doc`에는 대상 앱을 함께 적는다.

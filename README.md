@@ -22,13 +22,13 @@
 현재 정본과 배포본:
 
 - 사용자 스킬 정본: `skills/`의 20종. `project-write-access`를 포함한다.
-- 현재 main 배포 후보: `harness-kit` `0.5.0`
-- 배포 후보 archive: `plugins/harness-kit-0.5.0.zip` (`3d9c244c5f8788eb0bd010bc37098ae1910b4dd1a0b960afe01059af3dad1b62`)
-- `0.5.0` Codex runtime: 20 skills / 0 agents
-- `0.5.0` Claude runtime: 20 skills / 0 agents
-- `project-write-access`는 `0.5.0` 배포 후보에 포함된다. 공유 정책 설정·변경은 관리자만 명시적으로 수행하고, 정책 생성 뒤의 PC별 로컬 등록은 각 참여자가 수행한다.
+- 현재 main 배포 후보: `harness-kit` `0.6.0`
+- 배포 후보 archive: `plugins/harness-kit-0.6.0.zip` (`05254286fb1ed8266843230ae6839dbaeadd3088791adb660f17749204445a2f`)
+- `0.6.0` Codex runtime: 20 skills / 0 agents
+- `0.6.0` Claude runtime: 20 skills / 0 agents
+- `project-write-access`는 `0.6.0` 배포 후보에 포함된다. 공유 정책 설정·변경은 관리자만 명시적으로 수행하고, 정책 생성 뒤의 PC별 로컬 등록은 각 참여자가 수행한다.
 - 관리자 스킬: 3종, 이 저장소 안에서만 사용
-- 게시된 최신 stable은 [`v0.4.3`](https://github.com/hb9397/harness-kit/releases/tag/v0.4.3)이다. `0.5.0`은 main 배포 후보이며 아직 tag·GitHub Release를 만들지 않았다. `v0.4.3`의 게시 증적은 `maintainer/plugin/publish.json`에 보존한다.
+- 게시된 최신 stable은 [`v0.4.3`](https://github.com/hb9397/harness-kit/releases/tag/v0.4.3)이다. `0.6.0`은 main 배포 후보이며 아직 tag·GitHub Release를 만들지 않았다. 게시 결과는 `maintainer/plugin/publish.json`에 보존한다.
 
 ### 함께 사용해볼 만한 플러그인
 
@@ -58,7 +58,7 @@
 
 ### Claude
 
-- Claude Code CLI: `claude plugin marketplace add <이 저장소 URL 또는 루트 경로>` 후 `claude plugin install harness-kit@hb9397`
+- Claude Code CLI: `claude plugin marketplace add <이 저장소 URL·owner/repo 또는 ./로 시작하는 로컬 상대경로>` 후 `claude plugin install harness-kit@hb9397`
 - 설치 후 대화형 session에서 `/reload-plugins`를 실행하고 `/harness-kit:harness-setup`처럼 namespaced skill을 명시 호출한다.
 - Claude 앱: **설정 → 플러그인 → 추가 → 마켓플레이스 추가**에서 **URL**을 선택한다. GitHub 저장소 화면의 **Code → Local → HTTPS**에서 복사한 `.git` 포함 URL `https://github.com/hb9397/harness-kit.git`을 입력하고 동기화한다. 목록에 보이지 않으면 같은 사용자 프로필의 Claude Code CLI에서 marketplace를 등록한 뒤 앱을 다시 열어 설치하고 새 session을 연다.
 - Claude Chat/Cowork는 Code 플러그인과 별도 인터페이스다. 설치·권한·cache는 별도로 검증한다.
@@ -143,7 +143,7 @@ flowchart TD
 ### 0단계 — 환경 준비
 
 1. Codex 또는 Claude에 플러그인을 설치하고 새 task/session을 연다.
-2. 모든 참여자는 자기 작업 환경에서 `harness-setup`을 최초 1회 실행한다. 플러그인 공지가 하네스 갱신을 요구하거나 앱 경계가 바뀌거나 문서 골격을 복구할 때만 update mode로 다시 실행한다.
+2. 모든 참여자는 자기 작업 환경에서 `harness-setup`을 최초 1회 실행한다. 플러그인 공지가 하네스 갱신을 요구하거나 앱 경계가 바뀌거나 문서 골격을 복구할 때만 update mode로 다시 실행한다. 서명 권한 정책이 활성화된 뒤 공유 루트·하네스 파일을 실제로 갱신하는 주체는 `admin`이며, 다른 참여자는 갱신된 파일을 받은 뒤 자기 환경의 읽기·로컬 연결 상태만 확인한다.
 3. 단일·복수 repo의 모든 참여자는 자기 PC에서 `git-scoped-account`를 최초 1회 명시 호출한다. `user.name`·`user.email`의 공통 config 출처와 저장소별 provider·host·login 표식을 확인한다. 새 PC·새 clone, 계정 변경이나 1단계 repo 추가 때 다시 실행한다.
 4. 문서 쓰기 권한을 분리한다면 원격 Git provider와 저장소, 참여자 계정이 먼저 준비돼야 한다. 관리자는 `project-write-access`를 명시 호출해 공유 정책을 설정한다. `harness-setup`과 Git 계정 등록을 마친 뒤, `design-doc`, `context-doc`, 앱 핵심 문서를 만드는 `harness-bootstrap`보다 먼저 수행한다.
 5. 공유 정책이 생긴 뒤에는 각 참여자가 자기 PC에서 `git-scoped-account`의 로컬 등록 분기를 수행한다. 이 단계는 관리자 키 없이 현재 clone의 Git 훅과 AI 쓰기 가드만 연결하며 공유 정책·CODEOWNERS·원격 설정은 바꾸지 않는다.
@@ -226,7 +226,7 @@ Markdown 산출물이 있으면 원 producer가 구조를 검증한 뒤 `humaniz
 | 항목 | 최초 | 다시 실행할 때 |
 |------|------|----------------|
 | 플러그인 설치 | 사용자 프로필에 설치 | 새 릴리스 적용 시 plugin update 후 새 session |
-| `harness-setup` | 모든 참여자가 자기 작업 환경에서 1회 | 플러그인 공지가 갱신을 요구하거나 앱 경계 변경·골격 복구가 필요할 때 |
+| `harness-setup` | 모든 참여자가 자기 작업 환경에서 1회 | 정책이 없으면 필요한 참여자가 갱신하고, 서명 정책 활성 뒤 공유 루트·하네스 갱신은 `admin`이 수행 |
 | Git 작성자·provider 계정 | 단일·복수 repo의 모든 참여자가 `git-scoped-account` 1회 | 새 PC·새 clone, 계정 변경 또는 컨테이너 바로 아래 repo 추가 때 |
 | `project-write-access` 공유 정책 | 권한 분리가 필요할 때 검증된 관리자가 설정 | 관리자·계정·역할·앱 배정·경로가 바뀔 때 |
 | 권한 정책의 PC별 로컬 등록 | 공유 정책 생성 뒤 각 참여자가 자기 PC에서 수행 | 새 PC·새 clone 또는 로컬 Git·AI 가드 연결이 바뀔 때 |

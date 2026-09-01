@@ -31,15 +31,15 @@ AI Agent Harness는 Codex, Claude Code처럼 서로 다른 에이전트가 같�
 | 영역 | 담당 | 프로젝트에 남는가 |
 |------|------|-------------------|
 | 사용자 스킬 정본 20종 | 관리 저장소 `skills/` | 다음 plugin build의 입력 |
-| 현재 main `0.5.0` runtime 20종 | 설치된 `harness-kit` 플러그인 | local copy를 남기지 않음 |
-| `project-write-access` | `0.5.0` runtime에 포함된 명시 호출 전용 스킬 | 관리자는 공유 정책 설정·변경, 각 참여자는 PC별 로컬 등록 |
+| 현재 main `0.6.0` runtime 20종 | 설치된 `harness-kit` 플러그인 | local copy를 남기지 않음 |
+| `project-write-access` | `0.6.0` runtime에 포함된 명시 호출 전용 스킬 | 관리자는 공유 정책 설정·변경, 각 참여자는 PC별 로컬 등록 |
 | 프로젝트 문서 골격 | 프로젝트 수행자가 `harness-setup`으로 생성 | `.ai-docs/**`, `AGENTS.md`, `CLAUDE.md` |
 | 설계·구현 계획·프로토타입 | 프로젝트 수행자와 사용자 스킬 | `.ai-docs/**` |
 | 코드·테스트 산출물 | 프로젝트 수행자 | 각 앱 repo |
 | 리뷰·검증 보고 | 프로젝트 수행자와 사용자 스킬 | 기본은 대화 보고, 스킬이 별도 파일 생성을 금지하면 repo에 저장하지 않음 |
 | 플러그인 build·upstream 최신화 | 하네스 관리자 | 이 관리 저장소 |
 
-관리 저장소의 사용자 스킬 정본, `0.5.0`의 Codex·Claude runtime과 capability inventory는 모두 20종으로 같다. 게시된 최신 stable은 `v0.4.3`이며, `0.5.0`은 tag·GitHub Release를 만들기 전 main 배포 후보다.
+관리 저장소의 사용자 스킬 정본, `0.6.0`의 Codex·Claude runtime과 capability inventory는 모두 20종으로 같다. 게시된 최신 stable은 `v0.4.3`이며, `0.6.0`은 tag·GitHub Release를 만들기 전 main 배포 후보다.
 
 `harness-setup`의 쓰기 allowlist는 `.ai-docs/**`, 루트 `AGENTS.md`, `CLAUDE.md`다. `.agents/skills/**`, `.claude/skills/**`, `skills/**`를 생성·복사·동기화하지 않는다. 실행 전에 존재하던 local skill 경로는 읽기 전용으로 분류·보고하고 승인 없이 변경하지 않는다.
 
@@ -132,7 +132,7 @@ Codex는 설치 후 새 task를 열고 필요하면 앱을 재시작한다. Clau
 
 `harness-setup`은 플러그인 설치기나 스킬 동기화기가 아니다. 사용자 스킬 directory가 생겼다면 정상 결과로 보지 않는다.
 
-모든 참여자는 자기 작업 환경에서 이 확인을 최초 1회 수행한다. 플러그인 공지가 프로젝트 하네스 갱신을 요구하거나 앱 경계가 바뀌거나 골격 복구가 필요할 때만 update mode로 다시 실행한다. update mode는 관리 블록 밖의 사용자 내용을 보존한다.
+모든 참여자는 자기 작업 환경에서 이 확인을 최초 1회 수행한다. 플러그인 공지가 프로젝트 하네스 갱신을 요구하거나 앱 경계가 바뀌거나 골격 복구가 필요할 때만 update mode로 다시 실행한다. 서명 권한 정책이 활성화된 뒤 공유 루트·하네스 파일을 실제로 갱신하는 주체는 `admin`이다. 다른 참여자는 갱신된 파일을 받은 뒤 자기 환경의 읽기·로컬 연결 상태를 확인한다. update mode는 관리 블록 밖의 사용자 내용을 보존한다.
 
 ### 4.3 Git 작성자 계정과 문서 쓰기 권한
 
@@ -506,7 +506,7 @@ flowchart TD
 | 산출물 | 기본 위치 | 소유와 형상관리 |
 |--------|-----------|----------------|
 | 설계 | `.ai-docs/**/context-base/DESIGN.md` | 프로젝트 문서 |
-| 루트 컨텍스트 | `AGENTS.md`, `CLAUDE.md` | `AGENTS.md` 정본, `CLAUDE.md` bridge |
+| 루트 컨텍스트 | `AGENTS.md`, `CLAUDE.md` | 단일 앱은 루트 `AGENTS.md` 정본, 복수 앱은 `.ai-docs/root-context/AGENTS.md` Git 관리 원본과 루트 실행본, `CLAUDE.md` bridge |
 | 세부 규칙 | `.ai-docs/**/instruction/*-instruction.md` | 프로젝트 문서 |
 | 화면 설계 | 단일 `.ai-docs/prototype/{사용자}/{식별자}/design-doc.md`, 복수 `.ai-docs/{앱}/prototype/{사용자}/{식별자}/design-doc.md` | `design-prototype-docs`가 관리하는 프로젝트 문서 |
 | 프로토타입 | 단일 `.ai-docs/prototype/{사용자}/{식별자}/`, 복수 `.ai-docs/{앱}/prototype/{사용자}/{식별자}/` | `create-prototype`이 만드는 폐기 가능한 검증 산출물 |
@@ -857,7 +857,7 @@ python maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py
 - [ ] build가 clean source에서 재현된다.
 - [ ] source와 Codex·Claude runtime inventory가 일치한다.
 - [ ] 관리자 스킬과 agents가 사용자 payload에 없다.
-- [x] `0.5.0` CLI 설치 smoke가 격리 설정에서 통과한다.
+- [x] `0.6.0` CLI 설치 smoke가 격리 설정에서 통과한다.
 - [ ] 네 인터페이스의 수동 호출 증적이 있다.
 - [ ] release checklist의 미검증 항목이 없다.
 

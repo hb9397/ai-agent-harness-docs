@@ -34,10 +34,10 @@
 5. 다음 파일을 확인한다.
 
 ```text
-.docs/README.md
-.docs/.gitignore
-.docs/_inbox/README.md
-.docs/_inbox/.gitkeep
+.ai-docs/README.md
+.ai-docs/.gitignore
+.ai-docs/_inbox/README.md
+.ai-docs/_inbox/.gitkeep
 AGENTS.md
 CLAUDE.md
 ```
@@ -76,7 +76,7 @@ done
 
 ### B. 갱신과 사용자 확장 보존
 
-1. `.docs/README.md`의
+1. `.ai-docs/README.md`의
    `<!-- harness-kit:managed:end -->` 뒤에 `TEAM-README-SENTINEL`을
    추가한다.
 2. `AGENTS.md`의 관리 블록 뒤에 `TEAM-AGENT-SENTINEL`을 추가한다.
@@ -93,7 +93,7 @@ merge/backup 선택지가 제시되는지 확인한다. 전체 교체를 승인�
 ### C. 새 session 중복 handoff 방지
 
 1. 문서 개선안을 한 번 제안받고 승인·거절·건너뜀 중 하나를 완료한다.
-2. `.docs/.harness/humanize-handoffs.json`에 최종 산출물 상대경로·내용 hash와
+2. `.ai-docs/.harness/humanize-handoffs.json`에 최종 산출물 상대경로·내용 hash와
    해당 event가 기록됐는지 확인한다.
 3. task/session을 완전히 닫고 같은 fixture에서 새 session을 연다.
 4. 산출물을 변경하지 않은 채 `harness-setup`을 다시 실행한다.
@@ -106,7 +106,7 @@ ledger JSON 자체는 `humanize-korean`의 대상 파일 목록에 들어가면 
 
 ### D. 중단 시 원본 보존
 
-1. `.docs/README.md`, `AGENTS.md`, `CLAUDE.md`의 hash를 기록한다.
+1. `.ai-docs/README.md`, `AGENTS.md`, `CLAUDE.md`의 hash를 기록한다.
 2. marker 하나가 누락된 구버전 파일 fixture를 별도로 준비한다.
 3. `harness-setup`이 overwrite 대신 diff와 merge/backup 선택지를 제시하는지
    확인하고, 쓰기 직전에 취소한다.
@@ -131,7 +131,7 @@ ledger JSON 자체는 `humanize-korean`의 대상 파일 목록에 들어가면 
 ### F. 디자인 시스템 저장 — 승인과 거절
 
 1. E에 이어 저장을 명시적으로 요청한다.
-2. `.docs/design-system/{slug}/MASTER.md`에만 생성되는지 확인한다. 다른 경로에
+2. `.ai-docs/design-system/{slug}/MASTER.md`에만 생성되는지 확인한다. 다른 경로에
    파일이 생기면 실패다.
 3. 같은 요청을 다시 보내 **기존 파일을 무승인 덮어쓰지 않는지** 확인한다.
    diff나 확인 요청 없이 덮어쓰면 실패다.
@@ -156,7 +156,7 @@ ledger JSON 자체는 `humanize-korean`의 대상 파일 목록에 들어가면 
 
 ### H. 두 분기 경계
 
-1. "프로토타입만 필요하다"로 요청해 `.docs/prototype/**`에만 산출물이 생기고,
+1. "프로토타입만 필요하다"로 요청해 `.ai-docs/prototype/**`에만 산출물이 생기고,
    제품 소스 디렉터리가 변하지 않는지 확인한다.
 2. 이어서 "이제 실제 화면으로 구현해달라"고 요청한다. 확인한다.
    - 프로토타입 HTML을 **복사하지 않고** 제품 구조에 맞게 다시 구현하는가
@@ -186,7 +186,7 @@ $harness-setup
 $humanize-korean
 ```
 
-두 번째 호출에는 `.docs/README.md`를 대상으로 `document-refinement` 개선안만
+두 번째 호출에는 `.ai-docs/README.md`를 대상으로 `document-refinement` 개선안만
 제시하고 원본은 적용하지 말라고 요청한다.
 
 자연어 대조 호출도 한 번 확인한다.
@@ -238,7 +238,7 @@ codex plugin marketplace remove hb9397
 5. `<codex-app-fixture>`를 작업 폴더로 새 task를 연다.
 6. `$harness-setup`과 `$humanize-korean`을 각각 명시 호출해 공통 시나리오
    A·B·C·D를 수행하고, `$ui-ux-pro-max`와 `$motion-design`으로 E·F·G·H를
-   수행한다. `humanize-korean`은 `.docs/README.md`의 개선안만
+   수행한다. `humanize-korean`은 `.ai-docs/README.md`의 개선안만
    제시하고 원본을 적용하지 않게 한다.
 7. 플러그인 ID·버전 화면, 두 호출 화면, 최종 파일 트리, 금지 경로 확인 결과를
    캡처한다.
@@ -255,9 +255,10 @@ Codex 앱의 스킬 명시 호출은 `$skill-name`이다. ChatGPT Work에서 확
 
 ```text
 claude --version
-claude plugin validate plugins/harness-kit --strict
-claude plugin validate . --strict
-claude plugin marketplace add <관리-저장소-절대경로>
+claude plugin validate plugins/harness-kit
+claude plugin validate .
+cd <관리-저장소-부모-경로>
+claude plugin marketplace add ./<관리-저장소-디렉터리명>
 claude plugin marketplace list
 claude plugin install harness-kit@hb9397
 claude plugin list
@@ -272,7 +273,7 @@ claude
 /harness-kit:humanize-korean
 ```
 
-두 번째 호출에는 `.docs/README.md`를 대상으로 `document-refinement` 개선안만
+두 번째 호출에는 `.ai-docs/README.md`를 대상으로 `document-refinement` 개선안만
 제시하고 원본은 적용하지 말라고 요청한다.
 
 필요하면 `/reload-plugins` 후 다시 호출한다. 자연어 대조 호출도 한 번 확인한다.
@@ -315,7 +316,7 @@ claude plugin marketplace remove hb9397
 4. `<claude-desktop-fixture>`를 열고
    `/harness-kit:harness-setup`과
    `/harness-kit:humanize-korean`을 각각 호출한다. 두 번째 호출은
-   `.docs/README.md`의 개선안만 제시하고 적용하지 않게 한다.
+   `.ai-docs/README.md`의 개선안만 제시하고 적용하지 않게 한다.
 5. 공통 시나리오 A·B·C·D를 수행하고, `/harness-kit:ui-ux-pro-max`와
    `/harness-kit:motion-design`으로 E·F·G·H를 수행한다.
 6. local host 외에 SSH host 지원을 릴리스 범위로 주장하려면 SSH host에도

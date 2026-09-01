@@ -1075,9 +1075,9 @@ def make_plan(project_root: Path, config: dict[str, Any], operation: str = "appl
                 "purpose": repo["purpose"],
                 "protected_branches": repo.get("protected_branches", []),
                 "status": (
-                    "requires-separate-provider-admin-approval"
+                    "externally-managed-not-applied-by-skill"
                     if repo["purpose"] == "docs" and repo.get("server_policy") != "none"
-                    else "not-requested"
+                    else "not-configured"
                 ),
             }
             for repo in config["repositories"]
@@ -1228,7 +1228,7 @@ def provider_state(config: dict[str, Any], layout: dict[str, Any], git_root: Pat
             "codeowners": relative(Path(config["_project_root"]), target) if target is not None else None,
             "shadowed_by": shadow,
             "codeowners_status": "shadowed" if shadow else ("generated" if target is not None else "unavailable"),
-            "server_rules_status": "not-applied",
+            "server_rules_status": "external-not-queried-or-changed",
             "repositories": repositories,
             "coverage": "known-signed-policy-paths" if provider == "gitea" else "all-docs-with-ordered-overrides",
         }
@@ -1465,7 +1465,7 @@ def make_local_enrollment_plan(project_root: Path) -> dict[str, Any]:
         ],
         "core_hooks_path": ours_relative,
         "shared_policy_changes": "none",
-        "provider_server_rules": "left-unchanged",
+        "provider_server_rules": "externally-managed-not-applied-by-skill",
     }
     return {**basis, "plan_hash": sha256_bytes(canonical_json(basis))}
 
@@ -1518,7 +1518,7 @@ def apply_local_enrollment(project_root: Path, approved_hash: str) -> dict[str, 
         "roles": plan["roles"],
         "identity": plan["identity"],
         "shared_policy_changes": "none",
-        "provider_server_rules": "left-unchanged",
+        "provider_server_rules": "externally-managed-not-applied-by-skill",
     }
 
 
@@ -1590,7 +1590,7 @@ def make_remove_plan(project_root: Path, delete_keys: bool) -> dict[str, Any]:
         "policy_core_sha256": verified["policy_core_sha256"],
         "managed_paths": paths,
         "delete_keys": delete_keys,
-        "provider_server_rules": "left-unchanged; requires separate provider-admin approval",
+        "provider_server_rules": "externally-managed-not-applied-by-skill",
     }
     return {**basis, "plan_hash": sha256_bytes(canonical_json(basis))}
 
@@ -1686,7 +1686,7 @@ def remove_access_control(project_root: Path, approved_hash: str, codex_dir: Pat
         "project_id": policy["project_id"],
         "keys": "deleted" if delete_keys else "preserved",
         "remaining_access_control_files": remaining,
-        "provider_server_rules": "left-unchanged",
+        "provider_server_rules": "externally-managed-not-applied-by-skill",
     }
 
 
@@ -1741,7 +1741,7 @@ def make_root_migration_plan(project_root: Path, config: dict[str, Any]) -> dict
         "policy_core_sha256": desired_policy_core_hash,
         "changes": changes,
         "git_scoped_account": scoped_state,
-        "provider_server_rules": "left-unchanged; requires separate provider-admin approval",
+        "provider_server_rules": "externally-managed-not-applied-by-skill",
     }
     return {
         **basis,
@@ -2048,7 +2048,12 @@ def apply(
         raise
     if created_keys:
         atexit.unregister(cleanup_created_keys)
-    return {**result, "plan_hash": approved_hash, "provider_server_rules": "not-applied", "hosts": provider_state_value["hosts"]}
+    return {
+        **result,
+        "plan_hash": approved_hash,
+        "provider_server_rules": "externally-managed-not-applied-by-skill",
+        "hosts": provider_state_value["hosts"],
+    }
 
 
 def main() -> int:

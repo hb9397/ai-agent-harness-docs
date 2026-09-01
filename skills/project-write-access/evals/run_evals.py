@@ -458,6 +458,13 @@ def assert_skill_contract() -> None:
     assert '"tea", "--login"' in controller
     assert '"migrate-root-plan"' in controller
     assert '"migrate-root"' in controller
+    assert '"--method"' not in controller
+    assert '"-X"' not in controller
+    assert "requires-separate-provider-admin-approval" not in controller
+    assert "externally-managed-not-applied-by-skill" in controller
+    assert "관련 API로 값을 만들거나 바꾸지 않는다" in skill
+    assert "이미 바뀐 원격 상태" not in skill
+    assert "복구 대상에 포함하지 않는다" in skill
     for path in (CONTROLLER, GUARD_ASSET):
         compile(path.read_text(encoding="utf-8"), str(path), "exec")
 
@@ -477,7 +484,7 @@ def test_single_repository(root: Path) -> None:
     result = apply(project, config, first_plan["plan_hash"], codex_keys, claude_keys)
     applied = json.loads(result.stdout)
     assert applied["status"] == "valid"
-    assert applied["provider_server_rules"] == "not-applied"
+    assert applied["provider_server_rules"] == "externally-managed-not-applied-by-skill"
 
     key_a = codex_keys / "fixture-project.key"
     key_b = claude_keys / "fixture-project.key"

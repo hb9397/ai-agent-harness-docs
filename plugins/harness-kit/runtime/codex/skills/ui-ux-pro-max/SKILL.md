@@ -4,6 +4,15 @@ description: "새 화면이나 제품의 디자인 방향, 색상, 타이포그�
 allowed-tools: Read, Write, Glob, Grep
 ---
 
+## 문서 루트 계약
+
+이 스킬이 하네스 문서를 읽거나 쓸 때 사용하는 정본은 `.ai-docs/`뿐이다. 작업 전에
+`.ai-docs/`와 이전 `.docs/`의 존재를 확인한다. `.docs/`만 있거나 두 경로가 함께
+있으면 하네스 문서를 읽거나 쓰지 않고 `harness-setup`의 명시적 문서 루트 이관·충돌
+해결을 먼저 요청한다. 이전 경로를 호환 별칭으로 추측하지 않는다. 애플리케이션 소스
+작업 자체의 권한과 가능 여부는 이 문서 루트 판정으로 제한하지 않는다.
+
+
 # UI/UX Pro Max
 
 제품 유형, 스타일, 색상, 타이포그래피, 레이아웃, UX, 접근성, 차트, 기술 스택에
@@ -12,8 +21,8 @@ allowed-tools: Read, Write, Glob, Grep
 이 스킬은 **디자인 결정**을 담당한다. 제품 소스코드 구현은 하지 않는다.
 
 디자인 시스템 저장 경로·소유권·인계는 단일 앱의
-`@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
-`@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를 따른다.
+`@.ai-docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의
+`@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md`를 따른다.
 
 ## 적용 범위
 
@@ -39,7 +48,7 @@ allowed-tools: Read, Write, Glob, Grep
 2. 단일 애플리케이션인지 복수 애플리케이션 프로젝트인지 판정한다.
 3. 판정 결과와 대상 애플리케이션을 사용자에게 재확인한다.
 4. **기존 디자인 시스템을 먼저 조사한다.** 디자인 토큰, 테마 파일, 컴포넌트
-   라이브러리, `.docs/design-system/**`, Tailwind·CSS 변수 설정을 찾는다.
+   라이브러리, `.ai-docs/design-system/**`, Tailwind·CSS 변수 설정을 찾는다.
 5. 기존 시스템이 있으면 그 규칙이 이 스킬의 추천보다 **우선**한다. 충돌하는
    추천은 제시하되 기존값을 기본으로 두고 차이와 근거를 보고한다.
 6. 확인된 범위 밖은 건드리지 않는다.
@@ -160,12 +169,12 @@ python "{skill_dir}/scripts/search.py" "<query>" --design-system --variance <1-1
 
 ```text
 # 단일 앱
-.docs/design-system/{project-slug}/MASTER.md
-.docs/design-system/{project-slug}/pages/{page-slug}.md
+.ai-docs/design-system/{project-slug}/MASTER.md
+.ai-docs/design-system/{project-slug}/pages/{page-slug}.md
 
 # 복수 앱 — {앱}은 Step 0에서 확인한 대상 앱
-.docs/{앱}/design-system/{project-slug}/MASTER.md
-.docs/{앱}/design-system/{project-slug}/pages/{page-slug}.md
+.ai-docs/{앱}/design-system/{project-slug}/MASTER.md
+.ai-docs/{앱}/design-system/{project-slug}/pages/{page-slug}.md
 ```
 
 저장 규칙:
@@ -178,9 +187,9 @@ python "{skill_dir}/scripts/search.py" "<query>" --design-system --variance <1-1
 4. 저장 후 구조 검증을 수행한다. 필수 섹션, 토큰 표, 경로, 링크를 확인한다.
 
 스크립트의 `--persist`는 `--output-dir` 기준 `design-system/` 아래에 쓴다.
-`--output-dir`를 `.docs`로 지정해 위 계약 경로에 맞춘다. `--output-dir` 없이
+`--output-dir`를 `.ai-docs`로 지정해 위 계약 경로에 맞춘다. `--output-dir` 없이
 `--persist`를 실행하지 않는다. 실행 디렉터리에 따라 위치가 달라진다.
-복수 앱에서는 `--output-dir`를 해당 앱의 `.docs/{앱}` 루트로 지정한다.
+복수 앱에서는 `--output-dir`를 해당 앱의 `.ai-docs/{앱}` 루트로 지정한다.
 
 ### 문서 개선 handoff
 

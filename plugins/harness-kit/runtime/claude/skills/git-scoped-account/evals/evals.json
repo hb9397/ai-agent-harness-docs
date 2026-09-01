@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "C:\\dev\\project-a 아래에 있는 git repo들 전부 git 계정을 홍길동 / hong@example.com 으로 한 번에 설정해줘. 전역 설정은 건드리지 말고.",
-      "expected_output": "C:/dev/project-a/.gitconfig-scoped 공통 파일 생성(user.name=홍길동, email=hong@example.com), 기준 디렉토리 자체는 적용 대상에서 제외하고 바로 아래 1단계 .git repo만 탐지해 목록 확인 게이트 통과 후 각 repo에 include.path 주입, --show-origin 검증 리포트 출력. --global/--system 미사용.",
+      "expected_output": "프로젝트 루트가 Git 저장소면 그 저장소 하나, 아니면 바로 아래 1단계 Git 저장소를 탐지한다. C:/dev/project-a/.gitconfig-scoped에 user.name=홍길동, email=hong@example.com을 두고 각 대상에 include.path와 provider·host·@login 로컬 표식을 적용한다. 목록 확인 게이트와 --show-origin 검증을 거치며 --global/--system은 쓰지 않는다.",
       "files": []
     },
     {
@@ -16,7 +16,7 @@
     {
       "id": 3,
       "prompt": "C:\\dev\\empty-dir 아래 repo들에 gitea 계정 적용해줘",
-      "expected_output": "바로 아래 1단계에서 .git repo가 0건이면 전체 재귀 스캔 없이 '프로젝트 최상위 폴더 바로 아래에 git repo가 없습니다'로 알리고 종료. 파일 생성/수정 없음.",
+      "expected_output": "프로젝트 루트와 바로 아래 1단계에서 Git 저장소가 0건이면 전체 재귀 스캔 없이 대상이 없다고 알리고 종료. 파일 생성/수정 없음.",
       "files": []
     },
     {
@@ -29,6 +29,12 @@
       "id": 5,
       "prompt": "repo 5개에 계정을 적용하다가 3번째 repo가 읽기 전용이라 실패했다고 가정해. 어떻게 처리해?",
       "expected_output": "추가 처리를 중단하고 이미 변경한 repo를 포함한 모든 대상 로컬 config를 작업 전 바이트로 복구. 기존 공통 파일은 원본 바이트로 복구하고 새로 만든 파일은 그 파일만 제거. byte 비교와 git config 구문 검증 후 복구 결과 및 실패 경로 보고. 일부 성공 상태를 남기지 않음.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "서명된 project-write-access 정책이 있는 프로젝트를 새 PC에 clone했어. 내 Git 계정을 이 PC에 등록해줘.",
+      "expected_output": "user.name/email의 공통 config 출처와 provider·host·@login 표식을 검증한 뒤 project-write-access의 local-enroll-plan을 보여주고 별도 승인으로 local-enroll을 수행한다. 이 PC의 Git·AI 쓰기 가드만 연결하며 공유 정책, CODEOWNERS, 관리자 키와 원격 Git 서비스 규칙은 변경하지 않는다.",
       "files": []
     }
   ]
