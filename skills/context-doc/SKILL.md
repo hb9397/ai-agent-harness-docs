@@ -5,7 +5,7 @@ description: >
   'AGENTS.md 만들어줘', 'CLAUDE.md 만들어줘', '컨텍스트 문서 생성', 'instruction 작성',
   '.docs/instruction 생성', '규칙 문서 생성', '프로젝트 규칙 파일',
   '에이전트 가이드 만들어줘' 요청이 오면 반드시 이 스킬을 쓴다.
-  설계 문서 → 얇은 AGENTS.md 정본(프로젝트 팩트 + 인덱스) + CLAUDE.md bridge + 주제별 .docs/instruction/*-instruction.md 자동 생성.
+  설계 문서 → 앱별 *-context.md(애플리케이션 팩트 + 인덱스) + 주제별 .docs/instruction/*-instruction.md 자동 생성.
   산출물 위치·소유권·인계 기준인 `@.docs/instruction/artifact-output-routing-instruction.md`
   (복수 앱은 `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`)를 단일 앱·복수 앱
   모두에서 항상 생성한다.
@@ -14,6 +14,42 @@ allowed-tools: Read, Glob, Grep, Write, Agent
 ---
 
 # Context 문서 생성 (context-doc)
+
+---
+
+## 책임 경계
+
+이 스킬은 애플리케이션의 설계 원칙, 기술 스택, 아키텍처, 실행 방법과 주제별 작업
+규칙을 앱 context·instruction으로 만든다. AI가 프로젝트 전체를 어떻게 읽을지 정하는
+루트 `AGENTS.md`·`CLAUDE.md`, `.docs/root-context/**`와 `.docs/harness/**`는
+`harness-setup`의 관리 범위이며 이 스킬이 만들거나 갱신하지 않는다.
+
+단일 앱도 권한과 소유권을 분리하기 위해 프로젝트 팩트를 루트 `AGENTS.md`에 직접
+쓰지 않고 `.docs/{앱}-context.md`에 쓴다. 루트 읽기 지도 반영은 admin이
+`harness-setup`으로 수행한다.
+
+## 선택 권한 정책 연계
+
+`.docs/harness/access-control/policy.json`이 없으면 기존 앱 문서 생성 흐름을 유지한다.
+이 스킬은 선택 기능인 `project-write-access`를 자동 호출하거나 권한 설정을 요구하지
+않는다.
+
+서명 정책이 있으면 STEP 0-B에서 대상 앱을 확정하고 STEP 3-B에서 실제 생성 파일
+목록을 확정한 뒤 다음을 수행한다.
+
+1. `.docs/harness/access-control/write-access-instruction.md`를 읽는다.
+2. `.docs`를 추적하는 Git 경계의 `harness.writeAccess.provider`,
+   `harness.writeAccess.host`, `harness.writeAccess.account`를 현재 신원으로 읽는다.
+3. 프로젝트에 설치된 `write_access_guard.py check-path`로 앱 context와 생성할 모든
+   `*-instruction.md`의 정확한 경로를 한꺼번에 검사한다. 정책·서명·생성 목록을
+   검증하지 못하면 쓰지 않는다.
+4. `pm-pl`은 모든 앱, `app-doc-lead`는 배정된 앱에서만 진행한다. `admin`은 앱 문서
+   권한을 상속하지 않는다. 같은 사람이 두 범위를 맡으면 정책에 역할을 각각 배정한다.
+5. 권한이 없으면 역할·정책을 추측해 고치지 않고 초안과 필요한 역할만 보고한다.
+
+guard의 `decision=confirm`은 권한은 있으나 앱 핵심 문서 쓰기 전에 별도 승인이
+필요하다는 뜻이다. 다른 스킬이 `context-doc`을 선택한 경우에도 STEP 5의 권한 확인을
+생략하지 않는다.
 
 ---
 
@@ -90,8 +126,7 @@ handoff_completed = false
 design-doc 스킬의 OUTPUT 또는 별도 설계 문서를 입력받아
 AI Agent가 개발에 활용할 수 있는 Context 문서 세트를 생성한다.
 
-- `AGENTS.md` — 프로젝트 루트에 위치하는 **얇은 프로젝트 팩트 + 지침 인덱스** 정본
-- `CLAUDE.md` — `@AGENTS.md` bridge와 Claude 전용 차이만 담는 파일
+- `.docs/{앱}-context.md` — 애플리케이션의 **설계·기술 팩트 + 지침 인덱스** 정본
 - `.docs/instruction/*-instruction.md` — 주제별로 분리된 코딩 지침 (설계 문서에 등장한 주제만 생성)
 - `artifact-output-routing-instruction.md` — 단일/복수 앱 산출물 위치·소유권·승인·인계 정본 (항상 생성)
 
@@ -113,8 +148,8 @@ AI Agent가 개발에 활용할 수 있는 Context 문서 세트를 생성한다
 
 ## 설계 원칙
 
-1. **AGENTS.md는 얇게 유지한다.** 프로젝트 팩트(기술 스택·아키텍처·실행 방법·환경 변수·주의사항)와 인덱스만 둔다.
-2. **CLAUDE.md는 bridge로 유지한다.** 공통 본문을 복제하지 않고 `@AGENTS.md`와 Claude 전용 차이만 둔다.
+1. **앱 context는 얇게 유지한다.** 앱의 기술 스택·아키텍처·실행 방법·환경 변수·주의사항과 instruction 인덱스만 둔다.
+2. **루트 컨텍스트를 수정하지 않는다.** 루트 `AGENTS.md`·`CLAUDE.md`와 `.docs/root-context/**`는 harness-setup에 맡긴다.
 3. **규칙은 주제별로 분리한다.** Agent가 필요한 주제만 찾아 참조할 수 있게 한다.
 4. **프레임워크를 하드코딩하지 않는다.** 설계 문서에 등장한 라이브러리·주제를 그대로 반영한다.
 5. **설계 문서에 없는 주제는 파일을 만들지 않는다.** 단,
@@ -127,7 +162,7 @@ AI Agent가 개발에 활용할 수 있는 Context 문서 세트를 생성한다
 ```
 design-doc (설계 인터뷰 → OUTPUT 문서)
     ↓ OUTPUT 문서를 그대로 이 스킬에 입력
-context-doc → AGENTS.md 정본 + CLAUDE.md bridge + .docs/instruction/*-instruction.md
+context-doc → 앱별 *-context.md 정본 + .docs/{앱}/instruction/*-instruction.md
 ```
 
 > 아래 섹션 번호는 `design-doc`의 **OUTPUT_V2 기준**이다. V1 OUTPUT은 번호 체계가 다르므로 비권장.
@@ -136,13 +171,13 @@ design-doc OUTPUT의 각 섹션은 아래와 같이 매핑된다.
 
 | design-doc OUTPUT 섹션 | 생성 대상 |
 |------------------------|----------|
-| 01 개요, 05 데이터, 07 라이브러리 | AGENTS.md — 프로젝트 팩트 |
-| 06 파일 구성 | AGENTS.md(트리) + architecture-instruction.md + file-convention-instruction.md |
+| 01 개요, 05 데이터, 07 라이브러리 | 앱 context — 애플리케이션 팩트 |
+| 06 파일 구성 | 앱 context(트리) + architecture-instruction.md + file-convention-instruction.md |
 | 02 동작 흐름 | comm-instruction.md |
 | 03 집중 로직 | architecture-instruction.md + framework-instruction.md |
 | 04 인터페이스 | api-instruction.md + comm-instruction.md |
 | 07 라이브러리 | framework-instruction.md |
-| 11 부가 정보 | AGENTS.md — 실행 방법 + 환경 변수 + 배포 힌트 |
+| 11 부가 정보 | 앱 context — 실행 방법 + 환경 변수 + 배포 힌트 |
 | 10 주의사항 | code-style-instruction.md / agent-instruction.md / 각 주제 금지 목록 |
 | 12 열린 결정 | 해당 주제 파일의 `미정` 섹션 |
 
@@ -170,7 +205,7 @@ design-doc OUTPUT의 각 섹션은 아래와 같이 매핑된다.
 
 설계 문서가 제공되지 않은 경우 요청한다.
 
-> "AGENTS.md, CLAUDE.md bridge와 instruction 문서를 생성할 설계 문서를 공유해 주세요.
+> "앱 context와 instruction 문서를 생성할 설계 문서를 공유해 주세요.
 > design-doc 스킬의 결과물이나 기존 PRD/설계서 모두 가능합니다."
 
 ---
@@ -190,10 +225,10 @@ design-doc OUTPUT의 각 섹션은 아래와 같이 매핑된다.
 
 ---
 
-### Step 3-A — AGENTS.md 분석
+### Step 3-A — 앱 context 분석
 
-`prompts/analysis-claude.md` 기준으로 설계 문서를 분석하여 **프로젝트 팩트**만 추출한다.
-추출한 본문은 `AGENTS.md` 정본에 사용한다. `CLAUDE.md`에는 공통 본문을 복제하지 않는다.
+`prompts/analysis-claude.md` 기준으로 설계 문서를 분석하여 **애플리케이션 팩트**만 추출한다.
+추출한 본문은 `.docs/{앱}-context.md` 정본에 사용한다. 루트 컨텍스트에는 복제하지 않는다.
 **질문은 0~1개만** 한다. (전체 질문 예산 최대 3회 안에서만 허용)
 누락 항목은 `미정 — [이유]` 로 표시한다.
 
@@ -225,7 +260,7 @@ design-doc OUTPUT의 각 섹션은 아래와 같이 매핑된다.
   **컨텍스트 고정 문서로 저장하지 않고** 설계 보강을 요청한다.
 - `12 열린 결정 사항`이 풍부해도 핵심 섹션이 빈약하면 충분한 입력으로 간주하지 않는다.
 
-> "핵심 설계 정보가 부족해 현재 상태로는 `CLAUDE.md`, `AGENTS.md`와 instruction 문서를 고정 맥락으로 저장하기 어렵습니다.
+> "핵심 설계 정보가 부족해 현재 상태로는 앱 context와 instruction 문서를 고정 맥락으로 저장하기 어렵습니다.
 > 우선 01/03/06/07/10/11 중 비어 있는 섹션을 보강해 주세요."
 
 ---
@@ -243,8 +278,7 @@ STEP 0에서 병렬을 선택한 경우, Step 3-B에서 확정된 생성 파일 
 
 `templates/` 하위 템플릿을 참조하여 각 파일 초안을 작성한다.
 
-- `templates/AGENTS.md.template` — `AGENTS.md` 정본 본문으로 사용
-- `templates/CLAUDE.md.template` — `@AGENTS.md` bridge로 사용
+- `templates/AGENTS.md.template` — 파일명은 호환성을 위해 유지하며 앱 context 본문으로 사용
 - `templates/architecture-instruction.md.template`
 - `templates/code-style-instruction.md.template`
 - `templates/framework-instruction.md.template`
@@ -257,22 +291,22 @@ STEP 0에서 병렬을 선택한 경우, Step 3-B에서 확정된 생성 파일 
 작성 원칙:
 - 확실하지 않은 항목은 `미정 — [이유]` 로 표시하고 생략하지 않는다.
 - 설계 문서의 "열린 결정 사항"은 그대로 전달한다.
-- `OUTPUT_V2`의 `11 부가 정보`에 있는 실행/배포/env 정보는 `AGENTS.md`의 `5. 실행 방법`, `6. 환경 변수`에 우선 반영한다.
+- `OUTPUT_V2`의 `11 부가 정보`에 있는 실행/배포/env 정보는 앱 context의 `5. 실행 방법`, `6. 환경 변수`에 우선 반영한다.
 - 코드 예시는 핵심 패턴만, 완성 코드는 포함하지 않는다.
-- **AGENTS.md의 인덱스와 실제 생성 파일 목록이 1:1로 일치**해야 한다.
+- **앱 context의 인덱스와 실제 생성 파일 목록이 1:1로 일치**해야 한다.
 - `artifact-output-routing-instruction.md`는 AGENTS/앱 context의 `@` 참조와 실제 경로가 1:1로 일치해야 한다.
 - existing instruction의 `harness-kit:managed:start/end` marker 밖 규칙은 보존한다. 갱신은
   managed block diff만 보여주고 사용자 승인 뒤에 적용한다.
 - 외부 fixed-format bundle은 `.docs/_inbox/{artifact-bundle-id}/artifact-manifest.json`에
   proposal로 기록하며 G12 승인 전 canonical instruction에 병합하지 않는다.
-- **CLAUDE.md는 `@AGENTS.md` bridge 구조여야 한다.**
+- 루트 `AGENTS.md`·`CLAUDE.md`와 `.docs/root-context/**`는 생성 목록에 넣지 않는다.
 - 각 instruction 파일은 자신의 주제에만 집중한다. 주제 간 중복 금지.
 
 ---
 
 ### Step 5 — 미리보기 및 사용자 확인
 
-AGENTS.md 정본, CLAUDE.md bridge, 각 instruction 파일 초안을 대화창에 순서대로 출력하고 승인을 요청한다.
+앱 context와 각 instruction 파일 초안을 대화창에 순서대로 출력하고 승인을 요청한다.
 
 > "위 문서들을 검토해 주세요.
 > 수정할 부분이 있으면 말씀해 주시고, 이상 없으면 저장 경로를 확인해 드릴게요."
@@ -280,15 +314,41 @@ AGENTS.md 정본, CLAUDE.md bridge, 각 instruction 파일 초안을 대화창�
 저장 경로 안내:
 
 **단일 애플리케이션:**
-- `AGENTS.md` → 프로젝트(애플리케이션) 루트
-- `CLAUDE.md` → 프로젝트(애플리케이션) 루트 (`@AGENTS.md` bridge)
+- `.docs/{앱}-context.md` → 앱의 기술·설계 맥락과 instruction 인덱스
 - `.docs/instruction/*-instruction.md` → 프로젝트 루트 하위 `.docs/instruction/` 폴더
 
 **복수 애플리케이션:**
-- `.docs/{앱}-context.md` → 단일앱의 `AGENTS.md`에 들어갈 내용을 앱별로 작성
+- `.docs/{앱}-context.md` → 앱의 기술·설계 맥락과 instruction 인덱스
 - `.docs/{앱}/instruction/*-instruction.md` → 앱별 instruction 폴더에 작성
-- 루트 `AGENTS.md`/`CLAUDE.md` → 각 앱의 context 문서와 instruction 위치 정보 및 참조 안내만 관리 (**이 파일은 harness-setup이 최종 갱신**, 이 스킬은 `.docs/root-context/AGENTS.md`, `.docs/root-context/CLAUDE.md` 에 복사본을 갱신)
-- `.docs` 하위 폴더 및 문서의 위치·정보 요약을 루트 컨텍스트에 포함
+- 루트 `AGENTS.md`/`CLAUDE.md`와 `.docs/root-context/**`는 생성하지 않는다. admin이
+  `harness-setup`으로 앱 context·instruction 위치를 읽기 지도에 반영한다.
+
+권한 정책이 활성화되어 guard가 `decision=confirm`을 반환했다면 일반 초안 검토·저장
+승인과 별도로, 파일 저장 도구를 호출하기 직전에 다음 내용을 보여주고 이 변경에 한해
+승인받는다.
+
+> **앱 컨텍스트와 작업 지침 편집 확인**
+>
+> - 대상 앱: `{애플리케이션}`
+> - 대상 파일: `{정확한 *-context.md와 모든 *-instruction.md 경로}`
+> - 문서 역할:
+>   - `*-context.md`: 앱의 설계 원칙, 기술 스택, 아키텍처, 실행 방법과 지침 인덱스
+>   - `architecture-instruction.md`: 모듈·레이어 경계와 의존성 규칙
+>   - `code-style-instruction.md`: 네이밍·타입·예외 처리·주석 규칙
+>   - `framework-instruction.md`: 프레임워크·라이브러리 사용 및 금지 규칙
+>   - `api-instruction.md`: API 요청·응답과 엔드포인트 규약
+>   - `comm-instruction.md`: WebSocket·메시지큐·RPC 통신 규약
+>   - `file-convention-instruction.md`: 파일 위치·이름·디렉토리 추가 규칙
+>   - `agent-instruction.md`: AI가 사람과 다르게 지켜야 할 작업 규칙
+>   - `artifact-output-routing-instruction.md`: 산출물 위치·소유자·승인·인계 정본
+> - 현재 권한: `{pm-pl / app-doc-lead와 앱 범위}`
+> - 변경 내용과 이유: `{신규 작성 또는 갱신 요약}`
+>
+> 위 변경을 이 파일들에 반영할까요? **(승인 / 수정 / 취소)**
+
+실제로 만들지 않는 주제 파일은 목록에서 제거한다. 대상 파일·내용 요약·현재 역할이
+달라지면 이전 답변을 재사용하지 않는다. AI 훅의 `permissionDecision=ask`도 같은
+확인을 요구하므로 생략하지 않는다.
 
 ---
 
@@ -299,26 +359,27 @@ STEP 0에서 확정한 프로젝트 유형에 따라 저장 경로와 검증 범
 #### 단일 애플리케이션
 
 1. `.docs/instruction/` 디렉토리가 없으면 생성한다.
-2. `AGENTS.md`, `CLAUDE.md`, `.docs/instruction/*-instruction.md` 파일을 저장한다.
+2. `.docs/{앱}-context.md`, `.docs/instruction/*-instruction.md` 파일을 저장한다.
 3. `artifact-output-routing-instruction.md`를 설계 주제 유무와 관계없이 저장한다.
 4. 검증:
-   - `AGENTS.md` 인덱스의 `@.docs/instruction/*-instruction.md` 참조가 실제 파일과 1:1 일치
-   - `CLAUDE.md`가 `@AGENTS.md` bridge인지 확인
+   - `.docs/{앱}-context.md` 인덱스의 `@.docs/instruction/*-instruction.md` 참조가 실제 파일과 1:1 일치
+   - 루트 `AGENTS.md`·`CLAUDE.md`와 `.docs/root-context/**`를 수정하지 않았는지 확인
    - 불일치 시 사용자에게 보고하고 수정
 
 #### 복수 애플리케이션
 
 1. `.docs/{앱}/instruction/` 디렉토리가 없으면 생성한다.
-2. `.docs/root-context/` 디렉토리가 없으면 생성한다.
-3. 아래 파일을 저장한다:
+2. 아래 파일을 저장한다:
    - `.docs/{앱}-context.md`
    - `.docs/{앱}/instruction/*-instruction.md` (artifact-output-routing 포함)
-   - `.docs/root-context/AGENTS.md`, `.docs/root-context/CLAUDE.md`
-4. 검증:
+3. 검증:
    - `.docs/{앱}-context.md`의 instruction 참조가 `.docs/{앱}/instruction/` 내 실제 파일과 1:1 일치
-   - `.docs/root-context/CLAUDE.md`가 `@AGENTS.md` bridge인지 확인
-   - `.docs/root-context/AGENTS.md`가 각 앱의 context 문서 위치를 올바르게 참조
+   - 루트 `AGENTS.md`·`CLAUDE.md`와 `.docs/root-context/**`를 수정하지 않았는지 확인
    - 불일치 시 사용자에게 보고하고 수정
+
+저장과 검증이 끝나면 루트 읽기 지도 갱신이 필요한지 보고한다. 필요하면 admin이
+`harness-setup`을 명시적으로 실행할 후속 작업으로 남긴다. 현재 호출자가 admin인지
+추측해 자동 실행하지 않는다.
 
 > 이미 존재하는 파일이 있으면 덮어쓰기 전에 사용자에게 알린다.
 
@@ -326,7 +387,7 @@ STEP 0에서 확정한 프로젝트 유형에 따라 저장 경로와 검증 범
 
 ## 문서 개선 후처리
 
-전체 `AGENTS.md`, `CLAUDE.md`, 생성된 instruction 파일의 경로·참조·bridge 검증을
+전체 앱 context와 생성된 instruction 파일의 경로·참조 검증을
 마친 뒤 다음 조건을 전부 만족할 때만 bundle 전체를 `humanize-korean`의
 `document-refinement` 프로필로 한 번 넘긴다.
 
@@ -349,5 +410,5 @@ STEP 0에서 확정한 프로젝트 유형에 따라 저장 경로와 검증 범
 알린다.
 
 기본은 개선안 제안이며 승인 없이 파일을 덮어쓰지 않는다. 스킬명, 명령어, 경로,
-환경 변수, 정책 문구의 의무 수준은 보존한다. 승인 적용 후 Step 6의 참조·bridge
+환경 변수, 정책 문구의 의무 수준은 보존한다. 승인 적용 후 Step 6의 참조
 검증을 다시 수행해야 최종 완료로 보고한다.

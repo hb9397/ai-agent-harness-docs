@@ -4,13 +4,13 @@
     {
       "id": 1,
       "prompt": "@docs/OUTPUT_V2.md /context-doc\nNext.js + FastAPI 모노레포 설계 문서를 기준으로 AGENTS.md, CLAUDE.md bridge와 instruction 문서를 생성해줘.",
-      "expected_output": "모노레포를 감지하고 배치 방식은 1회만 확인한다. AGENTS.md 인덱스와 실제 생성 파일이 일치하며, CLAUDE.md는 @AGENTS.md bridge이고 FE/BE 분리 선택이 저장 경로에 반영된다.",
+      "expected_output": "모노레포를 감지하고 배치 방식은 1회만 확인한다. 앱별 *-context.md 인덱스와 실제 instruction 파일이 일치하며 FE/BE 분리 선택이 저장 경로에 반영된다. 루트 AGENTS.md·CLAUDE.md는 수정하지 않고 harness-setup 후속 작업으로 남긴다.",
       "files": []
     },
     {
       "id": 2,
       "prompt": "@docs/cli-design.md /context-doc\n순수 CLI 라이브러리 설계 문서를 기준으로 컨텍스트 문서를 만들어줘.",
-      "expected_output": "api-instruction.md와 comm-instruction.md를 만들지 않는다. architecture/code-style/file-convention/agent 중심으로만 생성하고, 실행/환경 변수 정보는 AGENTS.md의 실행 방법과 환경 변수 섹션에 채운다. CLAUDE.md는 bridge다.",
+      "expected_output": "api-instruction.md와 comm-instruction.md를 만들지 않는다. architecture/code-style/file-convention/agent 중심으로만 생성하고, 실행/환경 변수 정보는 앱 context의 실행 방법과 환경 변수 섹션에 채운다. 루트 컨텍스트는 만들지 않는다.",
       "files": []
     },
     {

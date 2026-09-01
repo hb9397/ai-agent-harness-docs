@@ -25,6 +25,12 @@ def main() -> int:
         "artifact-format-contract.json",
         "harness-kit:managed:start/end",
         ".docs/_inbox/{artifact-bundle-id}/artifact-manifest.json",
+        "## 선택 권한 정책 연계",
+        "`admin`은 앱 문서",
+        "권한을 상속하지 않는다",
+        "다른 스킬이 `context-doc`을 선택한 경우에도",
+        "앱 컨텍스트와 작업 지침 편집 확인",
+        "루트 `AGENTS.md`/`CLAUDE.md`와 `.docs/root-context/**`는 생성하지 않는다",
     )
     require(
         SKILL_ROOT / "templates" / "artifact-output-routing-instruction.md.template",
@@ -35,6 +41,7 @@ def main() -> int:
     )
     require(
         SKILL_ROOT / "templates" / "AGENTS.md.template",
+        "Application Context",
         ".docs/harness/artifact-routing.json",
         "artifact 의미와 대상 앱",
     )
@@ -51,6 +58,8 @@ def main() -> int:
         raise AssertionError(f"unexpected eval ids: {ids}")
     if "_inbox" not in evals["evals"][-1]["expected_output"]:
         raise AssertionError("external producer eval must require inbox-only proposal")
+    if any("CLAUDE.md는 bridge" in case["expected_output"] for case in evals["evals"]):
+        raise AssertionError("context-doc eval still assigns root bridge ownership")
 
     print("context-doc portable routing evals passed")
     return 0
