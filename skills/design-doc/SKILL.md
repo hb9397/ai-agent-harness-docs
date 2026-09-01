@@ -32,7 +32,7 @@ allowed-tools: Read, Glob, Write, Agent
 
 ```
 design-doc OUTPUT
-    ├─→ context-doc      →  CLAUDE.md + AGENTS.md + .docs/instruction/*-instruction.md
+    ├─→ context-doc      →  앱 context + .docs/{앱}/instruction/*-instruction.md
     ├─→ impl-fe-be-doc   →  FE/BE 페어 또는 화면 중심 작업지침서
     ├─→ impl-doc         →  범용 단계별 구현 지침서
     ├─→ impl-reuse-scan  →  Phase/태스크 시작 직전 공통 자산 발견·보고(자동 반영 금지)
@@ -51,6 +51,32 @@ OUTPUT 문서를 저장했다면 해당 파일을 그대로 다음 스킬에 넘
 - **복수 애플리케이션**: `{project}/.docs/{앱 디렉토리명}/context-base/DESIGN.md` (예: `.docs/fe-acro-portal/context-base/DESIGN.md`)
 - 사용자가 다른 파일명을 지정해도 위 `context-base/` 하위에 저장한다.
 - 상위 워크스페이스 루트에서 실행 중이어도, 대상 프로젝트가 따로 있으면 상위 루트에 저장하지 않는다.
+
+---
+
+## 선택 권한 정책 연계
+
+`.docs/harness/access-control/policy.json`이 없으면 기존 설계·저장 흐름을 그대로
+수행한다. `project-write-access`는 선택 기능이며 이 스킬이 자동 호출하거나 권한
+설정을 요구하지 않는다.
+
+서명 정책이 있으면 Step 0-1에서 대상 앱과 `DESIGN.md` 경로를 확정한 직후 다음을
+수행한다.
+
+1. `.docs/harness/access-control/write-access-instruction.md`를 읽는다.
+2. `.docs`를 추적하는 Git 경계의 `harness.writeAccess.provider`,
+   `harness.writeAccess.host`, `harness.writeAccess.account`를 현재 신원으로 읽는다.
+3. 프로젝트에 설치된 `write_access_guard.py check-path`에 대상 `DESIGN.md`의 정확한
+   경로와 현재 provider·host·account를 전달한다. guard가 정책 서명과 생성 목록까지
+   검증하지 못하면 저장하지 않는다.
+4. `pm-pl`은 모든 앱, `app-doc-lead`는 정책에 배정된 앱에서만 진행한다. `admin`은
+   앱 문서 권한을 상속하지 않으므로 `admin`만 가진 계정은 거부한다. 같은 사람이
+   `pm-pl`도 맡는다면 두 역할이 정책에 각각 있어야 한다.
+5. 권한이 없으면 정책을 고치거나 역할을 추측하지 않고, 대상 앱·파일과 필요한 역할을
+   알려준 뒤 초안만 대화창에 반환한다.
+
+guard의 `decision=confirm`은 권한은 있으나 앱 핵심 문서 쓰기 전에 별도 승인이
+필요하다는 뜻이다. 이 승인은 Step 4의 일반 문서 검토·저장 질문과 합치지 않는다.
 
 ---
 ## 워크플로우
@@ -142,6 +168,24 @@ OUTPUT 초안을 대화창에 출력하고 사용자에게 확인을 요청한�
 > "위 설계 문서를 검토해 주세요. 수정할 부분이 있으면 말씀해 주세요. 파일로 저장할까요?"
 
 수정 요청 시 해당 섹션만 재작성한다. 파일 저장은 승인 후 진행한다.
+권한 정책이 활성화되어 guard가 `decision=confirm`을 반환했다면 저장 도구를 호출하기
+직전에 다음 내용을 보여주고 이 변경에 한해 별도 승인을 받는다. 직접 호출뿐 아니라
+다른 스킬이 `design-doc`을 선택한 경우에도 생략하지 않는다.
+
+> **앱 설계 기준 문서 편집 확인**
+>
+> - 대상 앱: `{애플리케이션}`
+> - 대상 파일: `{정확한 DESIGN.md 경로}`
+> - 문서 역할: `DESIGN.md`는 앱의 요구사항, 범위, 아키텍처, 데이터와 인수 기준을
+>   정하는 설계 기준 문서입니다.
+> - 현재 권한: `{pm-pl / app-doc-lead와 앱 범위}`
+> - 변경 내용과 이유: `{신규 작성 또는 갱신 요약}`
+>
+> 위 변경을 이 파일에 반영할까요? **(승인 / 수정 / 취소)**
+
+대상 경로·내용 요약·현재 역할이 달라지면 이전 답변을 재사용하지 않는다. AI 훅의
+`permissionDecision=ask`도 같은 확인을 요구하므로 생략하지 않는다.
+
 저장 승인 시:
 - **단일 앱**: 기본 경로 `{project}/.docs/context-base/DESIGN.md`
 - **복수 앱**: 기본 경로 `{project}/.docs/{앱 디렉토리명}/context-base/DESIGN.md`
