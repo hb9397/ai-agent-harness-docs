@@ -33,6 +33,13 @@ PROVIDER_DEFAULT_HOSTS = {
     "gitlab": "gitlab.com",
     "gitea": "gitea.com",
 }
+GIT_SCOPED_ACCOUNT_KEYS = (
+    "harness.gitScopedAccount.projectRoot",
+    "harness.gitScopedAccount.configPath",
+    "harness.gitScopedAccount.provider",
+    "harness.gitScopedAccount.host",
+    "harness.gitScopedAccount.account",
+)
 CODEOWNERS_MARKERS = (
     "# harness-kit:write-access:start",
     "# harness-kit:write-access:end",
@@ -921,6 +928,84 @@ def preflight(layout: dict[str, Any]) -> dict[str, Any]:
     return state
 
 
+def one_local_git_value(git_root: Path, key: str) -> str:
+    result = git(git_root, "config", "--local", "--get-all", key, check=False)
+    values = result.stdout.decode().splitlines() if result.returncode == 0 else []
+    if len(values) != 1 or not values[0].strip():
+        raise AccessError(f"git-scoped-account local setting is missing or duplicated: {key}")
+    return values[0].strip()
+
+
+def normalized_config_origin(value: str) -> str:
+    raw = value.removeprefix("file:").strip().replace("\\", "/")
+    return raw.casefold()
+
+
+def require_git_scoped_identity(project_root: Path, git_root: Path) -> dict[str, str]:
+    values = {key: one_local_git_value(git_root, key) for key in GIT_SCOPED_ACCOUNT_KEYS}
+    registered_root = Path(values["harness.gitScopedAccount.projectRoot"]).resolve()
+    if registered_root != project_root.resolve():
+        raise AccessError("git-scoped-account project root does not match this project")
+
+    config_path = values["harness.gitScopedAccount.configPath"].replace("\\", "/")
+    included = git(
+        git_root,
+        "config",
+        "--local",
+        "--fixed-value",
+        "--get-all",
+        "include.path",
+        config_path,
+        check=False,
+    )
+    if included.returncode != 0 or included.stdout.decode().splitlines() != [config_path]:
+        raise AccessError("git-scoped-account shared config is not included exactly once")
+    for key in ("user.name", "user.email"):
+        origin = git(git_root, "config", "--show-origin", "--get", key, check=False)
+        if origin.returncode != 0:
+            raise AccessError(f"git-scoped-account did not provide {key}")
+        source = origin.stdout.decode(errors="replace").split(maxsplit=1)[0]
+        if normalized_config_origin(source) != normalized_config_origin(config_path):
+            raise AccessError(f"{key} is not sourced from the git-scoped-account shared config")
+
+    provider = values["harness.gitScopedAccount.provider"]
+    host = values["harness.gitScopedAccount.host"].casefold()
+    account = values["harness.gitScopedAccount.account"]
+    if provider not in PROVIDERS:
+        raise AccessError("git-scoped-account provider is unsupported")
+    if not re.fullmatch(r"[A-Za-z0-9.-]+(?::[0-9]{1,5})?", host):
+        raise AccessError("git-scoped-account provider host is invalid")
+    if not re.fullmatch(r"@[A-Za-z0-9_.-]+", account):
+        raise AccessError("git-scoped-account provider account is invalid")
+    return {
+        "project_root": str(project_root.resolve()),
+        "config_path": config_path,
+        "provider": provider,
+        "host": host,
+        "account": account,
+    }
+
+
+def git_scoped_plan_state(project_root: Path, git_root: Path | None, expected: dict[str, Any] | None = None) -> dict[str, Any]:
+    if git_root is None:
+        return {"status": "required", "message": "Git boundary is unavailable"}
+    try:
+        identity = require_git_scoped_identity(project_root, git_root)
+        if expected is not None and (
+            identity["provider"],
+            identity["host"],
+            identity["account"].casefold(),
+        ) != (
+            expected["provider"],
+            str(expected["host"]).casefold(),
+            str(expected["account"]).casefold(),
+        ):
+            raise AccessError("git-scoped-account identity does not match config local_identity")
+        return {"status": "ready", **identity}
+    except AccessError as exc:
+        return {"status": "required", "message": str(exc)}
+
+
 def make_plan(project_root: Path, config: dict[str, Any], operation: str = "apply") -> dict[str, Any]:
     layout = detect_layout(project_root)
     state = preflight(layout)
@@ -930,6 +1015,9 @@ def make_plan(project_root: Path, config: dict[str, Any], operation: str = "appl
     changes: list[dict[str, str]] = []
     conflicts: list[dict[str, str]] = []
     git_root: Path | None = layout["git_root"]
+    scoped_state = git_scoped_plan_state(project_root, git_root, config["local_identity"])
+    if scoped_state["status"] != "ready":
+        conflicts.append({"provider": "local-git", "type": "git-scoped-account-required", "path": ".git/config"})
     if git_root is not None:
         for provider, target in codeowners_targets(git_root).items():
             block = render_codeowners_block(policy_core, provider, layout, policy_core_hash)
@@ -971,6 +1059,7 @@ def make_plan(project_root: Path, config: dict[str, Any], operation: str = "appl
         "policy_core_sha256": policy_core_hash,
         "changes": sorted(changes, key=lambda item: item["path"]),
         "conflicts": conflicts,
+        "git_scoped_account": scoped_state,
         "participant_discovery": "required-before-role-change" if config["repositories"] else "not-applicable",
     }
     return {
@@ -1346,6 +1435,93 @@ def verify_bundle(project_root: Path) -> dict[str, Any]:
     return summary
 
 
+def make_local_enrollment_plan(project_root: Path) -> dict[str, Any]:
+    verified, policy, _manifest = verify_bundle_at(project_root, DOCS_ROOT_NAME)
+    layout = detect_layout(project_root)
+    git_root: Path | None = layout["git_root"]
+    if git_root is None:
+        raise AccessError("local enrollment requires the Git boundary that tracks .ai-docs")
+    identity = require_git_scoped_identity(project_root, git_root)
+    subject = subject_for_account(policy, identity["provider"], identity["host"], identity["account"])
+    roles = sorted(
+        assignment["role"]
+        for assignment in policy.get("role_assignments", [])
+        if subject is not None and assignment.get("subject_id") == subject.get("id")
+    )
+    ours_relative = ".ai-docs/harness/access-control/hooks/git" if layout["git_root_relative"] == "." else "harness/access-control/hooks/git"
+    basis = {
+        "schema_version": SCHEMA_VERSION,
+        "operation": "local-enroll",
+        "project_root": str(project_root.resolve()),
+        "project_id": policy["project_id"],
+        "policy_core_sha256": verified["policy_core_sha256"],
+        "git_root_relative": layout["git_root_relative"],
+        "identity": identity,
+        "subject_id": subject.get("id") if subject is not None else None,
+        "roles": roles,
+        "changes": [
+            {"path": ".git/config", "action": "connect-local-identity-and-hooks"},
+            {"path": str(git_local_state_path(git_root)), "action": "record-previous-hooks"},
+        ],
+        "core_hooks_path": ours_relative,
+        "shared_policy_changes": "none",
+        "provider_server_rules": "left-unchanged",
+    }
+    return {**basis, "plan_hash": sha256_bytes(canonical_json(basis))}
+
+
+def apply_local_enrollment(project_root: Path, approved_hash: str) -> dict[str, Any]:
+    plan = make_local_enrollment_plan(project_root)
+    if plan["plan_hash"] != approved_hash:
+        raise AccessError("approved local enrollment plan hash does not match the current plan")
+    layout = detect_layout(project_root)
+    git_root: Path | None = layout["git_root"]
+    if git_root is None:
+        raise AccessError("local enrollment requires the Git boundary that tracks .ai-docs")
+    state_path = git_local_state_path(git_root)
+    file_snapshot = snapshot([state_path])
+    git_snapshot = git_config_values(git_root)
+    config = {
+        "local_identity": {
+            "provider": plan["identity"]["provider"],
+            "host": plan["identity"]["host"],
+            "account": plan["identity"]["account"],
+        }
+    }
+    try:
+        install_git_hooks(project_root, git_root, layout, config)
+        actual = {
+            "project_root": one_local_git_value(git_root, "harness.writeAccess.projectRoot"),
+            "provider": one_local_git_value(git_root, "harness.writeAccess.provider"),
+            "host": one_local_git_value(git_root, "harness.writeAccess.host").casefold(),
+            "account": one_local_git_value(git_root, "harness.writeAccess.account"),
+            "core_hooks_path": one_local_git_value(git_root, "core.hooksPath"),
+        }
+        expected = {
+            "project_root": str(project_root.resolve()),
+            "provider": plan["identity"]["provider"],
+            "host": plan["identity"]["host"],
+            "account": plan["identity"]["account"],
+            "core_hooks_path": plan["core_hooks_path"],
+        }
+        if actual != expected:
+            raise AccessError("local enrollment verification failed")
+        verify_bundle(project_root)
+    except Exception:
+        restore_files(file_snapshot)
+        restore_git_config(git_root, git_snapshot)
+        raise
+    return {
+        "status": "enrolled",
+        "project_id": plan["project_id"],
+        "subject_id": plan["subject_id"],
+        "roles": plan["roles"],
+        "identity": plan["identity"],
+        "shared_policy_changes": "none",
+        "provider_server_rules": "left-unchanged",
+    }
+
+
 def remove_managed_block(content: bytes, markers: tuple[str, str]) -> bytes:
     text = content.decode("utf-8")
     start, end = markers
@@ -1525,6 +1701,7 @@ def make_root_migration_plan(project_root: Path, config: dict[str, Any]) -> dict
         raise AccessError("migration config project_id does not match the signed legacy policy")
 
     state = preflight(layout)
+    scoped_state = git_scoped_plan_state(project_root, layout["git_root"], config["local_identity"])
     remote_verification = "pending" if state["remote"] else "local-only"
     desired_policy_core = build_policy_core(config, layout, remote_verification)
     desired_policy_core_hash = sha256_bytes(canonical_json(desired_policy_core))
@@ -1563,6 +1740,7 @@ def make_root_migration_plan(project_root: Path, config: dict[str, Any]) -> dict
         "legacy_policy_core_sha256": verified["policy_core_sha256"],
         "policy_core_sha256": desired_policy_core_hash,
         "changes": changes,
+        "git_scoped_account": scoped_state,
         "provider_server_rules": "left-unchanged; requires separate provider-admin approval",
     }
     return {
@@ -1603,6 +1781,20 @@ def migrate_document_root(
         raise AccessError("Git history is behind or diverged; fast-forward it before migration")
     if state.get("remote") and not evidence:
         raise AccessError("remote repositories require provider-admin evidence before migration")
+    git_root: Path | None = detect_legacy_layout(project_root)["git_root"]
+    if git_root is None:
+        raise AccessError("migration requires the Git boundary that tracks .docs")
+    scoped_identity = require_git_scoped_identity(project_root, git_root)
+    if (
+        scoped_identity["provider"],
+        scoped_identity["host"],
+        scoped_identity["account"].casefold(),
+    ) != (
+        config["local_identity"]["provider"],
+        config["local_identity"]["host"].casefold(),
+        config["local_identity"]["account"].casefold(),
+    ):
+        raise AccessError("git-scoped-account identity does not match migration local_identity")
 
     _verified, current_policy, _manifest = verify_bundle_at(
         project_root,
@@ -1684,6 +1876,20 @@ def apply(
         raise AccessError("remote repositories require provider-admin evidence before Apply")
 
     layout = detect_layout(project_root)
+    git_root: Path | None = layout["git_root"]
+    if git_root is None:
+        raise AccessError("Apply requires the Git boundary that tracks .ai-docs")
+    scoped_identity = require_git_scoped_identity(project_root, git_root)
+    if (
+        scoped_identity["provider"],
+        scoped_identity["host"],
+        scoped_identity["account"].casefold(),
+    ) != (
+        config["local_identity"]["provider"],
+        config["local_identity"]["host"].casefold(),
+        config["local_identity"]["account"].casefold(),
+    ):
+        raise AccessError("git-scoped-account identity does not match config local_identity")
     remote_verification = "verified" if evidence else "local-only"
     policy_core = build_policy_core(config, layout, remote_verification)
     policy_core_hash = sha256_bytes(canonical_json(policy_core))
@@ -1738,7 +1944,6 @@ def apply(
 
     config_with_root = copy.deepcopy(config)
     config_with_root["_project_root"] = str(project_root.resolve())
-    git_root: Path | None = layout["git_root"]
     provider_state_value = provider_state(config_with_root, layout, git_root, evidence, policy_core_hash)
     trust_value = {
         "schema_version": SCHEMA_VERSION,
@@ -1861,6 +2066,11 @@ def main() -> int:
             item.add_argument("--claude-key-dir")
     discover = sub.add_parser("discover-participants")
     discover.add_argument("--config", required=True)
+    for name in ("local-enroll-plan", "local-enroll"):
+        item = sub.add_parser(name)
+        item.add_argument("--project-root", required=True)
+        if name == "local-enroll":
+            item.add_argument("--approve-plan-hash", required=True)
     for name in ("remove-plan", "remove"):
         item = sub.add_parser(name)
         item.add_argument("--project-root", required=True)
@@ -1881,6 +2091,10 @@ def main() -> int:
             project_root = Path(args.project_root).resolve()
             if args.command == "verify":
                 result = verify_bundle(project_root)
+            elif args.command == "local-enroll-plan":
+                result = make_local_enrollment_plan(project_root)
+            elif args.command == "local-enroll":
+                result = apply_local_enrollment(project_root, args.approve_plan_hash)
             elif args.command == "remove-plan":
                 result = make_remove_plan(project_root, args.delete_keys)
             elif args.command == "remove":

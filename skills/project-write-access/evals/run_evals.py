@@ -151,7 +151,48 @@ def controller(*args: str, check: bool = True) -> subprocess.CompletedProcess[st
     return command([sys.executable, str(CONTROLLER), *args], check=check)
 
 
+def prepare_git_scoped_identity(project: Path, config: Path) -> Path:
+    data = json.loads(config.read_text(encoding="utf-8"))
+    git_root = project
+    if not (git_root / ".git").exists():
+        for name in (".ai-docs", ".docs"):
+            candidate = project / name
+            if (candidate / ".git").exists():
+                git_root = candidate
+                break
+        else:
+            raise AssertionError("fixture has no Git boundary")
+
+    shared = project.parent / f".{project.name}-gitconfig-scoped"
+    write(shared, "[user]\n\tname = Fixture Admin\n\temail = fixture@example.com\n")
+    shared_value = shared.resolve().as_posix()
+    existing = git(git_root, "config", "--local", "--fixed-value", "--get-all", "include.path", shared_value, check=False)
+    if existing.returncode != 0:
+        git(git_root, "config", "--local", "--add", "include.path", shared_value)
+    elif len(existing.stdout.splitlines()) > 1:
+        git(git_root, "config", "--local", "--fixed-value", "--unset-all", "include.path", shared_value)
+        git(git_root, "config", "--local", "--add", "include.path", shared_value)
+
+    identity = data["local_identity"]
+    values = {
+        "harness.gitScopedAccount.projectRoot": str(project.resolve()),
+        "harness.gitScopedAccount.configPath": shared_value,
+        "harness.gitScopedAccount.provider": identity["provider"],
+        "harness.gitScopedAccount.host": identity["host"],
+        "harness.gitScopedAccount.account": identity["account"],
+    }
+    for key, value in values.items():
+        git(git_root, "config", "--local", "--replace-all", key, value)
+    return git_root
+
+
+def set_local_account(git_root: Path, account: str) -> None:
+    git(git_root, "config", "--local", "--replace-all", "harness.gitScopedAccount.account", account)
+    git(git_root, "config", "--local", "--replace-all", "harness.writeAccess.account", account)
+
+
 def plan(project: Path, config: Path) -> dict:
+    prepare_git_scoped_identity(project, config)
     result = controller("plan", "--project-root", str(project), "--config", str(config))
     return json.loads(result.stdout)
 
@@ -432,6 +473,7 @@ def test_single_repository(root: Path) -> None:
     claude_keys = root / "claude-keys"
     first_plan = plan(project, config)
     assert first_plan["topology"] == "single-repository"
+    assert first_plan["git_scoped_account"]["status"] == "ready"
     result = apply(project, config, first_plan["plan_hash"], codex_keys, claude_keys)
     applied = json.loads(result.stdout)
     assert applied["status"] == "valid"
@@ -460,6 +502,33 @@ def test_single_repository(root: Path) -> None:
     assert {item["id"] for item in provider_state["providers"]["github"]["repositories"]} == {"docs-repo", "web-source"}
 
     guard = project / ".ai-docs" / "harness" / "access-control" / "hooks" / "write_access_guard.py"
+    policy_before_enrollment = (project / ".ai-docs" / "harness" / "access-control" / "policy.json").read_bytes()
+    for key in ("core.hooksPath", "harness.writeAccess.projectRoot", "harness.writeAccess.provider", "harness.writeAccess.host", "harness.writeAccess.account"):
+        git(project, "config", "--local", "--unset-all", key, check=False)
+    enrollment_plan = json.loads(
+        controller("local-enroll-plan", "--project-root", str(project)).stdout
+    )
+    assert enrollment_plan["shared_policy_changes"] == "none"
+    assert enrollment_plan["roles"] == ["admin"]
+    enrolled = json.loads(
+        controller(
+            "local-enroll",
+            "--project-root",
+            str(project),
+            "--approve-plan-hash",
+            enrollment_plan["plan_hash"],
+        ).stdout
+    )
+    assert enrolled["status"] == "enrolled"
+    assert (project / ".ai-docs" / "harness" / "access-control" / "policy.json").read_bytes() == policy_before_enrollment
+
+    git(project, "config", "--local", "--unset-all", "harness.gitScopedAccount.account")
+    missing_enrollment_doc = ai_file_write(guard, project, "codex", project / ".ai-docs" / "README.md")
+    missing_enrollment_source = ai_file_write(guard, project, "codex", project / "src" / "app.py")
+    assert json.loads(missing_enrollment_doc.stdout)["hookSpecificOutput"]["permissionDecision"] == "deny"
+    assert missing_enrollment_source.returncode == 0 and missing_enrollment_source.stdout == ""
+    set_local_account(project, "@owner")
+
     common = [sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--provider-host", "github.com", "--account"]
     allow_admin = command([*common, "@owner", ".ai-docs/harness/access-control/policy.json"], check=False)
     deny_admin_app = command([*common, "@owner", ".ai-docs/web/context-base/DESIGN.md"], check=False)
@@ -486,7 +555,7 @@ def test_single_repository(root: Path) -> None:
     assert deny_dev_unlisted.returncode == 1
     assert allow_source_without_role.returncode == 0
 
-    git(project, "config", "--local", "harness.writeAccess.account", "@lead")
+    set_local_account(project, "@lead")
     for host in ("claude", "codex"):
         app_prompt = ai_file_write(
             guard, project, host, project / ".ai-docs" / "web" / "context-base" / "DESIGN.md"
@@ -496,7 +565,7 @@ def test_single_repository(root: Path) -> None:
         assert prompt_decision["permissionDecision"] == "ask"
         assert "설계 기준" in prompt_decision["permissionDecisionReason"]
 
-    git(project, "config", "--local", "harness.writeAccess.account", "@owner")
+    set_local_account(project, "@owner")
     instruction_path = project / ".ai-docs" / "harness" / "access-control" / "write-access-instruction.md"
     original_instruction = instruction_path.read_text(encoding="utf-8")
     staged_tamper = original_instruction.replace("역할은 상속하지 않는다", "역할을 상속한다")
@@ -509,7 +578,7 @@ def test_single_repository(root: Path) -> None:
     assert "staged generated content" in denied_managed_block.stderr
     git(project, "reset", "--", str(instruction_path))
 
-    git(project, "config", "--local", "harness.writeAccess.account", "@dev-a")
+    set_local_account(project, "@dev-a")
     team_path = project / ".ai-docs" / "web" / "impl-doc" / "dev-b" / "team.md"
     write(team_path, "team\n")
     assert git(project, "add", str(team_path)).returncode == 0
@@ -582,11 +651,11 @@ def test_single_repository(root: Path) -> None:
     assert self_hosted_push.returncode == 1
     assert "provider host" in self_hosted_push.stderr
 
-    git(project, "config", "--local", "harness.writeAccess.account", "@owner")
+    set_local_account(project, "@owner")
     write(protected_path, protected_text + "admin update\n")
     git(project, "add", str(protected_path))
     git(project, "commit", "-q", "-m", "admin updates admin document")
-    git(project, "config", "--local", "harness.writeAccess.account", "@dev-a")
+    set_local_account(project, "@dev-a")
     local_oid = git(project, "rev-parse", "HEAD").stdout.strip()
     push_input = f"refs/heads/main {local_oid} refs/heads/main {baseline_sha}\n"
     denied_push = subprocess.run(
@@ -602,7 +671,7 @@ def test_single_repository(root: Path) -> None:
     )
     assert denied_push.returncode == 1
     assert "push denied" in denied_push.stderr
-    git(project, "config", "--local", "harness.writeAccess.account", "@owner")
+    set_local_account(project, "@owner")
 
     verify = controller("verify", "--project-root", str(project))
     assert json.loads(verify.stdout)["status"] == "valid"
@@ -862,6 +931,7 @@ def test_signed_legacy_root_migration(root: Path) -> None:
     non_admin_value = json.loads(single_config.read_text(encoding="utf-8"))
     non_admin_value["local_identity"]["account"] = "@lead"
     write(non_admin_config, json.dumps(non_admin_value, ensure_ascii=False, indent=2) + "\n")
+    set_local_account(legacy_git_root, "@lead")
     non_admin_plan = migration_plan(single, non_admin_config)
     rejected_non_admin = migrate_root(
         single,
@@ -873,6 +943,7 @@ def test_signed_legacy_root_migration(root: Path) -> None:
     )
     assert rejected_non_admin.returncode == 2
     assert "signed-policy admin" in rejected_non_admin.stderr
+    set_local_account(legacy_git_root, "@owner")
 
     migrated = json.loads(
         migrate_root(

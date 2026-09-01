@@ -10,6 +10,11 @@ disable-model-invocation: true
 이 스킬은 문서 하네스를 만들거나 설계·구현 문서를 작성하지 않는다. 이미 존재하는
 문서 경로에 쓰기 권한만 연결하는 선택 기능이다. 읽기는 막지 않는다.
 
+공유 권한 정책을 만들고 바꾸는 일은 `admin`만 수행한다. 다만 정책이 이미 있는
+프로젝트에서 각 참여자가 자기 PC의 Git 계정과 로컬 쓰기 가드를 연결하는 **로컬 등록**은
+정책 변경이 아니다. `git-scoped-account`를 먼저 마친 참여자는 관리자 키 없이 이
+분기만 명시적으로 실행할 수 있다.
+
 명시 호출 예:
 
 - Codex: `$project-write-access 프로젝트 문서 권한을 처음 설정해줘`
@@ -64,6 +69,7 @@ disable-model-invocation: true
 |---|---|
 | 최초 설정 | Step 0 → 1 → 2에서 최초 관리자 확정 → 3 → 4 → 5 |
 | 최초 이후 계정·역할·앱 배정·경로 정책 변경 | Step 0 → 1 → 2에서 기존 관리자 검증 → 3 → 4 → 5 |
+| 기존 정책에 현재 PC 계정 로컬 등록 | Step 0 → 1에서 서명 정책·git-scoped-account 확인 → 로컬 등록 Plan → 별도 승인 → 5 |
 | 상태 확인·괴리 검사 | Step 0 → 1 → 5. 읽기 전용으로 종료 |
 | 제거 | Step 0 → 1 → 2 → 제거 계획 → 별도 승인 → 5 |
 | 관리자 교체 | Step 0 → 1 → 2 → 교체 계획 → 기존 키 승인 → 별도 승인 → 5 |
@@ -84,6 +90,11 @@ disable-model-invocation: true
 프로젝트 루트, `.ai-docs` 저장소 경계, 애플리케이션 목록, 보호할 루트
 `AGENTS.md`·`CLAUDE.md`의 Git 포함 여부를 보여주고 확인받는다. 소스코드는 보호
 범위에 넣지 않는다.
+
+최초 설정·정책 변경·문서 루트 이관 전에 현재 Git 경계에
+`harness.gitScopedAccount.*` 로컬 표식이 있고 `user.name`·`user.email`의 실제 출처가
+표식에 등록된 공통 config인지 확인한다. provider·host·account가 이번 설정의
+`local_identity`와 다르면 Apply하지 않고 `git-scoped-account`부터 다시 수행한다.
 
 `.docs/`와 `.ai-docs/`가 함께 있으면 Plan을 생성하지 않는다. `.docs/`만 있으면
 `harness/access-control/`의 정책·신뢰·서명·생성 목록이 모두 있는지 판정한다. 서명
@@ -106,6 +117,7 @@ disable-model-invocation: true
 5. `.claude/settings.json`, `.codex/hooks.json`, 기존 쓰기 훅
 6. 현재 호출자가 제시한 Git 서비스 계정과 관리자 권한 증적
 7. 루트 라우팅 정본에 등록된 모든 저장소와 각 Git 서비스의 실제 접근 구성원
+8. 현재 PC의 `git-scoped-account` 프로젝트 루트·공통 config·provider·host·account 표식
 
 원격이 있으면 인증 정보를 저장하지 않은 채 서비스 API 또는 공식 CLI로 현재 로그인
 계정, 저장소 관리자 권한과 실제 접근 구성원을 확인한다. 커밋·푸시·PR·MR 활동 기록이
@@ -117,6 +129,11 @@ disable-model-invocation: true
 정책 변경 전에 원격 확인이 필요하면 먼저 fetch 계획을 보여주고 별도 승인을 받는다.
 작업 폴더가 깨끗하고 fast-forward만 가능한 경우에만 갱신한다. 강제 reset, rebase,
 로컬 변경 폐기는 하지 않는다. 뒤처졌거나 이력이 갈라지면 중단한다.
+
+서명 정책이 이미 있고 요청이 현재 PC 로컬 등록뿐이면 접근 구성원 조회와 관리자 키
+검증을 요구하지 않는다. 정책의 공개키 서명과 생성 목록을 검증하고, 로컬 표식의
+계정을 정책 subject·역할에 매핑해 보여준다. 등록되지 않은 계정도 `team` 범위는
+기존 저장소 권한에 따르지만 관리자·앱 핵심 문서에는 권한이 생기지 않는다.
 
 ## Step 2 — 신뢰 상태 확인
 
@@ -155,6 +172,11 @@ Plan에는 최소한 다음을 포함한다.
 - 사용자가 정한 브랜치 규칙의 서버 적용 계획 또는 `미적용`
 - 되돌릴 수 없는 외부 상태와 남은 우회 가능성
 
+로컬 등록 Plan은 공유 정책 변경 Plan과 분리한다. 현재 서명 정책 해시, 로컬
+provider·host·account, 매핑된 subject·역할, `core.hooksPath`와
+`harness.writeAccess.*` 변경만 포함한다. 공유 정책·CODEOWNERS·관리자 키·원격 서비스
+규칙은 `변경 없음`으로 표시한다.
+
 프로젝트가 정하지 않은 `dev`·`main` 규칙을 새로 만들지 않는다.
 
 번들의 `scripts/project_write_access.py plan`을 사용해 결정론적 파일 Plan과
@@ -186,6 +208,11 @@ Plan을 사람에게 보여준 뒤 다음 범위를 나눠 승인받는다.
 스냅샷으로 복구한다. 이미 바뀐 원격 상태를 되돌리지 못하면 성공으로 보고하지 말고
 정확한 차이를 제시한다.
 
+현재 PC 로컬 등록은 `local-enroll-plan`의 해시를 별도 승인받아 `local-enroll`에
+전달한다. 이 명령은 `git-scoped-account` 표식과 서명 정책을 다시 검증한 뒤 로컬 Git
+훅과 AI 쓰기 가드의 계정 연결만 설정한다. 관리자 개인키나 정책 설정 JSON을 받지
+않으며 공유 파일과 원격 상태를 수정하지 않는다.
+
 문서 루트 이관은 승인된 `migrate-root-plan`의 해시를 `migrate-root`에 전달한다.
 이 명령은 기존 관리자 키와 서명을 다시 확인하고 `.docs/` 전체를 `.ai-docs/`로 옮긴
 뒤 정책·생성 목록·로컬 Git 훅·AI 훅을 현재 스키마로 재생성한다. 어느 단계든 실패하면
@@ -207,6 +234,7 @@ Plan을 사람에게 보여준 뒤 다음 범위를 나눠 승인받는다.
 - `policy.json` 서명과 `generated-manifest.json` 해시
 - 세 CODEOWNERS 관리 블록과 서비스별 활성 파일 우선순위
 - 로컬 Git 훅의 설치 상태와 기존 훅 연결 상태
+- `git-scoped-account` 표식과 `harness.writeAccess.*`의 provider·host·account 일치 여부
 - 루트 instruction 참조 블록, 전용 `write-access-instruction.md`와 Claude·Codex host 훅 상태
 - 관리자 문서, 앱 핵심 문서, 팀 작성 경로의 판정과 앱별 책임자 범위
 - 세 계층이 같은 `policy_core_sha256`을 가리키는지
@@ -237,5 +265,11 @@ CODEOWNERS만 생성된 상태나 로컬 훅만 설치된 상태를 완전한 �
   `pending-trust`다.
 - 복수 저장소 구조에서 Git 밖의 루트 `AGENTS.md`·`CLAUDE.md`는 CODEOWNERS와 Git
   훅으로 보호할 수 없다. AI 훅·운영체제 파일 권한·형상관리 구조 변경이 필요하다.
+
+서명 정책이 활성화된 프로젝트에서는 현재 PC의 `git-scoped-account` 표식과 로컬
+등록이 모두 검증되기 전까지 지원되는 Git·AI 가드가 `.ai-docs/**`와 Git에 포함된 루트
+지도를 fail closed 한다. 앱 소스코드는 이 사전 조건으로 막지 않는다. 로컬 등록 자체를
+하지 않은 PC에는 로컬 Git 훅이 설치되지 않으므로 원격 보호 규칙 없이 사람의 직접
+편집·push까지 막는다고 표현하지 않는다.
 
 이 한계를 바꾸거나 축소해 설명하지 않는다.

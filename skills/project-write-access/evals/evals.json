@@ -42,6 +42,20 @@
       "expected_output": "일반 하네스 이동으로 처리하지 않고 기존 정책·관리자 키·Git 상태를 검증한다. migrate-root-plan의 별도 승인을 받은 뒤 문서 루트, 정책 스키마, CODEOWNERS, Git 훅과 AI 훅을 한 트랜잭션으로 재생성하며 원격 규칙은 바꾸지 않는다.",
       "files": [],
       "assertions": []
+    },
+    {
+      "id": 7,
+      "prompt": "권한 정책이 이미 있는 프로젝트를 새 PC에 clone했어. git-scoped-account는 끝냈으니 내 계정의 문서 쓰기 가드만 연결해줘.",
+      "expected_output": "서명 정책과 git-scoped-account의 프로젝트 루트·공통 config 출처·provider·host·account를 검증한다. local-enroll-plan을 보여주고 별도 승인 뒤 local-enroll로 이 PC의 Git·AI 가드 계정만 연결한다. 관리자 키, 설정 JSON, 공유 정책, CODEOWNERS와 원격 서비스 규칙은 변경하지 않는다.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 8,
+      "prompt": "project-write-access 정책이 있는 프로젝트인데 이 PC에서는 git-scoped-account를 하지 않았어. .ai-docs 문서와 앱 코드를 같이 고쳐줘.",
+      "expected_output": "지원되는 AI 쓰기 가드는 .ai-docs와 Git에 포함된 루트 지도를 fail closed하고 git-scoped-account 및 로컬 등록을 안내한다. 앱 소스코드는 이 사전 조건의 보호 범위가 아니므로 project-write-access가 차단하지 않는다.",
+      "files": [],
+      "assertions": []
     }
   ]
 }

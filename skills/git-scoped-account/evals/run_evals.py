@@ -91,10 +91,16 @@ def test_byte_exact_rollback(tmp: Path) -> None:
 
 
 def test_document_contract() -> None:
+    skill = (SKILL_ROOT / "SKILL.md").read_text(encoding="utf-8")
     commands = (SKILL_ROOT / "prompts" / "commands.md").read_text(encoding="utf-8")
     assert "--fixed-value" in commands
     assert "byte" in commands
     assert "롤백" in commands
+    assert "harness.gitScopedAccount.projectRoot" in commands
+    assert "harness.gitScopedAccount.account" in commands
+    assert "local-enroll-plan" in commands
+    assert "공유 정책·CODEOWNERS·관리자 키" in skill
+    assert "애플리케이션 소스코드는 이 조건으로 막지 않는다" in skill
     unsafe_line = re.compile(
         r"^\s*(?![-`>]).*\bconfig\b.*--local\s+--unset-all\s+include\.path(?:\s*$|[\"'`])",
         re.MULTILINE,

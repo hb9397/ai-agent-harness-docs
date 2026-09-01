@@ -7,6 +7,7 @@
 | 모든 호출 | 사전 점검 |
 | 최초 설정 | 최초 사용 + Plan + Apply |
 | 최초 이후 정책 변경 | 최초 이후 사용 + Plan + Apply |
+| 기존 정책에 현재 PC 등록 | 사전 점검 + 로컬 계정 등록 |
 | 서명된 `.docs` 정책 이관 | 사전 점검 + 문서 루트 이관 |
 | 제거 | 제거 |
 | 관리자 교체 | 관리자 교체 |
@@ -24,6 +25,8 @@
 6. 기존 CODEOWNERS, `core.hooksPath`, 두 host 설정을 byte 단위 스냅샷 대상으로 잡는다.
 7. 루트 라우팅 정본에 등록된 repository를 모두 확인하고 `discover-participants`로
    서비스의 실제 접근 명단을 조회한다. 활동 이력으로 참여자를 추측하지 않는다.
+8. 정책이 사용하는 Git 경계에서 `harness.gitScopedAccount.*` 다섯 값과
+   `user.name`·`user.email`의 실제 config 출처를 확인한다.
 
 작업 폴더가 더럽거나 upstream보다 뒤처졌거나 이력이 갈라지면 적용하지 않는다. 읽기
 전용 검증은 계속할 수 있다.
@@ -32,6 +35,36 @@
 처리하지 않는다. 정책 경로, `core.hooksPath`, Claude·Codex 훅의 절대·상대 참조가 함께
 바뀌어야 하므로 아래 **문서 루트 이관** 분기에서 기존 정책과 관리자 키를 검증한다.
 서명 정책이 없으면 이 스킬이 옮기지 않고 `harness-setup`의 이관 흐름으로 넘긴다.
+
+## 로컬 계정 등록
+
+서명 정책이 있는 프로젝트를 새 PC나 새 clone에서 사용할 때는 참여자마다 먼저
+`git-scoped-account`를 수행한다. 그 결과의 프로젝트 루트·공통 config·provider·host·
+account 표식이 모두 정확해야 다음 Plan을 만든다.
+
+```text
+python {skill-root}/scripts/project_write_access.py local-enroll-plan \
+  --project-root {project-root}
+```
+
+서명 정책 해시, 현재 로컬 계정, 매핑된 subject·역할, 바뀌는 로컬 Git 설정을 보여주고
+별도 승인받는다.
+
+```text
+python {skill-root}/scripts/project_write_access.py local-enroll \
+  --project-root {project-root} \
+  --approve-plan-hash {local-enrollment-plan-hash}
+```
+
+이 분기는 관리자 키·정책 설정 JSON·원격 API 권한을 요구하지 않는다. 공유 정책,
+CODEOWNERS, 관리자 키, 원격 브랜치·검토 규칙은 바꾸지 않는다. 정책에 등록되지 않은
+계정도 로컬 등록할 수 있지만 `admin`·`app-doc` 권한은 생기지 않는다. `team` 범위와
+앱 소스코드는 기존 저장소 권한을 따른다.
+
+정책이 활성화됐는데 현재 PC에서 `git-scoped-account`와 이 등록을 마치지 않았으면
+지원되는 AI 가드는 `.ai-docs/**`와 Git에 포함된 루트 지도의 쓰기를 거부한다. 로컬
+Git 훅이 아직 설치되지 않은 PC에서 사람의 직접 편집·push까지 막는다고 표현하지
+않는다.
 
 ## 최초 사용
 
