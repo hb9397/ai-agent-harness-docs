@@ -17,11 +17,14 @@
   필요하다.
 - code owner 사용자·팀은 저장소 write 권한이 있어야 한다.
 - 서버 설정 조회·변경은 저장소 관리자 권한과 API 인증이 필요하다.
+- 참여자는 `List repository collaborators`의 `affiliation=all`과 유효 permission으로
+  조회한다. 조직·팀을 통해 접근한 사용자도 결과에 포함되며 페이지를 끝까지 읽는다.
 
 공식 자료:
 
 - https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 - https://docs.github.com/en/rest/branches/branch-protection
+- https://docs.github.com/en/rest/collaborators/collaborators
 
 ## GitLab
 
@@ -33,12 +36,15 @@
   확인한다.
 - `Allowed to push and merge` 사용자는 MR 승인을 우회할 수 있으므로 직접 push 권한도
   함께 확인한다.
+- 참여자는 `/projects/:id/members/all`로 조회해 직접 구성원뿐 아니라 초대 그룹과 상위
+  그룹에서 상속된 유효 구성원까지 확인한다.
 
 공식 자료:
 
 - https://docs.gitlab.com/user/project/codeowners/
 - https://docs.gitlab.com/user/project/repository/branches/protected/
 - https://docs.gitlab.com/api/protected_branches/
+- https://docs.gitlab.com/api/project_members/
 
 ## Gitea
 
@@ -52,12 +58,29 @@
 - branch protection에서 code owner approval을 켜야 PR 병합 제한이 생긴다.
 - 저장소 소유자·관리자 권한과 API 토큰이 필요하다. 설치 버전의 OpenAPI에서
   `block_on_codeowner_reviews`, push·merge allowlist 필드 지원을 확인한다.
+- 참여자는 collaborator, 저장소에 연결된 team과 team member, 사용자별 repository
+  permission을 합쳐 조회한다. team 목록만 사람 목록으로 사용하지 않는다.
 
 공식 자료:
 
 - https://docs.gitea.com/next/usage/repository/code-owners/
 - https://docs.gitea.com/api/next/operations/repo-get-branch-protection/
 - https://docs.gitea.com/usage/access-control/protected-branches
+- https://docs.gitea.com/api/next/operations/repo-list-collaborators/
+- https://docs.gitea.com/api/next/operations/repo-list-teams/
+- https://docs.gitea.com/api/operations/repo-get-repo-permissions/
+
+## 참여자 조회 공통 규칙
+
+- 커밋·푸시·PR·MR 작성자 이력은 현재 접근 권한을 나타내지 않으므로 역할 후보의 정본으로
+  사용하지 않는다.
+- 루트 라우팅 정본에 등록된 모든 repository를 조회한다. 한 앱이나 한 저장소만 보고
+  프로젝트 전체 참여자라고 표현하지 않는다.
+- provider·host·불변 account ID로 합치고, ID가 없을 때만 login을 보조 식별자로 쓴다.
+- bot·서비스 계정, 비활성 계정, 읽기 전용 계정을 숨기지 않는다. 관리자가 역할 배정
+  대상에서 포함하거나 제외한다.
+- 조회 권한이나 API가 부족해 일부가 누락되면 `partial`로 보고하고 자동 역할 배정을
+  중단한다.
 
 ## 표준 Git 훅
 

@@ -14,6 +14,9 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import urllib.error
+import urllib.parse
+import urllib.request
 from pathlib import Path
 from typing import Any
 
@@ -21,10 +24,15 @@ from typing import Any
 SKILL_ROOT = Path(__file__).resolve().parents[1]
 RUNTIME_ROOT = SKILL_ROOT / "assets" / "runtime"
 NAMESPACE = "harness-kit-project-write-access"
-SCHEMA_VERSION = "1.1.0"
-ROLES = {"admin", "pm-pl", "app-doc-lead"}
+SCHEMA_VERSION = "2.0.0"
+ROLES = {"admin", "pm-pl", "app-doc-lead", "developer"}
 WRITE_SCOPES = {"admin", "app-doc", "team"}
 PROVIDERS = ("github", "gitlab", "gitea")
+PROVIDER_DEFAULT_HOSTS = {
+    "github": "github.com",
+    "gitlab": "gitlab.com",
+    "gitea": "gitea.com",
+}
 CODEOWNERS_MARKERS = (
     "# harness-kit:write-access:start",
     "# harness-kit:write-access:end",
@@ -94,22 +102,61 @@ def validate_config(raw: dict[str, Any]) -> dict[str, Any]:
     if len(set(applications)) != len(applications) or any(not isinstance(item, str) or not SAFE_ID.fullmatch(item) for item in applications):
         raise AccessError("application ids must be unique safe identifiers")
 
-    principals = raw.get("principals")
-    if not isinstance(principals, list) or not principals:
-        raise AccessError("principals must contain at least one entry")
-    ids: set[str] = set()
-    provider_accounts: set[tuple[str, str]] = set()
-    admin_count = 0
-    for principal in principals:
-        principal_id = str(principal.get("id", ""))
-        role = str(principal.get("role", ""))
-        if not SAFE_ID.fullmatch(principal_id) or principal_id in ids:
-            raise AccessError("principal ids must be unique safe identifiers")
+    subjects = raw.get("subjects")
+    if not isinstance(subjects, list) or not subjects:
+        raise AccessError("subjects must contain at least one person or service-account entry")
+    subject_ids: set[str] = set()
+    provider_accounts: set[tuple[str, str, str]] = set()
+    for subject in subjects:
+        subject_id = str(subject.get("id", ""))
+        if not SAFE_ID.fullmatch(subject_id) or subject_id in subject_ids:
+            raise AccessError("subject ids must be unique safe identifiers")
+        subject_ids.add(subject_id)
+        accounts = subject.get("accounts")
+        if not isinstance(accounts, list) or not accounts:
+            raise AccessError(f"subject {subject_id} requires at least one provider account")
+        for account in accounts:
+            if not isinstance(account, dict):
+                raise AccessError(f"provider accounts for {subject_id} must be objects")
+            provider = str(account.get("provider", ""))
+            host = str(account.get("host") or PROVIDER_DEFAULT_HOSTS.get(provider, "")).casefold()
+            login = str(account.get("login", ""))
+            account_id = account.get("account_id")
+            if provider not in PROVIDERS:
+                raise AccessError(f"unsupported provider account for {subject_id}: {provider}")
+            if not re.fullmatch(r"[A-Za-z0-9.-]+(?::[0-9]{1,5})?", host):
+                raise AccessError(f"invalid provider host for {subject_id}: {host}")
+            if not re.fullmatch(r"@[A-Za-z0-9_.-]+", login):
+                raise AccessError(f"invalid individual {provider} login for {subject_id}: {login}")
+            if account_id is not None and (not isinstance(account_id, (str, int)) or not str(account_id).strip()):
+                raise AccessError(f"invalid immutable account_id for {subject_id}: {account_id}")
+            account["host"] = host
+            if account_id is not None:
+                account["account_id"] = str(account_id)
+            account_key = (provider, host, str(account_id).casefold() if account_id is not None else login.casefold())
+            if account_key in provider_accounts:
+                raise AccessError(f"provider account is assigned to more than one subject: {provider}@{host}:{login}")
+            provider_accounts.add(account_key)
+
+    assignments = raw.get("role_assignments")
+    if not isinstance(assignments, list) or not assignments:
+        raise AccessError("role_assignments must contain at least one entry")
+    assignment_keys: set[tuple[str, str]] = set()
+    admin_subjects: set[str] = set()
+    for assignment in assignments:
+        if not isinstance(assignment, dict):
+            raise AccessError("role assignments must be objects")
+        subject_id = str(assignment.get("subject_id", ""))
+        role = str(assignment.get("role", ""))
+        if subject_id not in subject_ids:
+            raise AccessError(f"role assignment references an unknown subject: {subject_id}")
         if role not in ROLES:
-            raise AccessError(f"unsupported role for {principal_id}: {role}")
-        ids.add(principal_id)
-        admin_count += int(role == "admin")
-        scoped_applications = principal.get("applications")
+            raise AccessError(f"unsupported role for {subject_id}: {role}")
+        key = (subject_id, role)
+        if key in assignment_keys:
+            raise AccessError(f"duplicate role assignment: {subject_id}/{role}")
+        assignment_keys.add(key)
+        scoped_applications = assignment.get("applications")
         if role == "app-doc-lead":
             if (
                 not isinstance(scoped_applications, list)
@@ -119,24 +166,14 @@ def validate_config(raw: dict[str, Any]) -> dict[str, Any]:
                 or any(app not in applications for app in scoped_applications)
             ):
                 raise AccessError(
-                    f"app-doc-lead {principal_id} requires unique applications from the configured application list"
+                    f"app-doc-lead {subject_id} requires unique applications from the configured application list"
                 )
         elif scoped_applications is not None:
-            raise AccessError(f"applications may be assigned only to app-doc-lead principals: {principal_id}")
-        accounts = principal.get("accounts", {})
-        if not isinstance(accounts, dict):
-            raise AccessError(f"accounts for {principal_id} must be an object")
-        for provider, account in accounts.items():
-            if provider not in PROVIDERS:
-                raise AccessError(f"unsupported provider account: {provider}")
-            if not isinstance(account, str) or not re.fullmatch(r"@[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?", account):
-                raise AccessError(f"invalid {provider} account for {principal_id}")
-            account_key = (provider, account.casefold())
-            if account_key in provider_accounts:
-                raise AccessError(f"{provider} account is assigned to more than one principal: {account}")
-            provider_accounts.add(account_key)
-    if admin_count < 1:
-        raise AccessError("at least one admin principal is required")
+            raise AccessError(f"applications may be assigned only to app-doc-lead: {subject_id}/{role}")
+        if role == "admin":
+            admin_subjects.add(subject_id)
+    if not admin_subjects:
+        raise AccessError("at least one subject must have an explicit admin role assignment")
 
     configured_rules = raw.get("path_rules")
     if configured_rules is not None:
@@ -170,21 +207,60 @@ def validate_config(raw: dict[str, Any]) -> dict[str, Any]:
     repositories = raw.get("repositories", [])
     if not isinstance(repositories, list):
         raise AccessError("repositories must be an array")
+    repository_ids: set[str] = set()
     for repo in repositories:
+        if not isinstance(repo, dict):
+            raise AccessError("repository entries must be objects")
+        repository_id = str(repo.get("id", ""))
+        if not SAFE_ID.fullmatch(repository_id) or repository_id in repository_ids:
+            raise AccessError("repository ids must be unique safe identifiers")
+        repository_ids.add(repository_id)
         if repo.get("provider") not in PROVIDERS:
             raise AccessError("repository provider must be github, gitlab, or gitea")
+        provider = str(repo["provider"])
+        host = str(repo.get("host") or PROVIDER_DEFAULT_HOSTS[provider]).casefold()
+        if not re.fullmatch(r"[A-Za-z0-9.-]+(?::[0-9]{1,5})?", host):
+            raise AccessError(f"invalid repository provider host: {host}")
+        repo["host"] = host
+        owner = str(repo.get("owner", ""))
+        name = str(repo.get("name", ""))
+        if not re.fullmatch(r"[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*", owner) or not re.fullmatch(r"[A-Za-z0-9_.-]+", name):
+            raise AccessError(f"repository {repository_id} requires a safe owner/namespace and name")
+        purpose = str(repo.get("purpose", "source"))
+        if purpose not in {"docs", "source"}:
+            raise AccessError(f"repository {repository_id} purpose must be docs or source")
+        repo["purpose"] = purpose
+        scoped_apps = repo.get("applications", [])
+        if not isinstance(scoped_apps, list) or len(set(scoped_apps)) != len(scoped_apps) or any(app not in applications for app in scoped_apps):
+            raise AccessError(f"repository {repository_id} applications must come from the configured application list")
         branches = repo.get("protected_branches", [])
         if not isinstance(branches, list) or any(not isinstance(item, str) or not item.strip() for item in branches):
             raise AccessError("protected_branches must be an array of non-empty strings")
         if repo.get("server_policy", "externally-approved") not in {"externally-approved", "none"}:
             raise AccessError("server_policy must be externally-approved or none")
+        api_base_url = repo.get("api_base_url")
+        if api_base_url is not None and (not isinstance(api_base_url, str) or not re.fullmatch(r"https?://[^\s]+", api_base_url)):
+            raise AccessError(f"repository {repository_id} api_base_url must be http(s)")
 
     local_identity = raw.get("local_identity")
-    if local_identity is not None:
-        if not isinstance(local_identity, dict) or local_identity.get("provider") not in PROVIDERS:
-            raise AccessError("local_identity provider is invalid")
-        if not isinstance(local_identity.get("account"), str):
-            raise AccessError("local_identity account is required")
+    if not isinstance(local_identity, dict) or local_identity.get("provider") not in PROVIDERS:
+        raise AccessError("local_identity with a supported provider is required")
+    if not isinstance(local_identity.get("account"), str) or not re.fullmatch(r"@[A-Za-z0-9_.-]+", local_identity["account"]):
+        raise AccessError("local_identity account must be an individual @login")
+    provider = str(local_identity["provider"])
+    local_identity.setdefault("host", PROVIDER_DEFAULT_HOSTS[provider])
+    local_identity["host"] = str(local_identity["host"]).casefold()
+    if not re.fullmatch(r"[A-Za-z0-9.-]+(?::[0-9]{1,5})?", local_identity["host"]):
+        raise AccessError("local_identity host is invalid")
+    identity_key = (provider, local_identity["host"], local_identity["account"].casefold())
+    if not any(
+        account["provider"] == identity_key[0]
+        and account["host"] == identity_key[1]
+        and account["login"].casefold() == identity_key[2]
+        for subject in subjects
+        for account in subject["accounts"]
+    ):
+        raise AccessError("local_identity must match a configured subject account")
 
     for flag in ("enable_git_hooks", "enable_ai_hooks"):
         if flag in raw and not isinstance(raw[flag], bool):
@@ -286,6 +362,16 @@ def path_rules(config: dict[str, Any], layout: dict[str, Any]) -> list[dict[str,
 
 
 def build_policy_core(config: dict[str, Any], layout: dict[str, Any], remote_verification: str) -> dict[str, Any]:
+    subjects = copy.deepcopy(config["subjects"])
+    for subject in subjects:
+        subject["accounts"] = sorted(
+            subject["accounts"],
+            key=lambda item: (item["provider"], item["host"], str(item.get("account_id", "")), item["login"].casefold()),
+        )
+    assignments = copy.deepcopy(config["role_assignments"])
+    for assignment in assignments:
+        if "applications" in assignment:
+            assignment["applications"] = sorted(assignment["applications"])
     return {
         "schema_version": SCHEMA_VERSION,
         "project_id": config["project_id"],
@@ -293,17 +379,50 @@ def build_policy_core(config: dict[str, Any], layout: dict[str, Any], remote_ver
         "git_root_relative": layout["git_root_relative"],
         "root_context_tracked": layout["root_context_tracked"],
         "remote_verification": remote_verification,
-        "role_inheritance": {"admin": ["pm-pl"], "pm-pl": [], "app-doc-lead": []},
         "authorization_model": {
+            "role_mode": "explicit-capabilities-no-inheritance",
             "app_scoped_role": "app-doc-lead",
+            "team_access_mode": "repository-writers",
             "unregistered_team_write": True,
-            "admin_app_doc_confirmation": "required-by-ai-instruction",
+            "app_doc_ai_confirmation": "required-for-authorized-writes",
+            "source_code_protection": "out-of-scope",
         },
         "applications": sorted(config["applications"]),
-        "principals": sorted(config["principals"], key=lambda item: item["id"]),
+        "subjects": sorted(subjects, key=lambda item: item["id"]),
+        "role_assignments": sorted(
+            assignments,
+            key=lambda item: (item["subject_id"], item["role"]),
+        ),
         "path_rules": path_rules(config, layout),
-        "repositories": config["repositories"],
+        "repositories": sorted(copy.deepcopy(config["repositories"]), key=lambda item: item["id"]),
     }
+
+
+def assignments_for(policy: dict[str, Any], subject_id: str) -> list[dict[str, Any]]:
+    return [
+        assignment
+        for assignment in policy.get("role_assignments", [])
+        if assignment.get("subject_id") == subject_id
+    ]
+
+
+def subject_has_role(policy: dict[str, Any], subject_id: str, role: str, application: str | None = None) -> bool:
+    for assignment in assignments_for(policy, subject_id):
+        if assignment.get("role") != role:
+            continue
+        if role != "app-doc-lead" or application in assignment.get("applications", []):
+            return True
+    return False
+
+
+def subject_for_account(policy: dict[str, Any], provider: str, host: str, login: str) -> dict[str, Any] | None:
+    wanted = (provider, host.casefold(), login.casefold())
+    for subject in policy.get("subjects", []):
+        for account in subject.get("accounts", []):
+            actual = (str(account.get("provider", "")), str(account.get("host", "")).casefold(), str(account.get("login", "")).casefold())
+            if actual == wanted:
+                return subject
+    return None
 
 
 def path_in_git(rule_path: str, layout: dict[str, Any]) -> str | None:
@@ -322,18 +441,20 @@ def eligible_owners(policy: dict[str, Any], rule: dict[str, Any], provider: str)
         return []
     application = rule.get("application")
     result: list[str] = []
-    for principal in policy["principals"]:
-        role = principal["role"]
-        account = principal.get("accounts", {}).get(provider)
-        if not account:
-            continue
-        if write_scope == "admin" and role != "admin":
+    for subject in policy["subjects"]:
+        subject_id = subject["id"]
+        if write_scope == "admin" and not subject_has_role(policy, subject_id, "admin"):
             continue
         if write_scope == "app-doc" and not (
-            role == "pm-pl" or (role == "app-doc-lead" and application in principal.get("applications", []))
+            subject_has_role(policy, subject_id, "pm-pl")
+            or subject_has_role(policy, subject_id, "app-doc-lead", application)
         ):
             continue
-        result.append(account)
+        result.extend(
+            account["login"]
+            for account in subject.get("accounts", [])
+            if account.get("provider") == provider
+        )
     return sorted(set(result), key=str.casefold)
 
 
@@ -423,24 +544,13 @@ def provider_shadow(git_root: Path, provider: str, managed_target: Path) -> str 
     return None
 
 
-def instruction_targets(project_root: Path, applications: list[str]) -> list[Path]:
-    targets: set[Path] = set()
+def instruction_targets(project_root: Path) -> list[Path]:
+    """Return only session-entry maps that must point at the signed access instruction."""
+    targets: list[Path] = []
     for root_file in (project_root / "AGENTS.md", project_root / "CLAUDE.md"):
         if root_file.is_file():
-            targets.add(root_file)
-    roots = [project_root / ".docs" / "instruction"] + [project_root / ".docs" / app / "instruction" for app in applications]
-    for directory in roots:
-        if not directory.is_dir():
-            continue
-        found = sorted(path for path in directory.glob("*-instruction.md") if path.is_file())
-        agent = directory / "agent-instruction.md"
-        if agent.is_file() and agent not in found:
-            found.append(agent)
-        if found:
-            targets.update(found)
-        elif directory.parent.name in applications:
-            targets.add(directory / "write-access-instruction.md")
-    return sorted(targets)
+            targets.append(root_file)
+    return targets
 
 
 def render_instruction_block(policy_core_hash: str) -> str:
@@ -451,17 +561,37 @@ def render_instruction_block(policy_core_hash: str) -> str:
             "## 문서 쓰기 권한 확인",
             "",
             f"- 정책: `@.docs/harness/access-control/policy.json` (`{policy_core_hash}`)",
-            "- 읽기는 모두 허용한다. 파일 생성·편집과 AI가 실행하는 Git 명령 전에 서명 정책의 현재 계정·역할·대상 앱·쓰기 범위를 확인한다.",
-            "- `admin`은 관리 문서와 제어 설정을, `pm-pl`은 모든 앱의 핵심 문서를, `app-doc-lead`는 배정된 앱의 핵심 문서만 쓸 수 있다.",
-            "- 등록되지 않은 일반 기여자도 `team` 범위의 구현 지침·프로토타입·임시 입력 경로에는 쓸 수 있다. 개발자를 개인별 principal로 등록하지 않는다.",
-            "- `admin`이 `app-doc` 범위를 대신 수정할 때는 일반 내용 승인과 별도로 대상 앱·파일·원래 소유 범위·수정 이유를 보여주고 한 번 더 확인받는다. 그 승인을 다른 변경에 재사용하지 않는다.",
-            "- guard의 `check-path`가 `decision=confirm`을 반환하거나 `PreToolUse`가 `permissionDecision=ask`를 반환하면 그 확인을 생략하지 않는다.",
-            "- 신원·프로젝트·앱·경로를 확정할 수 없거나 권한이 부족하면 직접 쓰지 말고 해당 문서 소유자에게 변경안을 제안한다.",
+            "- 쓰기 전에 `@.docs/harness/access-control/write-access-instruction.md`를 반드시 읽고 서명 정책과 현재 Git 계정을 확인한다.",
             "- 이 블록은 `project-write-access`만 갱신한다. 블록 밖의 설계·개발 지침은 원래 소유자가 관리한다.",
             end,
             "",
         ]
     )
+
+
+def render_access_instruction(policy_core_hash: str) -> bytes:
+    return (
+        "# 프로젝트 문서 쓰기 권한\n\n"
+        f"정본 정책은 `@.docs/harness/access-control/policy.json`이며 현재 정책 본문 해시는 `{policy_core_hash}`다. "
+        "이 파일과 정책은 `project-write-access`만 갱신한다.\n\n"
+        "## 적용 원칙\n\n"
+        "- 모든 참여자는 문서를 읽을 수 있다. 앱 소스 코드와 일반 개발 파일은 이 정책의 보호 대상이 아니다.\n"
+        "- 역할은 상속하지 않는다. 한 사람이 여러 역할을 맡으려면 정책에 각 역할을 명시적으로 배정한다.\n"
+        "- `admin`은 루트 컨텍스트, `.docs/harness/`, CODEOWNERS와 권한 설정만 관리한다.\n"
+        "- `pm-pl`은 모든 앱의 `DESIGN.md`, `*-context.md`, `*-instruction.md`를 관리한다.\n"
+        "- `app-doc-lead`는 배정된 앱에서만 같은 종류의 핵심 문서를 관리한다.\n"
+        "- `developer`는 일반 기여자임을 명시하는 표기다. 이 역할이 없거나 등록되지 않은 저장소 작성자도 `team` 범위의 구현 지침, 프로토타입, 임시 입력 문서를 쓸 수 있다.\n"
+        "- 신원, 프로젝트, 앱 또는 경로를 확정할 수 없거나 권한이 부족하면 직접 쓰지 않고 문서 소유자에게 변경안을 제안한다.\n\n"
+        "## 앱 핵심 문서 AI 편집 확인\n\n"
+        "권한이 있는 `pm-pl` 또는 해당 앱의 `app-doc-lead`라도 AI가 앱 핵심 문서를 만들거나 고치기 직전에 다음 정보를 보여주고 이 변경에 한해 명시적 승인을 받아야 한다. "
+        "스킬이 자동으로 `design-doc` 또는 `context-doc`을 선택한 경우에도 생략하지 않는다.\n\n"
+        "1. 대상 앱과 정확한 파일 경로\n"
+        "2. 문서 종류와 역할: `DESIGN.md`는 설계 기준, `*-context.md`는 앱의 기술·설계 맥락, `*-instruction.md`는 해당 주제 작업 규칙\n"
+        "3. 만들거나 바꿀 내용의 요약과 변경 이유\n"
+        "4. 현재 Git 계정에 적용된 역할과 앱 범위\n\n"
+        "승인은 다른 파일이나 후속 변경에 재사용하지 않는다. guard의 `check-path`가 `decision=confirm`을 반환하거나 "
+        "PreToolUse가 `permissionDecision=ask`를 반환하면 반드시 사용자에게 확인한다.\n"
+    ).encode("utf-8")
 
 
 def merge_hook_config(path: Path, host: str, project_root: Path) -> tuple[bytes, dict[str, Any]]:
@@ -515,6 +645,217 @@ def read_optional(path: Path) -> bytes | None:
     return path.read_bytes() if path.is_file() else None
 
 
+PERMISSION_RANK = {
+    "none": 0,
+    "guest": 5,
+    "pull": 10,
+    "read": 10,
+    "reporter": 10,
+    "triage": 15,
+    "push": 20,
+    "write": 20,
+    "developer": 20,
+    "maintain": 30,
+    "maintainer": 30,
+    "admin": 40,
+    "owner": 40,
+}
+
+
+def repository_api_base(repo: dict[str, Any]) -> str:
+    if repo.get("api_base_url"):
+        return str(repo["api_base_url"]).rstrip("/")
+    host = str(repo["host"])
+    if repo["provider"] == "github":
+        return "https://api.github.com" if host == "github.com" else f"https://{host}/api/v3"
+    if repo["provider"] == "gitlab":
+        return f"https://{host}/api/v4"
+    return f"https://{host}/api/v1"
+
+
+def provider_token(provider: str) -> str:
+    names = {
+        "github": ("GITHUB_TOKEN", "GH_TOKEN"),
+        "gitlab": ("GITLAB_TOKEN", "GLAB_TOKEN"),
+        "gitea": ("GITEA_TOKEN", "TEA_TOKEN"),
+    }[provider]
+    for name in names:
+        value = os.environ.get(name)
+        if value:
+            return value
+    raise AccessError(f"{provider} participant discovery requires one of: {', '.join(names)}")
+
+
+def api_json(url: str, headers: dict[str, str]) -> tuple[Any, dict[str, str]]:
+    request = urllib.request.Request(url, headers={"Accept": "application/json", "User-Agent": "harness-kit", **headers})
+    try:
+        with urllib.request.urlopen(request, timeout=20) as response:
+            return json.loads(response.read().decode("utf-8")), dict(response.headers.items())
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")[:300]
+        raise AccessError(f"participant API returned HTTP {exc.code}: {detail}") from exc
+    except urllib.error.URLError as exc:
+        raise AccessError(f"participant API request failed: {exc.reason}") from exc
+
+
+def paged_api(url: str, headers: dict[str, str], provider: str) -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    page = 1
+    while True:
+        separator = "&" if "?" in url else "?"
+        page_url = f"{url}{separator}per_page=100&page={page}"
+        payload, response_headers = api_json(page_url, headers)
+        if not isinstance(payload, list):
+            raise AccessError("participant API response must be an array")
+        records.extend(item for item in payload if isinstance(item, dict))
+        if provider == "gitlab":
+            next_page = response_headers.get("X-Next-Page", "").strip()
+            if not next_page:
+                break
+            page = int(next_page)
+        elif len(payload) < 100:
+            break
+        else:
+            page += 1
+    return records
+
+
+def permission_name(value: Any, provider: str) -> str:
+    if provider == "gitlab":
+        return {
+            50: "owner",
+            40: "maintainer",
+            30: "developer",
+            20: "reporter",
+            10: "guest",
+        }.get(int(value or 0), "none")
+    text = str(value or "none").casefold()
+    return text if text in PERMISSION_RANK else "none"
+
+
+def merge_participant_records(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    merged: dict[tuple[str, str, str], dict[str, Any]] = {}
+    for record in records:
+        provider = str(record["provider"])
+        host = str(record["host"]).casefold()
+        account_id = str(record.get("account_id") or "")
+        login = str(record["login"])
+        key = (provider, host, account_id or login.casefold())
+        current = merged.setdefault(
+            key,
+            {
+                "provider": provider,
+                "host": host,
+                "account_id": account_id or None,
+                "login": login,
+                "display_name": record.get("display_name") or login.lstrip("@"),
+                "account_type": record.get("account_type", "user"),
+                "active": bool(record.get("active", True)),
+                "max_permission": "none",
+                "repositories": [],
+            },
+        )
+        permission = permission_name(record.get("permission"), provider)
+        if PERMISSION_RANK[permission] > PERMISSION_RANK[current["max_permission"]]:
+            current["max_permission"] = permission
+        repository = {
+            "id": record["repository_id"],
+            "permission": permission,
+            "source": record.get("source", "direct"),
+        }
+        if repository not in current["repositories"]:
+            current["repositories"].append(repository)
+        current["active"] = current["active"] and bool(record.get("active", True))
+    for participant in merged.values():
+        participant["repositories"] = sorted(
+            participant["repositories"], key=lambda item: (item["id"], item["source"], item["permission"])
+        )
+    return sorted(merged.values(), key=lambda item: (item["provider"], item["host"], item["login"].casefold()))
+
+
+def discover_repository_participants(repo: dict[str, Any]) -> list[dict[str, Any]]:
+    provider = repo["provider"]
+    token = provider_token(provider)
+    base = repository_api_base(repo)
+    owner = urllib.parse.quote(str(repo["owner"]), safe="")
+    name = urllib.parse.quote(str(repo["name"]), safe="")
+    records: list[dict[str, Any]] = []
+
+    def add(account: dict[str, Any], permission: Any, source: str) -> None:
+        login = str(account.get("login") or account.get("username") or "")
+        if not login:
+            return
+        records.append(
+            {
+                "provider": provider,
+                "host": repo["host"],
+                "account_id": account.get("id"),
+                "login": "@" + login.lstrip("@"),
+                "display_name": account.get("name") or account.get("full_name") or login,
+                "account_type": str(account.get("type") or ("bot" if login.endswith("[bot]") else "user")).casefold(),
+                "active": str(account.get("state", "active")).casefold() not in {"blocked", "inactive", "deactivated"},
+                "permission": permission,
+                "repository_id": repo["id"],
+                "source": source,
+            }
+        )
+
+    if provider == "github":
+        headers = {"Authorization": f"Bearer {token}", "X-GitHub-Api-Version": "2022-11-28"}
+        collaborators = paged_api(f"{base}/repos/{owner}/{name}/collaborators?affiliation=all", headers, provider)
+        for item in collaborators:
+            permission = item.get("role_name")
+            if not permission:
+                permissions = item.get("permissions", {})
+                permission = next((key for key in ("admin", "maintain", "push", "triage", "pull") if permissions.get(key)), "none")
+            add(item, permission, "effective-collaborator")
+    elif provider == "gitlab":
+        headers = {"PRIVATE-TOKEN": token}
+        project = urllib.parse.quote(f"{repo['owner']}/{repo['name']}", safe="")
+        members = paged_api(f"{base}/projects/{project}/members/all", headers, provider)
+        for item in members:
+            add(item, item.get("access_level"), "effective-member")
+    else:
+        headers = {"Authorization": f"token {token}"}
+        collaborators = paged_api(f"{base}/repos/{owner}/{name}/collaborators", headers, provider)
+        for item in collaborators:
+            login = str(item.get("login") or item.get("username") or "")
+            permission_payload, _ = api_json(
+                f"{base}/repos/{owner}/{name}/collaborators/{urllib.parse.quote(login, safe='')}/permission",
+                headers,
+            )
+            permission = permission_payload.get("permission") if isinstance(permission_payload, dict) else "none"
+            add(item, permission, "effective-collaborator")
+        teams = paged_api(f"{base}/repos/{owner}/{name}/teams", headers, provider)
+        for team in teams:
+            team_id = team.get("id")
+            if team_id is None:
+                continue
+            members = paged_api(f"{base}/teams/{team_id}/members", headers, provider)
+            for item in members:
+                add(item, team.get("permission", "none"), f"team:{team_id}")
+    return records
+
+
+def discover_participants(config: dict[str, Any]) -> dict[str, Any]:
+    records: list[dict[str, Any]] = []
+    errors: list[dict[str, str]] = []
+    for repo in config["repositories"]:
+        try:
+            records.extend(discover_repository_participants(repo))
+        except AccessError as exc:
+            errors.append({"repository_id": repo["id"], "message": str(exc)})
+    status = "complete" if not errors else ("partial" if records else "failed")
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "status": status,
+        "repositories_checked": [repo["id"] for repo in config["repositories"]],
+        "participants": merge_participant_records(records),
+        "errors": errors,
+        "selection_required": "admin must explicitly assign roles; discovery never grants a role",
+    }
+
+
 def preflight(layout: dict[str, Any]) -> dict[str, Any]:
     git_root: Path | None = layout["git_root"]
     if git_root is None:
@@ -552,13 +893,16 @@ def make_plan(project_root: Path, config: dict[str, Any], operation: str = "appl
         conflicts.append({"provider": "all", "type": "no-git-repository", "path": ".docs"})
 
     block = render_instruction_block(policy_core_hash)
-    for target in instruction_targets(project_root, config["applications"]):
+    desired_instruction_targets = instruction_targets(project_root)
+    for target in desired_instruction_targets:
         desired = replace_managed_block(read_optional(target), block, INSTRUCTION_MARKERS)
         current = read_optional(target)
         changes.append({"path": relative(project_root, target), "action": "unchanged" if current == desired else ("create" if current is None else "modify")})
+    for target, reduced in stale_instruction_outputs(project_root, desired_instruction_targets).items():
+        changes.append({"path": relative(project_root, target), "action": "delete" if reduced is None else "modify"})
 
     access_dir = project_root / ".docs" / "harness" / "access-control"
-    for name in ("trust.json", "policy.json", "policy.sig", "provider-state.json", "generated-manifest.json", "hooks/write_access_guard.py", "hooks/git/pre-commit", "hooks/git/pre-push"):
+    for name in ("trust.json", "policy.json", "policy.sig", "provider-state.json", "generated-manifest.json", "write-access-instruction.md", "hooks/write_access_guard.py", "hooks/git/pre-commit", "hooks/git/pre-push"):
         target = access_dir / name
         changes.append({"path": relative(project_root, target), "action": "modify" if target.exists() else "create"})
     if config["enable_ai_hooks"]:
@@ -577,6 +921,7 @@ def make_plan(project_root: Path, config: dict[str, Any], operation: str = "appl
         "policy_core_sha256": policy_core_hash,
         "changes": sorted(changes, key=lambda item: item["path"]),
         "conflicts": conflicts,
+        "participant_discovery": "required-before-role-change" if config["repositories"] else "not-applicable",
     }
     return {
         **plan_basis,
@@ -585,9 +930,16 @@ def make_plan(project_root: Path, config: dict[str, Any], operation: str = "appl
         "server_changes": [
             {
                 "provider": repo["provider"],
-                "repository_path": repo.get("path", "."),
+                "repository_id": repo["id"],
+                "host": repo["host"],
+                "repository": f"{repo['owner']}/{repo['name']}",
+                "purpose": repo["purpose"],
                 "protected_branches": repo.get("protected_branches", []),
-                "status": "requires-separate-provider-admin-approval" if repo.get("server_policy") != "none" else "not-requested",
+                "status": (
+                    "requires-separate-provider-admin-approval"
+                    if repo["purpose"] == "docs" and repo.get("server_policy") != "none"
+                    else "not-requested"
+                ),
             }
             for repo in config["repositories"]
         ],
@@ -717,17 +1069,28 @@ def managed_hash(content: bytes, markers: tuple[str, str]) -> str:
 def provider_state(config: dict[str, Any], layout: dict[str, Any], git_root: Path | None, evidence: str | None, policy_core_hash: str) -> dict[str, Any]:
     states: dict[str, Any] = {}
     targets = codeowners_targets(git_root) if git_root is not None else {}
-    configured_repos = {item["provider"]: item for item in config["repositories"]}
     for provider in PROVIDERS:
         target = targets.get(provider)
         shadow = provider_shadow(git_root, provider, target) if git_root is not None and target is not None else None
-        repo = configured_repos.get(provider, {})
+        repositories = [
+            {
+                "id": item["id"],
+                "host": item["host"],
+                "repository": f"{item['owner']}/{item['name']}",
+                "purpose": item["purpose"],
+                "applications": item.get("applications", []),
+                "protected_branches": item.get("protected_branches", []),
+                "server_policy": item.get("server_policy", "externally-approved"),
+            }
+            for item in config["repositories"]
+            if item["provider"] == provider
+        ]
         states[provider] = {
             "codeowners": relative(Path(config["_project_root"]), target) if target is not None else None,
             "shadowed_by": shadow,
             "codeowners_status": "shadowed" if shadow else ("generated" if target is not None else "unavailable"),
             "server_rules_status": "not-applied",
-            "protected_branches": repo.get("protected_branches", []),
+            "repositories": repositories,
             "coverage": "known-signed-policy-paths" if provider == "gitea" else "all-docs-with-ordered-overrides",
         }
     return {
@@ -759,6 +1122,7 @@ GIT_CONFIG_KEYS = (
     "core.hooksPath",
     "harness.writeAccess.projectRoot",
     "harness.writeAccess.provider",
+    "harness.writeAccess.host",
     "harness.writeAccess.account",
 )
 
@@ -819,6 +1183,7 @@ def install_git_hooks(project_root: Path, git_root: Path, layout: dict[str, Any]
     identity = config.get("local_identity")
     if identity:
         git(git_root, "config", "--local", "--replace-all", "harness.writeAccess.provider", identity["provider"])
+        git(git_root, "config", "--local", "--replace-all", "harness.writeAccess.host", identity["host"])
         git(git_root, "config", "--local", "--replace-all", "harness.writeAccess.account", identity["account"])
 
 
@@ -893,6 +1258,29 @@ def remove_managed_block(content: bytes, markers: tuple[str, str]) -> bytes:
     left = text.index(start)
     right = text.index(end, left) + len(end)
     return (text[:left] + text[right:]).encode("utf-8")
+
+
+def stale_instruction_outputs(project_root: Path, desired_targets: list[Path]) -> dict[Path, bytes | None]:
+    """Remove v1 blocks that were copied into every app instruction during a v2 migration."""
+    manifest_path = project_root / ".docs" / "harness" / "access-control" / "generated-manifest.json"
+    if not manifest_path.is_file():
+        return {}
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    desired = {path.resolve() for path in desired_targets}
+    outputs: dict[Path, bytes | None] = {}
+    for entry in manifest.get("files", []):
+        if entry.get("mode") != "instruction-block":
+            continue
+        path = (project_root / str(entry.get("path", ""))).resolve()
+        try:
+            path.relative_to(project_root.resolve())
+        except ValueError as exc:
+            raise AccessError("existing generated-manifest path escapes project root") from exc
+        if path in desired or not path.is_file():
+            continue
+        reduced = remove_managed_block(path.read_bytes(), INSTRUCTION_MARKERS)
+        outputs[path] = reduced if reduced.strip() else None
+    return outputs
 
 
 def remove_json_handler(content: bytes) -> bytes:
@@ -1047,6 +1435,16 @@ def apply(project_root: Path, config: dict[str, Any], approved_hash: str, codex_
         verify_bundle(project_root)
     if initial and rotate_key:
         raise AccessError("administrator key rotation requires an existing signed policy")
+    caller = subject_for_account(
+        policy_core,
+        config["local_identity"]["provider"],
+        config["local_identity"]["host"],
+        config["local_identity"]["account"],
+    )
+    if caller is None:
+        raise AccessError("local Git identity is not registered in the policy")
+    if initial and not subject_has_role(policy_core, caller["id"], "admin"):
+        raise AccessError("the first caller must be assigned the explicit admin role")
 
     created_keys: list[Path] = []
     key_outputs: dict[Path, bytes] = {}
@@ -1085,13 +1483,18 @@ def apply(project_root: Path, config: dict[str, Any], approved_hash: str, codex_
         "project_id": config["project_id"],
         "admin_public_key": public_key,
         "admin_key_fingerprint": key_fingerprint,
-        "admin_principals": sorted(principal["id"] for principal in config["principals"] if principal["role"] == "admin"),
+        "admin_subjects": sorted(
+            subject["id"]
+            for subject in config["subjects"]
+            if subject_has_role(policy_core, subject["id"], "admin")
+        ),
         "signature_namespace": NAMESPACE,
     }
 
     full_outputs: dict[Path, bytes] = {
         access_dir / "trust.json": pretty_json(trust_value),
         access_dir / "provider-state.json": pretty_json(provider_state_value),
+        access_dir / "write-access-instruction.md": render_access_instruction(policy_core_hash),
         access_dir / "hooks" / "write_access_guard.py": (RUNTIME_ROOT / "write_access_guard.py").read_bytes(),
         access_dir / "hooks" / "git" / "pre-commit": (RUNTIME_ROOT / "pre-commit").read_bytes(),
         access_dir / "hooks" / "git" / "pre-push": (RUNTIME_ROOT / "pre-push").read_bytes(),
@@ -1102,8 +1505,10 @@ def apply(project_root: Path, config: dict[str, Any], approved_hash: str, codex_
             block = render_codeowners_block(policy_core, provider, layout, policy_core_hash)
             managed_outputs[target] = (replace_managed_block(read_optional(target), block, CODEOWNERS_MARKERS), "codeowners-block")
     instruction_block = render_instruction_block(policy_core_hash)
-    for target in instruction_targets(project_root, config["applications"]):
+    desired_instruction_targets = instruction_targets(project_root)
+    for target in desired_instruction_targets:
         managed_outputs[target] = (replace_managed_block(read_optional(target), instruction_block, INSTRUCTION_MARKERS), "instruction-block")
+    stale_outputs = stale_instruction_outputs(project_root, desired_instruction_targets)
 
     json_outputs: dict[Path, tuple[bytes, dict[str, Any]]] = {}
     if config["enable_ai_hooks"]:
@@ -1132,7 +1537,7 @@ def apply(project_root: Path, config: dict[str, Any], approved_hash: str, codex_
         access_dir / "policy.json": policy_bytes,
         access_dir / "policy.sig": signature_bytes,
     }
-    transaction_paths = [*final_outputs, *key_outputs]
+    transaction_paths = [*final_outputs, *key_outputs, *stale_outputs]
     if git_root is not None and config["enable_git_hooks"]:
         transaction_paths.append(git_local_state_path(git_root))
     file_snapshot = snapshot(transaction_paths)
@@ -1141,6 +1546,12 @@ def apply(project_root: Path, config: dict[str, Any], approved_hash: str, codex_
         for path, content in final_outputs.items():
             mode = 0o755 if path.name in {"pre-commit", "pre-push", "write_access_guard.py"} else None
             atomic_write(path, content, mode)
+        for path, content in stale_outputs.items():
+            if content is None:
+                if path.is_file():
+                    path.unlink()
+            else:
+                atomic_write(path, content)
         for path, content in key_outputs.items():
             private = path.suffix == ".key"
             atomic_write(path, content, 0o600 if private else 0o644)
@@ -1176,6 +1587,8 @@ def main() -> int:
             item.add_argument("--admin-key")
             item.add_argument("--codex-key-dir")
             item.add_argument("--claude-key-dir")
+    discover = sub.add_parser("discover-participants")
+    discover.add_argument("--config", required=True)
     for name in ("remove-plan", "remove"):
         item = sub.add_parser(name)
         item.add_argument("--project-root", required=True)
@@ -1190,26 +1603,29 @@ def main() -> int:
     args = parser.parse_args()
 
     try:
-        project_root = Path(args.project_root).resolve()
-        if args.command == "verify":
-            result = verify_bundle(project_root)
-        elif args.command == "remove-plan":
-            result = make_remove_plan(project_root, args.delete_keys)
-        elif args.command == "remove":
-            policy = json.loads((project_root / ".docs" / "harness" / "access-control" / "policy.json").read_text(encoding="utf-8"))
-            codex_dir = Path(args.codex_key_dir).resolve() if args.codex_key_dir else Path.home() / ".codex" / "harness-kit" / "admin-keys"
-            claude_dir = Path(args.claude_key_dir).resolve() if args.claude_key_dir else Path.home() / ".claude" / "harness-kit" / "admin-keys"
-            backup = Path(args.admin_key).resolve() if args.admin_key else None
-            result = remove_access_control(project_root, args.approve_plan_hash, codex_dir, claude_dir, backup, args.delete_keys)
+        if args.command == "discover-participants":
+            result = discover_participants(load_config(Path(args.config).resolve()))
         else:
-            config = load_config(Path(args.config).resolve())
-            if args.command in {"plan", "rotate-plan"}:
-                result = make_plan(project_root, config, "rotate" if args.command == "rotate-plan" else "apply")
-            else:
+            project_root = Path(args.project_root).resolve()
+            if args.command == "verify":
+                result = verify_bundle(project_root)
+            elif args.command == "remove-plan":
+                result = make_remove_plan(project_root, args.delete_keys)
+            elif args.command == "remove":
+                policy = json.loads((project_root / ".docs" / "harness" / "access-control" / "policy.json").read_text(encoding="utf-8"))
                 codex_dir = Path(args.codex_key_dir).resolve() if args.codex_key_dir else Path.home() / ".codex" / "harness-kit" / "admin-keys"
                 claude_dir = Path(args.claude_key_dir).resolve() if args.claude_key_dir else Path.home() / ".claude" / "harness-kit" / "admin-keys"
                 backup = Path(args.admin_key).resolve() if args.admin_key else None
-                result = apply(project_root, config, args.approve_plan_hash, codex_dir, claude_dir, backup, args.provider_admin_evidence, args.command == "rotate")
+                result = remove_access_control(project_root, args.approve_plan_hash, codex_dir, claude_dir, backup, args.delete_keys)
+            else:
+                config = load_config(Path(args.config).resolve())
+                if args.command in {"plan", "rotate-plan"}:
+                    result = make_plan(project_root, config, "rotate" if args.command == "rotate-plan" else "apply")
+                else:
+                    codex_dir = Path(args.codex_key_dir).resolve() if args.codex_key_dir else Path.home() / ".codex" / "harness-kit" / "admin-keys"
+                    claude_dir = Path(args.claude_key_dir).resolve() if args.claude_key_dir else Path.home() / ".claude" / "harness-kit" / "admin-keys"
+                    backup = Path(args.admin_key).resolve() if args.admin_key else None
+                    result = apply(project_root, config, args.approve_plan_hash, codex_dir, claude_dir, backup, args.provider_admin_evidence, args.command == "rotate")
         print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
         return 0
     except (AccessError, OSError, ValueError, KeyError, json.JSONDecodeError) as exc:

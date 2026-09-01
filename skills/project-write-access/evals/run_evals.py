@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import importlib.util
 import os
 import subprocess
 import sys
@@ -68,35 +69,72 @@ def commit_all(root: Path, message: str) -> None:
 def base_config(path: Path, repo_path: str = ".", applications: list[str] | None = None) -> Path:
     application_ids = applications or ["web", "api"]
     config = {
-        "schema_version": "1.1.0",
+        "schema_version": "2.0.0",
         "project_id": "fixture-project",
         "applications": application_ids,
-        "principals": [
+        "subjects": [
             {
                 "id": "owner",
-                "role": "admin",
-                "accounts": {"github": "@owner", "gitlab": "@owner", "gitea": "@owner"},
+                "accounts": [
+                    {"provider": "github", "host": "github.com", "account_id": "1", "login": "@owner"},
+                    {"provider": "gitlab", "host": "gitlab.com", "account_id": "1", "login": "@owner"},
+                    {"provider": "gitea", "host": "gitea.com", "account_id": "1", "login": "@owner"},
+                ],
             },
             {
                 "id": "lead",
-                "role": "pm-pl",
-                "accounts": {"github": "@lead", "gitlab": "@lead", "gitea": "@lead"},
+                "accounts": [
+                    {"provider": "github", "host": "github.com", "account_id": "2", "login": "@lead"},
+                    {"provider": "gitlab", "host": "gitlab.com", "account_id": "2", "login": "@lead"},
+                    {"provider": "gitea", "host": "gitea.com", "account_id": "2", "login": "@lead"},
+                ],
             },
             {
                 "id": "web-doc-lead",
-                "role": "app-doc-lead",
-                "applications": [application_ids[0]],
-                "accounts": {
-                    "github": "@web-doc-lead",
-                    "gitlab": "@web-doc-lead",
-                    "gitea": "@web-doc-lead",
-                },
+                "accounts": [
+                    {"provider": "github", "host": "github.com", "account_id": "3", "login": "@web-doc-lead"},
+                    {"provider": "gitlab", "host": "gitlab.com", "account_id": "3", "login": "@web-doc-lead"},
+                    {"provider": "gitea", "host": "gitea.com", "account_id": "3", "login": "@web-doc-lead"},
+                ],
+            },
+            {
+                "id": "developer-a",
+                "accounts": [
+                    {"provider": "github", "host": "github.com", "account_id": "4", "login": "@dev-a"}
+                ],
             },
         ],
-        "repositories": [
-            {"path": repo_path, "provider": "github", "protected_branches": ["main"], "server_policy": "externally-approved"}
+        "role_assignments": [
+            {"subject_id": "owner", "role": "admin"},
+            {"subject_id": "lead", "role": "pm-pl"},
+            {"subject_id": "web-doc-lead", "role": "app-doc-lead", "applications": [application_ids[0]]},
+            {"subject_id": "developer-a", "role": "developer"},
         ],
-        "local_identity": {"provider": "github", "account": "@owner"},
+        "repositories": [
+            {
+                "id": "docs-repo",
+                "provider": "github",
+                "host": "github.com",
+                "owner": "example",
+                "name": "docs",
+                "purpose": "docs",
+                "applications": application_ids,
+                "protected_branches": ["main"],
+                "server_policy": "externally-approved",
+            },
+            {
+                "id": "web-source",
+                "provider": "github",
+                "host": "github.com",
+                "owner": "example",
+                "name": "web",
+                "purpose": "source",
+                "applications": [application_ids[0]],
+                "protected_branches": [],
+                "server_policy": "none",
+            },
+        ],
+        "local_identity": {"provider": "github", "host": "github.com", "account": "@owner"},
         "enable_git_hooks": True,
         "enable_ai_hooks": True,
     }
@@ -215,48 +253,58 @@ def test_single_repository(root: Path) -> None:
     assert "/.docs/ @owner" not in codeowners
     instruction = (project / ".docs" / "web" / "instruction" / "agent-instruction.md").read_text(encoding="utf-8")
     assert "TEAM-web" in instruction
-    assert "한 번 더 확인" in instruction
-    assert "개발자를 개인별 principal로 등록하지 않는다" in instruction
+    assert "harness-kit:write-access" not in instruction
+    root_map = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert "write-access-instruction.md" in root_map
+    access_instruction = (project / ".docs" / "harness" / "access-control" / "write-access-instruction.md").read_text(encoding="utf-8")
+    assert "역할은 상속하지 않는다" in access_instruction
+    assert "설계 기준" in access_instruction
     assert git(project, "config", "--local", "--get", "core.hooksPath").stdout.strip() == ".docs/harness/access-control/hooks/git"
+    assert git(project, "config", "--local", "--get", "harness.writeAccess.host").stdout.strip() == "github.com"
+    provider_state = json.loads((project / ".docs" / "harness" / "access-control" / "provider-state.json").read_text(encoding="utf-8"))
+    assert {item["id"] for item in provider_state["providers"]["github"]["repositories"]} == {"docs-repo", "web-source"}
 
     guard = project / ".docs" / "harness" / "access-control" / "hooks" / "write_access_guard.py"
-    allow_admin = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@owner", ".docs/harness/access-control/policy.json"], check=False)
-    confirm_admin_app = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@owner", ".docs/web/context-base/DESIGN.md"], check=False)
-    deny_admin_doc = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@dev-a", ".docs/harness/access-control/policy.json"], check=False)
-    allow_team_a = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@dev-a", ".docs/web/impl-doc/dev-a/task.md"], check=False)
-    allow_team_b = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@dev-a", ".docs/web/impl-doc/dev-b/task.md"], check=False)
-    allow_pm_pl_all_apps = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@lead", ".docs/api/context-base/DESIGN.md"], check=False)
-    allow_app_lead = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@web-doc-lead", ".docs/web/instruction/agent-instruction.md"], check=False)
-    deny_other_app = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@web-doc-lead", ".docs/api/context-base/DESIGN.md"], check=False)
-    deny_app_lead_admin = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@web-doc-lead", ".docs/README.md"], check=False)
-    allow_admin_unlisted = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@owner", ".docs/new-admin-document.md"], check=False)
-    deny_dev_unlisted = command([sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--account", "@dev-a", ".docs/new-admin-document.md"], check=False)
+    common = [sys.executable, str(guard), "check-path", "--project-root", str(project), "--provider", "github", "--provider-host", "github.com", "--account"]
+    allow_admin = command([*common, "@owner", ".docs/harness/access-control/policy.json"], check=False)
+    deny_admin_app = command([*common, "@owner", ".docs/web/context-base/DESIGN.md"], check=False)
+    deny_admin_doc = command([*common, "@dev-a", ".docs/harness/access-control/policy.json"], check=False)
+    allow_team_a = command([*common, "@dev-a", ".docs/web/impl-doc/dev-a/task.md"], check=False)
+    allow_team_b = command([*common, "@dev-a", ".docs/web/impl-doc/dev-b/task.md"], check=False)
+    confirm_pm_pl_all_apps = command([*common, "@lead", ".docs/api/context-base/DESIGN.md"], check=False)
+    confirm_app_lead = command([*common, "@web-doc-lead", ".docs/web/instruction/agent-instruction.md"], check=False)
+    deny_other_app = command([*common, "@web-doc-lead", ".docs/api/context-base/DESIGN.md"], check=False)
+    deny_app_lead_admin = command([*common, "@web-doc-lead", ".docs/README.md"], check=False)
+    allow_admin_unlisted = command([*common, "@owner", ".docs/new-admin-document.md"], check=False)
+    deny_dev_unlisted = command([*common, "@dev-a", ".docs/new-admin-document.md"], check=False)
+    allow_source_without_role = command([*common, "@unregistered", "src/app.py"], check=False)
     assert allow_admin.returncode == 0
-    assert confirm_admin_app.returncode == 3
-    assert json.loads(confirm_admin_app.stdout)["decision"] == "confirm"
+    assert deny_admin_app.returncode == 1
     assert deny_admin_doc.returncode == 1
     assert allow_team_a.returncode == 0
     assert allow_team_b.returncode == 0
-    assert allow_pm_pl_all_apps.returncode == 0
-    assert allow_app_lead.returncode == 0
+    assert confirm_pm_pl_all_apps.returncode == 3
+    assert confirm_app_lead.returncode == 3
     assert deny_other_app.returncode == 1
     assert deny_app_lead_admin.returncode == 1
     assert allow_admin_unlisted.returncode == 0
     assert deny_dev_unlisted.returncode == 1
+    assert allow_source_without_role.returncode == 0
 
+    git(project, "config", "--local", "harness.writeAccess.account", "@lead")
     for host in ("claude", "codex"):
-        admin_app_prompt = ai_file_write(
+        app_prompt = ai_file_write(
             guard, project, host, project / ".docs" / "web" / "context-base" / "DESIGN.md"
         )
-        assert admin_app_prompt.returncode == 0
-        prompt_decision = json.loads(admin_app_prompt.stdout)["hookSpecificOutput"]
+        assert app_prompt.returncode == 0
+        prompt_decision = json.loads(app_prompt.stdout)["hookSpecificOutput"]
         assert prompt_decision["permissionDecision"] == "ask"
-        assert "관리자가 앱 문서 소유 범위를 대신 수정" in prompt_decision["permissionDecisionReason"]
+        assert "설계 기준" in prompt_decision["permissionDecisionReason"]
 
-    git(project, "config", "--local", "harness.writeAccess.account", "@web-doc-lead")
-    instruction_path = project / ".docs" / "web" / "instruction" / "agent-instruction.md"
+    git(project, "config", "--local", "harness.writeAccess.account", "@owner")
+    instruction_path = project / ".docs" / "harness" / "access-control" / "write-access-instruction.md"
     original_instruction = instruction_path.read_text(encoding="utf-8")
-    staged_tamper = original_instruction.replace("읽기는 모두 허용한다", "읽기 제한을 해제한다")
+    staged_tamper = original_instruction.replace("역할은 상속하지 않는다", "역할을 상속한다")
     assert staged_tamper != original_instruction
     write(instruction_path, staged_tamper)
     git(project, "add", str(instruction_path))
@@ -336,7 +384,8 @@ def test_single_repository(root: Path) -> None:
         stderr=subprocess.PIPE,
         check=False,
     )
-    assert self_hosted_push.returncode == 0, self_hosted_push.stderr
+    assert self_hosted_push.returncode == 1
+    assert "provider host" in self_hosted_push.stderr
 
     git(project, "config", "--local", "harness.writeAccess.account", "@owner")
     write(protected_path, protected_text + "admin update\n")
@@ -378,7 +427,7 @@ def test_single_repository(root: Path) -> None:
     controller("verify", "--project-root", str(project))
 
     updated_config = json.loads(config.read_text(encoding="utf-8"))
-    app_lead = next(item for item in updated_config["principals"] if item["role"] == "app-doc-lead")
+    app_lead = next(item for item in updated_config["role_assignments"] if item["role"] == "app-doc-lead")
     app_lead["applications"].append("api")
     write(config, json.dumps(updated_config, ensure_ascii=False, indent=2) + "\n")
     policy_update_plan = plan(project, config)
@@ -393,13 +442,15 @@ def test_single_repository(root: Path) -> None:
             str(project),
             "--provider",
             "github",
+            "--provider-host",
+            "github.com",
             "--account",
             "@web-doc-lead",
             ".docs/api/context-base/DESIGN.md",
         ],
         check=False,
     )
-    assert newly_allowed_app.returncode == 0
+    assert newly_allowed_app.returncode == 3
     commit_all(project, "assign second application to document lead")
 
     old_key = root / "old-admin-backup.key"
@@ -536,6 +587,8 @@ def test_single_application_defaults(root: Path) -> None:
             str(project),
             "--provider",
             "github",
+            "--provider-host",
+            "github.com",
             "--account",
             "@unregistered",
             ".docs/impl-doc/anyone/task.md",
@@ -551,6 +604,8 @@ def test_single_application_defaults(root: Path) -> None:
             str(project),
             "--provider",
             "github",
+            "--provider-host",
+            "github.com",
             "--account",
             "@web-doc-lead",
             ".docs/context-base/DESIGN.md",
@@ -558,27 +613,38 @@ def test_single_application_defaults(root: Path) -> None:
         check=False,
     )
     assert allow_unregistered_team.returncode == 0
-    assert allow_scoped_lead.returncode == 0
+    assert allow_scoped_lead.returncode == 3
 
 
-def test_rejects_legacy_developer_role(root: Path) -> None:
-    project = root / "legacy-role"
+def test_explicit_developer_and_multiple_roles(root: Path) -> None:
+    project = root / "role-model"
     init_repo(project)
     write(project / "AGENTS.md", "# Agent map\n")
     write(project / "CLAUDE.md", "@AGENTS.md\n")
-    config = base_config(root / "legacy-role-config.json")
+    config = base_config(root / "role-model-config.json")
     value = json.loads(config.read_text(encoding="utf-8"))
-    value["principals"].append(
-        {
-            "id": "legacy-developer",
-            "role": "developer",
-            "accounts": {"github": "@legacy-developer"},
-        }
-    )
+    value["role_assignments"].append({"subject_id": "owner", "role": "pm-pl"})
     write(config, json.dumps(value, ensure_ascii=False, indent=2) + "\n")
-    rejected = controller("plan", "--project-root", str(project), "--config", str(config), check=False)
-    assert rejected.returncode == 2
-    assert "unsupported role" in rejected.stderr
+    current_plan = plan(project, config)
+    assert current_plan["schema_version"] == "2.0.0"
+    assert current_plan["participant_discovery"] == "required-before-role-change"
+
+
+def test_participant_merge() -> None:
+    spec = importlib.util.spec_from_file_location("project_write_access_controller", CONTROLLER)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    records = [
+        {"provider": "github", "host": "github.com", "account_id": "7", "login": "@alice", "permission": "pull", "repository_id": "repo-a", "source": "team"},
+        {"provider": "github", "host": "github.com", "account_id": "7", "login": "@alice", "permission": "admin", "repository_id": "repo-b", "source": "direct"},
+        {"provider": "github", "host": "git.example.com", "account_id": "7", "login": "@alice", "permission": "write", "repository_id": "repo-c", "source": "direct"},
+    ]
+    merged = module.merge_participant_records(records)
+    assert len(merged) == 2
+    public = next(item for item in merged if item["host"] == "github.com")
+    assert public["max_permission"] == "admin"
+    assert {item["id"] for item in public["repositories"]} == {"repo-a", "repo-b"}
 
 
 def test_multi_repository(root: Path) -> None:
@@ -641,7 +707,8 @@ def main() -> int:
         root = Path(raw)
         test_single_repository(root)
         test_single_application_defaults(root)
-        test_rejects_legacy_developer_role(root)
+        test_explicit_developer_and_multiple_roles(root)
+        test_participant_merge()
         test_multi_repository(root)
         test_failed_apply_removes_new_keys(root)
     print("project-write-access evals: PASS")
