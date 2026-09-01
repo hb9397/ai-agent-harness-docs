@@ -16,13 +16,13 @@
     {
       "id": 3,
       "prompt": "harness-bootstrap 스킬 실행 중 질문 1에 사용자가 '모르겠음'이라고 답한 상황에서 계속 진행해줘.",
-      "expected_output": "도메인 목적은 `미정 — 사용자 미제공`으로 남기고 추가 인터뷰를 무한정 이어가지 않는다. context 단계에서도 새 질문 없이 bootstrap 한계를 표시한 문서를 생성한다.",
+      "expected_output": "도메인 목적은 `미정 — 사용자 미제공`으로 남기고 추가 도메인 인터뷰를 무한정 이어가지 않는다. 권한 정책이 활성화된 경우 앱 핵심 문서 쓰기 승인은 인터뷰 예산과 별도로 수행한다.",
       "files": []
     },
     {
       "id": 4,
       "prompt": "AI 문서가 전혀 없는 기존 프로젝트에서 harness-bootstrap을 실행해줘.",
-      "expected_output": "확정한 프로젝트 유형과 적용 경로를 공개 harness-setup workflow에 전달해 .docs와 AGENTS.md/CLAUDE.md 골격을 먼저 만든다. 사용자 프로젝트에 .agents/skills, .claude/skills, skills를 생성하지 않으며 setup 자식의 humanize handoff는 억제한다.",
+      "expected_output": "확정한 프로젝트 유형과 적용 경로를 공개 harness-setup workflow에 전달해 .docs와 AGENTS.md/CLAUDE.md 골격을 먼저 만든다. 권한 정책이 있으면 admin 하네스 단계와 pm-pl/app-doc-lead 앱 문서 단계를 분리하며 역할을 상속하지 않는다. 사용자 프로젝트에 .agents/skills, .claude/skills, skills를 생성하지 않는다.",
       "files": []
     },
     {

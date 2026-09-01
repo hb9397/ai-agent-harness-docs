@@ -5,7 +5,7 @@ description: >
   '하네스 부팅', '기존 코드 분석해서 문서 만들어줘', '레거시 프로젝트 문서화',
   'CLAUDE.md 없는데 생성', '설계 문서 역추출', 'AI 문서 부트스트랩',
   '기존 프로젝트에 하네스 도입' 요청이 오면 이 스킬을 사용한다.
-  기존 코드베이스에 harness-setup의 프로젝트 문서 골격을 먼저 적용한 뒤 design-doc OUTPUT_V2 형식 설계 문서 + context-doc 결과물(AGENTS.md 정본 + CLAUDE.md bridge + .docs/instruction/*)을 자동 도출한다.
+  기존 코드베이스에 harness-setup의 프로젝트 문서 골격을 먼저 적용한 뒤 design-doc OUTPUT_V2 형식 설계 문서 + context-doc 결과물(앱별 *-context.md + .docs/instruction/*)을 자동 도출한다.
   프레임워크 자동 감지. 최소 인터뷰(2회 이하)로 코드에서 추출 불가능한 도메인 맥락만 보충.
 allowed-tools: Read, Glob, Grep, Write
 ---
@@ -16,7 +16,7 @@ allowed-tools: Read, Glob, Grep, Write
 코드를 직접 분석해서 다음 두 산출물을 한 번에 도출한다.
 
 1. **`design-doc` OUTPUT_V2 형식 설계 문서** (프로젝트 설계 스냅샷)
-2. **`context-doc` 결과물** — `AGENTS.md` 정본 + `CLAUDE.md` bridge + `.docs/instruction/*-instruction.md`
+2. **`context-doc` 결과물** — 앱별 `*-context.md` + `.docs/instruction/*-instruction.md`
 
 생성 전 반드시 사용자 확인을 거친다. 파일을 무단으로 생성하지 않는다.
 사용자 스킬은 설치된 `harness-kit` 플러그인에서 제공하며 프로젝트에
@@ -25,7 +25,7 @@ allowed-tools: Read, Glob, Grep, Write
 > 이 스킬은 "레거시/기존 프로젝트에 AI 하네스를 처음 도입"하는 진입점이다.
 > 이후부터는 `design-doc` → `context-doc` 정규 플로우를 그대로 쓰면 된다.
 
-> **공개 계약 재사용**: 이 스킬은 `design-doc`과 `context-doc`의 공개 산출물 계약을 한 번에 수행하는 통합 스킬이다. 다른 스킬의 내부 구현 경로에 결합하지 않고, 필요한 템플릿 구조는 이 문서의 AGENTS 정본 + CLAUDE bridge 계약을 따른다.
+> **공개 계약 재사용**: 이 스킬은 `design-doc`과 `context-doc`의 공개 산출물 계약을 한 번에 수행하는 통합 스킬이다. 다른 스킬의 내부 구현 경로에 결합하지 않고, 루트 컨텍스트는 `harness-setup`, 앱 설계·컨텍스트는 각 앱 문서 스킬의 공개 계약을 따른다.
 
 ---
 
@@ -34,8 +34,44 @@ allowed-tools: Read, Glob, Grep, Write
 1. **코드에서 추출 가능한 건 모두 자동 추출**. 질문하지 않는다.
 2. **코드에서 알 수 없는 것만 인터뷰**. 도메인 목적·사용자·상위 비즈니스 맥락.
 3. **인터뷰는 최대 2회**. 그 이상은 `미정 — [이유]` 로 남긴다.
-4. **공개 산출물 계약을 재사용한다**. `design-doc` OUTPUT_V2 형식과 `context-doc`의 AGENTS 정본 + CLAUDE bridge 구조를 따른다.
+4. **공개 산출물 계약을 재사용한다**. `design-doc` OUTPUT_V2 형식과 `context-doc`의 앱 context + instruction 구조를 따른다.
 5. **프레임워크 중립**. 매니페스트 파일 기반으로 자동 감지한다.
+
+## 선택 권한 정책 연계와 단계 분리
+
+`.docs/harness/access-control/policy.json`이 없으면 기존 통합 부트스트랩 흐름을 그대로
+수행한다. 이 스킬은 선택 기능인 `project-write-access`를 자동 호출하거나 권한을
+자동 설정하지 않는다. 초기 `harness-setup` 뒤부터 권한을 적용하려는 사용자는
+부트스트랩을 잠시 멈추고 관리자가 `project-write-access`를 명시적으로 실행한 다음
+재개한다.
+
+서명 정책이 있으면 `.docs/harness/access-control/write-access-instruction.md`를 읽고,
+`.docs` Git 경계의 provider·host·account와 프로젝트의 `write_access_guard.py
+check-path`로 단계별 정확한 파일을 검사한다.
+
+```text
+[하네스 단계]
+admin
+  └─ 루트 AGENTS.md·CLAUDE.md, .docs/root-context/**, .docs/harness/**
+
+[앱 문서 단계]
+pm-pl 또는 해당 앱 app-doc-lead
+  └─ DESIGN.md, *-context.md, *-instruction.md
+```
+
+- 역할은 상속하지 않는다. `admin`만 가진 계정은 앱 문서를 저장할 수 없다.
+- 한 사람이 전체 부트스트랩을 이어서 수행하려면 `admin`과 `pm-pl` 또는 대상 앱의
+  `app-doc-lead`가 정책에 각각 배정돼 있어야 한다.
+- 하네스가 이미 최신이면 admin 쓰기 단계를 생략하고 앱 문서 권한자 세션에서 코드
+  분석과 앱 문서 생성을 진행할 수 있다.
+- 하네스 갱신이 필요하지만 현재 계정에 admin이 없으면 변경 계획과 checkpoint를
+  반환하고 admin 단계가 끝난 뒤 재개한다.
+- 앱 문서 권한이 없으면 코드 분석·초안까지만 반환하고 저장하지 않는다.
+- 권한 부족을 역할 변경으로 우회하거나 정책을 자동 수정하지 않는다.
+
+권한 정책의 앱 문서 승인 질문은 도메인 인터뷰 예산과 별개인 필수 쓰기 게이트다.
+`design-doc`·`context-doc`을 자동 handoff한 경우에도 Step 7에서 문서 종류·대상·변경
+요약을 설명하고 별도 승인을 받는다.
 
 ## 산출물 bundle과 후처리 소유권
 
@@ -98,8 +134,11 @@ ledger를 안전하게 기록할 수 없으면 새 proposal을 보여주지 않�
 
 - Step 1의 저장소 루트/프로젝트 단위 확인: 최대 1회
 - Step 3의 인터뷰: 최대 2회
-- Step 6의 `context-doc` 단계에서는 **새 질문을 추가하지 않는다**
+- Step 6의 `context-doc` 단계에서는 **새 도메인 인터뷰를 추가하지 않는다**
 - 예산이 소진되면 추가 확인 대신 `미정 — [이유]` 로 남긴다
+
+프로젝트 범위 확인, 권한 단계 전환, 파일 덮어쓰기, 앱 핵심 문서 쓰기 승인은
+인터뷰가 아니라 안전·쓰기 게이트이므로 이 예산으로 생략하지 않는다.
 
 ---
 
@@ -119,7 +158,7 @@ harness-bootstrap 스킬
         │            └── 저장: {project}/.docs/context-base/DESIGN.md (또는 사용자 지정)
         │
         └─ Step 6~7: context-doc 파이프라인 실행
-                     └── 저장: AGENTS.md + CLAUDE.md bridge + .docs/instruction/*-instruction.md
+                     └── 저장: *-context.md + .docs/instruction/*-instruction.md
 ```
 
 이후 작업은 정규 플로우를 따른다.
@@ -175,6 +214,11 @@ harness-bootstrap 스킬
 
 Step 0-B 승인 뒤 다음 기준으로 공개 스킬 이름 `harness-setup`에 handoff한다.
 
+먼저 **선택 권한 정책 연계와 단계 분리**를 적용한다. 정책이 활성화돼 있고 하네스
+변경이 필요하면 현재 계정의 admin 범위를 검증한 뒤에만 handoff한다. admin이 없으면
+필요한 변경과 코드 스캔 재개 지점을 checkpoint로 남기고 파일을 쓰지 않는다. 하네스가
+최신이면 읽기 전용 확인만 하고 앱 문서 권한 단계로 진행한다.
+
 - `.docs/`, `AGENTS.md`, `CLAUDE.md` 중 하나라도 없으면 초기 설정 또는
   복구 workflow를 실행한다.
 - 모두 있어도 `.docs/README.md`, `.docs/.gitignore`, `@AGENTS.md` bridge의
@@ -199,6 +243,9 @@ copy는 읽기 전용 report만 반환한다.
 `harness-setup`을 찾을 수 없으면 플러그인 설치가 불완전한 상태로 보고 쓰기를
 중단한다. bootstrap이 private 템플릿을 흉내 내거나 프로젝트에 스킬을 복사해
 우회하지 않는다.
+
+권한 정책이 활성화된 경우 이 handoff의 쓰기 범위는 admin 문서에 한정한다. 앱의
+`DESIGN.md`, `*-context.md`, `*-instruction.md`는 만들지 않는다.
 
 ---
 
@@ -297,6 +344,10 @@ suppress_child_handoff = true
 이 handoff에서는 준비된 관찰·답변을 입력으로 사용하고 추가 인터뷰나 자식
 `humanize-korean` 후처리를 요청하지 않는다.
 
+권한 정책이 활성화돼 있으면 대상 `DESIGN.md`에 `pm-pl` 또는 해당 앱
+`app-doc-lead` 권한이 있는지 검증한다. 이 단계는 초안 생성이므로 아직 파일을 쓰지
+않으며, guard의 `decision=confirm`은 Step 7의 별도 앱 문서 승인으로 넘긴다.
+
 - 작성 지침(주석)은 제거한 상태로 출력
 - 해당하지 않는 스케일 섹션은 삭제
 - 불명확한 항목은 `미정 — [이유]` 로 표시
@@ -324,12 +375,13 @@ handoff_owner = harness-bootstrap
 suppress_child_handoff = true
 ```
 
-- AGENTS.md 정본에 들어갈 프로젝트 팩트 + 지침 인덱스 초안 작성
+- `.docs/{앱}-context.md`에 들어갈 애플리케이션 팩트 + 지침 인덱스 초안 작성
 - `context-doc`의 공개 workflow로 주제별 instruction 파일 분류
-- AGENTS 정본 + CLAUDE bridge + 각 `*-instruction.md` 구조 활용
+- 앱 context + 각 `*-instruction.md` 구조 활용
 - 모노레포 감지 시 `.docs/instruction/` 배치 질문 (context-doc의 Step 2와 동일)
 
 이 단계에서는 **새로운 인터뷰를 추가하지 않는다**. Step 3 답변 + Step 5 OUTPUT으로 충분하다.
+단, 활성 권한 정책의 쓰기 승인 질문은 인터뷰가 아니므로 Step 7에서 반드시 수행한다.
 또한 bootstrap 한계 때문에 아래 오버라이드를 적용한다.
 
 - 코드/README/주석에서 **규범적 이유·대안이 확인된 금지 항목만** 삼위일체로 기록한다.
@@ -346,17 +398,15 @@ suppress_child_handoff = true
 
 **단일 애플리케이션:**
 1. `.docs/context-base/DESIGN.md` (또는 사용자 지정 경로)
-2. `AGENTS.md`
-3. `CLAUDE.md` (`@AGENTS.md` bridge)
-4. `.docs/instruction/*-instruction.md` (해당 주제와 항상 생성되는
+2. `.docs/{앱}-context.md`
+3. `.docs/instruction/*-instruction.md` (해당 주제와 항상 생성되는
    `@.docs/instruction/artifact-output-routing-instruction.md` 포함)
 
 **복수 애플리케이션:**
 1. `.docs/{앱}/context-base/DESIGN.md`
-2. `.docs/{앱}-context.md` (단일앱의 CLAUDE.md/AGENTS.md에 해당하는 내용)
+2. `.docs/{앱}-context.md`
 3. `.docs/{앱}/instruction/*-instruction.md` (해당 주제와 항상 생성되는
    `@.docs/{앱}/instruction/artifact-output-routing-instruction.md` 포함)
-4. `.docs/root-context/AGENTS.md`, `.docs/root-context/CLAUDE.md` (루트 통합 인덱스 복사본)
 
 (단, 설계 문서에 해당 주제가 없으면 일반 주제 instruction 파일은 생성하지 않는다.
 artifact-output-routing-instruction은 산출물 경계 정본이므로 항상 생성한다.)
@@ -371,25 +421,43 @@ proposal만 기록하고 G12 승인 전 canonical artifact를 만들지 않는�
 > "위 파일들을 검토해 주세요.
 > 이상 없으면 한꺼번에 저장하겠습니다. 수정 사항이 있으면 알려주세요."
 
+권한 정책이 활성화된 경우 일반 검토·저장 승인과 별도로, 실제 저장 직전에 guard로
+위의 정확한 파일 전체를 다시 검사한다. `decision=confirm`이면 다음 정보를 한 번에
+보여주되 문서 종류별 역할을 빠뜨리지 않는다.
+
+> **앱 설계·컨텍스트 문서 쓰기 확인**
+>
+> - 대상 앱과 정확한 파일 전체
+> - `DESIGN.md`: 요구사항, 범위, 아키텍처, 데이터와 인수 기준을 정하는 설계 기준
+> - `*-context.md`: 앱의 설계 원칙, 기술 스택, 아키텍처, 실행 방법과 지침 인덱스
+> - 각 `*-instruction.md`: 파일명별 주제 규칙
+> - `artifact-output-routing-instruction.md`: 산출물 위치·소유자·승인·인계 정본
+> - 현재 `pm-pl` 또는 `app-doc-lead` 역할과 앱 범위
+> - 신규 작성·갱신 파일별 변경 요약과 이유
+>
+> 위 변경을 이 파일들에 반영할까요? **(승인 / 수정 / 취소)**
+
+`design-doc`과 `context-doc`이 자동 handoff된 실행에서도 생략하지 않는다. 대상 경로,
+내용 요약 또는 역할이 달라지면 이전 승인을 재사용하지 않는다. `admin`만 가진 계정은
+질문으로 우회하지 않고 거부한다.
+
 승인 시 STEP 0에서 확정한 프로젝트 유형에 따라 분기한다.
 
 **단일 애플리케이션:**
 - `.docs/instruction/` 디렉토리가 없으면 생성
 - 설계 문서 저장 폴더(`.docs/context-base/`)가 없으면 생성
-- 모든 파일 일괄 저장
-- `AGENTS.md`의 `@.docs/instruction/*` 참조가 실제 파일과 1:1 일치하는지 검증
-- `CLAUDE.md`가 `@AGENTS.md` bridge인지 검증
+- `DESIGN.md`, `.docs/{앱}-context.md`, instruction 파일 일괄 저장
+- 앱 context의 `@.docs/instruction/*` 참조가 실제 파일과 1:1 일치하는지 검증
+- 루트 `AGENTS.md`·`CLAUDE.md`와 `.docs/root-context/**`를 수정하지 않았는지 검증
 
 **복수 애플리케이션:**
 - `.docs/{앱}/instruction/` 디렉토리가 없으면 생성
 - `.docs/{앱}/context-base/` 디렉토리가 없으면 생성
-- `.docs/root-context/` 디렉토리가 없으면 생성
 - 설계 문서: `.docs/{앱}/context-base/DESIGN.md` 저장
 - 컨텍스트 문서: `.docs/{앱}-context.md` 저장
 - instruction: `.docs/{앱}/instruction/*-instruction.md` 저장
-- 루트 통합: `.docs/root-context/CLAUDE.md`, `.docs/root-context/AGENTS.md` 저장
 - `.docs/{앱}-context.md`의 instruction 참조가 `.docs/{앱}/instruction/` 내 실제 파일과 1:1 일치하는지 검증
-- `.docs/root-context/CLAUDE.md`가 `@AGENTS.md` bridge인지 검증
+- 루트 `AGENTS.md`·`CLAUDE.md`와 `.docs/root-context/**`를 수정하지 않았는지 검증
 
 **공통:**
 - 이미 존재하는 파일이 있으면 덮어쓰기 전에 사용자에게 알림
@@ -397,6 +465,9 @@ proposal만 기록하고 G12 승인 전 canonical artifact를 만들지 않는�
   그 사용자 확장을 보존
 - 실행 전후 `.agents/skills/`, `.claude/skills/`, `skills/`의 존재·hash가
   동일하고 새 local skill 디렉터리가 생기지 않았는지 검증
+- 앱 문서 저장 뒤 루트 읽기 지도 갱신이 필요하면 admin의 `harness-setup` 후속 작업으로
+  남긴다. 같은 계정에 admin 역할도 명시돼 있으면 별도 admin 경로 검사와 승인을 거쳐
+  공개 `harness-setup` workflow로 이어갈 수 있다.
 
 ---
 
@@ -421,5 +492,5 @@ fingerprint를 연결한다. `applied`와 Step 7 재검증의 `revalidated`는 �
 `design-doc`과 `context-doc` 자식 workflow가 반환한 문서는 별도 handoff하지 않는다.
 후처리는 proposal-only가 기본이며 승인 전 파일 쓰기는 금지한다. 요구사항, 경로,
 ID, 숫자, 날짜, 코드 fence, 표 구조, 의무 수준은 변경하지 않는다. 승인 적용 후에는
-Step 7의 경로·참조·bridge 검증을 다시 수행한다.
+Step 7의 경로·참조 검증을 다시 수행한다.
 `harness-kit:managed:start/end` marker는 변경하거나 제거하지 않는다.

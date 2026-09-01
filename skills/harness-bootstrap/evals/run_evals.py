@@ -40,6 +40,13 @@ def main() -> int:
         "`proposed`, `skipped`, `rejected`, `applied`, `revalidated`",
         "원자적 replace",
         "`harness-kit:managed:start/end` marker",
+        "## 선택 권한 정책 연계와 단계 분리",
+        "`admin`만 가진 계정은 앱 문서를 저장할 수 없다",
+        "하네스 단계",
+        "앱 문서 단계",
+        "`design-doc`과 `context-doc`이 자동 handoff된 실행에서도",
+        "앱 설계·컨텍스트 문서 쓰기 확인",
+        "루트 `AGENTS.md`·`CLAUDE.md`와 `.docs/root-context/**`를 수정하지 않았는지 검증",
     ):
         require(skill, needle)
 
@@ -63,6 +70,8 @@ def main() -> int:
         raise AssertionError(f"unexpected eval ids: {ids}")
     if "/harness-bootstrap" in EVALS_FILE.read_text(encoding="utf-8"):
         raise AssertionError("platform-specific standalone slash invocation remains")
+    if "context 단계에서도 새 질문 없이" in EVALS_FILE.read_text(encoding="utf-8"):
+        raise AssertionError("eval contract incorrectly suppresses mandatory access approval")
 
     print("harness bootstrap contract evals passed")
     return 0
