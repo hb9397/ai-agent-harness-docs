@@ -24,7 +24,7 @@ NAMESPACE = "harness-kit-project-write-access"
 SCHEMA_VERSION = "3.0.0"
 DOCS_ROOT_NAME = ".ai-docs"
 LEGACY_DOCS_ROOT_NAME = ".docs"
-LEGACY_POLICY_SCHEMA_VERSIONS = {"2.0.0"}
+LEGACY_POLICY_SCHEMA_VERSIONS = {"1.1.0", "2.0.0"}
 ROLES = {"admin", "pm-pl", "app-doc-lead", "developer"}
 WRITE_SCOPES = {"admin", "app-doc", "team"}
 PROVIDERS = ("github", "gitlab", "gitea")
@@ -466,6 +466,30 @@ def subject_for_account(policy: dict[str, Any], provider: str, host: str, login:
             actual = (str(account.get("provider", "")), str(account.get("host", "")).casefold(), str(account.get("login", "")).casefold())
             if actual == wanted:
                 return subject
+    return None
+
+
+def legacy_admin_id_for_account(
+    policy: dict[str, Any],
+    provider: str,
+    host: str,
+    login: str,
+) -> str | None:
+    """Resolve one legacy admin while preserving each schema's identity boundary."""
+    schema_version = policy.get("schema_version")
+    if schema_version == "1.1.0":
+        matches = [
+            str(principal.get("id", ""))
+            for principal in policy.get("principals", [])
+            if principal.get("role") == "admin"
+            and isinstance(principal.get("accounts"), dict)
+            and str(principal["accounts"].get(provider, "")).casefold() == login.casefold()
+        ]
+        return matches[0] if len(matches) == 1 and matches[0] else None
+    if schema_version == "2.0.0":
+        subject = subject_for_account(policy, provider, host, login)
+        if subject is not None and subject_has_role(policy, subject["id"], "admin"):
+            return str(subject["id"])
     return None
 
 
@@ -1521,6 +1545,7 @@ def make_root_migration_plan(project_root: Path, config: dict[str, Any]) -> dict
         },
         *({"path": path, "action": "rebind-and-regenerate"} for path in managed_paths),
     ]
+    legacy_schema_version = current_policy.get("schema_version")
     basis = {
         "schema_version": SCHEMA_VERSION,
         "operation": "migrate-document-root",
@@ -1529,7 +1554,12 @@ def make_root_migration_plan(project_root: Path, config: dict[str, Any]) -> dict
         "config": config,
         "topology": layout["topology"],
         "git_root_relative": layout["git_root_relative"],
-        "legacy_policy_schema_version": current_policy.get("schema_version"),
+        "legacy_policy_schema_version": legacy_schema_version,
+        "legacy_admin_identity_binding": (
+            "provider-login-and-admin-key"
+            if legacy_schema_version == "1.1.0"
+            else "provider-host-login-and-admin-key"
+        ),
         "legacy_policy_core_sha256": verified["policy_core_sha256"],
         "policy_core_sha256": desired_policy_core_hash,
         "changes": changes,
@@ -1589,13 +1619,13 @@ def migrate_document_root(
     key_path = locate_admin_key(config["project_id"], codex_dir, claude_dir, backup_key)
     if fingerprint(public_key_from_private(key_path)) != trust.get("admin_key_fingerprint"):
         raise AccessError("administrator key fingerprint does not match legacy trust")
-    caller = subject_for_account(
+    legacy_admin_id = legacy_admin_id_for_account(
         current_policy,
         config["local_identity"]["provider"],
         config["local_identity"]["host"],
         config["local_identity"]["account"],
     )
-    if caller is None or not subject_has_role(current_policy, caller["id"], "admin"):
+    if legacy_admin_id is None:
         raise AccessError("the legacy document root can be migrated only by a signed-policy admin")
 
     legacy_root = project_root / LEGACY_DOCS_ROOT_NAME

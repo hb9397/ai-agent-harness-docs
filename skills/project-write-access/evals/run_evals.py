@@ -217,26 +217,84 @@ def load_controller_module():
     return module
 
 
-def replace_legacy_values(value):
+def replace_legacy_values(value, schema_version: str):
     if isinstance(value, dict):
-        return {key: replace_legacy_values(item) for key, item in value.items()}
+        return {key: replace_legacy_values(item, schema_version) for key, item in value.items()}
     if isinstance(value, list):
-        return [replace_legacy_values(item) for item in value]
+        return [replace_legacy_values(item, schema_version) for item in value]
     if isinstance(value, str):
-        return value.replace(".ai-docs", ".docs").replace("3.0.0", "2.0.0")
+        return value.replace(".ai-docs", ".docs").replace("3.0.0", schema_version)
     return value
 
 
-def convert_current_policy_to_legacy(project: Path, codex_keys: Path) -> Path:
-    """Turn a valid current fixture into a correctly signed v2 .docs fixture."""
+def legacy_policy_core(policy: dict, schema_version: str) -> dict:
+    if schema_version == "2.0.0":
+        result = replace_legacy_values(policy, schema_version)
+        result.pop("policy_core_sha256", None)
+        result.pop("generated_manifest_sha256", None)
+        return result
+    if schema_version != "1.1.0":
+        raise AssertionError(f"unsupported legacy fixture schema: {schema_version}")
+
+    subjects = {subject["id"]: subject for subject in policy["subjects"]}
+    principals = []
+    for assignment in policy["role_assignments"]:
+        role = assignment["role"]
+        if role == "developer":
+            continue
+        subject = subjects[assignment["subject_id"]]
+        principal = {
+            "id": subject["id"],
+            "role": role,
+            "accounts": {
+                account["provider"]: account["login"]
+                for account in subject.get("accounts", [])
+            },
+        }
+        if role == "app-doc-lead":
+            principal["applications"] = assignment["applications"]
+        principals.append(principal)
+
+    return {
+        "schema_version": schema_version,
+        "project_id": policy["project_id"],
+        "topology": policy["topology"],
+        "git_root_relative": policy["git_root_relative"],
+        "root_context_tracked": policy["root_context_tracked"],
+        "remote_verification": policy["remote_verification"],
+        "role_inheritance": {"admin": ["pm-pl"], "pm-pl": [], "app-doc-lead": []},
+        "authorization_model": {
+            "app_scoped_role": "app-doc-lead",
+            "unregistered_team_write": True,
+            "admin_app_doc_confirmation": "required-by-ai-instruction",
+        },
+        "applications": policy["applications"],
+        "principals": sorted(principals, key=lambda item: item["id"]),
+        "path_rules": replace_legacy_values(policy["path_rules"], schema_version),
+        "repositories": [
+            {
+                "provider": repository["provider"],
+                "path": ".",
+                "protected_branches": repository.get("protected_branches", []),
+                "server_policy": repository.get("server_policy", "externally-approved"),
+            }
+            for repository in policy["repositories"]
+        ],
+    }
+
+
+def convert_current_policy_to_legacy(
+    project: Path,
+    codex_keys: Path,
+    schema_version: str = "2.0.0",
+) -> Path:
+    """Turn a valid current fixture into a correctly signed legacy .docs fixture."""
     module = load_controller_module()
     current_root = project / ".ai-docs"
     access = current_root / "harness" / "access-control"
     policy = json.loads((access / "policy.json").read_text(encoding="utf-8"))
     current_core_hash = policy["policy_core_sha256"]
-    legacy_core = replace_legacy_values(policy)
-    legacy_core.pop("policy_core_sha256", None)
-    legacy_core.pop("generated_manifest_sha256", None)
+    legacy_core = legacy_policy_core(policy, schema_version)
     legacy_core_hash = module.sha256_bytes(module.canonical_json(legacy_core))
     manifest = json.loads((access / "generated-manifest.json").read_text(encoding="utf-8"))
 
@@ -244,7 +302,7 @@ def convert_current_policy_to_legacy(project: Path, codex_keys: Path) -> Path:
         target = project / entry["path"]
         content = target.read_bytes()
         content = content.replace(b".ai-docs", b".docs")
-        content = content.replace(b"3.0.0", b"2.0.0")
+        content = content.replace(b"3.0.0", schema_version.encode("ascii"))
         content = content.replace(current_core_hash.encode("ascii"), legacy_core_hash.encode("ascii"))
         target.write_bytes(content)
 
@@ -267,7 +325,7 @@ def convert_current_policy_to_legacy(project: Path, codex_keys: Path) -> Path:
         legacy_entries.append(legacy_entry)
 
     legacy_manifest = {
-        "schema_version": "2.0.0",
+        "schema_version": schema_version,
         "policy_core_sha256": legacy_core_hash,
         "files": sorted(legacy_entries, key=lambda item: item["path"]),
     }
@@ -287,7 +345,7 @@ def convert_current_policy_to_legacy(project: Path, codex_keys: Path) -> Path:
     state_path = module.git_local_state_path(git_root)
     if state_path.is_file():
         state = json.loads(state_path.read_text(encoding="utf-8"))
-        state["schema_version"] = "2.0.0"
+        state["schema_version"] = schema_version
         state_path.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
 
     legacy_root = project / ".docs"
@@ -782,7 +840,7 @@ def test_signed_legacy_root_migration(root: Path) -> None:
     single_claude = root / "signed-legacy-single-claude"
     current = plan(single, single_config)
     apply(single, single_config, current["plan_hash"], single_codex, single_claude)
-    legacy_git_root = convert_current_policy_to_legacy(single, single_codex)
+    legacy_git_root = convert_current_policy_to_legacy(single, single_codex, "1.1.0")
     commit_all_without_hooks(legacy_git_root, "legacy signed policy")
 
     rejected_general_plan = controller(
@@ -797,7 +855,25 @@ def test_signed_legacy_root_migration(root: Path) -> None:
     assert "use migrate-root-plan and migrate-root" in rejected_general_plan.stderr
     migration = migration_plan(single, single_config)
     assert migration["operation"] == "migrate-document-root"
-    assert migration["legacy_policy_schema_version"] == "2.0.0"
+    assert migration["legacy_policy_schema_version"] == "1.1.0"
+    assert migration["legacy_admin_identity_binding"] == "provider-login-and-admin-key"
+
+    non_admin_config = root / "signed-legacy-single-non-admin-config.json"
+    non_admin_value = json.loads(single_config.read_text(encoding="utf-8"))
+    non_admin_value["local_identity"]["account"] = "@lead"
+    write(non_admin_config, json.dumps(non_admin_value, ensure_ascii=False, indent=2) + "\n")
+    non_admin_plan = migration_plan(single, non_admin_config)
+    rejected_non_admin = migrate_root(
+        single,
+        non_admin_config,
+        non_admin_plan["plan_hash"],
+        single_codex,
+        single_claude,
+        check=False,
+    )
+    assert rejected_non_admin.returncode == 2
+    assert "signed-policy admin" in rejected_non_admin.stderr
+
     migrated = json.loads(
         migrate_root(
             single,
@@ -836,6 +912,8 @@ def test_signed_legacy_root_migration(root: Path) -> None:
     legacy_git_root = convert_current_policy_to_legacy(multi, multi_codex)
     commit_all_without_hooks(legacy_git_root, "legacy signed policy")
     migration = migration_plan(multi, multi_config)
+    assert migration["legacy_policy_schema_version"] == "2.0.0"
+    assert migration["legacy_admin_identity_binding"] == "provider-host-login-and-admin-key"
     migrated = json.loads(
         migrate_root(
             multi,
