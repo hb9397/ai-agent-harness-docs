@@ -11,7 +11,7 @@
 | 문서 | 역할 |
 |------|------|
 | [Plugin_Installation_Guide.md](./Plugin_Installation_Guide.md) | Codex CLI·앱, Claude Code CLI·앱 설치·확인·업데이트·제거 기준과 예시 화면 |
-| [Harness_Engineering.md](./Harness_Engineering.md) | 사용자 스킬 정본과 현재 main `0.6.0` runtime 20종, 관리자 3종, 플러그인 흐름, `.ai-docs`·컨텍스트·권한·Markdown 후처리 운영 정본 |
+| [Harness_Engineering.md](./Harness_Engineering.md) | 사용자 스킬 정본과 현재 stable `0.6.0` runtime 20종, 관리자 3종, 플러그인 흐름, `.ai-docs`·컨텍스트·권한·Markdown 후처리 운영 정본 |
 | [Harness_Engineering_Intro.md](./Harness_Engineering_Intro.md) | 플러그인 기반 하네스 도입 배경과 실제 프로젝트 사용·권한 분기 예시 |
 | [Multi_App_Doc_Flow_And_Ownership.md](./Multi_App_Doc_Flow_And_Ownership.md) | 복수 앱 프로젝트의 AI 문서 흐름, 문서 소유권, 선택형 3계층 쓰기 권한 제어 |
 

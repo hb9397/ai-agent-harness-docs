@@ -3,7 +3,7 @@
 생성 시각: 2026-08-01
 
 > Historical report: 이 문서는 `0.2.2` 후보의 감사 기록이다. 현재 `harness-kit`
-> `0.4.3` stable 릴리스의 게시 결과는 `publish.json`, live metadata와 설치 증적은
+> `0.6.0` stable 릴리스의 게시 결과는 `publish.json`, live metadata와 설치 증적은
 > `release.json`, `release-checklist.md`, `install-verification.json`을 따른다. 네
 > 인터페이스의 미확보 수동 증적은 알려진 검증 한계다.
 

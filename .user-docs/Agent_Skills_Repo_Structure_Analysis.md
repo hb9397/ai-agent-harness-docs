@@ -5,8 +5,8 @@
 > 이 문서의 본문은 2026-05-27 당시 외부 생태계 조사 기록이다. 현행 운영 기준은 플러그인 전환 이후 문서인 [README.md](../README.md), [Plugin Installation Guide](./Plugin_Installation_Guide.md), [Harness Engineering Guide](./Harness_Engineering.md)를 따른다.
 >
 > 현재 source 구성은 사용자 스킬 20종과 관리자 스킬 3종으로 분리되어 있다.
-> 사용자 정본은 `skills/`에서 관리해 plugin build의 입력으로 사용한다. 현재 main
-> `0.6.0` payload도 20종이며, 게시된 최신 stable `v0.4.3`과 이전 archive는 historical
+> 사용자 정본은 `skills/`에서 관리해 plugin build의 입력으로 사용한다. 현재 stable
+> `0.6.0` payload는 20종이며, 이전 archive는 historical
 > 비교 증적으로 보존한다. 관리자 스킬은 `maintainer/skills/`와 repo-local `.agents/skills`,
 > `.claude/skills` projection에서만 사용한다.
 >

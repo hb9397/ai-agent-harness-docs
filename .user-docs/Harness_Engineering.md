@@ -31,7 +31,7 @@ AI Agent Harness는 Codex, Claude Code처럼 서로 다른 에이전트가 같�
 | 영역 | 담당 | 프로젝트에 남는가 |
 |------|------|-------------------|
 | 사용자 스킬 정본 20종 | 관리 저장소 `skills/` | 다음 plugin build의 입력 |
-| 현재 main `0.6.0` runtime 20종 | 설치된 `harness-kit` 플러그인 | local copy를 남기지 않음 |
+| 현재 stable `0.6.0` runtime 20종 | 설치된 `harness-kit` 플러그인 | local copy를 남기지 않음 |
 | `project-write-access` | `0.6.0` runtime에 포함된 명시 호출 전용 스킬 | 관리자는 공유 정책 설정·변경, 각 참여자는 PC별 로컬 등록 |
 | 프로젝트 문서 골격 | 프로젝트 수행자가 `harness-setup`으로 생성 | `.ai-docs/**`, `AGENTS.md`, `CLAUDE.md` |
 | 설계·구현 계획·프로토타입 | 프로젝트 수행자와 사용자 스킬 | `.ai-docs/**` |
@@ -39,7 +39,7 @@ AI Agent Harness는 Codex, Claude Code처럼 서로 다른 에이전트가 같�
 | 리뷰·검증 보고 | 프로젝트 수행자와 사용자 스킬 | 기본은 대화 보고, 스킬이 별도 파일 생성을 금지하면 repo에 저장하지 않음 |
 | 플러그인 build·upstream 최신화 | 하네스 관리자 | 이 관리 저장소 |
 
-관리 저장소의 사용자 스킬 정본, `0.6.0`의 Codex·Claude runtime과 capability inventory는 모두 20종으로 같다. 게시된 최신 stable은 `v0.4.3`이며, `0.6.0`은 tag·GitHub Release를 만들기 전 main 배포 후보다.
+관리 저장소의 사용자 스킬 정본, `0.6.0`의 Codex·Claude runtime과 capability inventory는 모두 20종으로 같다. 게시된 최신 stable은 [`v0.6.0`](https://github.com/hb9397/harness-kit/releases/tag/v0.6.0)이다.
 
 `harness-setup`의 쓰기 allowlist는 `.ai-docs/**`, 루트 `AGENTS.md`, `CLAUDE.md`다. `.agents/skills/**`, `.claude/skills/**`, `skills/**`를 생성·복사·동기화하지 않는다. 실행 전에 존재하던 local skill 경로는 읽기 전용으로 분류·보고하고 승인 없이 변경하지 않는다.
 

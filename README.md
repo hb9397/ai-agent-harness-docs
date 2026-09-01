@@ -22,13 +22,13 @@
 현재 정본과 배포본:
 
 - 사용자 스킬 정본: `skills/`의 20종. `project-write-access`를 포함한다.
-- 현재 main 배포 후보: `harness-kit` `0.6.0`
-- 배포 후보 archive: `plugins/harness-kit-0.6.0.zip` (`05254286fb1ed8266843230ae6839dbaeadd3088791adb660f17749204445a2f`)
+- 현재 stable: [`harness-kit` `0.6.0`](https://github.com/hb9397/harness-kit/releases/tag/v0.6.0)
+- stable archive: `plugins/harness-kit-0.6.0.zip` (`05254286fb1ed8266843230ae6839dbaeadd3088791adb660f17749204445a2f`)
 - `0.6.0` Codex runtime: 20 skills / 0 agents
 - `0.6.0` Claude runtime: 20 skills / 0 agents
-- `project-write-access`는 `0.6.0` 배포 후보에 포함된다. 공유 정책 설정·변경은 관리자만 명시적으로 수행하고, 정책 생성 뒤의 PC별 로컬 등록은 각 참여자가 수행한다.
+- `project-write-access`는 `0.6.0` stable에 포함된다. 공유 정책 설정·변경은 관리자만 명시적으로 수행하고, 정책 생성 뒤의 PC별 로컬 등록은 각 참여자가 수행한다.
 - 관리자 스킬: 3종, 이 저장소 안에서만 사용
-- 게시된 최신 stable은 [`v0.4.3`](https://github.com/hb9397/harness-kit/releases/tag/v0.4.3)이다. `0.6.0`은 main 배포 후보이며 아직 tag·GitHub Release를 만들지 않았다. 게시 결과는 `maintainer/plugin/publish.json`에 보존한다.
+- 게시된 최신 stable은 [`v0.6.0`](https://github.com/hb9397/harness-kit/releases/tag/v0.6.0)이다. annotated tag, GitHub Release와 원격 archive 검증 결과는 `maintainer/plugin/publish.json`에 보존한다.
 
 ### 함께 사용해볼 만한 플러그인
 
