@@ -699,6 +699,8 @@ def check_setup_contract() -> None:
         "`.docs/`만 있으면 **이전 문서 루트 이관 모드**",
         "`.docs/`와 `.ai-docs/`가 함께 있으면",
         "서명 권한 정책이 있으면 디렉토리를 옮기지 않는다",
+        "`migrate-root-plan`과 `migrate-root`",
+        "`harness-setup`이 이 권한 작업을 대신 실행하지 않는다",
     ):
         require(skill_text, needle, SETUP_ROOT / "SKILL.md")
 

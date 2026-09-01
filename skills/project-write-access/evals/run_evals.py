@@ -66,6 +66,11 @@ def commit_all(root: Path, message: str) -> None:
     git(root, "commit", "-q", "-m", message)
 
 
+def commit_all_without_hooks(root: Path, message: str) -> None:
+    git(root, "add", "-A")
+    git(root, "commit", "-q", "--no-verify", "-m", message)
+
+
 def base_config(path: Path, repo_path: str = ".", applications: list[str] | None = None) -> Path:
     application_ids = applications or ["web", "api"]
     config = {
@@ -168,6 +173,131 @@ def apply(project: Path, config: Path, plan_hash: str, codex_keys: Path, claude_
     )
 
 
+def migration_plan(project: Path, config: Path) -> dict:
+    result = controller(
+        "migrate-root-plan",
+        "--project-root",
+        str(project),
+        "--config",
+        str(config),
+    )
+    return json.loads(result.stdout)
+
+
+def migrate_root(
+    project: Path,
+    config: Path,
+    plan_hash: str,
+    codex_keys: Path,
+    claude_keys: Path,
+    *,
+    check: bool = True,
+) -> subprocess.CompletedProcess[str]:
+    return controller(
+        "migrate-root",
+        "--project-root",
+        str(project),
+        "--config",
+        str(config),
+        "--approve-plan-hash",
+        plan_hash,
+        "--codex-key-dir",
+        str(codex_keys),
+        "--claude-key-dir",
+        str(claude_keys),
+        check=check,
+    )
+
+
+def load_controller_module():
+    spec = importlib.util.spec_from_file_location("project_write_access_controller", CONTROLLER)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def replace_legacy_values(value):
+    if isinstance(value, dict):
+        return {key: replace_legacy_values(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [replace_legacy_values(item) for item in value]
+    if isinstance(value, str):
+        return value.replace(".ai-docs", ".docs").replace("3.0.0", "2.0.0")
+    return value
+
+
+def convert_current_policy_to_legacy(project: Path, codex_keys: Path) -> Path:
+    """Turn a valid current fixture into a correctly signed v2 .docs fixture."""
+    module = load_controller_module()
+    current_root = project / ".ai-docs"
+    access = current_root / "harness" / "access-control"
+    policy = json.loads((access / "policy.json").read_text(encoding="utf-8"))
+    current_core_hash = policy["policy_core_sha256"]
+    legacy_core = replace_legacy_values(policy)
+    legacy_core.pop("policy_core_sha256", None)
+    legacy_core.pop("generated_manifest_sha256", None)
+    legacy_core_hash = module.sha256_bytes(module.canonical_json(legacy_core))
+    manifest = json.loads((access / "generated-manifest.json").read_text(encoding="utf-8"))
+
+    for entry in manifest["files"]:
+        target = project / entry["path"]
+        content = target.read_bytes()
+        content = content.replace(b".ai-docs", b".docs")
+        content = content.replace(b"3.0.0", b"2.0.0")
+        content = content.replace(current_core_hash.encode("ascii"), legacy_core_hash.encode("ascii"))
+        target.write_bytes(content)
+
+    legacy_entries = []
+    for entry in manifest["files"]:
+        legacy_entry = dict(entry)
+        legacy_entry["path"] = entry["path"].replace(".ai-docs/", ".docs/", 1)
+        current_path = project / entry["path"]
+        if entry["mode"] == "full":
+            digest = module.sha256_bytes(current_path.read_bytes())
+        elif entry["mode"] == "codeowners-block":
+            digest = module.managed_hash(current_path.read_bytes(), module.CODEOWNERS_MARKERS)
+        elif entry["mode"] == "instruction-block":
+            digest = module.managed_hash(current_path.read_bytes(), module.INSTRUCTION_MARKERS)
+        elif entry["mode"] == "json-handler":
+            digest = module.json_handler_hash(current_path)
+        else:
+            raise AssertionError(f"unknown fixture manifest mode: {entry['mode']}")
+        legacy_entry["sha256"] = digest
+        legacy_entries.append(legacy_entry)
+
+    legacy_manifest = {
+        "schema_version": "2.0.0",
+        "policy_core_sha256": legacy_core_hash,
+        "files": sorted(legacy_entries, key=lambda item: item["path"]),
+    }
+    manifest_bytes = module.pretty_json(legacy_manifest)
+    legacy_policy = {
+        **legacy_core,
+        "policy_core_sha256": legacy_core_hash,
+        "generated_manifest_sha256": module.sha256_bytes(manifest_bytes),
+    }
+    policy_bytes = module.canonical_json(legacy_policy)
+    key_path = codex_keys / "fixture-project.key"
+    (access / "generated-manifest.json").write_bytes(manifest_bytes)
+    (access / "policy.json").write_bytes(policy_bytes)
+    (access / "policy.sig").write_bytes(module.sign_policy(policy_bytes, key_path))
+
+    git_root = current_root if module.is_git_root(current_root) else project
+    state_path = module.git_local_state_path(git_root)
+    if state_path.is_file():
+        state = json.loads(state_path.read_text(encoding="utf-8"))
+        state["schema_version"] = "2.0.0"
+        state_path.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+
+    legacy_root = project / ".docs"
+    os.replace(current_root, legacy_root)
+    if git_root == project:
+        git(project, "config", "--local", "--replace-all", "core.hooksPath", ".docs/harness/access-control/hooks/git")
+        return project
+    return legacy_root
+
+
 def ai_command(guard: Path, project: Path, host: str, shell_command: str) -> subprocess.CompletedProcess[str]:
     payload = json.dumps({"cwd": str(project), "tool_input": {"command": shell_command}}, ensure_ascii=False)
     return subprocess.run(
@@ -227,6 +357,8 @@ def assert_skill_contract() -> None:
     assert '"gh", "api"' in controller
     assert '"glab", "api"' in controller
     assert '"tea", "--login"' in controller
+    assert '"migrate-root-plan"' in controller
+    assert '"migrate-root"' in controller
     for path in (CONTROLLER, GUARD_ASSET):
         compile(path.read_text(encoding="utf-8"), str(path), "exec")
 
@@ -635,6 +767,128 @@ def test_explicit_developer_and_multiple_roles(root: Path) -> None:
     assert current_plan["participant_discovery"] == "required-before-role-change"
 
 
+def test_signed_legacy_root_migration(root: Path) -> None:
+    single = root / "signed-legacy-single"
+    init_repo(single)
+    write(single / "AGENTS.md", "# Agent map\n")
+    write(single / "CLAUDE.md", "@AGENTS.md\n")
+    for app in ("web", "api"):
+        write(single / ".ai-docs" / app / "instruction" / "agent-instruction.md", f"# {app}\n")
+    write(single / ".ai-docs" / "README.md", "# Docs\n")
+    write(single / ".ai-docs" / ".gitignore", "_inbox/*\n")
+    commit_all(single, "baseline")
+    single_config = base_config(root / "signed-legacy-single-config.json")
+    single_codex = root / "signed-legacy-single-codex"
+    single_claude = root / "signed-legacy-single-claude"
+    current = plan(single, single_config)
+    apply(single, single_config, current["plan_hash"], single_codex, single_claude)
+    legacy_git_root = convert_current_policy_to_legacy(single, single_codex)
+    commit_all_without_hooks(legacy_git_root, "legacy signed policy")
+
+    rejected_general_plan = controller(
+        "plan",
+        "--project-root",
+        str(single),
+        "--config",
+        str(single_config),
+        check=False,
+    )
+    assert rejected_general_plan.returncode == 2
+    assert "use migrate-root-plan and migrate-root" in rejected_general_plan.stderr
+    migration = migration_plan(single, single_config)
+    assert migration["operation"] == "migrate-document-root"
+    assert migration["legacy_policy_schema_version"] == "2.0.0"
+    migrated = json.loads(
+        migrate_root(
+            single,
+            single_config,
+            migration["plan_hash"],
+            single_codex,
+            single_claude,
+        ).stdout
+    )
+    assert migrated["status"] == "migrated"
+    assert not (single / ".docs").exists()
+    assert (single / ".ai-docs").is_dir()
+    assert git(single, "config", "--local", "--get", "core.hooksPath").stdout.strip() == ".ai-docs/harness/access-control/hooks/git"
+    state = json.loads((single / ".git" / "harness-write-access.json").read_text(encoding="utf-8"))
+    assert state["previous_core_hooks_path"] is None
+    verified = json.loads(controller("verify", "--project-root", str(single)).stdout)
+    assert verified["schema_version"] == "3.0.0"
+    assert verified["document_root"] == ".ai-docs"
+
+    multi = root / "signed-legacy-multi"
+    docs = multi / ".ai-docs"
+    multi.mkdir()
+    init_repo(docs)
+    write(multi / "AGENTS.md", "# Root map\n")
+    write(multi / "CLAUDE.md", "@AGENTS.md\n")
+    for app in ("web", "api"):
+        write(docs / app / "instruction" / "agent-instruction.md", f"# {app}\n")
+    write(docs / "README.md", "# Docs\n")
+    write(docs / ".gitignore", "_inbox/*\n")
+    commit_all(docs, "baseline")
+    multi_config = base_config(root / "signed-legacy-multi-config.json")
+    multi_codex = root / "signed-legacy-multi-codex"
+    multi_claude = root / "signed-legacy-multi-claude"
+    current = plan(multi, multi_config)
+    apply(multi, multi_config, current["plan_hash"], multi_codex, multi_claude)
+    legacy_git_root = convert_current_policy_to_legacy(multi, multi_codex)
+    commit_all_without_hooks(legacy_git_root, "legacy signed policy")
+    migration = migration_plan(multi, multi_config)
+    migrated = json.loads(
+        migrate_root(
+            multi,
+            multi_config,
+            migration["plan_hash"],
+            multi_codex,
+            multi_claude,
+        ).stdout
+    )
+    assert migrated["status"] == "migrated"
+    assert not (multi / ".docs").exists()
+    assert git(multi / ".ai-docs", "config", "--local", "--get", "core.hooksPath").stdout.strip() == "harness/access-control/hooks/git"
+    assert json.loads(controller("verify", "--project-root", str(multi)).stdout)["status"] == "valid"
+
+
+def test_legacy_root_migration_rolls_back(root: Path) -> None:
+    project = root / "legacy-migration-rollback"
+    init_repo(project)
+    write(project / "AGENTS.md", "# Agent map\n")
+    write(project / "CLAUDE.md", "@AGENTS.md\n")
+    write(project / ".ai-docs" / "web" / "instruction" / "agent-instruction.md", "# Web\n")
+    write(project / ".ai-docs" / "api" / "instruction" / "agent-instruction.md", "# API\n")
+    write(project / ".ai-docs" / "README.md", "# Docs\n")
+    commit_all(project, "baseline")
+    config = base_config(root / "legacy-migration-rollback-config.json")
+    config_value = json.loads(config.read_text(encoding="utf-8"))
+    config_value["enable_ai_hooks"] = False
+    write(config, json.dumps(config_value, ensure_ascii=False, indent=2) + "\n")
+    codex_keys = root / "legacy-migration-rollback-codex"
+    claude_keys = root / "legacy-migration-rollback-claude"
+    current = plan(project, config)
+    apply(project, config, current["plan_hash"], codex_keys, claude_keys)
+    legacy_git_root = convert_current_policy_to_legacy(project, codex_keys)
+    write(project / ".codex" / "hooks.json", "{ malformed\n")
+    commit_all_without_hooks(legacy_git_root, "legacy signed policy with unmanaged host file")
+
+    config_value["enable_ai_hooks"] = True
+    write(config, json.dumps(config_value, ensure_ascii=False, indent=2) + "\n")
+    migration = migration_plan(project, config)
+    failed = migrate_root(
+        project,
+        config,
+        migration["plan_hash"],
+        codex_keys,
+        claude_keys,
+        check=False,
+    )
+    assert failed.returncode == 2
+    assert (project / ".docs").is_dir()
+    assert not (project / ".ai-docs").exists()
+    assert git(project, "config", "--local", "--get", "core.hooksPath").stdout.strip() == ".docs/harness/access-control/hooks/git"
+
+
 def test_legacy_document_roots_are_rejected(root: Path) -> None:
     legacy = root / "legacy-docs-root"
     init_repo(legacy)
@@ -731,11 +985,14 @@ def test_failed_apply_removes_new_keys(root: Path) -> None:
 
 def main() -> int:
     assert_skill_contract()
-    with tempfile.TemporaryDirectory(prefix="project-write-access-evals-") as raw:
+    eval_tmp = os.environ.get("HARNESS_EVAL_TMPDIR")
+    with tempfile.TemporaryDirectory(prefix="project-write-access-evals-", dir=eval_tmp) as raw:
         root = Path(raw)
         test_single_repository(root)
         test_single_application_defaults(root)
         test_explicit_developer_and_multiple_roles(root)
+        test_signed_legacy_root_migration(root)
+        test_legacy_root_migration_rolls_back(root)
         test_legacy_document_roots_are_rejected(root)
         test_participant_merge()
         test_multi_repository(root)

@@ -7,14 +7,16 @@
 | 모든 호출 | 사전 점검 |
 | 최초 설정 | 최초 사용 + Plan + Apply |
 | 최초 이후 정책 변경 | 최초 이후 사용 + Plan + Apply |
+| 서명된 `.docs` 정책 이관 | 사전 점검 + 문서 루트 이관 |
 | 제거 | 제거 |
 | 관리자 교체 | 관리자 교체 |
 
 ## 사전 점검
 
 1. 대상 프로젝트 루트와 Git 경계를 절대경로로 확정한다.
-   `.ai-docs/`와 이전 `.docs/`를 함께 확인하고, 이전 경로만 있거나 두 경로가
-   공존하면 일반 Plan·Apply로 진행하지 않는다.
+   `.ai-docs/`와 이전 `.docs/`를 함께 확인한다. 두 경로가 공존하면 중단하고,
+   이전 경로만 있으면 서명 정책 유무에 따라 일반 하네스 이관과 권한 정책 이관을
+   구분한다.
 2. `git status --short --branch`, remote URL, upstream 유무와 앞섬·뒤처짐을 읽는다.
 3. 원격 조회가 필요하면 토큰 값이 아닌 인증 수단의 존재만 확인한다.
 4. 현재 서비스의 로그인 계정과 저장소 관리자 권한은 공식 API·CLI 응답으로 확인한다.
@@ -28,8 +30,8 @@
 
 이전 `.docs/harness/access-control/`에 서명 정책이 있으면 단순 디렉토리 이름 변경으로
 처리하지 않는다. 정책 경로, `core.hooksPath`, Claude·Codex 훅의 절대·상대 참조가 함께
-바뀌어야 하므로 `harness-setup`의 문서 루트 이관 계획과 관리자 재설정 계획을 먼저
-분리해 보여준다.
+바뀌어야 하므로 아래 **문서 루트 이관** 분기에서 기존 정책과 관리자 키를 검증한다.
+서명 정책이 없으면 이 스킬이 옮기지 않고 `harness-setup`의 이관 흐름으로 넘긴다.
 
 ## 최초 사용
 
@@ -127,6 +129,29 @@ Apply 뒤에는 즉시 `verify`를 실행한다. 파일 적용이 성공해도 �
 반환해 사용자 확인을 띄운다. 질문 뒤 대상 경로나 변경 내용이 달라지면 이전 답변을
 재사용하지 않는다. 표준 `pre-commit`·`pre-push`는 비대화형이므로 이 질문을 대신하지
 않는다.
+
+## 문서 루트 이관
+
+지원되는 이전 서명 정책이 `.docs/harness/access-control/`에 있고 `.ai-docs/`는 없는
+경우에만 사용한다. 두 문서 루트가 함께 있거나 정책 파일이 일부만 있으면 자동 병합·
+초기화하지 않는다.
+
+```text
+python {skill-root}/scripts/project_write_access.py migrate-root-plan \
+  --project-root {project-root} \
+  --config {schema-3-config-json}
+
+python {skill-root}/scripts/project_write_access.py migrate-root \
+  --project-root {project-root} \
+  --config {schema-3-config-json} \
+  --approve-plan-hash {migration-plan-hash}
+```
+
+Plan에서 이전 정책 스키마·본문 해시, 새 정책 해시, 옮기고 재생성할 경로를 확인한다.
+Apply는 기존 정책의 관리자 계정과 관리자 키가 모두 일치할 때만 진행한다. 원격이 있는
+경우 관리자 권한 확인 증거 요약을 `--provider-admin-evidence`로 전달한다. 이관 도중
+실패하면 `.ai-docs/`를 남기지 않고 `.docs/`와 로컬 Git·AI 훅 설정을 이전 상태로
+복구한다. 원격 Git 서비스의 브랜치·검토 규칙은 바꾸지 않는다.
 
 ## 제거
 

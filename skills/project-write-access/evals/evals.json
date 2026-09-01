@@ -35,6 +35,13 @@
       "expected_output": "정책과 앱 범위를 확인한 뒤 실제 쓰기 직전에 대상 앱과 파일, context·instruction 문서의 역할, 수정 요약과 현재 역할을 설명하고 이 변경에 한해 승인받는다.",
       "files": [],
       "assertions": []
+    },
+    {
+      "id": 6,
+      "prompt": "서명된 project-write-access 정책이 있는 기존 .docs 프로젝트를 .ai-docs로 이관해줘.",
+      "expected_output": "일반 하네스 이동으로 처리하지 않고 기존 정책·관리자 키·Git 상태를 검증한다. migrate-root-plan의 별도 승인을 받은 뒤 문서 루트, 정책 스키마, CODEOWNERS, Git 훅과 AI 훅을 한 트랜잭션으로 재생성하며 원격 규칙은 바꾸지 않는다.",
+      "files": [],
+      "assertions": []
     }
   ]
 }
