@@ -59,7 +59,7 @@ flowchart LR
 
 그래서 하네스는 다음을 프로젝트에 남긴다.
 
-- 단일 앱의 루트 `AGENTS.md`, 복수 앱의 `.docs/root-context/AGENTS.md` 형상관리 원본과 루트 실행용 `AGENTS.md`
+- 단일 앱의 루트 `AGENTS.md`, 복수 앱의 `.ai-docs/root-context/AGENTS.md` 형상관리 원본과 루트 실행용 `AGENTS.md`
 - Claude가 정본을 읽도록 하는 `CLAUDE.md` bridge
 - 설계 문서
 - 주제별 instruction
@@ -99,7 +99,7 @@ flowchart TD
 ```mermaid
 flowchart LR
     A["사람·모델·플랫폼이 다름"] --> B["공통 플러그인"]
-    B --> C["공통 .docs"]
+    B --> C["공통 .ai-docs"]
     B --> D["AGENTS.md 중심 컨텍스트"]
     B --> E["공통 구현 계획"]
     B --> F["공통 검증 흐름"]
@@ -117,7 +117,7 @@ flowchart LR
 
 ### 3.2 고정 맥락은 얇고 연결 가능해야 한다
 
-단일 앱의 루트 `AGENTS.md`에는 프로젝트 팩트, 실행 방법, 중요한 규칙과 문서 인덱스를 둔다. 복수 앱은 `.docs/root-context/AGENTS.md`를 형상관리 갱신 기준으로 두고 루트 `AGENTS.md`를 실행용으로 갱신한다. 상세 규칙은 `.docs/**/instruction/`으로 분리한다. `CLAUDE.md`는 별도의 정본이 아니라 `@AGENTS.md`를 읽게 하는 bridge다.
+단일 앱의 루트 `AGENTS.md`에는 프로젝트 팩트, 실행 방법, 중요한 규칙과 문서 인덱스를 둔다. 복수 앱은 `.ai-docs/root-context/AGENTS.md`를 형상관리 갱신 기준으로 두고 루트 `AGENTS.md`를 실행용으로 갱신한다. 상세 규칙은 `.ai-docs/**/instruction/`으로 분리한다. `CLAUDE.md`는 별도의 정본이 아니라 `@AGENTS.md`를 읽게 하는 bridge다.
 
 ### 3.3 구현은 작은 단위로 쪼갠다
 
@@ -145,14 +145,14 @@ AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 
 
 | 스킬 | 역할 | 언제 쓰는가 |
 |------|------|-------------|
-| `harness-setup` | `.docs` 골격, `AGENTS.md` 정본, `CLAUDE.md` bridge와 `.docs/harness/` portable routing bundle 생성·복구; 별도 승인 시 Claude·Codex write guard 설치 | 모든 참여자가 자기 작업 환경에서 최초 1회, 공지가 요구한 갱신·앱 경계 변경·골격 복구 때 |
+| `harness-setup` | `.ai-docs` 골격, `AGENTS.md` 정본, `CLAUDE.md` bridge와 `.ai-docs/harness/` portable routing bundle 생성·복구; 별도 승인 시 Claude·Codex write guard 설치 | 모든 참여자가 자기 작업 환경에서 최초 1회, 공지가 요구한 갱신·앱 경계 변경·골격 복구 때 |
 | `harness-bootstrap` | 기존 코드를 스캔해 설계·컨텍스트 역추출 | 하네스 문서가 없는 기존 코드 |
-| `git-scoped-account` | 하위 앱 repo의 Git 작성자 계정을 로컬 컨테이너 범위로 지정 | 복수 repo 프로젝트에서 모든 참여자가 최초 1회, 계정·앱 repo 변경 때 |
-| `project-write-access` | `.docs`와 Git에 포함된 루트 컨텍스트의 쓰기 역할을 CODEOWNERS·Git 훅·AI 쓰기 가드에 연결 | 문서 권한을 분리할 때 관리자가 최초 설정·검증·변경 |
+| `git-scoped-account` | 단일·복수 repo의 Git 작성자와 provider·host·login을 프로젝트 범위로 지정하고 정책이 있으면 현재 PC를 로컬 등록 | 모든 참여자가 PC별 최초 1회, 새 PC·새 clone·계정·repo 변경 때 |
+| `project-write-access` | `.ai-docs`와 Git에 포함된 루트 컨텍스트의 공유 역할 정책, CODEOWNERS와 PC별 Git·AI 가드를 연결 | 관리자는 공유 정책 설정·변경, 각 참여자는 PC별 로컬 등록 |
 
-복수 repo 프로젝트에서는 모든 참여자가 `git-scoped-account`를 자기 로컬 컨테이너에서 최초 1회 명시 호출한다. 단일 repo는 적용 대상이 없으므로 현재 repo에 유효한 `user.name`과 `user.email`의 값과 출처를 최초 1회 확인한다.
+단일·복수 repo의 모든 참여자는 `git-scoped-account`를 자기 PC에서 최초 1회 명시 호출한다. 공통 config의 `user.name`·`user.email` 출처와 provider·host·login 표식을 확인한다.
 
-`project-write-access`는 선택 기능이며 일반 문서 작성 흐름과 자동으로 연결되지 않는다. 권한을 사용하는 프로젝트에서는 관리자가 `harness-setup`과 Git 계정 설정·확인 뒤, `design-doc`, `context-doc`, 앱 핵심 문서를 만드는 `harness-bootstrap`보다 먼저 설정한다. 이 스킬은 `0.5.0` runtime에 포함되지만 자동 실행되지 않으며, 검증된 관리자가 명시적으로 호출할 때만 설정·변경한다.
+`project-write-access`는 선택 기능이다. 권한을 사용하는 프로젝트는 원격 Git provider·저장소·참여자 계정을 준비하고, 관리자가 `harness-setup`과 참여자별 Git 계정 등록 뒤 `design-doc`, `context-doc`, 앱 핵심 문서를 만드는 `harness-bootstrap`보다 먼저 공유 정책을 설정한다. 정책 생성 뒤 각 참여자는 관리자 키 없이 자기 PC의 로컬 Git·AI 가드만 등록한다. `admin`은 앱 문서 권한을 상속하지 않으며, 권한이 있는 `pm-pl`·`app-doc-lead`도 앱 핵심 문서를 AI로 쓰기 전에 대상·문서 역할·변경 이유를 설명받고 한 번 더 확인한다. 정책이 있는데 현재 PC의 Git 계정 표식이나 로컬 등록이 없거나 서로 다르면 지원되는 AI 가드는 `.ai-docs/**` 쓰기를 거부하지만 애플리케이션 소스코드는 막지 않는다.
 
 `harness-setup`이 만든 portable bundle은 플러그인 제거 뒤에도 남는다. host hook의 `pending-trust` 상태는 사용자가 신뢰 검토를 끝낸 증적을 명시해 `active`로 기록하기 전까지 바뀌지 않으며, 외부 fixed-format 산출물은 `_inbox`에서만 관리한다.
 
@@ -161,14 +161,14 @@ AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 
 | 스킬 | 역할 | 언제 쓰는가 |
 |------|------|-------------|
 | `design-doc` | 아이디어·요구사항·RFP를 구조화한 앱별 설계로 변환 | 신규 프로젝트·기능 설계. 권한 정책이 있으면 허용된 역할·앱 범위에서 실행 |
-| `context-doc` | 설계를 앱 컨텍스트와 instruction, 루트 반영 원본으로 변환 | 에이전트가 계속 읽을 기준이 필요할 때. 권한 정책이 있으면 `design-doc`과 같은 범위에서 실행 |
+| `context-doc` | 설계를 앱 컨텍스트와 주제별 instruction으로 변환 | 에이전트가 계속 읽을 기준이 필요할 때. 권한 정책이 있으면 `design-doc`과 같은 범위에서 실행하며 루트 지도 변경은 `harness-setup` 후속 작업으로 남김 |
 | `ui-ux-pro-max` | 디자인 방향·색·타이포그래피·레이아웃·접근성 결정 | 화면의 디자인 기준을 정하거나 기존 UI를 점검할 때 |
 | `motion-design` | 모션 목적·타이밍·이징·reduced-motion 대안 결정 | 전환·상태 피드백·등장 순서에 움직임이 필요할 때 |
 | `design-prototype-docs` | 화면 요구사항·배치·이동 흐름 문서화 | 화면을 먼저 합의할 때 |
-| `create-prototype` | 단일 `.docs/prototype/`, 복수 `.docs/{앱}/prototype/` 아래 검증 시안 생성 | 고객 확인·UX 검증용 시안 |
+| `create-prototype` | 단일 `.ai-docs/prototype/`, 복수 `.ai-docs/{앱}/prototype/` 아래 검증 시안 생성 | 고객 확인·UX 검증용 시안 |
 | `frontend-design` | 실제 제품 UI 구현 품질 기준 적용 | 앱의 페이지·컴포넌트·스타일 구현 |
 
-모든 producer는 단일 앱의 `@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의 `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`를 기준으로 산출물 위치·소유권·인계를 결정한다. `create-prototype`은 이 계약에 따라 검증 시안을 만들고 `frontend-design`은 승인된 앱 소스에 실제 제품 UI를 구현한다.
+모든 producer는 단일 앱의 `@.ai-docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의 `@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md`를 기준으로 산출물 위치·소유권·인계를 결정한다. `create-prototype`은 이 계약에 따라 검증 시안을 만들고 `frontend-design`은 승인된 앱 소스에 실제 제품 UI를 구현한다.
 
 ### 구현 계획·점검
 
@@ -193,18 +193,19 @@ AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 
 
 RFP는 `design-doc`, `design-prototype-docs`, 다중 화면·FE/BE 페어 계획용 `impl-fe-be-doc`에 직접 입력한다. 사용자 스킬 배포·업데이트는 플러그인이 담당한다.
 
+프로젝트 문서 루트는 `.ai-docs/`다. 이전 `.docs/`만 있는 프로젝트는 `harness-setup`의 승인형 이관을 먼저 수행하고, 서명된 권한 정책이 있으면 `admin`이 `project-write-access`의 전용 이관 흐름을 사용한다. 두 경로가 함께 있으면 자동 병합하지 않는다.
+
 ## 5. 언제 어떤 스킬을 쓰는가
 
 ```mermaid
 flowchart LR
-    S["모든 참여자<br/>harness-setup 최초 1회"] --> T{"Git 구조"}
-    T -->|"복수 repo"| GA["모든 참여자<br/>git-scoped-account 최초 1회"]
-    T -->|"단일 repo"| GV["유효 Git 작성자<br/>계정 확인"]
+    S["모든 참여자<br/>harness-setup 최초 1회"] --> GA["모든 참여자<br/>git-scoped-account PC별 최초 1회"]
     GA --> P{"문서 권한을 분리하는가?"}
-    GV --> P
-    P -->|"예"| PA["관리자<br/>project-write-access"]
+    P -->|"예"| RP["원격 provider·저장소·<br/>참여자 계정 준비"]
+    RP --> PA["관리자<br/>project-write-access 공유 정책"]
+    PA --> LE["모든 참여자<br/>현재 PC 로컬 등록"]
     P -->|"아니오"| A["지금 어떤 상황인가?"]
-    PA --> A
+    LE --> A
 
     A --> B["아이디어·요구사항·RFP"]
     A --> C["문서 없는 기존 코드"]
@@ -242,8 +243,8 @@ flowchart LR
 빠른 선택:
 
 - 모든 참여자의 작업 환경에서 프로젝트 문서 골격을 처음 확인한다 → `harness-setup` 1회
-- 복수 repo 프로젝트에서 Git 작성자 계정을 맞춘다 → 모든 참여자가 `git-scoped-account` 1회
-- 문서 쓰기 권한을 나눈다 → 관리자가 `project-write-access` 설정·변경
+- 단일·복수 repo에서 Git 작성자·provider 계정을 맞춘다 → 모든 참여자가 `git-scoped-account` 1회
+- 문서 쓰기 권한을 나눈다 → 관리자 공유 정책 설정 뒤 모든 참여자가 PC별 로컬 등록
 - 문서 없는 기존 코드다 → `harness-bootstrap`
 - 요구사항이나 RFP를 설계로 정리한다 → `design-doc`
 - 설계를 에이전트 규칙으로 고정한다 → `context-doc`
@@ -262,9 +263,10 @@ flowchart LR
 플러그인 설치
 → 새 task/session
 → 모든 참여자: 자기 작업 환경에서 harness-setup 최초 1회
-→ 복수 repo: 모든 참여자가 자기 로컬 컨테이너에서 git-scoped-account 최초 1회
-  단일 repo: 현재 적용되는 Git 작성자 계정 최초 1회 확인
-→ 문서 권한을 분리하면 관리자: project-write-access 최초 설정
+→ 단일·복수 repo: 모든 참여자가 자기 PC에서 git-scoped-account 최초 1회
+→ 문서 권한을 분리하면 원격 provider·저장소·참여자 계정 준비
+→ 관리자: project-write-access 공유 정책 설정
+→ 모든 참여자: 현재 PC 로컬 등록
 → 권한 정책이 있으면 허용된 역할·앱 범위에서 design-doc
 → 같은 역할·앱 범위에서 context-doc
 → 화면 작업일 때 선택: ui-ux-pro-max → design-prototype-docs → 필요 시 motion-design → create-prototype
@@ -287,9 +289,10 @@ flowchart LR
 플러그인 설치
 → 새 task/session
 → 모든 참여자: 자기 작업 환경에서 harness-setup 최초 1회
-→ 복수 repo: git-scoped-account 최초 1회
-  단일 repo: 유효 Git 작성자 계정 확인
-→ 문서 권한을 분리하면 관리자: project-write-access 최초 설정
+→ 단일·복수 repo: 모든 참여자가 자기 PC에서 git-scoped-account 최초 1회
+→ 문서 권한을 분리하면 원격 provider·저장소·참여자 계정 준비
+→ 관리자: project-write-access 공유 정책 설정
+→ 모든 참여자: 현재 PC 로컬 등록
 → harness-bootstrap
    ├─ 기존 harness-setup 골격 확인
    ├─ 코드 스캔
@@ -314,7 +317,7 @@ flowchart LR
 → 최종 Markdown을 downstream에 전달
 ```
 
-상태와 내용 fingerprint는 `.docs/.harness/humanize-handoffs.json`에 기록해 새 session에서도 같은 제안을 반복하지 않는다. 개선을 건너뛰어도 작업은 계속된다.
+상태와 내용 fingerprint는 `.ai-docs/.harness/humanize-handoffs.json`에 기록해 새 session에서도 같은 제안을 반복하지 않는다. 개선을 건너뛰어도 작업은 계속된다.
 
 ## 7. 시작하는 방법
 
@@ -396,7 +399,7 @@ $harness-bootstrap
 현재 repository가 대상 프로젝트다.
 코드에서 직접 관찰한 사실과 내가 확인해야 할 추정을 분리해줘.
 기존 실행 명령과 테스트 체계를 우선하고 새 표준을 임의로 만들지 말아줘.
-생성 예정인 .docs, AGENTS.md, CLAUDE.md 전체를 저장 전에 보여줘.
+생성 예정인 .ai-docs, AGENTS.md, CLAUDE.md 전체를 저장 전에 보여줘.
 ```
 
 ### 예시 4. 설계를 에이전트 규칙으로 고정
@@ -404,7 +407,7 @@ $harness-bootstrap
 ```text
 $context-doc
 
-.docs/context-base/DESIGN.md를 입력으로 사용해줘.
+.ai-docs/context-base/DESIGN.md를 입력으로 사용해줘.
 AGENTS.md에는 프로젝트 팩트와 문서 인덱스만 얇게 남기고,
 아키텍처·코드 스타일·API 규칙은 instruction으로 분리해줘.
 금지 규칙은 패턴, 이유, 대안을 함께 적어줘.
@@ -416,7 +419,7 @@ CLAUDE.md는 @AGENTS.md bridge로 유지해줘.
 ```text
 $design-prototype-docs
 
-.docs/context-base/DESIGN.md를 기준으로
+.ai-docs/context-base/DESIGN.md를 기준으로
 관리자 대시보드, 작업 목록, 상세 패널의 화면 경계를 정리해줘.
 기능 배치 이유와 화면 간 이동 흐름을 포함하고
 저장 전 디자인 문서를 먼저 보여줘.
@@ -431,7 +434,7 @@ $design-prototype-docs
 ```text
 $impl-doc
 
-.docs/context-base/DESIGN.md의 검색 API 기능만 계획해줘.
+.ai-docs/context-base/DESIGN.md의 검색 API 기능만 계획해줘.
 엔드포인트 2개와 단일 검색 도메인 로직이 범위다.
 다른 화면과 배포 설정은 제외하고 Phase마다 자동 검증 명령을 적어줘.
 ```
@@ -449,7 +452,7 @@ $impl-fe-be-doc
 ### 예시 7. Phase 하나만 구현
 
 ```text
-.docs/impl-doc/developer/260730-1.search-impl-api.md를 참고해줘.
+.ai-docs/impl-doc/developer/260730-1.search-impl-api.md를 참고해줘.
 
 Phase 2의 API-03만 구현해줘.
 수정 범위는 search controller, service, 관련 test로 제한한다.
@@ -466,7 +469,7 @@ $multi-review
 현재 변경 파일에서 보안, 성능, 테스트 누락을 우선순위 높게 봐줘.
 
 $doc-audit
-변경된 동작과 AGENTS.md, .docs 문서가 어긋나는지 분석만 해줘.
+변경된 동작과 AGENTS.md, .ai-docs 문서가 어긋나는지 분석만 해줘.
 승인 전에는 문서를 수정하지 말아줘.
 ```
 
@@ -497,7 +500,7 @@ $doc-audit
 - 설계 문서
 - `AGENTS.md`
 - 대상 앱 context
-- `.docs/**/instruction/*-instruction.md`
+- `.ai-docs/**/instruction/*-instruction.md`
 - 현재 구현 계획
 - 직접 관련된 RFP·요구사항
 
@@ -540,8 +543,8 @@ $doc-audit
 
 | 담당 스킬 | 단일 앱 | 복수 앱 |
 |---|---|---|
-| `ui-ux-pro-max` | `.docs/design-system/{project-slug}/MASTER.md`, `.docs/design-system/{project-slug}/pages/{page-slug}.md` | `.docs/{앱}/design-system/{project-slug}/MASTER.md`, `.docs/{앱}/design-system/{project-slug}/pages/{page-slug}.md` |
-| `motion-design` | `.docs/design-system/{project-slug}/motion/{screen-or-component}.md` | `.docs/{앱}/design-system/{project-slug}/motion/{screen-or-component}.md` |
+| `ui-ux-pro-max` | `.ai-docs/design-system/{project-slug}/MASTER.md`, `.ai-docs/design-system/{project-slug}/pages/{page-slug}.md` | `.ai-docs/{앱}/design-system/{project-slug}/MASTER.md`, `.ai-docs/{앱}/design-system/{project-slug}/pages/{page-slug}.md` |
+| `motion-design` | `.ai-docs/design-system/{project-slug}/motion/{screen-or-component}.md` | `.ai-docs/{앱}/design-system/{project-slug}/motion/{screen-or-component}.md` |
 
 ### 프로토타입과 실제 화면은 다르다
 
@@ -580,8 +583,8 @@ $doc-audit
 - 플러그인 설치
 - 새 task/session
 - 모든 참여자가 자기 작업 환경에서 `harness-setup` 최초 1회
-- 복수 repo는 모든 참여자가 `git-scoped-account` 최초 1회, 단일 repo는 유효 Git 작성자 계정 확인
-- 문서 권한을 나누면 관리자가 `project-write-access` 설정
+- 단일·복수 repo의 모든 참여자가 `git-scoped-account` PC별 최초 1회
+- 문서 권한을 나누면 원격 provider 준비 → 관리자 공유 정책 설정 → 모든 참여자 PC별 로컬 등록
 - local user skill directory 미생성 확인
 
 ### 1단계 — 최소 하네스
@@ -639,7 +642,7 @@ flowchart LR
 
 | 역할 | 하는 일 | 하지 않는 일 |
 |------|---------|--------------|
-| 프로젝트 수행자 | 플러그인 설치, `.docs`와 루트 컨텍스트 생성, 설계·구현·검증 | 관리 저장소 clone, 사용자 스킬 복사, 양 플랫폼 동기화 |
+| 프로젝트 수행자 | 플러그인 설치, `.ai-docs`와 루트 컨텍스트 생성, 설계·구현·검증 | 관리 저장소 clone, 사용자 스킬 복사, 양 플랫폼 동기화 |
 | 하네스 관리자 | 사용자 스킬 정본, upstream, provenance, plugin build·검증·release gate | 각 사용자 프로젝트의 산출물 직접 운영 |
 
 별도의 관리자 플러그인은 없다. 관리자는 이 저장소의 repo-local 관리자 스킬을 쓰고, 사용자 경험을 검증할 때만 일반 사용자용 플러그인을 격리 설치한다.

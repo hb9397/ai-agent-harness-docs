@@ -14,10 +14,10 @@
 - 이 저장소는 관리자용 원본 저장소다.
 - 실제 프로젝트에는 `plugins/harness-kit` 또는 배포된 marketplace source를 통해 플러그인을 설치한다.
 - 설치 후 새 task/session 또는 reload가 필요하다.
-- 프로젝트에서는 `harness-setup`을 호출해 `.docs/**`, 루트 `AGENTS.md`, `CLAUDE.md`만 만든다.
+- 프로젝트에서는 `harness-setup`을 호출해 `.ai-docs/**`, 루트 `AGENTS.md`, `CLAUDE.md`만 만든다.
 - `harness-setup`은 사용자 프로젝트에 `.agents/skills/`, `.claude/skills/`, `skills/`를 생성하거나 스킬을 복사·동기화하지 않는다.
-- 모든 참여자는 자기 작업 환경에서 `harness-setup`을 최초 1회 실행한다. 복수 repo에서는 `git-scoped-account`도 로컬 컨테이너별로 최초 1회 실행한다.
-- 문서 쓰기 권한을 나눌 때만 관리자가 `project-write-access`를 명시 호출한다. 권한 기능이 없어도 나머지 하네스 흐름은 그대로 사용할 수 있다.
+- 모든 참여자는 자기 작업 환경에서 `harness-setup`을 최초 1회 실행하고, 단일·복수 repo 구분 없이 `git-scoped-account`로 각 repo의 Git 작성자와 provider 계정을 등록한다.
+- 문서 쓰기 권한을 나눌 때만 관리자가 `project-write-access`를 명시 호출해 공유 정책을 설정한다. 정책 생성 뒤에는 각 참여자가 관리자 키 없이 자기 PC의 로컬 Git·AI 가드를 등록한다. 권한 기능이 없어도 나머지 하네스 흐름은 그대로 사용할 수 있다.
 - `.md` 산출물 후처리는 별도 `im-not-ai` 설치 없이 내장 `humanize-korean`을 쓴다.
 
 ---
@@ -42,7 +42,7 @@
 
 릴리스 게이트 증적은 [maintainer/plugin/release-checklist.md](../maintainer/plugin/release-checklist.md)와 [maintainer/plugin/install-verification.json](../maintainer/plugin/install-verification.json)에 있다.
 
-관리 저장소의 사용자 스킬 정본과 `0.5.0`의 Codex·Claude runtime은 모두 20종이다. `project-write-access`도 배포 후보에 포함되지만 자동으로 실행되지 않으며, 권한을 나누는 프로젝트의 검증된 관리자만 명시적으로 호출한다.
+관리 저장소의 사용자 스킬 정본과 `0.5.0`의 Codex·Claude runtime은 모두 20종이다. `project-write-access`도 배포 후보에 포함되지만 자동으로 실행되지 않는다. 공유 정책 설정·변경은 검증된 관리자만 명시적으로 수행하고, 정책 생성 뒤의 PC별 로컬 등록은 각 참여자가 수행한다.
 
 ---
 
@@ -88,7 +88,7 @@ Codex 앱에서는 왼쪽 메뉴의 **플러그인**과 `/plugins` UI에서 설�
 
 ### 3-4. Codex IDE extension
 
-Codex IDE extension은 이 문서의 별도 플러그인 설치 인터페이스로 다루지 않는다. 프로젝트에서 확장이 Codex CLI/앱 플러그인 상태를 공유하지 않으면 `AGENTS.md`와 `.docs` 산출물만 일반 프로젝트 문서로 참조한다.
+Codex IDE extension은 이 문서의 별도 플러그인 설치 인터페이스로 다루지 않는다. 프로젝트에서 확장이 Codex CLI/앱 플러그인 상태를 공유하지 않으면 `AGENTS.md`와 `.ai-docs` 산출물만 일반 프로젝트 문서로 참조한다.
 
 ---
 
@@ -177,7 +177,7 @@ Claude Chat/Cowork는 Claude Code 플러그인과 같은 설치 인터페이스�
 
 - Code 탭에서 검증된 플러그인이 Chat/Cowork에서 자동 활성화된다고 가정하지 않는다.
 - Chat/Cowork에서 같은 스킬을 쓰려면 별도 프로젝트/워크스페이스 지침, 권한, 파일 접근 범위를 문서화한다.
-- 사용자가 Code와 Chat을 오가면 최종 기준 문서는 프로젝트의 `AGENTS.md`와 `.docs`로 둔다.
+- 사용자가 Code와 Chat을 오가면 최종 기준 문서는 프로젝트의 `AGENTS.md`와 `.ai-docs`로 둔다.
 
 ---
 
@@ -212,22 +212,25 @@ version marker 확인
 harness-setup 명시 호출
 → 모든 참여자가 자기 작업 환경에서 최초 1회 수행
 → 단일/복수 앱 확인
-→ .docs 생성 또는 갱신
+→ .ai-docs 생성 또는 갱신
 → AGENTS.md 생성 또는 갱신
 → CLAUDE.md bridge 생성 또는 갱신
 → .agents/skills·.claude/skills·skills 미생성 확인
-→ 복수 repo: 모든 참여자가 자기 로컬 컨테이너에서 git-scoped-account 최초 1회
-  단일 repo: 현재 유효한 Git 작성자 계정의 값과 출처 최초 1회 확인
-→ 문서 권한을 분리하면 관리자: project-write-access 최초 설정
+→ 단일·복수 repo: 모든 참여자가 자기 PC에서 git-scoped-account 최초 1회
+→ 문서 권한을 분리하면 원격 Git provider·저장소·참여자 계정 준비
+→ 관리자: project-write-access 공유 정책 설정
+→ 모든 참여자: 현재 PC의 로컬 Git·AI 가드 등록
 → 권한 정책이 있으면 허용된 역할·앱 범위에서 design-doc/context-doc 또는 harness-bootstrap
 → 권한 정책이 없으면 같은 문서화 흐름을 그대로 수행
 ```
 
-`harness-setup`은 플러그인 공지가 프로젝트 하네스 갱신을 요구하거나 앱 경계가 바뀌거나 골격 복구가 필요할 때만 update mode로 다시 실행한다. `git-scoped-account`는 계정이 바뀌거나 복수 repo 컨테이너 바로 아래에 앱 repo가 추가될 때 다시 실행한다.
+`harness-setup`은 플러그인 공지가 프로젝트 하네스 갱신을 요구하거나 앱 경계가 바뀌거나 골격 복구가 필요할 때만 update mode로 다시 실행한다. `git-scoped-account`는 새 PC·새 clone, 계정 변경 또는 컨테이너 바로 아래 repo 추가 때 다시 실행한다.
 
-`project-write-access`가 활성화되면 `pm-pl`은 모든 앱, `app-doc-lead`는 배정된 앱에서 `design-doc`과 `context-doc`을 사용한다. `admin`이 앱 핵심 문서를 직접 수정할 때는 대상 파일과 변경 내용을 확인한 뒤 한 번 더 승인한다. 일반 기여자는 구현 계획·프로토타입·`_inbox` 같은 `team` 범위를 사용한다.
+새 문서 루트는 `.ai-docs/` 하나뿐이다. 이전 `.docs/`만 있으면 일반 설정을 중단하고 이관 계획과 별도 승인을 거친다. 서명된 권한 정책이 있으면 `admin`이 `project-write-access`의 전용 이관 흐름으로 정책·Git 훅·AI 가드 경로를 함께 바꾼다. `.docs/`와 `.ai-docs/`가 함께 있으면 자동 병합하지 않는다.
 
-복수 앱에서는 `.docs/root-context/AGENTS.md`가 루트 컨텍스트의 관리 원본이다. 루트 `CLAUDE.md`는 `AGENTS.md`를 읽도록 하는 bridge로 둔다.
+`project-write-access`가 활성화되면 `pm-pl`은 모든 앱, `app-doc-lead`는 배정된 앱에서 `design-doc`과 `context-doc`을 사용한다. 두 역할이 AI로 앱 핵심 문서를 쓰기 전에도 대상 문서의 역할과 변경 이유를 설명받고 한 번 더 확인한다. `admin`은 앱 문서 권한을 상속하지 않고 루트 컨텍스트·하네스·권한 정책만 관리한다. `developer`는 일반 참여자를 명시하는 역할이며, 구현 계획·프로토타입·`_inbox` 같은 팀 문서와 애플리케이션 소스코드 작업은 기존 저장소 권한을 따른다. 정책이 있는데 현재 PC의 `git-scoped-account` 또는 로컬 등록이 없거나 계정이 다르면 지원되는 AI 가드는 `.ai-docs/**` 쓰기를 거부한다.
+
+복수 앱에서는 `.ai-docs/root-context/AGENTS.md`가 루트 컨텍스트의 관리 원본이다. 루트 `CLAUDE.md`는 `AGENTS.md`를 읽도록 하는 bridge로 둔다.
 
 플랫폼별 명시 호출:
 
@@ -236,7 +239,7 @@ harness-setup 명시 호출
 | Codex CLI·앱 | `$harness-setup` |
 | Claude Code CLI·Claude 앱 | `/harness-kit:harness-setup` |
 
-`0.5.0`에서 권한 기능을 명시 호출하는 방법은 Codex `$project-write-access`, Claude Code·Claude 앱 `/harness-kit:project-write-access`다. 최초 설정과 이후 정책 변경은 검증된 관리자만 수행한다.
+`0.5.0`에서 권한 기능을 명시 호출하는 방법은 Codex `$project-write-access`, Claude Code·Claude 앱 `/harness-kit:project-write-access`다. 최초 설정과 이후 공유 정책 변경은 검증된 관리자만 수행한다. 각 참여자의 PC별 로컬 등록은 `git-scoped-account`가 서명된 정책을 발견했을 때 별도 계획과 승인을 거쳐 `project-write-access`의 로컬 등록 분기로 연결한다.
 
 ---
 
@@ -259,7 +262,7 @@ harness-setup 명시 호출
 - `ui-ux-pro-max`
 - `motion-design`
 
-조건부 2종은 기본적으로 대화창에 결과를 보고하며 사용자가 디자인 시스템이나 모션 명세의 저장을 명시적으로 요청했을 때만 파일을 만든다. 모든 producer는 단일 앱의 `@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의 `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`에 따라 위치·소유권·인계를 결정한다.
+조건부 2종은 기본적으로 대화창에 결과를 보고하며 사용자가 디자인 시스템이나 모션 명세의 저장을 명시적으로 요청했을 때만 파일을 만든다. 모든 producer는 단일 앱의 `@.ai-docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의 `@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md`에 따라 위치·소유권·인계를 결정한다.
 
 산출물 생성 후 흐름:
 
@@ -291,7 +294,7 @@ harness-setup 명시 호출
 
 삭제 또는 이동은 다음 조건을 만족해야 한다.
 
-1. 백업 대상 확인: `.docs/archive/legacy-agent-skills/{timestamp}/`
+1. 백업 대상 확인: `.ai-docs/archive/legacy-agent-skills/{timestamp}/`
 2. 사용자 승인
 3. backup/remove 실행
 4. 플러그인 단일 discovery 확인
@@ -311,7 +314,7 @@ harness-setup 명시 호출
 | Claude CLI가 없음 | 공식 Claude Code CLI를 설치하거나 격리된 npm package 실행으로 명령 surface 재검증 |
 | `humanize-korean`이 원본을 바꾸려 함 | 중단. proposal-only 계약 위반으로 보고 |
 | local copy와 plugin skill이 중복됨 | inventory 후 승인형 backup/remove 절차 수행 |
-| setup 후 새 skill 디렉터리가 생김 | 중단. `.docs/**`, `AGENTS.md`, `CLAUDE.md` 출력 allowlist 위반으로 보고 |
+| setup 후 새 skill 디렉터리가 생김 | 중단. `.ai-docs/**`, `AGENTS.md`, `CLAUDE.md` 출력 allowlist 위반으로 보고 |
 
 ---
 
@@ -321,11 +324,11 @@ harness-setup 명시 호출
 
 1. 실제 플러그인 설치·활성 버전
 2. 새 task/session에서 명시 호출
-3. `.docs/**`, `AGENTS.md`, `CLAUDE.md` 생성
+3. `.ai-docs/**`, `AGENTS.md`, `CLAUDE.md` 생성
 4. `.agents/skills`, `.claude/skills`, `skills` 미생성
 5. 재실행 시 managed block 밖 사용자 확장 보존
 6. 새 task/session에서 같은 artifact fingerprint의 문서 개선안 재제안 없음
 7. 실패·중단 시 기존 파일 보존
 
 정확한 Codex CLI·앱, Claude Code CLI·Claude 앱 명령 예와 인터페이스별 증적 양식은 [Direct Plugin Surface Test Record](../maintainer/plugin/manual-surface-test-template.md)를 복사해 사용한다. 스크린샷만 남기지 말고 CLI/app 버전, plugin version, fixture 경로, 명시 호출, 생성 파일, 금지 경로 검사 출력과 검토자를 함께 기록한다.
-중복 handoff 검증은 `.docs/.harness/humanize-handoffs.json`의 event와 함께 남기며 이 JSON 자체는 Markdown 개선 대상에서 제외한다.
+중복 handoff 검증은 `.ai-docs/.harness/humanize-handoffs.json`의 event와 함께 남기며 이 JSON 자체는 Markdown 개선 대상에서 제외한다.

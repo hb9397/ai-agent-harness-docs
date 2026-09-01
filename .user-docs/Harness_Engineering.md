@@ -16,10 +16,10 @@ AI Agent Harness는 Codex, Claude Code처럼 서로 다른 에이전트가 같�
 핵심 원칙은 다음과 같다.
 
 1. **플러그인으로 시작한다.** 실제 프로젝트는 이 관리 저장소를 clone하거나 스킬을 복사하지 않는다.
-2. **작업 환경을 먼저 고정한다.** 모든 참여자는 `harness-setup`을 작업 환경별로 최초 1회 실행하고, 복수 repo에서는 `git-scoped-account`도 로컬 컨테이너별로 최초 1회 실행한다.
-3. **문서 권한은 필요한 프로젝트만 별도로 설정한다.** 관리자가 `project-write-access`를 명시 호출하며, 권한을 쓰지 않아도 하네스 흐름은 유지된다.
+2. **작업 환경과 Git 계정을 먼저 고정한다.** 모든 참여자는 `harness-setup`과 `git-scoped-account`를 단일·복수 repo 구분 없이 자기 PC에서 최초 1회 실행한다.
+3. **문서 권한은 필요한 프로젝트만 별도로 설정한다.** 원격 Git provider·저장소·참여자 계정을 준비한 뒤 관리자가 `project-write-access`로 공유 정책을 설정하고, 각 참여자는 자기 PC만 로컬 등록한다. 권한을 쓰지 않아도 하네스 흐름은 유지된다.
 4. **설계가 먼저다.** 구현 전에 요구사항, 범위, 아키텍처, 완료 기준을 문서로 고정한다.
-5. **에이전트가 읽을 고정 맥락을 만든다.** 단일 앱은 루트 `AGENTS.md`를 공용 정본으로 쓰고, 복수 앱은 `.docs/root-context/AGENTS.md`를 Git 관리 원본으로 두며 루트 `AGENTS.md`는 실행용으로 갱신한다. 세부 규칙은 `.docs/**/instruction/`으로 분리한다.
+5. **에이전트가 읽을 고정 맥락을 만든다.** 단일 앱은 루트 `AGENTS.md`를 공용 정본으로 쓰고, 복수 앱은 `.ai-docs/root-context/AGENTS.md`를 Git 관리 원본으로 두며 루트 `AGENTS.md`는 실행용으로 갱신한다. 세부 규칙은 `.ai-docs/**/instruction/`으로 분리한다.
 6. **구현은 작은 단위로 쪼갠다.** Phase, 태스크, 화면, 기능 단위로 구현하고 각 단위가 끝날 때 검증한다.
 7. **문서와 코드를 함께 관리한다.** 코드가 달라지면 설계·컨텍스트·구현 계획의 괴리를 확인한다.
 8. **품질 확인을 앞당긴다.** 구현 직후 검증·리뷰하고, 커밋은 그 다음에 한다.
@@ -32,16 +32,18 @@ AI Agent Harness는 Codex, Claude Code처럼 서로 다른 에이전트가 같�
 |------|------|-------------------|
 | 사용자 스킬 정본 20종 | 관리 저장소 `skills/` | 다음 plugin build의 입력 |
 | 현재 main `0.5.0` runtime 20종 | 설치된 `harness-kit` 플러그인 | local copy를 남기지 않음 |
-| `project-write-access` | `0.5.0` runtime에 포함된 명시 호출 전용 스킬 | 권한을 사용하는 프로젝트에서 관리자만 설정·변경 |
-| 프로젝트 문서 골격 | 프로젝트 수행자가 `harness-setup`으로 생성 | `.docs/**`, `AGENTS.md`, `CLAUDE.md` |
-| 설계·구현 계획·프로토타입 | 프로젝트 수행자와 사용자 스킬 | `.docs/**` |
+| `project-write-access` | `0.5.0` runtime에 포함된 명시 호출 전용 스킬 | 관리자는 공유 정책 설정·변경, 각 참여자는 PC별 로컬 등록 |
+| 프로젝트 문서 골격 | 프로젝트 수행자가 `harness-setup`으로 생성 | `.ai-docs/**`, `AGENTS.md`, `CLAUDE.md` |
+| 설계·구현 계획·프로토타입 | 프로젝트 수행자와 사용자 스킬 | `.ai-docs/**` |
 | 코드·테스트 산출물 | 프로젝트 수행자 | 각 앱 repo |
 | 리뷰·검증 보고 | 프로젝트 수행자와 사용자 스킬 | 기본은 대화 보고, 스킬이 별도 파일 생성을 금지하면 repo에 저장하지 않음 |
 | 플러그인 build·upstream 최신화 | 하네스 관리자 | 이 관리 저장소 |
 
 관리 저장소의 사용자 스킬 정본, `0.5.0`의 Codex·Claude runtime과 capability inventory는 모두 20종으로 같다. 게시된 최신 stable은 `v0.4.3`이며, `0.5.0`은 tag·GitHub Release를 만들기 전 main 배포 후보다.
 
-`harness-setup`의 쓰기 allowlist는 `.docs/**`, 루트 `AGENTS.md`, `CLAUDE.md`다. `.agents/skills/**`, `.claude/skills/**`, `skills/**`를 생성·복사·동기화하지 않는다. 실행 전에 존재하던 local skill 경로는 읽기 전용으로 분류·보고하고 승인 없이 변경하지 않는다.
+`harness-setup`의 쓰기 allowlist는 `.ai-docs/**`, 루트 `AGENTS.md`, `CLAUDE.md`다. `.agents/skills/**`, `.claude/skills/**`, `skills/**`를 생성·복사·동기화하지 않는다. 실행 전에 존재하던 local skill 경로는 읽기 전용으로 분류·보고하고 승인 없이 변경하지 않는다.
+
+새 하네스의 문서 루트는 `.ai-docs/` 하나뿐이다. 이전 이름 `.docs/`만 있는 프로젝트는 일반 초기 설정·갱신이 아니라 이관 모드로 분류한다. 서명 정책이 없으면 `harness-setup`이 전체 이동 계획과 바뀔 참조를 보여주고 별도 승인을 받는다. 서명 정책이 있으면 `admin`이 `project-write-access`의 `migrate-root-plan`과 `migrate-root`로 정책·Git 훅·AI 가드 경로까지 함께 이관한다. `.docs/`와 `.ai-docs/`가 함께 있으면 자동 병합하지 않는다.
 
 공유 runtime의 `allowed-tools`에는 제한 없는 `Bash`를 사전 승인하지 않는다. shell 명령은 각 플랫폼의 일반 permission mode를 따르며, 커밋·Git 설정·작업 지침 명령 실행처럼 부작용이 있는 스킬은 사용자가 명시 호출한다.
 
@@ -67,24 +69,24 @@ RFP는 별도의 중간 스킬을 거치지 않고 RFP 원문 해석을 지원�
 
 ```text
 my-app/
-├── .docs/
+├── .ai-docs/
 ├── AGENTS.md
 ├── CLAUDE.md
 └── src/
 ```
 
-**복수 애플리케이션**은 프로젝트 최상위 폴더 아래 앱 repo들과 공용 `.docs` repo를 분리하는 것을 권장한다.
+**복수 애플리케이션**은 프로젝트 최상위 폴더 아래 앱 repo들과 공용 `.ai-docs` repo를 분리하는 것을 권장한다.
 
 ```text
 my-project/              ← 보통 git 미관리
 ├── app-frontend/        ← 별도 git repo
 ├── app-backend/         ← 별도 git repo
-├── .docs/               ← 별도 git repo 권장
+├── .ai-docs/            ← 별도 git repo 권장
 ├── AGENTS.md            ← 실행용
 └── CLAUDE.md            ← AGENTS.md bridge
 ```
 
-복수 앱에서 `.docs/root-context/AGENTS.md`가 루트 컨텍스트의 관리 원본이다. 루트 `AGENTS.md`와 `CLAUDE.md`는 실행용이다. 기존 `.docs` repo가 있다면 빈 골격을 새로 만들기 전에 올바른 위치에 clone/pull해서 복원한다.
+복수 앱에서 `.ai-docs/root-context/AGENTS.md`가 루트 컨텍스트의 관리 원본이다. 루트 `AGENTS.md`와 `CLAUDE.md`는 실행용이다. 기존 `.ai-docs` repo가 있다면 빈 골격을 새로 만들기 전에 올바른 위치에 clone/pull해서 복원한다.
 
 ### 3.3 작업 규모
 
@@ -121,9 +123,9 @@ Codex는 설치 후 새 task를 열고 필요하면 앱을 재시작한다. Clau
 
 1. 대상 프로젝트 루트를 확정한다.
 2. 단일 앱인지 복수 앱인지 판정한다.
-3. 신규 세팅인지 기존 `.docs`의 갱신·복구인지 판정한다.
+3. 신규 세팅인지 기존 `.ai-docs`의 갱신·복구인지 판정한다.
 4. 생성·갱신 예정 경로를 미리 확인한다.
-5. `.docs` 안내·정책 파일과 루트 컨텍스트를 만든다.
+5. `.ai-docs` 안내·정책 파일과 루트 컨텍스트를 만든다.
 6. 링크, bridge, 앱별 context 참조를 검증한다.
 7. Markdown bundle의 문서 개선안을 검토한다.
 8. 프로젝트 local skill 경로를 만들지 않았는지 확인한다.
@@ -134,27 +136,27 @@ Codex는 설치 후 새 task를 열고 필요하면 앱을 재시작한다. Clau
 
 ### 4.3 Git 작성자 계정과 문서 쓰기 권한
 
-복수 repo 프로젝트의 모든 참여자는 `git-scoped-account`를 자기 로컬 컨테이너에서 최초 1회 명시 호출한다. 공통 계정 파일과 바로 아래 앱 repo의 `include.path`를 확인하고, 계정이 바뀌거나 앱 repo가 추가되면 다시 실행한다. 단일 repo는 이 스킬의 적용 대상이 아니므로 현재 repo에서 유효한 `user.name`과 `user.email`의 값과 출처를 최초 1회 확인한다.
+단일·복수 repo의 모든 참여자는 `git-scoped-account`를 자기 PC에서 최초 1회 명시 호출한다. 공통 config의 `user.name`·`user.email` 출처와 저장소별 provider·host·login 표식을 확인한다. 새 PC·새 clone, 계정 변경 또는 컨테이너 바로 아래 repo 추가 때 다시 실행한다.
 
-문서 쓰기 권한을 분리할 때는 관리자가 `project-write-access`를 명시 호출한다. `harness-setup`과 Git 계정 설정·확인을 먼저 마치고, `design-doc`, `context-doc`, 앱 핵심 문서를 만드는 `harness-bootstrap`보다 앞서 적용한다.
+문서 쓰기 권한을 분리할 때는 원격 Git provider와 저장소, 참여자 계정이 먼저 준비돼야 한다. 관리자는 `project-write-access`를 명시 호출해 공유 정책을 설정한다. `harness-setup`과 참여자별 Git 계정 등록을 먼저 마치고, `design-doc`, `context-doc`, 앱 핵심 문서를 만드는 `harness-bootstrap`보다 앞서 적용한다. 공유 정책이 생긴 뒤 각 참여자는 `git-scoped-account`의 로컬 등록 분기로 현재 PC의 Git 훅과 AI 쓰기 가드를 연결한다. 이 분기는 관리자 키·공유 정책·CODEOWNERS·원격 설정을 바꾸지 않는다.
 
-- `admin`: 권한 정책, `.docs/harness/**`, 루트 에이전트 지도와 소유자·가드 설정을 관리한다. 앱 핵심 문서를 직접 고칠 때는 대상 파일과 변경 내용을 확인한 뒤 한 번 더 승인한다.
+- `admin`: 권한 정책, `.ai-docs/harness/**`, 루트 에이전트 지도와 소유자·가드 설정을 관리한다. 앱 핵심 문서 권한을 상속하지 않는다.
 - `pm-pl`: 모든 앱의 설계 정본, 앱 컨텍스트와 instruction을 관리한다.
 - `app-doc-lead`: 배정된 앱에서 `pm-pl`과 같은 종류의 핵심 문서를 관리한다.
-- 일반 기여자: 별도 principal 등록 없이 `impl-doc/**`, `prototype/**`, `_inbox/**` 같은 `team` 범위를 사용한다.
+- `developer`: 일반 기여자임을 명시하는 역할이다. 등록 여부와 관계없이 기존 저장소 권한으로 `impl-doc/**`, `prototype/**`, `_inbox/**` 같은 `team` 범위와 앱 소스코드를 사용한다.
 
-이 스킬은 문서 쓰기 권한만 관리하고 소스코드 권한은 바꾸지 않는다. CODEOWNERS는 서버 보호 규칙과 결합해야 병합을 강제하며, 로컬 Git 훅과 AI 쓰기 가드는 각각 우회 가능성과 host 신뢰 경계를 가진다. `project-write-access`는 `0.5.0` runtime에 포함되지만 자동 실행되지 않으며, 검증된 관리자가 명시적으로 호출할 때만 설정·변경한다.
+이 스킬은 문서 쓰기 권한만 관리하고 소스코드 권한은 바꾸지 않는다. 권한이 있는 `pm-pl` 또는 해당 앱의 `app-doc-lead`가 앱 핵심 문서를 AI로 쓸 때도 문서 역할·대상 파일·변경 이유를 설명하고 한 번 더 확인한다. PC별 로컬 등록을 하지 않으면 지원되는 AI 가드는 `.ai-docs/**` 쓰기를 중단하지만, 로컬 Git 훅이 아직 연결되지 않은 PC의 사람 편집까지 막는다고 보지는 않는다. CODEOWNERS는 서버 보호 규칙과 결합해야 병합을 강제하며, 로컬 Git 훅과 AI 쓰기 가드는 각각 우회 가능성과 host 신뢰 경계를 가진다.
 
-### 4.4 `.docs` 초기 골격과 진행 후 구조
+### 4.4 `.ai-docs` 초기 골격과 진행 후 구조
 
-`harness-setup` 직후에는 `.docs/README.md`, `.docs/.gitignore`, `.docs/_inbox/`, 루트 컨텍스트 골격을 만든다. 복수 앱이면 빈 앱별 context와 instruction 디렉터리, `.docs/root-context/`도 준비한다.
+`harness-setup` 직후에는 `.ai-docs/README.md`, `.ai-docs/.gitignore`, `.ai-docs/_inbox/`, 루트 컨텍스트 골격을 만든다. 복수 앱이면 빈 앱별 context와 instruction 디렉터리, `.ai-docs/root-context/`도 준비한다.
 
 아래 트리는 `design-doc`, `context-doc`, `impl-*`과 prototype·design-system producer의 산출물이 누적된 **대표 구조**다. `context-base/`, `impl-doc/`, `prototype/`, `design-system/`, `.harness/`가 setup만으로 모두 생긴다는 뜻은 아니다.
 
 단일 앱의 대표 구조:
 
 ```text
-.docs/
+.ai-docs/
 ├── README.md
 ├── .gitignore
 ├── _inbox/                    ← 내용은 local 임시 입력
@@ -171,7 +173,7 @@ Codex는 설치 후 새 task를 열고 필요하면 앱을 재시작한다. Clau
 복수 앱의 대표 구조:
 
 ```text
-.docs/
+.ai-docs/
 ├── README.md
 ├── .gitignore
 ├── _inbox/
@@ -194,21 +196,20 @@ Codex는 설치 후 새 task를 열고 필요하면 앱을 재시작한다. Clau
     └── humanize-handoffs.json
 ```
 
-복수 앱에서는 문서·프로토타입·디자인 시스템 산출물을 공유 루트에 두지 않고 항상 대상 앱의 `.docs/{앱}/` 아래에 분리한다.
+복수 앱에서는 문서·프로토타입·디자인 시스템 산출물을 공유 루트에 두지 않고 항상 대상 앱의 `.ai-docs/{앱}/` 아래에 분리한다.
 
 ## 5. 전체 사용자 흐름
 
 ```mermaid
 flowchart TD
     S["플러그인 설치·새 session"] --> H["모든 참여자: harness-setup<br/>작업 환경별 최초 1회"]
-    H --> G{"Git 구조"}
-    G -->|"복수 repo"| GA["모든 참여자: git-scoped-account<br/>로컬 컨테이너별 최초 1회"]
-    G -->|"단일 repo"| GV["유효 Git 작성자 계정<br/>최초 1회 확인"]
+    H --> GA["모든 참여자: git-scoped-account<br/>단일·복수 repo 모두 PC별 최초 1회"]
     GA --> A{"문서 쓰기 권한을<br/>분리하는가?"}
-    GV --> A
-    A -->|"예"| PA["관리자: project-write-access"]
+    A -->|"예"| RP["원격 provider·저장소와<br/>참여자 계정 확인"]
+    RP --> PA["관리자: project-write-access<br/>공유 정책 설정"]
+    PA --> LE["모든 참여자: 현재 PC<br/>로컬 등록"]
     A -->|"아니오"| X{"진입 유형"}
-    PA --> X
+    LE --> X
     X -->|"신규·요구사항 기반"| D["권한 범위에 맞게<br/>design-doc"]
     X -->|"하네스 문서 없는 기존 코드"| B["권한 범위에 맞게<br/>harness-bootstrap"]
     D --> C["context-doc"]
@@ -237,7 +238,7 @@ flowchart TD
 
 #### 신규·요구사항 기반
 
-1. 권한 정책이 활성화돼 있으면 현재 Git 계정이 `pm-pl`인지, 대상 앱의 `app-doc-lead`인지, 추가 확인이 필요한 `admin`인지 먼저 판정한다.
+1. 권한 정책이 활성화돼 있으면 현재 PC의 로컬 등록과 Git 계정을 확인하고, `pm-pl`인지 대상 앱의 `app-doc-lead`인지 판정한다. `admin` 역할만으로는 앱 문서를 쓸 수 없다.
 2. 요구사항, RFP, 관련 코드, 금지 범위를 `design-doc`에 제공한다.
 3. 인터뷰로 모호한 요구사항과 의사결정을 정리한다.
 4. OUTPUT_V2 설계 초안을 검토한다.
@@ -247,12 +248,12 @@ flowchart TD
 
 `design-doc`의 기본 저장 경로:
 
-- 단일 앱: `.docs/context-base/DESIGN.md`
-- 복수 앱: `.docs/{앱}/context-base/DESIGN.md`
+- 단일 앱: `.ai-docs/context-base/DESIGN.md`
+- 복수 앱: `.ai-docs/{앱}/context-base/DESIGN.md`
 
 #### 기존 코드베이스
 
-`harness-bootstrap`은 기존 코드의 설계와 컨텍스트를 역추출하는 흐름을 하나의 최외곽 bundle로 묶는다. 호출자의 작업 환경에서 `harness-setup`을 아직 수행하지 않았다면 내부 setup이 그 호출자의 최초 실행을 담당한다. 문서 권한을 분리하는 프로젝트는 독립된 `harness-setup`을 먼저 수행하고 관리자가 `project-write-access`를 설정한 뒤, 허용된 역할·앱 범위에서 `harness-bootstrap`을 실행한다.
+`harness-bootstrap`은 기존 코드의 설계와 컨텍스트를 역추출하는 흐름을 하나의 최외곽 bundle로 묶는다. 호출자의 작업 환경에서 `harness-setup`을 아직 수행하지 않았다면 내부 setup이 그 호출자의 최초 실행을 담당한다. 문서 권한을 분리하는 프로젝트는 독립된 `harness-setup`과 참여자별 `git-scoped-account`를 먼저 수행한다. 관리자가 `project-write-access` 공유 정책을 설정하고 현재 PC 로컬 등록까지 마친 뒤, 허용된 역할·앱 범위에서 `harness-bootstrap`을 실행한다.
 
 ```text
 harness-setup 골격 확인
@@ -286,19 +287,19 @@ harness-setup 골격 확인
 설계에 근거가 없는 주제 문서를 억지로 만들지 않는다.
 `agent-instruction.md`는 항상 생성한다.
 
-복수 앱에서는 프로젝트 팩트를 `.docs/{앱}-context.md`, 세부 규칙을 `.docs/{앱}/instruction/*-instruction.md`에 저장한다.
-루트 폴더는 보통 git으로 관리하지 않으므로 `.docs/root-context/AGENTS.md`가 루트 정본 내용을 형상관리하는 실제 원본이며, `.docs/root-context/CLAUDE.md`는 그 bridge의 형상관리 사본이다. 루트 실행용 `AGENTS.md`와 `CLAUDE.md`의 최종 갱신은 `harness-setup` 계약이 담당한다.
+복수 앱에서는 프로젝트 팩트를 `.ai-docs/{앱}-context.md`, 세부 규칙을 `.ai-docs/{앱}/instruction/*-instruction.md`에 저장한다.
+루트 폴더는 보통 git으로 관리하지 않으므로 `.ai-docs/root-context/AGENTS.md`가 루트 정본 내용을 형상관리하는 실제 원본이며, `.ai-docs/root-context/CLAUDE.md`는 그 bridge의 형상관리 사본이다. 루트 실행용 `AGENTS.md`와 `CLAUDE.md`의 최종 갱신은 `harness-setup` 계약이 담당한다.
 
 #### 화면을 먼저 검증할 때
 
 ```text
 design-doc
 → design-prototype-docs
-→ 단일 .docs/prototype/{사용자}/{식별자}/design-doc.md
-  복수 .docs/{앱}/prototype/{사용자}/{식별자}/design-doc.md
+→ 단일 .ai-docs/prototype/{사용자}/{식별자}/design-doc.md
+  복수 .ai-docs/{앱}/prototype/{사용자}/{식별자}/design-doc.md
 → create-prototype
-→ 단일 .docs/prototype/{사용자}/{식별자}/
-  복수 .docs/{앱}/prototype/{사용자}/{식별자}/
+→ 단일 .ai-docs/prototype/{사용자}/{식별자}/
+  복수 .ai-docs/{앱}/prototype/{사용자}/{식별자}/
 ```
 
 프로토타입은 요구사항과 이동 흐름을 검증하는 폐기 가능한 산출물이다. 실제 제품 코드로 그대로 승격하지 않는다.
@@ -315,9 +316,9 @@ design-doc
 
 구현 계획 기본 경로:
 
-- 단일 앱: `.docs/impl-doc/{사용자}/{YYMMDD}-{seq}.{slug}-impl-{kind}.md`
+- 단일 앱: `.ai-docs/impl-doc/{사용자}/{YYMMDD}-{seq}.{slug}-impl-{kind}.md`
 - 복수 앱:
-  `.docs/{앱}/impl-doc/{사용자}/{YYMMDD}-{seq}.{slug}-impl-{kind}.md`
+  `.ai-docs/{앱}/impl-doc/{사용자}/{YYMMDD}-{seq}.{slug}-impl-{kind}.md`
 - 공용 index:
   `{YYMMDD}-0.{앱이름}-roadmap-impl-index.md`
 
@@ -341,8 +342,8 @@ design-doc
 예시:
 
 ```text
-참조 설계: .docs/context-base/DESIGN.md
-참조 계획: .docs/impl-doc/developer/260730-1.user-search-impl-api.md
+참조 설계: .ai-docs/context-base/DESIGN.md
+참조 계획: .ai-docs/impl-doc/developer/260730-1.user-search-impl-api.md
 
 Phase 2의 API-03만 구현해줘.
 수정 범위는 search service, controller, 관련 test로 제한한다.
@@ -394,7 +395,7 @@ impl-verify
 - `ui-ux-pro-max`
 - `motion-design`
 
-조건부 2종은 기본적으로 대화창에 결과를 보고한다. 사용자가 디자인 시스템이나 모션 명세의 저장을 명시적으로 요청했을 때만 Markdown 파일을 만든다. 모든 producer는 단일 앱의 `@.docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의 `@.docs/{앱}/instruction/artifact-output-routing-instruction.md`에 따라 산출물 위치·소유권·인계를 결정한다.
+조건부 2종은 기본적으로 대화창에 결과를 보고한다. 사용자가 디자인 시스템이나 모션 명세의 저장을 명시적으로 요청했을 때만 Markdown 파일을 만든다. 모든 producer는 단일 앱의 `@.ai-docs/instruction/artifact-output-routing-instruction.md` 또는 복수 앱의 `@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md`에 따라 산출물 위치·소유권·인계를 결정한다.
 
 후처리 계약:
 
@@ -408,7 +409,7 @@ impl-verify
 8. 원 producer가 원래 구조 계약을 다시 검증한다.
 9. downstream 스킬은 승인·재검증된 최종 Markdown을 입력으로 사용한다.
 
-제안, 건너뛰기, 거절, 적용, 재검증 상태 이벤트는 `.docs/.harness/humanize-handoffs.json`에 기록한다. 최종 Markdown 상대경로, 내용 SHA-256, profile로 계산한 fingerprint에 기존 결정이 있으면 새 session에서 같은 제안을 반복하지 않는다.
+제안, 건너뛰기, 거절, 적용, 재검증 상태 이벤트는 `.ai-docs/.harness/humanize-handoffs.json`에 기록한다. 최종 Markdown 상대경로, 내용 SHA-256, profile로 계산한 fingerprint에 기존 결정이 있으면 새 session에서 같은 제안을 반복하지 않는다.
 상태가 `proposed`라면 이미 제안이 존재함을 보고하고, 건너뛰기·거절·적용·재검증 상태는 그 결정을 재사용한다. ledger 자체는 문서 개선 대상에서 제외한다.
 
 사용자가 개선을 건너뛰거나 거절해도 원래 하네스 흐름은 계속된다.
@@ -419,10 +420,10 @@ impl-verify
 |------|------|------|
 | 설치·기반 | `harness-setup` | 프로젝트 문서 골격과 루트 컨텍스트 생성·복구 |
 | 설치·기반 | `harness-bootstrap` | 기존 코드에서 설계·컨텍스트 역추출 |
-| 설치·기반 | `git-scoped-account` | 상위 트리의 여러 repo에 한정된 Git 계정 설정 |
-| 권한 | `project-write-access` | 문서 경로를 `admin`·`pm-pl`·앱별 `app-doc-lead`·`team` 쓰기 범위와 세 강제 계층에 연결 |
+| 설치·기반 | `git-scoped-account` | 단일·복수 repo의 작성자와 provider 계정을 프로젝트 범위 및 PC별 권한 가드에 연결 |
+| 권한 | `project-write-access` | 문서 경로를 상속 없는 `admin`·`pm-pl`·앱별 `app-doc-lead`·`developer` 역할과 세 제어 계층에 연결 |
 | 설계 | `design-doc` | 요구사항·아이디어·RFP 입력을 OUTPUT_V2 설계로 변환 |
-| 컨텍스트 | `context-doc` | `AGENTS.md` 정본, Claude bridge, instruction 생성 |
+| 컨텍스트 | `context-doc` | 앱 컨텍스트와 주제별 instruction 생성. 루트 지도 변경은 `harness-setup` 후속 작업으로 분리 |
 | UI/UX 설계 | `ui-ux-pro-max` | 제품 유형·스타일·색·타이포그래피·레이아웃·접근성 결정 |
 | 모션 설계 | `motion-design` | 모션 목적·타이밍·이징·안무·접근성·성능 결정 |
 | 화면 설계 | `design-prototype-docs` | 프로토타입 입력용 화면 설계 문서 |
@@ -471,7 +472,7 @@ flowchart TD
 | `ui-ux-pro-max` | 제품 유형·업종·스택·접근성 요구 | 대화창 디자인 결정과 근거 | 저장 시 승인 필요 | 기존 토큰 우선 여부 |
 | `design-prototype-docs` | 디자인 결정 또는 기존 시스템 | 화면·상태·반응형 명세 `.md` | producer gate | 7개 품질 기준 |
 | `motion-design` | 모션 후보와 목적 | 모션 결정표 | 저장 시 승인 필요 | reduced-motion 대체안 필수 |
-| `create-prototype` | 승인된 명세와 모션 | 단일 `.docs/prototype/**`, 복수 `.docs/{앱}/prototype/**` | — | 시안·요구사항 일치 |
+| `create-prototype` | 승인된 명세와 모션 | 단일 `.ai-docs/prototype/**`, 복수 `.ai-docs/{앱}/prototype/**` | — | 시안·요구사항 일치 |
 | `frontend-design` | 승인된 결정과 명세 | 제품 소스 | — | 기능·UI·접근성·모션 |
 
 #### 호출·생략 조건
@@ -491,8 +492,8 @@ flowchart TD
 
 | 담당 스킬 | 단일 앱 | 복수 앱 |
 |---|---|---|
-| `ui-ux-pro-max` | `.docs/design-system/{project-slug}/MASTER.md`, `.docs/design-system/{project-slug}/pages/{page-slug}.md` | `.docs/{앱}/design-system/{project-slug}/MASTER.md`, `.docs/{앱}/design-system/{project-slug}/pages/{page-slug}.md` |
-| `motion-design` | `.docs/design-system/{project-slug}/motion/{screen-or-component}.md` | `.docs/{앱}/design-system/{project-slug}/motion/{screen-or-component}.md` |
+| `ui-ux-pro-max` | `.ai-docs/design-system/{project-slug}/MASTER.md`, `.ai-docs/design-system/{project-slug}/pages/{page-slug}.md` | `.ai-docs/{앱}/design-system/{project-slug}/MASTER.md`, `.ai-docs/{앱}/design-system/{project-slug}/pages/{page-slug}.md` |
+| `motion-design` | `.ai-docs/design-system/{project-slug}/motion/{screen-or-component}.md` | `.ai-docs/{앱}/design-system/{project-slug}/motion/{screen-or-component}.md` |
 
 기존 파일이 있으면 diff를 제시하고 승인 전에는 덮어쓰지 않는다. 두 스킬은 조건부 Markdown producer이므로, 최외곽 생성자일 때만 `humanize-korean` 개선안을 한 번 제안한다. 색상값, 토큰 이름, duration, easing, reduced-motion 조건, 성능 budget은 문서 개선 단계의 보호 토큰이며 개선으로 값이 바뀌지 않는다.
 
@@ -504,19 +505,19 @@ flowchart TD
 
 | 산출물 | 기본 위치 | 소유와 형상관리 |
 |--------|-----------|----------------|
-| 설계 | `.docs/**/context-base/DESIGN.md` | 프로젝트 문서 |
+| 설계 | `.ai-docs/**/context-base/DESIGN.md` | 프로젝트 문서 |
 | 루트 컨텍스트 | `AGENTS.md`, `CLAUDE.md` | `AGENTS.md` 정본, `CLAUDE.md` bridge |
-| 세부 규칙 | `.docs/**/instruction/*-instruction.md` | 프로젝트 문서 |
-| 화면 설계 | 단일 `.docs/prototype/{사용자}/{식별자}/design-doc.md`, 복수 `.docs/{앱}/prototype/{사용자}/{식별자}/design-doc.md` | `design-prototype-docs`가 관리하는 프로젝트 문서 |
-| 프로토타입 | 단일 `.docs/prototype/{사용자}/{식별자}/`, 복수 `.docs/{앱}/prototype/{사용자}/{식별자}/` | `create-prototype`이 만드는 폐기 가능한 검증 산출물 |
-| 디자인 시스템 | 단일 `.docs/design-system/{project-slug}/MASTER.md`·`pages/{page-slug}.md`, 복수 `.docs/{앱}/design-system/{project-slug}/MASTER.md`·`pages/{page-slug}.md` | `ui-ux-pro-max`가 명시적 저장 요청 때만 생성 |
-| 모션 명세 | 단일 `.docs/design-system/{project-slug}/motion/{screen-or-component}.md`, 복수 `.docs/{앱}/design-system/{project-slug}/motion/{screen-or-component}.md` | `motion-design`이 명시적 저장 요청 때만 생성 |
-| 구현 계획·index | `.docs/**/impl-doc/{사용자}/` | 구현 근거와 진행 index |
-| handoff ledger | `.docs/.harness/humanize-handoffs.json` | 개선 제안 중복 방지 상태 |
+| 세부 규칙 | `.ai-docs/**/instruction/*-instruction.md` | 프로젝트 문서 |
+| 화면 설계 | 단일 `.ai-docs/prototype/{사용자}/{식별자}/design-doc.md`, 복수 `.ai-docs/{앱}/prototype/{사용자}/{식별자}/design-doc.md` | `design-prototype-docs`가 관리하는 프로젝트 문서 |
+| 프로토타입 | 단일 `.ai-docs/prototype/{사용자}/{식별자}/`, 복수 `.ai-docs/{앱}/prototype/{사용자}/{식별자}/` | `create-prototype`이 만드는 폐기 가능한 검증 산출물 |
+| 디자인 시스템 | 단일 `.ai-docs/design-system/{project-slug}/MASTER.md`·`pages/{page-slug}.md`, 복수 `.ai-docs/{앱}/design-system/{project-slug}/MASTER.md`·`pages/{page-slug}.md` | `ui-ux-pro-max`가 명시적 저장 요청 때만 생성 |
+| 모션 명세 | 단일 `.ai-docs/design-system/{project-slug}/motion/{screen-or-component}.md`, 복수 `.ai-docs/{앱}/design-system/{project-slug}/motion/{screen-or-component}.md` | `motion-design`이 명시적 저장 요청 때만 생성 |
+| 구현 계획·index | `.ai-docs/**/impl-doc/{사용자}/` | 구현 근거와 진행 index |
+| handoff ledger | `.ai-docs/.harness/humanize-handoffs.json` | 개선 제안 중복 방지 상태 |
 | 코드·테스트 | 각 앱 repo | 앱별 형상관리 |
 | 사용자 스킬 | 설치된 플러그인 | 프로젝트 repo에 복사하지 않음 |
 
-복수 앱에서 `.docs`가 별도 repo라면 코드 commit과 문서 commit의 연결을 이슈, 작업 ID, 구현 계획 링크 등으로 남긴다. 루트 `AGENTS.md`와 `CLAUDE.md`가 git 미관리 파일이어도 `.docs/root-context/AGENTS.md`는 관리한다.
+복수 앱에서 `.ai-docs`가 별도 repo라면 코드 commit과 문서 commit의 연결을 이슈, 작업 ID, 구현 계획 링크 등으로 남긴다. 루트 `AGENTS.md`와 `CLAUDE.md`가 git 미관리 파일이어도 `.ai-docs/root-context/AGENTS.md`는 관리한다.
 
 ## 9. 병렬화와 hook 전략
 
@@ -624,7 +625,7 @@ flowchart TD
 | Java | wrapper가 있으면 `mvnw`/`gradlew`의 test·package |
 | Python | 프로젝트가 고정한 formatter, type checker, test runner |
 | 문서 | 링크·index·bridge·경로, Markdown 구조 |
-| 다중 앱 | 앱별 repo status와 공용 `.docs` status를 각각 확인 |
+| 다중 앱 | 앱별 repo status와 공용 `.ai-docs` status를 각각 확인 |
 
 명령이 없거나 실행 환경이 불완전하면 임의의 새 표준을 만들지 말고 SKIP 이유와 남은 검증을 보고한다.
 
@@ -635,7 +636,7 @@ flowchart TD
 - [ ] Codex 또는 Claude에 사용자 플러그인을 설치했다.
 - [ ] 새 task/session에서 명시 호출이 보인다.
 - [ ] 대상 프로젝트 루트와 단일/복수 앱 유형을 확인했다.
-- [ ] 기존 `.docs` repo가 있다면 먼저 복원했다.
+- [ ] 기존 `.ai-docs` repo가 있다면 먼저 복원했다.
 - [ ] `harness-setup` 출력이 allowlist 안에만 있다.
 - [ ] local user skill directory가 새로 생기지 않았다.
 - [ ] `AGENTS.md`가 정본이고 `CLAUDE.md`가 bridge다.
@@ -864,10 +865,10 @@ python maintainer/skills/skill-portfolio-maintainer/scripts/validate_registry.py
 
 ## Portable routing lifecycle
 
-`harness-setup`은 `.docs/harness/`에 경로·형식·host 상태 정본을 남긴다. `-Plan`/`-Check`은 읽기 전용이며, Claude/Codex host-local hook의 `-Apply`/`-Uninstall`은 host별 diff와 별도 승인 뒤에만 수행한다. Codex hook은 `/hooks` 신뢰 증적 전까지 `pending-trust`이며 plugin runtime 비종속 상태로 기록하지 않는다.
+`harness-setup`은 `.ai-docs/harness/`에 경로·형식·host 상태 정본을 남긴다. `-Plan`/`-Check`은 읽기 전용이며, Claude/Codex host-local hook의 `-Apply`/`-Uninstall`은 host별 diff와 별도 승인 뒤에만 수행한다. Codex hook은 `/hooks` 신뢰 증적 전까지 `pending-trust`이며 plugin runtime 비종속 상태로 기록하지 않는다.
 따라서 이후 다른 플러그인이나 일반 AI 도구를 사용해도 bundle과 앱별 routing instruction만으로 산출물 위치를 해석할 수 있다.
 
-G10 뒤 선택 host에 설치하는 `PreToolUse` adapter는 공통 write guard를 호출한다. guard는 경로를 project containment 기준으로 정규화하고, 기존 canonical 문서·승인된 앱 source·`.docs/_inbox/**`·manifest exception만 통과시킨다. 새 관리 문서는 target path, operation, content SHA-256, TTL을 함께 묶은 1회성 approval marker가 정확히 일치할 때만 통과하며 성공 뒤 marker를 소비한다.
+G10 뒤 선택 host에 설치하는 `PreToolUse` adapter는 공통 write guard를 호출한다. guard는 경로를 project containment 기준으로 정규화하고, 기존 canonical 문서·승인된 앱 source·`.ai-docs/_inbox/**`·manifest exception만 통과시킨다. 새 관리 문서는 target path, operation, content SHA-256, TTL을 함께 묶은 1회성 approval marker가 정확히 일치할 때만 통과하며 성공 뒤 marker를 소비한다.
 Codex는 deny JSON을, Claude는 exit 2/stderr를 사용한다.
 
 이는 관찰 가능한 local write surface의 best-effort guard다. 동적 shell target, hosted tool, opt-out path, 명령 실행 후의 redirect, 외부 process는 완전 차단을 주장하지 않고 bypass evidence로 남긴다. 실제 Codex `/hooks` trust는 여전히 별도의 사용자 증적이다.
