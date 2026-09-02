@@ -154,7 +154,7 @@ AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 
 
 `project-write-access`는 선택 기능이다. 권한을 사용하는 프로젝트는 원격 Git provider·저장소·참여자 계정을 준비하고, 관리자가 `harness-setup`과 참여자별 Git 계정 등록 뒤 `design-doc`, `context-doc`, 앱 핵심 문서를 만드는 `harness-bootstrap`보다 먼저 공유 정책을 설정한다. 정책 생성 뒤 각 참여자는 관리자 키 없이 자기 PC의 로컬 Git·AI 가드만 등록한다. `admin`은 앱 문서 권한을 상속하지 않으며, 권한이 있는 `pm-pl`·`app-doc-lead`도 앱 핵심 문서를 AI로 쓰기 전에 대상·문서 역할·변경 이유를 설명받고 한 번 더 확인한다. 정책이 있는데 현재 PC의 Git 계정 표식이나 로컬 등록이 없거나 서로 다르면 지원되는 AI 가드는 `.ai-docs/**` 쓰기를 거부하지만 애플리케이션 소스코드는 막지 않는다.
 
-`harness-setup`이 만든 portable bundle은 플러그인 제거 뒤에도 남는다. host hook의 `pending-trust` 상태는 사용자가 신뢰 검토를 끝낸 증적을 명시해 `active`로 기록하기 전까지 바뀌지 않으며, 외부 fixed-format 산출물은 `_inbox`에서만 관리한다.
+`harness-setup`이 만든 portable bundle은 플러그인 제거 뒤에도 남는다. host hook의 `pending-trust` 상태는 사용자가 신뢰 검토를 끝낸 증적을 명시해 `active`로 기록하기 전까지 바뀌지 않으며, 외부 fixed-format 산출물은 `_inbox`에서만 관리한다. `_inbox` 파일은 기본적으로 로컬에서만 보관하지만, 설계·instruction에 계속 참고할 원문은 사용자가 정확한 파일과 Git 공유를 명시한 경우에만 파일별로 선택 추적할 수 있다. 추적된 원문도 정규 산출물로 자동 승격되지 않으며 commit과 원격 push는 각각 별도로 요청해야 한다.
 
 ### 설계·컨텍스트·프로토타입
 

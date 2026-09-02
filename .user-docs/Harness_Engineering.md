@@ -159,7 +159,7 @@ Codex는 설치 후 새 task를 열고 필요하면 앱을 재시작한다. Clau
 .ai-docs/
 ├── README.md
 ├── .gitignore
-├── _inbox/                    ← 내용은 local 임시 입력
+├── _inbox/                    ← 기본 local 참고 입력, 명시적 파일별 Git 공유 가능
 ├── context-base/
 │   └── DESIGN.md
 ├── instruction/
@@ -195,6 +195,14 @@ Codex는 설치 후 새 task를 열고 필요하면 앱을 재시작한다. Clau
 └── .harness/
     └── humanize-handoffs.json
 ```
+
+`_inbox/`의 파일은 기본적으로 `.ai-docs/.gitignore`에 따라 로컬에서만 보관한다.
+설계·instruction에 계속 참고해야 하는 원문을 팀과 공유하려면 사용자가 정확한 파일
+경로와 Git 공유 의도를 명시적으로 요청한 경우에만 해당 파일을
+`git add -f -- <현재 Git 저장소 기준 정확한 파일 경로>`로 선택 추적한다. 민감정보·
+저작권·저장소 용량을 먼저 확인하고 `_inbox/` 전체를 강제 추가하지 않는다. 선택 추적된
+원문은 다른 사용자의 clone/pull에도 포함되지만 정규 설계·instruction 산출물로 승격된
+것은 아니다. commit과 원격 push는 각각 별도의 명시적 요청이 있을 때만 수행한다.
 
 복수 앱에서는 문서·프로토타입·디자인 시스템 산출물을 공유 루트에 두지 않고 항상 대상 앱의 `.ai-docs/{앱}/` 아래에 분리한다.
 
