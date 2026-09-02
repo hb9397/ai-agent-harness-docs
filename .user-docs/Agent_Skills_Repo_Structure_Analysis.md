@@ -227,7 +227,7 @@ my-repo/
 
 | 스킬 | 한글 역할 요약 | 의도가 비슷한 외부 (참고용) |
 |------|----------------|-----------------------------|
-| `design-doc` | 인터뷰형 대화로 요구사항·동작 흐름·집중 로직·인터페이스·데이터를 끌어내 `OUTPUT_V2` 설계 문서를 만든다 | superpowers `brainstorming`, gstack `/office-hours`, openai `define-goal` |
+| `design-doc` | 프로젝트 전체는 확장 가능한 고정 목차의 `PROJECT_DESIGN`으로, 화면·기능·컴포넌트는 인터뷰형 `OUTPUT_V2` 상세 설계로 만든다 | superpowers `brainstorming`, gstack `/office-hours`, openai `define-goal` |
 | `context-doc` | 설계 문서를 얇은 `CLAUDE.md`/`AGENTS.md` + 주제별 `.docs/root-context/*-context.md` 7종으로 분할 생성해 에이전트 컨텍스트를 만든다 | 직접 대응 없음 (Karpathy 4원칙이 일부 가드 역할) |
 | `harness-bootstrap` | 문서 없는 기존/레거시 코드베이스를 스캔해 설계 문서·CLAUDE/AGENTS·instruction 문서를 역추출한다 | OpenAI `AGENTS.md`, Claude memory 공식 문서 |
 | `design-prototype-docs` | 프로토타입을 만들기 전에 화면 목록·흐름·기능·레이아웃·더미 데이터를 정리한 목업 디자인 문서를 만든다 | OpenAI Product Design, gstack `/design-consultation`·`/design-shotgun` |

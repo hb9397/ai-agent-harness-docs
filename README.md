@@ -75,7 +75,7 @@
 | 설치·기반 | [harness-bootstrap](./skills/harness-bootstrap/SKILL.md) | 기존 코드에서 설계·컨텍스트 역추출 | 참조: [OpenAI AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md), [Claude Code memory](https://code.claude.com/docs/en/memory) |
 | 설치·기반 | [git-scoped-account](./skills/git-scoped-account/SKILL.md) | 단일·복수 repo의 Git 작성자와 provider·host·login을 프로젝트 범위로 연결 | 로컬 정본: [harness-kit](https://github.com/hb9397/harness-kit) |
 | 권한 | [project-write-access](./skills/project-write-access/SKILL.md) | 공유 문서 역할 정책과 참여자 PC별 Git 훅·AI 쓰기 가드 등록 | 로컬 정본: [harness-kit](https://github.com/hb9397/harness-kit) |
-| 설계·컨텍스트 | [design-doc](./skills/design-doc/SKILL.md) | 요구사항·아이디어·RFP를 구조화한 설계 | 참조: [Superpowers](https://github.com/obra/superpowers), [gstack](https://github.com/garrytan/gstack) |
+| 설계·컨텍스트 | [design-doc](./skills/design-doc/SKILL.md) | 프로젝트 전체는 확장 가능한 앱 기준 문서로, 상세 단위는 구조화한 설계로 작성 | 참조: [Superpowers](https://github.com/obra/superpowers), [gstack](https://github.com/garrytan/gstack) |
 | 설계·컨텍스트 | [context-doc](./skills/context-doc/SKILL.md) | 앱 컨텍스트와 주제별 instruction 생성 | 참조: [OpenAI AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md), [Claude Code memory](https://code.claude.com/docs/en/memory) |
 | UI/UX 설계 | [ui-ux-pro-max](./skills/ui-ux-pro-max/SKILL.md) | 제품 유형·스타일·색·타이포그래피·레이아웃 결정 | 변형 반영: [UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) |
 | 모션 설계 | [motion-design](./skills/motion-design/SKILL.md) | 모션 목적·타이밍·이징·접근성·성능 결정 | 변형 반영: [LottieFiles Motion Design](https://github.com/LottieFiles/motion-design-skill) |
@@ -163,14 +163,19 @@ flowchart TD
 
 ### 1단계 — 설계·컨텍스트·프로토타입
 
-- 아이디어나 요구사항이 있으면 `design-doc`으로 설계한다.
+- 아이디어나 요구사항이 있으면 `design-doc`으로 설계한다. 프로젝트 전체 `DESIGN.md`는
+  개요·상위 기능 분류·기술 스택·아키텍처·앱 특이사항·배포 환경·VSCode 추천을 담되,
+  상위 기능 분류에 없는 상세 문서나 구현을 막는 허용 목록으로 사용하지 않는다.
+  본문에는 변경 이력을 누적하지 않고 현재 기준 사실만 남긴다.
 - RFP가 있으면 파일이나 필요한 요구사항을 `design-doc`, `design-prototype-docs`, 다중 화면·FE/BE 페어 계획용 `impl-fe-be-doc` 요청에 직접 제공한다. 단일·소규모 구현 계획에는 승인된 설계나 PRD를 `impl-doc` 입력값으로 사용한다.
 - 문서가 없는 기존 코드베이스에는 `harness-bootstrap`을 사용한다. 이 스킬은 필요한 `harness-setup` 골격을 확인한 뒤 코드에서 설계와 컨텍스트를 역추출한다.
 - 설계가 정리되면 `context-doc`으로 앱 컨텍스트와 주제별 instruction 문서를 만든다. 루트 읽기 지도 갱신이 필요하면 `admin`이 `harness-setup`을 다시 실행한다.
 - 화면 작업이면 `ui-ux-pro-max`로 디자인 방향을 정한 뒤 `design-prototype-docs`로 화면 설계 문서를 만든다.
 - 모션이 필요하면 `motion-design`으로 목적·타이밍·reduced-motion 대안을 정한다. 검증 시안은 `create-prototype`으로 만든다.
 
-`design-doc`은 초안을 대화창에 보여 주고 사용자가 저장을 승인하면 파일로 저장한다. 후속 스킬에 파일 경로를 넘길 계획이라면 저장까지 요청한다.
+`design-doc`은 초안을 대화창에 보여 주고 사용자가 저장을 승인하면 파일로 저장한다.
+프로젝트 전체에서는 기술 스택을 근거로 아키텍처 권장안·대안과 패키지·파일 구조
+예시를 먼저 보여주고 선택받는다. 후속 스킬에 파일 경로를 넘길 계획이라면 저장까지 요청한다.
 
 권한 정책이 활성화된 프로젝트에서는 서명 정책과 쓰기 가드가 현재 Git 계정, 역할, 대상 앱을 먼저 판정한다. `design-doc`과 `context-doc`은 역할을 부여하거나 권한 정책을 바꾸지 않는다.
 
@@ -237,7 +242,7 @@ Markdown 산출물이 있으면 원 producer가 구조를 검증한 뒤 `humaniz
 | Git 작성자·provider 계정 | 단일·복수 repo의 모든 참여자가 `git-scoped-account` 1회 | 새 PC·새 clone, 계정 변경 또는 컨테이너 바로 아래 repo 추가 때 |
 | `project-write-access` 공유 정책 | 권한 분리가 필요할 때 검증된 관리자가 설정 | 관리자·계정·역할·앱 배정·경로가 바뀔 때 |
 | 권한 정책의 PC별 로컬 등록 | 공유 정책 생성 뒤 각 참여자가 자기 PC에서 수행 | 새 PC·새 clone 또는 로컬 Git·AI 가드 연결이 바뀔 때 |
-| `design-doc` | 권한 정책이 있으면 허용된 역할이 앱별 설계 정본 작성 | 핵심 요구사항이나 아키텍처 결정이 바뀔 때 |
+| `design-doc` | 권한 정책이 있으면 허용된 역할이 확장 가능한 앱별 설계 정본 작성 | 상위 기능 분류·기술 스택·아키텍처·앱 고유 사실이 바뀔 때 |
 | `harness-bootstrap` | 문서 없는 기존 코드에 최초 도입 | 전체 재스캔보다 `design-doc`·`context-doc` 갱신을 우선 |
 | `context-doc` | 권한 정책이 있으면 `design-doc`과 같은 역할·앱 범위에서 실행 | 설계·프레임워크·실행 방법·금지 규칙이 바뀔 때 |
 | `impl-*` | 기능 구현 전에 작성 | 범위·Phase·의존성·완료 기준이 바뀔 때 |

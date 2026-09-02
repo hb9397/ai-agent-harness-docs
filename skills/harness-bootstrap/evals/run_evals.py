@@ -11,7 +11,7 @@ SKILL_FILE = SKILL_ROOT / "SKILL.md"
 EVALS_FILE = Path(__file__).with_name("evals.json")
 INTERVIEW_FILE = SKILL_ROOT / "prompts" / "interview.md"
 CODE_SCAN_FILE = SKILL_ROOT / "prompts" / "code-scan.md"
-EXTRACTION_FILE = SKILL_ROOT / "prompts" / "extraction-mapping.md"
+EXTRACTION_FILE = SKILL_ROOT / "prompts" / "project-extraction-mapping.md"
 DESIGN_SKILL_FILE = SKILL_ROOT.parent / "design-doc" / "SKILL.md"
 CONTEXT_SKILL_FILE = SKILL_ROOT.parent / "context-doc" / "SKILL.md"
 
@@ -58,6 +58,9 @@ def main() -> int:
         "@.ai-docs/instruction/artifact-output-routing-instruction.md",
         "@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md",
         "{project}/.ai-docs/{앱}/context-base/DESIGN.md",
+        "PROJECT_DESIGN",
+        "기능 분류는 상세 문서나 구현의 허용 목록이 아님",
+        "변경 이력 없이 현재 기준 사실만 기록",
     ):
         require(skill, needle)
 
@@ -77,7 +80,15 @@ def main() -> int:
     if not INTERVIEW_FILE.is_file():
         raise AssertionError(f"missing protected interview prompt: {INTERVIEW_FILE}")
     interview = INTERVIEW_FILE.read_text(encoding="utf-8")
-    for needle in ("최대 2회", "질문 1 (필수)", "질문 2 (선택)", "묻지 않는 것"):
+    for needle in (
+        "최대 3회",
+        "질문 1 (필수)",
+        "질문 2 (필수)",
+        "질문 3 (조건부)",
+        "패키지·파일 구조 예시",
+        "배포 환경은 비워 두겠습니다",
+        "묻지 않는 것",
+    ):
         if needle not in interview:
             raise AssertionError(f"{INTERVIEW_FILE}: missing contract: {needle}")
 

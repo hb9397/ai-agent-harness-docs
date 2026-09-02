@@ -5,8 +5,8 @@ description: >
   '하네스 부팅', '기존 코드 분석해서 문서 만들어줘', '레거시 프로젝트 문서화',
   'CLAUDE.md 없는데 생성', '설계 문서 역추출', 'AI 문서 부트스트랩',
   '기존 프로젝트에 하네스 도입' 요청이 오면 이 스킬을 사용한다.
-  기존 코드베이스에 harness-setup의 프로젝트 문서 골격을 먼저 적용한 뒤 design-doc OUTPUT_V2 형식 설계 문서 + context-doc 결과물(앱별 *-context.md + .ai-docs/instruction/*)을 자동 도출한다.
-  프레임워크 자동 감지. 최소 인터뷰(2회 이하)로 코드에서 추출 불가능한 도메인 맥락만 보충.
+  기존 코드베이스에 harness-setup의 프로젝트 문서 골격을 먼저 적용한 뒤 design-doc PROJECT_DESIGN 형식 설계 문서 + context-doc 결과물(앱별 *-context.md + .ai-docs/instruction/*)을 자동 도출한다.
+  프레임워크 자동 감지. 최소 인터뷰(3회 이하)로 코드에서 추출 불가능한 도메인 맥락·아키텍처 선택·배포 환경만 보충.
 allowed-tools: Read, Glob, Grep, Write
 ---
 
@@ -15,7 +15,7 @@ allowed-tools: Read, Glob, Grep, Write
 기존 코드베이스만 있고 AI 하네스 문서(CLAUDE.md, AGENTS.md, 설계 문서, instruction 등)가 전혀 없을 때,
 코드를 직접 분석해서 다음 두 산출물을 한 번에 도출한다.
 
-1. **`design-doc` OUTPUT_V2 형식 설계 문서** (프로젝트 설계 스냅샷)
+1. **`design-doc` PROJECT_DESIGN 형식 설계 문서** (확장 가능한 앱 설계 기준)
 2. **`context-doc` 결과물** — 앱별 `*-context.md` + `.ai-docs/instruction/*-instruction.md`
 
 생성 전 반드시 사용자 확인을 거친다. 파일을 무단으로 생성하지 않는다.
@@ -40,8 +40,8 @@ allowed-tools: Read, Glob, Grep, Write
 
 1. **코드에서 추출 가능한 건 모두 자동 추출**. 질문하지 않는다.
 2. **코드에서 알 수 없는 것만 인터뷰**. 도메인 목적·사용자·상위 비즈니스 맥락.
-3. **인터뷰는 최대 2회**. 그 이상은 `미정 — [이유]` 로 남긴다.
-4. **공개 산출물 계약을 재사용한다**. `design-doc` OUTPUT_V2 형식과 `context-doc`의 앱 context + instruction 구조를 따른다.
+3. **인터뷰는 최대 3회**. 앱 대분류, 아키텍처 선택, 배포 환경만 확인한다.
+4. **공개 산출물 계약을 재사용한다**. `design-doc` PROJECT_DESIGN 형식과 `context-doc`의 앱 context + instruction 구조를 따른다.
 5. **프레임워크 중립**. 매니페스트 파일 기반으로 자동 감지한다.
 
 ## 선택 권한 정책 연계와 단계 분리
@@ -137,10 +137,10 @@ ledger를 안전하게 기록할 수 없으면 새 proposal을 보여주지 않�
 
 ## 질문 예산
 
-사용자 질문 총합은 **최대 3회**다.
+사용자 질문 총합은 **최대 4회**다.
 
 - Step 1의 저장소 루트/프로젝트 단위 확인: 최대 1회
-- Step 3의 인터뷰: 최대 2회
+- Step 3의 인터뷰: 최대 3회
 - Step 6의 `context-doc` 단계에서는 **새 도메인 인터뷰를 추가하지 않는다**
 - 예산이 소진되면 추가 확인 대신 `미정 — [이유]` 로 남긴다
 
@@ -161,7 +161,7 @@ harness-bootstrap 스킬
         │
         ├─ Step 1~4: 코드 스캔 + 최소 인터뷰
         │
-        ├─ Step 5: design-doc OUTPUT_V2 산출
+        ├─ Step 5: design-doc PROJECT_DESIGN 산출
         │            ├── 단일 앱: {project}/.ai-docs/context-base/DESIGN.md
         │            └── 복수 앱: {project}/.ai-docs/{앱}/context-base/DESIGN.md
         │
@@ -171,7 +171,7 @@ harness-bootstrap 스킬
 ```
 
 이후 작업은 정규 플로우를 따른다.
-- 설계 변경 시 → `design-doc`로 OUTPUT 갱신 후 → `context-doc`로 하네스 갱신
+- 설계 변경 시 → `design-doc`로 PROJECT_DESIGN 갱신 후 → `context-doc`로 하네스 갱신
 - 문서-코드 괴리 검증 → `doc-audit`
 - 구현 지침이 필요하면 → `impl-fe-be-doc` / `impl-doc`
 - 구현 직전 공통 자산 확인 → `impl-reuse-scan` (재사용 불가 판정 포함 필수 preflight)
@@ -319,47 +319,47 @@ copy는 읽기 전용 report만 반환한다.
 
 ---
 
-### Step 3 — 최소 인터뷰 (최대 2회)
+### Step 3 — 최소 인터뷰 (최대 3회)
 
 `prompts/interview.md`를 이 단계의 **단일 상세 계약**으로 사용한다. 질문 문구,
-질문 2를 사용할 조건, 한 번만 허용하는 재질문, 묻지 않을 항목, 답변 거부·
+질문 2·3을 사용할 조건, 한 번만 허용하는 재질문, 묻지 않을 항목, 답변 거부·
 `모름` 처리 규칙은 그 파일을 따른다. 이 본문이나 다른 prompt에 별도 인터뷰
 질문을 중복 정의하지 않는다.
 
 오케스트레이션 상의 불변조건은 다음뿐이다.
 
-- 코드에서 알 수 없는 도메인 목적·사용자와 필요한 경우의 상위 운영 제약만 묻는다.
-- 최대 2회이며 질문 예산이 소진되면 `미정 — [이유]`로 진행한다.
+- 코드에서 알 수 없는 앱의 대분류, 기술 스택 기반 아키텍처 선택과 배포 환경만 묻는다.
+- 최대 3회이며 아키텍처는 권장안·대안과 패키지·파일 구조 예시를 먼저 보여준다.
+- 배포 환경을 모르면 `DESIGN.md`의 해당 본문을 비운다.
 - Step 6의 자식 workflow는 새 인터뷰를 추가하지 않는다.
 
 ---
 
-### Step 4 — OUTPUT_V2 섹션 매핑
+### Step 4 — PROJECT_DESIGN 섹션 매핑
 
-`prompts/extraction-mapping.md` 기준으로 Step 2 인벤토리 + Step 3 인터뷰 답변을
-`design-doc`의 `OUTPUT_V2.md` 섹션에 매핑한다.
+`prompts/project-extraction-mapping.md` 기준으로 Step 2 인벤토리 + Step 3 인터뷰 답변을
+`design-doc`의 프로젝트 전체 공개 산출물 계약에 매핑한다.
 
-| OUTPUT_V2 섹션 | 채우는 소스 |
-|----------------|------------|
+| PROJECT_DESIGN 섹션 | 채우는 소스 |
+|------------------------|------------|
 | 01 개요 | 인터뷰 + 매니페스트 프로젝트명·버전 |
-| 02 동작 흐름 | 엔트리포인트 → 라우터/핸들러 체인 역추적 |
-| 03 집중 로직 | 엔트리포인트 주변 핵심 모듈 분석 |
-| 04 인터페이스 | 추출된 API/WebSocket 목록 |
-| 05 데이터 | ORM 모델 / 스키마 파일 |
-| 06 파일 구성 | 디렉토리 트리 |
-| 07 라이브러리 | 매니페스트 의존성 |
-| 10 주의사항 | 위험한 환경 분기·Dockerfile·README 패턴 |
-| 11 부가 정보 | 실행 스크립트·배포 힌트·환경 변수·DB/외부 구성 |
-| 12 열린 결정 | 코드에서 TODO/FIXME/주석 추출 |
+| 02 구축 대상 기능 분류 | 페이지·라우트·모듈·엔드포인트의 상위 책임 그룹 |
+| 03 기술 스택 | 매니페스트 의존성·런타임 |
+| 04 아키텍처 | 관찰된 구조 + 기술 스택 기반 후보와 사용자 선택 |
+| 05 애플리케이션 특이사항 | 외부 연동·환경 분기·고유 데이터·운영 제약 |
+| 06 배포 환경 | 실행 스크립트·컨테이너·CI와 사용자 답변 |
+| 07 VSCode 익스텐션 추천 | 기술 스택과 파일 형식 기반 자동 추천 |
 
 코드에서 역추출한 정보는 **관찰 기반**이므로, 설계 의도를 추측하지 않는다.
 "현재 코드는 이렇게 구성돼 있다"로만 서술한다.
+최종 `DESIGN.md`에는 현재 코드·설정과 이번 사용자 확인으로 유효한 사실만 남긴다.
+변경 전 값, 제거·이동·이름 변경 기록과 과거 대안은 본문에 넣지 않는다.
 
 ---
 
 ### Step 5 — design-doc OUTPUT 초안 생성 및 확인
 
-공개 스킬 이름 `design-doc`으로 handoff하여 OUTPUT_V2 설계 문서 초안을
+공개 스킬 이름 `design-doc`으로 handoff하여 PROJECT_DESIGN 설계 문서 초안을
 생성한다. 다른 스킬의 `templates/**` 경로나 구현 파일을 직접 읽지 않는다.
 
 handoff 입력에는 Step 2 인벤토리, Step 3 답변, Step 4 매핑 결과와 다음 실행
@@ -372,7 +372,7 @@ suppress_child_handoff = true
 confirmed_scope = {Step 0-B에서 승인받은 범위 객체}
 ```
 
-이 handoff에서는 준비된 관찰·답변을 입력으로 사용하고 추가 인터뷰나 자식
+이 handoff에서는 준비된 관찰·답변과 사용자가 선택한 아키텍처를 입력으로 사용하고 추가 인터뷰나 자식
 `humanize-korean` 후처리를 요청하지 않는다.
 
 권한 정책이 활성화돼 있으면 대상 `DESIGN.md`에 `pm-pl` 또는 해당 앱
@@ -380,8 +380,9 @@ confirmed_scope = {Step 0-B에서 승인받은 범위 객체}
 않으며, guard의 `decision=confirm`은 Step 7의 별도 앱 문서 승인으로 넘긴다.
 
 - 작성 지침(주석)은 제거한 상태로 출력
-- 해당하지 않는 스케일 섹션은 삭제
-- 불명확한 항목은 `미정 — [이유]` 로 표시
+- 고정된 01~07 목차를 유지하고 `주의사항` 제목은 생성하지 않음
+- 불명확한 배포 환경은 제목만 남기고 본문을 비움
+- 변경 이력 없이 현재 기준 사실만 기록
 - 사용자가 별도 중단을 요청하지 않으면, **설계 초안 확인 후 바로 Step 6으로 연속 진행**한다.
 - 설계 초안 단계의 확인은 **수정 포인트 수집용**이며, 최종 저장 승인은 Step 7에서 1회만 받는다.
 
@@ -395,7 +396,8 @@ confirmed_scope = {Step 0-B에서 승인받은 범위 객체}
 
 ### Step 6 — context-doc 파이프라인 실행
 
-Step 5 OUTPUT을 입력으로 삼아 공개 스킬 이름 `context-doc`으로 handoff한다.
+Step 5 OUTPUT과 Step 2의 관찰 기반 코드 인벤토리를 입력으로 삼아 공개 스킬 이름
+`context-doc`으로 handoff한다.
 다른 스킬의 `prompts/**` 또는 `templates/**` 내부 경로를 직접 참조하지 않는다.
 
 handoff에는 다음 실행 컨텍스트를 전달한다.
@@ -463,7 +465,8 @@ proposal만 기록하고 G12 승인 전 canonical artifact를 만들지 않는�
 > **앱 설계·컨텍스트 문서 쓰기 확인**
 >
 > - 대상 앱과 정확한 파일 전체
-> - `DESIGN.md`: 요구사항, 범위, 아키텍처, 데이터와 인수 기준을 정하는 설계 기준
+> - `DESIGN.md`: 앱 개요, 상위 기능 분류, 기술 스택, 아키텍처와 앱 고유 운영 맥락을
+>   공유하는 설계 기준. 기능 분류는 상세 문서나 구현의 허용 목록이 아님
 > - `*-context.md`: 앱의 설계 원칙, 기술 스택, 아키텍처, 실행 방법과 지침 인덱스
 > - 각 `*-instruction.md`: 파일명별 주제 규칙
 > - `artifact-output-routing-instruction.md`: 산출물 위치·소유자·승인·인계 정본

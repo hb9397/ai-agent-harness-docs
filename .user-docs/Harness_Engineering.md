@@ -247,9 +247,12 @@ flowchart TD
 #### 신규·요구사항 기반
 
 1. 권한 정책이 활성화돼 있으면 현재 PC의 로컬 등록과 Git 계정을 확인하고, `pm-pl`인지 대상 앱의 `app-doc-lead`인지 판정한다. `admin` 역할만으로는 앱 문서를 쓸 수 없다.
-2. 요구사항, RFP, 관련 코드, 금지 범위를 `design-doc`에 제공한다.
-3. 인터뷰로 모호한 요구사항과 의사결정을 정리한다.
-4. OUTPUT_V2 설계 초안을 검토한다.
+2. 프로젝트 전체 설계라면 앱의 대분류, 관련 코드와 기존 문서를 `design-doc`에 제공한다.
+3. 앱 개요와 구축 대상 기능은 대분류 수준으로 두고, 기술 스택을 근거로 제안된
+   아키텍처 패턴과 패키지·파일 구조 예시를 검토해 선택한다.
+4. 고정 목차의 PROJECT_DESIGN 초안을 검토한다. 화면·기능·컴포넌트 상세 설계는
+   기존 OUTPUT_V2를 사용하며, 상위 기능 분류에 없는 항목도 작성할 수 있다.
+   PROJECT_DESIGN 본문은 변경 이력을 누적하지 않고 현재 기준 사실만 유지한다.
 5. 후속 workflow에서 쓸 경우 저장을 승인한다.
 6. 저장된 설계를 같은 역할·앱 범위에서 `context-doc`에 입력한다.
 7. `AGENTS.md`, `CLAUDE.md`, 필요한 instruction 파일을 검토하고 저장한다.
@@ -267,7 +270,7 @@ flowchart TD
 harness-setup 골격 확인
 → repository·stack·구조 스캔
 → 관찰과 사용자 답변 구분
-→ design-doc OUTPUT_V2 초안
+→ design-doc PROJECT_DESIGN 초안
 → context-doc 산출물
 → 일괄 미리보기·승인
 → 저장·구조 검증
@@ -430,7 +433,7 @@ impl-verify
 | 설치·기반 | `harness-bootstrap` | 기존 코드에서 설계·컨텍스트 역추출 |
 | 설치·기반 | `git-scoped-account` | 단일·복수 repo의 작성자와 provider 계정을 프로젝트 범위 및 PC별 권한 가드에 연결 |
 | 권한 | `project-write-access` | 문서 경로를 상속 없는 `admin`·`pm-pl`·앱별 `app-doc-lead`·`developer` 역할과 세 제어 계층에 연결 |
-| 설계 | `design-doc` | 요구사항·아이디어·RFP 입력을 OUTPUT_V2 설계로 변환 |
+| 설계 | `design-doc` | 프로젝트 전체는 확장 가능한 PROJECT_DESIGN 기준 문서로, 상세 단위는 OUTPUT_V2 설계로 변환 |
 | 컨텍스트 | `context-doc` | 앱 컨텍스트와 주제별 instruction 생성. 루트 지도 변경은 `harness-setup` 후속 작업으로 분리 |
 | UI/UX 설계 | `ui-ux-pro-max` | 제품 유형·스타일·색·타이포그래피·레이아웃·접근성 결정 |
 | 모션 설계 | `motion-design` | 모션 목적·타이밍·이징·안무·접근성·성능 결정 |

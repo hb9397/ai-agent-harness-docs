@@ -9,20 +9,20 @@
     },
     {
       "id": 2,
-      "prompt": "harness-bootstrap 스킬로 매니페스트는 있지만 엔트리포인트 파일명이 관례를 따르지 않는 프로젝트를 문서화해줘.",
-      "expected_output": "실행 스크립트와 Docker CMD를 기반으로 엔트리포인트 후보를 수집한다. 동작 흐름은 최대 3 hop까지만 추적하고, 정적 추적 한계는 미정으로 명시한다.",
+      "prompt": "harness-bootstrap 스킬로 Spring Boot 프로젝트를 분석해서 하네스를 부팅해줘.",
+      "expected_output": "매니페스트와 현재 패키지 구조를 근거로 적용 가능한 아키텍처 권장안과 대안을 먼저 제시한다. 각 후보의 패키지·파일 구조 예시를 보여준 뒤 사용자에게 선택받고, 선택 전에는 추천안을 확정 구조로 기록하지 않는다.",
       "files": []
     },
     {
       "id": 3,
-      "prompt": "harness-bootstrap 스킬 실행 중 질문 1에 사용자가 '모르겠음'이라고 답한 상황에서 계속 진행해줘.",
-      "expected_output": "도메인 목적은 `미정 — 사용자 미제공`으로 남기고 추가 도메인 인터뷰를 무한정 이어가지 않는다. 권한 정책이 활성화된 경우 앱 핵심 문서 쓰기 승인은 인터뷰 예산과 별도로 수행한다.",
+      "prompt": "harness-bootstrap 스킬 실행 중 배포 환경 질문에 사용자가 '모르겠음'이라고 답한 상황에서 계속 진행해줘.",
+      "expected_output": "PROJECT_DESIGN의 배포 환경 제목은 유지하되 확인되지 않은 본문은 비워 둔다. 배포 방식을 추측하거나 반복해서 묻지 않으며, 권한 정책이 활성화된 경우 앱 핵심 문서 쓰기 승인은 인터뷰 예산과 별도로 수행한다.",
       "files": []
     },
     {
       "id": 4,
       "prompt": "AI 문서가 전혀 없는 기존 프로젝트에서 harness-bootstrap을 실행해줘.",
-      "expected_output": "확정한 프로젝트 유형과 적용 경로를 공개 harness-setup workflow에 전달해 .ai-docs와 AGENTS.md/CLAUDE.md 골격을 먼저 만든다. 권한 정책이 있으면 admin 하네스 단계와 pm-pl/app-doc-lead 앱 문서 단계를 분리하며 역할을 상속하지 않는다. 사용자 프로젝트에 .agents/skills, .claude/skills, skills를 생성하지 않는다.",
+      "expected_output": "확정한 프로젝트 유형과 적용 경로를 공개 harness-setup workflow에 전달해 .ai-docs와 AGENTS.md/CLAUDE.md 골격을 먼저 만든다. 앱 설계는 PROJECT_DESIGN의 개요·구축 대상 기능 분류·기술 스택·아키텍처·애플리케이션 특이사항·배포 환경·VSCode 추천 목차로 만들고 변경 이력 없이 현재 기준 사실만 남긴다. 권한 정책이 있으면 admin 하네스 단계와 pm-pl/app-doc-lead 앱 문서 단계를 분리하며 역할을 상속하지 않는다. 사용자 프로젝트에 .agents/skills, .claude/skills, skills를 생성하지 않는다.",
       "files": []
     },
     {
