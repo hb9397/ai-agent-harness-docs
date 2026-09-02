@@ -255,7 +255,8 @@ flowchart TD
    PROJECT_DESIGN 본문은 변경 이력을 누적하지 않고 현재 기준 사실만 유지한다.
 5. 후속 workflow에서 쓸 경우 저장을 승인한다.
 6. 저장된 설계를 같은 역할·앱 범위에서 `context-doc`에 입력한다.
-7. `AGENTS.md`, `CLAUDE.md`, 필요한 instruction 파일을 검토하고 저장한다.
+7. `{앱}-context.md`와 필요한 instruction 파일을 검토하고 저장한다. 루트 `AGENTS.md`와
+   `CLAUDE.md` 갱신이 필요하면 `harness-setup` 후속 작업으로 분리한다.
 
 `design-doc`의 기본 저장 경로:
 
@@ -281,13 +282,13 @@ harness-setup 골격 확인
 
 #### 컨텍스트 문서
 
-단일 앱에서 `context-doc`은 설계 내용을 다음처럼 분리한다.
+`context-doc`은 앱별 `DESIGN.md`와 현재 코드·설정·Git 정보를 다음처럼 분리한다.
 
 | 내용 | 생성 대상 |
 |------|-----------|
-| 프로젝트 팩트, 디렉터리 인덱스, 실행 방법, 환경 변수 | `AGENTS.md` |
-| Claude 진입점 | `CLAUDE.md`의 `@AGENTS.md` bridge |
+| DESIGN 참조·요약, 프로젝트 개요, 기술 스택, 아키텍처, 실행 프로필, Git, 배포, 계층형 앱 특이사항, 환경 변수, AI 구현 지침 인덱스, 구축 대상 기능 분류 | `.ai-docs/{앱}-context.md` |
 | 모듈·레이어·의존성 | `architecture-instruction.md` |
+| 앱 고유 용어·식별자·코드 표준 | `data-standard-instruction.md` |
 | 네이밍·예외·주석 | `code-style-instruction.md` |
 | 프레임워크·라이브러리 규칙 | `framework-instruction.md` |
 | API 규약 | `api-instruction.md` |
@@ -295,10 +296,24 @@ harness-setup 골격 확인
 | 파일 위치·네이밍 | `file-convention-instruction.md` |
 | 에이전트 전용 행동 규칙 | `agent-instruction.md` |
 
-설계에 근거가 없는 주제 문서를 억지로 만들지 않는다.
-`agent-instruction.md`는 항상 생성한다.
+최초 생성에서는 참조 앱에서 반복적으로 쓰인 `architecture`, `data-standard`,
+`code-style`, `framework`, `file-convention` instruction을 제목과 보편 목적만 있는
+골격으로 준비한다. HTTP API와 비-HTTP 통신 파일은 기술의 존재가 아니라 독립해서
+반복 적용할 현재 규칙이 확인될 때만 같은 형식으로 만든다. `agent-instruction.md`와
+`artifact-output-routing-instruction.md`는 항상 생성한다.
+앱 컨텍스트 제목 아래에는 대응 DESIGN의 `@` 참조와 링크, 두 문서의 양방향 최신화
+원칙을 적는다. 최상단과 9번 항목에는 루트 컨텍스트 → 앱 컨텍스트 → AI가 판단한 작업
+관련 instruction의 필독 순서를 둔다. 7번 애플리케이션 특이사항은 핵심 도메인 개념을
+포함한 계층형 하위 노드로 구성하고, 명명·약어·식별자 표현·코드값 규범은
+`data-standard-instruction.md`로 분리한다. 10번 기능 분류는 DESIGN.md 02와 같은 노드명·
+순서·부모-자식 관계·Depth를 유지하며 현재 구현 위치를 연결한다. 본문에는 변경 이력을
+쌓지 않고 현재 유효한 사실만 남긴다. 최초 목적 골격은 프로젝트 규칙의 근거로 사용하지
+않으며, 이후 현재 근거가 확인되면 본문을 갱신한다. 재실행에서 더 이상 적용할 이유가
+없는 선택 instruction은 삭제 후보와 근거를 먼저 보여주고 승인 후 파일과 9번 인덱스
+행을 함께 제거한다. 남은 instruction에도 과거 규칙이나 삭제 이력을 기록하지 않는다.
 
-복수 앱에서는 프로젝트 팩트를 `.ai-docs/{앱}-context.md`, 세부 규칙을 `.ai-docs/{앱}/instruction/*-instruction.md`에 저장한다.
+단일 앱은 instruction을 `.ai-docs/instruction/`, 복수 앱은 `.ai-docs/{앱}/instruction/`에
+저장한다. 두 유형 모두 앱 컨텍스트는 `.ai-docs/{앱}-context.md`에 저장한다.
 루트 폴더는 보통 git으로 관리하지 않으므로 `.ai-docs/root-context/AGENTS.md`가 루트 정본 내용을 형상관리하는 실제 원본이며, `.ai-docs/root-context/CLAUDE.md`는 그 bridge의 형상관리 사본이다. 루트 실행용 `AGENTS.md`와 `CLAUDE.md`의 최종 갱신은 `harness-setup` 계약이 담당한다.
 
 #### 화면을 먼저 검증할 때

@@ -171,14 +171,15 @@ exam/                                          ← 컨테이너 폴더.
      │   └── access-control/                      [선택] 서명된 쓰기 권한 정책·계정 연결·Git 훅 원본
      │
      ├── fe-exam-portal-context.md              ← [PM·PL/앱 문서 책임자] 프론트엔드 앱 고정 컨텍스트.
-     │                                            개요·기술 스택·트리·도메인·실행 방법·환경 변수·주의사항 + 지침 인덱스.
+     │                                            DESIGN 링크·개요·기술 스택·아키텍처·실행 프로필·Git·배포·계층형 앱 특이사항·환경 변수·AI 지침·기능 분류 추적.
      ├── fe-exam-portal/
      │   ├── context-base/
      │   │   └── DESIGN.md                      ← [PM·PL/앱 문서 책임자] design-doc 산출물.
      │   │                                        앱 전체 설계 맥락.
      │   ├── instruction/                       ← [PM·PL/앱 문서 책임자] 에이전트가 매 작업마다 따르는 규칙.
      │   │   │                                    [항상]은 무조건 생성된다.
-     │   │   │                                    [조건]은 설계 문서에 그 주제가 있을 때만.
+     │   │   │                                    [초기] 목적 골격, [조건] 독립 규칙 확인 시,
+     │   │   │                                    이후 불필요한 선택 파일은 승인 후 제거.
      │   │   │                                    [추가]는 팀이 요청해서 만든 주제다.
      │   │   ├── agent-instruction.md             [항상] AI 동작 규칙
      │   │   ├── artifact-output-routing-instruction.md  [항상] 산출물 위치·소유권·인계
@@ -188,7 +189,7 @@ exam/                                          ← 컨테이너 폴더.
      │   │   ├── api-instruction.md               [조건] API 호출·응답 규약
      │   │   ├── comm-instruction.md              [조건] WebSocket·메시지큐 등 통신 규약
      │   │   ├── file-convention-instruction.md   [조건] 파일 위치·네이밍 규칙
-     │   │   └── data-standard-instruction.md     [추가] 용어·도메인·코드 표준
+     │   │   └── data-standard-instruction.md     [조건] 용어·식별자·코드 표준
      │   └── impl-doc/                          ← [공통] 사용자별로 폴더가 갈린다.
      │       └── {사용자}/
      │           ├── 260629-0.fe-exam-portal-roadmap-impl-index.md   ← 로드맵 인덱스 (디렉토리당 1개)
@@ -196,7 +197,7 @@ exam/                                          ← 컨테이너 폴더.
      │           └── 260711-1.search-filter-impl-pair.md
      │
      ├── fe-exam-mobile-context.md              ← [PM·PL/앱 문서 책임자] 모바일 앱 고정 컨텍스트.
-     │                                            개요·기술 스택·트리·도메인·실행 방법·환경 변수·주의사항 + 지침 인덱스.
+     │                                            DESIGN 링크·개요·기술 스택·아키텍처·실행 프로필·Git·배포·계층형 앱 특이사항·환경 변수·AI 지침·기능 분류 추적.
      ├── fe-exam-mobile/
      │   ├── context-base/
      │   │   └── DESIGN.md                      ← [PM·PL/앱 문서 책임자] design-doc 산출물.
@@ -215,7 +216,7 @@ exam/                                          ← 컨테이너 폴더.
      │           └── 260702-1.push-login-impl-ui.md                  ← 기능별 구현 계획
      │
      ├── be-exam-portal-context.md              ← [PM·PL/앱 문서 책임자] 포털 백엔드 앱 고정 컨텍스트.
-     │                                            개요·기술 스택·트리·도메인·실행 방법·환경 변수·주의사항 + 지침 인덱스.
+     │                                            DESIGN 링크·개요·기술 스택·아키텍처·실행 프로필·Git·배포·계층형 앱 특이사항·환경 변수·AI 지침·기능 분류 추적.
      ├── be-exam-portal/
      │   ├── context-base/
      │   │   └── DESIGN.md                      ← [PM·PL/앱 문서 책임자] design-doc 산출물.
@@ -228,7 +229,7 @@ exam/                                          ← 컨테이너 폴더.
      │   │   ├── api-instruction.md               [조건] 엔드포인트·요청/응답 스키마
      │   │   ├── framework-instruction.md         [조건] 프레임워크 사용 규칙·금지 패턴
      │   │   ├── egov-springboot-instruction.md   [추가] 표준프레임워크 적용 규칙
-     │   │   └── data-standard-instruction.md     [추가] 용어·도메인·코드 표준
+     │   │   └── data-standard-instruction.md     [조건] 용어·식별자·코드 표준
      │   └── impl-doc/                          ← [공통]
      │       └── {사용자}/
      │           ├── 260701-0.be-exam-portal-roadmap-impl-index.md   ← 로드맵 인덱스
@@ -236,7 +237,7 @@ exam/                                          ← 컨테이너 폴더.
      │           └── 260705-1.board-crud-impl-api.md
      │
      ├── be-exam-collector-context.md           ← [PM·PL/앱 문서 책임자] 수집 배치 앱 고정 컨텍스트.
-     │                                            개요·기술 스택·트리·도메인·실행 방법·환경 변수·주의사항 + 지침 인덱스.
+     │                                            DESIGN 링크·개요·기술 스택·아키텍처·실행 프로필·Git·배포·계층형 앱 특이사항·환경 변수·AI 지침·기능 분류 추적.
      ├── be-exam-collector/
      │   ├── context-base/
      │   │   └── DESIGN.md                      ← [PM·PL/앱 문서 책임자] design-doc 산출물.
@@ -248,7 +249,7 @@ exam/                                          ← 컨테이너 폴더.
      │   │   ├── code-style-instruction.md        [조건] 네이밍·예외 처리·주석 스타일
      │   │   ├── framework-instruction.md         [조건] 스케줄러·HTTP 클라이언트 사용 규칙
      │   │   ├── file-convention-instruction.md   [조건] 파일 위치·네이밍 규칙
-     │   │   └── data-standard-instruction.md     [추가] 용어·도메인·코드 표준
+     │   │   └── data-standard-instruction.md     [조건] 용어·식별자·코드 표준
      │   └── impl-doc/                          ← [공통]
      │       └── {사용자}/
      │           ├── 260629-0.be-exam-collector-roadmap-impl-index.md ← 로드맵 인덱스
@@ -324,7 +325,7 @@ exam/                                          ← 컨테이너 폴더.
 
 [작업 대상 앱을 정한 뒤 — 필요할 때 읽음]
   .ai-docs/{앱}-context.md
-      └─ 문서 끝의 "코딩 지침 (Instruction Index)"에서 @ 참조를 따라 읽는다.
+      └─ 문서 끝의 "AI 구현 지침"에서 작업과 관련된 지침을 판단하고 반드시 읽는다.
          .ai-docs/{앱}/instruction/architecture-instruction.md
          .ai-docs/{앱}/instruction/framework-instruction.md
          .ai-docs/{앱}/instruction/api-instruction.md
@@ -617,10 +618,16 @@ cd .ai-docs && git init && git add -A && git commit -m "init: 프로젝트 AI �
 
 ## 6. `context-doc`이 만드는 컨텍스트와 지침
 
-- `context-doc`은 앱별 `DESIGN.md`에서 에이전트가 반복해서 읽어야 할 사실과 규칙을 분리한다.
+- `context-doc`은 앱별 `DESIGN.md`와 현재 코드·설정·Git 정보에서 에이전트가 반복해서
+  읽어야 할 상세 사실과 규칙을 분리한다.
 
     - 결과물은 **애플리케이션 컨텍스트**와 주제별 instruction이다.
-    - 애플리케이션 컨텍스트에는 업무·도메인 맥락, 설계 원칙, 아키텍처 개요, 기술 스택, 실행 방법과 반복 적용 규칙이 들어간다.
+    - 애플리케이션 컨텍스트에는 DESIGN 참조·요약, 프로젝트 개요, 기술 스택, 아키텍처,
+      실행 프로필, Git, 배포, 계층형 앱 특이사항, 환경 변수, AI 구현 지침 인덱스와
+      DESIGN 02의 구축 대상 기능 분류 추적 뷰가 들어간다.
+    - 핵심 도메인 개념은 7번 애플리케이션 특이사항의 하위 노드에 둔다.
+    - 제목 아래에는 DESIGN과의 양방향 최신화 원칙, 최상단에는 루트 컨텍스트 → 앱
+      컨텍스트 → 작업 관련 instruction의 필독 순서를 둔다.
     - 문서 위치와 읽는 순서만 안내하는 하네스 루트 컨텍스트와는 역할이 다르다.
 
 - 권한 정책이 활성화되면 `design-doc`과 같은 역할 범위로 실행한다.
@@ -637,7 +644,7 @@ cd .ai-docs && git init && git add -A && git commit -m "init: 프로젝트 AI �
 
 | 산출물 | 위치 | 역할 |
 |---|---|---|
-| 애플리케이션 컨텍스트 | `.ai-docs/{앱}-context.md` | 해당 앱의 업무·도메인 맥락, 설계 원칙, 아키텍처 개요, 기술 스택, 주요 구조, 실행·검증 방법과 지침 인덱스를 담는다 |
+| 애플리케이션 컨텍스트 | `.ai-docs/{앱}-context.md` | 대응 DESIGN과 양방향 추적하며 개요·기술 스택·아키텍처·실행 프로필·Git·배포·계층형 앱 특이사항·환경 변수·AI 구현 지침·기능 분류 추적을 1~10 목차로 담는다 |
 | 앱별 지침 | `.ai-docs/{앱}/instruction/*-instruction.md` | 아키텍처·API·프레임워크처럼 작업 중 필요한 규칙을 주제별로 분리한다 |
 
 - 두 컨텍스트는 이름은 비슷하지만 답하는 질문이 다르다.
@@ -652,10 +659,10 @@ cd .ai-docs && git init && git add -A && git commit -m "init: 프로젝트 AI �
     - 하네스 세팅 관리자가 관리하는 탐색 지도다.
     - `.ai-docs/root-context/AGENTS.md`와 `CLAUDE.md`는 `harness-setup`이 생성·갱신한다.
 
-- 애플리케이션 컨텍스트는 앱의 고정 사실과 지침 위치를 알려주는 얇은 문서로 유지한다.
+- 애플리케이션 컨텍스트는 앱 구현에 필요한 현재 상세 사실과 지침 위치를 제공한다.
 
     - 단순한 경로 목록으로 축소하지 않는다.
-    - 앱의 설계·기술 맥락을 이해하는 데 필요한 핵심 내용은 담는다.
+    - 앱의 설계·기술·실행·배포 맥락을 이해하는 데 필요한 상세 현재 사실을 담는다.
     - 세부 규칙만 instruction으로 분리한다.
     - 에이전트가 작업과 무관한 규칙까지 매번 읽는 일과 같은 규칙의 중복을 줄인다.
 
@@ -670,13 +677,17 @@ cd .ai-docs && git init && git add -A && git commit -m "init: 프로젝트 AI �
 
 - `agent-instruction.md`와 `artifact-output-routing-instruction.md`는 모든 앱에 필요하다.
 
-    - 나머지 파일은 설계 문서에 해당 규칙이 있을 때만 만든다.
+    - 최초에는 `architecture`, `data-standard`, `code-style`, `framework`,
+      `file-convention`을 제목과 보편 목적만 있는 골격으로 함께 만든다.
+    - `api`와 `comm`은 기술의 존재가 아니라 독립해서 반복 적용할 현재 규칙이 확인될
+      때만 같은 형식으로 만든다.
 
 | 파일 | 담는 내용 |
 |---|---|
 | `agent-instruction.md` | AI가 사람과 다르게 처리해야 할 행동 규칙 |
 | `artifact-output-routing-instruction.md` | 산출물의 위치·소유권·승인·인계 기준 |
 | `architecture-instruction.md` | 모듈·레이어 경계와 의존성 방향 |
+| `data-standard-instruction.md` | 앱 고유 용어·식별자·코드 표준 |
 | `code-style-instruction.md` | 네이밍·예외 처리·주석 스타일 |
 | `framework-instruction.md` | 라이브러리 사용 규칙과 금지 패턴 |
 | `api-instruction.md` | API 엔드포인트와 요청·응답 규약 |
@@ -685,8 +696,12 @@ cd .ai-docs && git init && git add -A && git commit -m "init: 프로젝트 AI �
 
 - 팀 고유의 데이터 표준, 보안 규약, 전자정부 프레임워크 규칙도 같은 방식으로 분리할 수 있다.
 
-    - 규칙의 근거는 `DESIGN.md`나 팀 표준 문서에 있어야 한다.
-    - 근거가 없는 빈 instruction이나 추측으로 만든 규칙은 남기지 않는다.
+    - 최초 목적 골격은 현재 프로젝트 규칙으로 사용하지 않는다.
+    - 이후 규칙의 근거는 현재 `DESIGN.md`, 코드·설정이나 승인된 팀 표준에 있어야 한다.
+    - 재실행에서 근거와 읽을 조건이 사라진 선택 instruction은 삭제 후보로 보여주고,
+      승인 후 파일과 앱 컨텍스트 9번 인덱스를 함께 제거한다.
+    - 앱 context와 모든 instruction 본문에는 현재 사실·규칙만 두며 변경 이력과 과거
+      규칙을 남기지 않는다.
 
 ### 6.3 다른 플러그인의 산출물과 연결되는 방식
 
@@ -1150,7 +1165,7 @@ cd .ai-docs && git init && git add -A && git commit -m "init: 프로젝트 AI �
 
 - 판단 필요
 
-    - `context-doc`은 설계 문서에 있는 주제만 문서로 만든다.
+    - `context-doc`은 DESIGN과 현재 앱 자료에서 확인되는 주제만 문서로 만든다.
     - 없는 내용은 `미정`으로 남긴다.
     - `미정`을 무엇으로 채울지는 설계 결정이다.
 

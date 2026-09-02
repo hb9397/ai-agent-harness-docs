@@ -4,6 +4,8 @@
 > artifact routing instruction이다.
 > 단일 앱은 이 파일을 `.ai-docs/instruction/artifact-output-routing-instruction.md`,
 > 복수 앱은 `.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md`에 둔다.
+> 본문은 현재 유효한 routing·소유권·승인·인계 규칙만 유지하며 과거 경로와 변경 이력은
+> 기록하지 않는다.
 
 ## 1. 읽기 규칙과 적용 범위
 

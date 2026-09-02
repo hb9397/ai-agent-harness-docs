@@ -313,6 +313,7 @@ copy는 읽기 전용 report만 반환한다.
 | DB 테이블/모델 | ORM 모델 파일 (`models.py`, `entity/*.ts`, `@Entity` 등) |
 | 환경 변수 | `.env*`, `os.getenv`, `process.env`, `System.getenv` grep |
 | 실행 스크립트 | `scripts` 필드, `Makefile`, `start.sh`, `Dockerfile`, `docker-compose*` |
+| Git remote·branch | 대상 앱 Git 경계의 `.git/config`, `HEAD`, refs·packed-refs |
 | 외부 서비스/라이브러리 | 매니페스트 의존성 분류 |
 
 추출 결과는 **요약 보고서**로 사용자에게 먼저 보여준다. 잘못 읽은 것이 있으면 수정받는다.
@@ -396,8 +397,8 @@ confirmed_scope = {Step 0-B에서 승인받은 범위 객체}
 
 ### Step 6 — context-doc 파이프라인 실행
 
-Step 5 OUTPUT과 Step 2의 관찰 기반 코드 인벤토리를 입력으로 삼아 공개 스킬 이름
-`context-doc`으로 handoff한다.
+Step 5 OUTPUT과 Step 2의 관찰 기반 코드 인벤토리를 입력으로 삼아
+공개 스킬 이름 `context-doc`으로 handoff한다.
 다른 스킬의 `prompts/**` 또는 `templates/**` 내부 경로를 직접 참조하지 않는다.
 
 handoff에는 다음 실행 컨텍스트를 전달한다.
@@ -409,9 +410,18 @@ suppress_child_handoff = true
 confirmed_scope = {Step 0-B에서 승인받은 범위 객체}
 ```
 
-- `.ai-docs/{앱}-context.md`에 들어갈 애플리케이션 팩트 + 지침 인덱스 초안 작성
-- `context-doc`의 공개 workflow로 주제별 instruction 파일 분류
+- `.ai-docs/{앱}-context.md`에 대응 DESIGN.md의 링크·양방향 최신화 계약과
+  1~10 상세 애플리케이션 컨텍스트 + AI 구현 지침 인덱스 초안 작성
+- 7번은 핵심 도메인 개념을 포함한 계층형 앱 특이사항으로 구성하고, 10번은 DESIGN.md
+  02의 노드명·순서·부모-자식 관계·Depth와 현재 구현 연결을 양방향 추적
+- `context-doc`의 공개 workflow로 초기 목적 골격·조건부 확장·항상 유지 instruction을 분류
 - 앱 context + 각 `*-instruction.md` 구조 활용
+- 앱 context와 instruction에는 과거 값·변경 과정 없이 현재 사실·규칙만 남기고,
+  선택 instruction의 현재 필요성이 사라지면 승인된 삭제 후보로 처리
+- 실행 profile과 환경별 branch에 별도 기준이 없으면 `dev/qa/prod`를 기본 기준으로
+  제시하되 실제 존재를 추측하지 않는다.
+- 실행 profile, Git remote·branch, Kubernetes·컨테이너·빌드 결과물, 환경 변수는
+  Step 2의 현재 관찰 근거로 채운다. 4번과 6번에는 DB 준비·migration 명령을 넣지 않는다.
 - `confirmed_scope.instruction_root`에 따라 instruction 배치를 확정하고 같은 배치 질문을
   반복하지 않는다. 현재 구조가 승인값과 달라졌으면 자동 보정하지 않고 Step 0-B로
   돌아가 범위를 다시 확인한다.
@@ -421,7 +431,8 @@ confirmed_scope = {Step 0-B에서 승인받은 범위 객체}
 또한 bootstrap 한계 때문에 아래 오버라이드를 적용한다.
 
 - 코드/README/주석에서 **규범적 이유·대안이 확인된 금지 항목만** 삼위일체로 기록한다.
-- 관찰 사실만 있고 이유·대안이 확정되지 않으면 `미정 — bootstrap 산출물에는 규범 근거 없음`으로 남긴다.
+- 관찰 사실만 있고 이유·대안이 확정되지 않으면 instruction 본문에 넣지 않고 검토
+  화면의 보강 후보로만 표시한다.
 - 이 사유로는 사용자를 다시 인터뷰하지 않는다. 후속 `design-doc` → `context-doc` 보강 대상으로 넘긴다.
 
 ---
@@ -435,18 +446,19 @@ confirmed_scope = {Step 0-B에서 승인받은 범위 객체}
 **단일 애플리케이션:**
 1. `.ai-docs/context-base/DESIGN.md` (또는 사용자 지정 경로)
 2. `.ai-docs/{앱}-context.md`
-3. `.ai-docs/instruction/*-instruction.md` (해당 주제와 항상 생성되는
+3. `.ai-docs/instruction/*-instruction.md` (초기 목적 골격 세트와 항상 생성되는
    `agent-instruction.md`, `@.ai-docs/instruction/artifact-output-routing-instruction.md` 포함)
 
 **복수 애플리케이션:**
 1. `.ai-docs/{앱}/context-base/DESIGN.md`
 2. `.ai-docs/{앱}-context.md`
-3. `.ai-docs/{앱}/instruction/*-instruction.md` (해당 주제와 항상 생성되는
+3. `.ai-docs/{앱}/instruction/*-instruction.md` (초기 목적 골격 세트와 항상 생성되는
    `agent-instruction.md`, `@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md` 포함)
 
-(단, 설계 문서에 해당 주제가 없으면 일반 주제 instruction 파일은 생성하지 않는다.
-`agent-instruction.md`와 `artifact-output-routing-instruction.md`는 각각 AI 동작 규칙과
-산출물 경계의 기본 정본이므로 항상 생성한다.)
+(최초 실행은 architecture·data-standard·code-style·framework·file-convention을
+보편 목적만 설명하는 빈 골격으로 만들고, api·comm은 독립해서 반복 적용할 현재 규칙이
+확인될 때만 같은 형식으로 만든다. `agent-instruction.md`와 `artifact-output-routing-instruction.md`는
+항상 생성한다.)
 
 bootstrap이 `DESIGN.md`와 context 초안을 만든 뒤에는 installer나 host 설정을 복제하지
 않는다. `.ai-docs/harness/artifact-routing.json`이 있으면 이를 읽고, 없으면 공개 스킬 이름
@@ -467,7 +479,8 @@ proposal만 기록하고 G12 승인 전 canonical artifact를 만들지 않는�
 > - 대상 앱과 정확한 파일 전체
 > - `DESIGN.md`: 앱 개요, 상위 기능 분류, 기술 스택, 아키텍처와 앱 고유 운영 맥락을
 >   공유하는 설계 기준. 기능 분류는 상세 문서나 구현의 허용 목록이 아님
-> - `*-context.md`: 앱의 설계 원칙, 기술 스택, 아키텍처, 실행 방법과 지침 인덱스
+> - `*-context.md`: 대응 DESIGN.md와 양방향 추적하는 앱의 개요·기술 스택·아키텍처·
+>   실행 profile·Git·배포·앱 특이사항·환경 변수와 AI 구현 지침 인덱스
 > - 각 `*-instruction.md`: 파일명별 주제 규칙
 > - `artifact-output-routing-instruction.md`: 산출물 위치·소유자·승인·인계 정본
 > - 현재 `pm-pl` 또는 `app-doc-lead` 역할과 앱 범위

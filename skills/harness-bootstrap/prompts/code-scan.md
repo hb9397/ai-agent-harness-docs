@@ -84,13 +84,21 @@ grep 키워드: `websocket`, `WebSocket`, `\.on\(['\"]message`, `@WebSocketGatew
 - `Dockerfile`, `docker-compose*`, `Containerfile`, `podman-compose*`
 - CI 파일 (`.github/workflows/*`, `.gitlab-ci.yml`) — 빌드·테스트 명령만 참고
 
-### 8. 외부 서비스/라이브러리
+### 8. Git 원격 저장소·브랜치
+
+- 대상 앱의 Git 경계를 확정하고 `.git`이 디렉토리인지 worktree 포인터 파일인지 확인
+- `.git/config`에서 remote 이름과 URL을 읽고 사용자정보·token·credential·민감 query 제거
+- `HEAD`, `refs/heads`, `refs/remotes`, `packed-refs`에서 현재·로컬·원격 추적 branch 확인
+- 사용자나 저장소가 환경별 branch를 지정하지 않았으면 context-doc에 `dev/qa/prod`
+  기본 기준을 전달하되 실제 원격 존재가 확인되지 않은 branch를 존재한다고 표현하지 않음
+
+### 9. 외부 서비스/라이브러리
 
 - 매니페스트에서 의존성 목록 추출
 - 카테고리 분류 후보: HTTP 서버, DB 드라이버, ORM, 캐시, 큐, AI/LLM, 테스트, 빌드 도구, 모니터링
 - 카테고리 불명은 `기타`로 묶는다
 
-### 9. TODO/FIXME/NOTE 주석
+### 10. TODO/FIXME/NOTE 주석
 
 - grep: `TODO`, `FIXME`, `XXX`, `HACK`, `NOTE`
 - OUTPUT_V2의 **12 열린 결정 사항** 섹션 후보로 사용
@@ -135,6 +143,7 @@ grep 키워드: `websocket`, `WebSocket`, `\.on\(['\"]message`, `@WebSocketGatew
 - WebSocket: [있음/없음]
 - DB: [ORM / 테이블 수]
 - 환경 변수: [N개 발견]
+- Git remote/현재 branch: [확인 결과]
 
 확인 필요:
 - [불명확한 항목 리스트]

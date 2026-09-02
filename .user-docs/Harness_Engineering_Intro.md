@@ -117,7 +117,7 @@ flowchart LR
 
 ### 3.2 고정 맥락은 얇고 연결 가능해야 한다
 
-단일 앱의 루트 `AGENTS.md`에는 프로젝트 팩트, 실행 방법, 중요한 규칙과 문서 인덱스를 둔다. 복수 앱은 `.ai-docs/root-context/AGENTS.md`를 형상관리 갱신 기준으로 두고 루트 `AGENTS.md`를 실행용으로 갱신한다. 상세 규칙은 `.ai-docs/**/instruction/`으로 분리한다. `CLAUDE.md`는 별도의 정본이 아니라 `@AGENTS.md`를 읽게 하는 bridge다.
+루트 `AGENTS.md`는 프로젝트·앱 경계와 문서 읽기 순서를 안내하는 지도로 유지한다. 복수 앱은 `.ai-docs/root-context/AGENTS.md`를 형상관리 갱신 기준으로 두고 루트 `AGENTS.md`를 실행용으로 갱신한다. 앱의 상세 현재 사실은 DESIGN과 양방향 추적하는 `.ai-docs/{앱}-context.md`, 세부 규칙은 `.ai-docs/**/instruction/`으로 분리한다. `CLAUDE.md`는 별도의 정본이 아니라 `@AGENTS.md`를 읽게 하는 bridge다.
 
 ### 3.3 구현은 작은 단위로 쪼갠다
 
@@ -161,7 +161,7 @@ AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 
 | 스킬 | 역할 | 언제 쓰는가 |
 |------|------|-------------|
 | `design-doc` | 프로젝트 전체는 확장 가능한 앱 기준 문서로, 상세 단위는 구조화한 설계로 변환 | 신규 프로젝트·기능 설계. 기술 스택 기반 아키텍처 후보와 구조 예시를 확인하며, 권한 정책이 있으면 허용된 역할·앱 범위에서 실행 |
-| `context-doc` | 설계를 앱 컨텍스트와 주제별 instruction으로 변환 | 에이전트가 계속 읽을 기준이 필요할 때. 권한 정책이 있으면 `design-doc`과 같은 범위에서 실행하며 루트 지도 변경은 `harness-setup` 후속 작업으로 남김 |
+| `context-doc` | DESIGN과 현재 앱 자료를 1~10 상세 컨텍스트와 주제별 instruction으로 변환 | 에이전트가 계속 읽을 기준이 필요할 때. 권한 정책이 있으면 `design-doc`과 같은 범위에서 실행하며 루트 지도 변경은 `harness-setup` 후속 작업으로 남김 |
 | `ui-ux-pro-max` | 디자인 방향·색·타이포그래피·레이아웃·접근성 결정 | 화면의 디자인 기준을 정하거나 기존 UI를 점검할 때 |
 | `motion-design` | 모션 목적·타이밍·이징·reduced-motion 대안 결정 | 전환·상태 피드백·등장 순서에 움직임이 필요할 때 |
 | `design-prototype-docs` | 화면 요구사항·배치·이동 흐름 문서화 | 화면을 먼저 합의할 때 |
@@ -408,10 +408,16 @@ $harness-bootstrap
 $context-doc
 
 .ai-docs/context-base/DESIGN.md를 입력으로 사용해줘.
-AGENTS.md에는 프로젝트 팩트와 문서 인덱스만 얇게 남기고,
+{앱}-context.md에는 DESIGN 링크와 양방향 최신화 원칙, 1~10 상세 현재 사실과
+루트 컨텍스트 → 앱 컨텍스트 → 필요한 instruction 필독 순서를 남기고,
+7번에는 핵심 도메인 개념을 포함한 계층형 앱 특이사항을, 10번에는 DESIGN.md 02와
+같은 노드·Depth의 구축 대상 기능 분류를 두고,
 아키텍처·코드 스타일·API 규칙은 instruction으로 분리해줘.
+최초 instruction은 제목과 보편 목적만 있는 골격으로 만들고, 이후 현재 확정 규칙만
+반영해줘. 더 이상 필요 없는 선택 instruction은 삭제 후보로 보여준 뒤 승인받아
+9번 인덱스와 함께 제거하고, 모든 본문에는 변경 이력을 남기지 마.
 금지 규칙은 패턴, 이유, 대안을 함께 적어줘.
-CLAUDE.md는 @AGENTS.md bridge로 유지해줘.
+루트 AGENTS.md와 CLAUDE.md는 수정하지 말아줘.
 ```
 
 ### 예시 5. 화면을 먼저 확인
