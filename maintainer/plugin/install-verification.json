@@ -4,10 +4,10 @@
   "plugin": {
     "plugin_root": "plugins/harness-kit",
     "plugin_id": "harness-kit",
-    "version": "0.6.0",
+    "version": "0.6.1",
     "codex_manifest_matches_claude": true,
-    "archive": "plugins/harness-kit-0.6.0.zip",
-    "archive_sha256": "05254286fb1ed8266843230ae6839dbaeadd3088791adb660f17749204445a2f",
+    "archive": "plugins/harness-kit-0.6.1.zip",
+    "archive_sha256": "aa681b5996e0a28f2484780620897f104afc81d19bab2a71066ee1d50aff4900",
     "archive_sha256_matches_release": true,
     "logical_user_skills": 20,
     "codex_physical_skills": 20,
@@ -101,10 +101,10 @@
         "claude",
         "--help"
       ],
-      "available": true,
-      "status": "ok",
-      "exit_code": 0,
-      "stdout_excerpt": "Usage: claude [options] [command] [prompt]\n\nClaude Code - starts an interactive session by default, use -p/--print for\nnon-interactive output\n\nArguments:\n  prompt                                            Your prompt\n\nOptions:\n  --add-dir <directories...>                        Additional directories to allow tool access to\n  --agent <agent>                                   Agent for the current session. Overrides the 'agent' setting.\n  --agents <json>                                   JSON object defining custom agents (e.g. '{\"reviewer\": {\"description\": \"Reviews code\", \"prompt\": \"You are a code reviewer\"}}')\n  --allow-dangerously-skip-permissions              Enable bypassing all permission checks as an option, without it being enabled by default. Recommended only for sandboxes with no internet access.\n  --allowedTools, --allowed-tools <tools...>        Comma or space-separated list of tool names to allow (e.g. \"Bash(git:*) Edit\")\n  --append-system-prompt <prompt>                  ",
+      "available": false,
+      "status": "missing",
+      "exit_code": null,
+      "stdout_excerpt": "",
       "stderr_excerpt": ""
     }
   },
@@ -119,13 +119,13 @@
     "platforms": {
       "codex": {
         "status": "passed",
-        "cli_version": "codex-cli 0.151.0-alpha.7.2",
+        "cli_version": "codex-cli 0.152.1",
         "marketplace": "hb9397",
         "plugin_id": "harness-kit@hb9397",
         "evidence_level": "marketplace-install-and-cache-smoke",
         "model_invocation_verified": false,
         "installed_payload": {
-          "version": "0.6.0",
+          "version": "0.6.1",
           "skill_count": 20,
           "agent_count": 0,
           "required_skills": [
@@ -146,7 +146,7 @@
         "evidence_level": "marketplace-install-and-cache-smoke",
         "model_invocation_verified": false,
         "installed_payload": {
-          "version": "0.6.0",
+          "version": "0.6.1",
           "skill_count": 20,
           "agent_count": 0,
           "required_skills": [

@@ -33,6 +33,12 @@ def main() -> int:
         "루트 `AGENTS.md`/`CLAUDE.md`와 `.ai-docs/root-context/**`는 생성하지 않는다",
         "`agent-instruction.md`와 `artifact-output-routing-instruction.md`",
         "confirmed_scope",
+        "prompts/design-sync.md",
+        "prompts/instruction-lifecycle.md",
+        "1~10 상세 컨텍스트",
+        "data-standard-instruction.md",
+        "Git 원격 저장소 및 브랜치",
+        "DB 생성·migration·seed·접속",
     )
     skill_text = (SKILL_ROOT / "SKILL.md").read_text(encoding="utf-8")
     if "유일한 항상 생성 예외" in skill_text:
@@ -46,9 +52,98 @@ def main() -> int:
     )
     require(
         SKILL_ROOT / "templates" / "AGENTS.md.template",
-        "Application Context",
+        "AI Agent Guide",
+        "DESIGN.md 열기",
+        "양방향으로 추적",
+        "AI 구현 전 읽기 순서",
+        "## 1. 프로젝트 개요",
+        "## 2. 기술 스택",
+        "## 3. 아키텍처",
+        "## 4. 실행 프로필 및 실행 방식",
+        "## 5. Git 원격 저장소 및 브랜치",
+        "## 6. 배포 방식",
+        "## 7. 애플리케이션 특이사항",
+        "## 8. 애플리케이션 사용 환경 변수 목록",
+        "## 9. AI 구현 지침",
+        "## 10. 구축 대상 기능 분류",
+        "### 핵심 도메인 개념",
+        "#### [도메인 개념 또는 식별자 묶음]",
+        "### 기능 분류 트리",
+        "### 현재 구현 연결",
+        "| dev |",
+        "| qa |",
+        "| prod |",
+        "`@` 참조",
+        "문서 링크",
+        "현재 상태",
+        "목적만 정의됨",
         ".ai-docs/harness/artifact-routing.json",
         "artifact 의미와 대상 앱",
+    )
+    context_template = (SKILL_ROOT / "templates" / "AGENTS.md.template").read_text(
+        encoding="utf-8"
+    )
+    if "## 4. 핵심 도메인 개념" in context_template:
+        raise AssertionError("app context template still contains core-domain section")
+    require(
+        SKILL_ROOT / "templates" / "data-standard-instruction.md.template",
+        "# 데이터 명칭·용어·약어·코드 표준 지침",
+        "논리명·물리명",
+        "최초에는 위 목적 설명만 둔다",
+        "변경 이력은 남기지 않는다",
+    )
+    require(
+        SKILL_ROOT / "prompts" / "instruction-lifecycle.md",
+        "## 현재 사실 전용 계약",
+        "## 초기 기본 세트",
+        "architecture-instruction.md",
+        "data-standard-instruction.md",
+        "code-style-instruction.md",
+        "framework-instruction.md",
+        "file-convention-instruction.md",
+        "## 불필요 파일 삭제",
+        "해당 통신 방식의 존재만으로 만들지",
+        "실제 앱 이름과 현재 기술 스택",
+        "앱 context 9번",
+        "파일과 인덱스 행",
+        "`agent-instruction.md`와 `artifact-output-routing-instruction.md`는 삭제 후보가 아니다",
+    )
+    skeleton_templates = {
+        "agent-instruction.md.template": "# AI Agent 구현 지침",
+        "architecture-instruction.md.template": "# 아키텍처 제약 지침",
+        "data-standard-instruction.md.template": "# 데이터 명칭·용어·약어·코드 표준 지침",
+        "code-style-instruction.md.template": "# 코드 스타일 지침",
+        "framework-instruction.md.template": "# 프레임워크·라이브러리 사용 지침",
+        "file-convention-instruction.md.template": "# 파일 구성 지침",
+        "api-instruction.md.template": "# API 설계 지침",
+        "comm-instruction.md.template": "# 비-HTTP 통신 지침",
+    }
+    for name, title in skeleton_templates.items():
+        template = (SKILL_ROOT / "templates" / name).read_text(encoding="utf-8")
+        if title not in template:
+            raise AssertionError(f"{name}: missing universal purpose title")
+        if "최초에는 위 목적 설명만" not in template:
+            raise AssertionError(f"{name}: missing purpose-only initial state")
+        if "변경 이력" not in template:
+            raise AssertionError(f"{name}: missing current-facts-only contract")
+        if "- [규칙]" in template or "| | |" in template:
+            raise AssertionError(f"{name}: initial skeleton contains placeholder rule data")
+    require(
+        SKILL_ROOT / "prompts" / "design-sync.md",
+        "양방향",
+        "구축 대상 기능 분류 양방향 추적",
+        "노드명·순서·부모-자식 관계·",
+        "Depth로 재구성",
+        "공개 `design-doc` workflow",
+        "변경 전 값",
+    )
+    require(
+        SKILL_ROOT / "prompts" / "analysis-claude.md",
+        "dev`, `qa`, `prod",
+        "Git 원격 저장소 및 브랜치",
+        "핵심 도메인 개념`을 독립된 최상위 섹션으로 만들지 않고",
+        "## 10. 구축 대상 기능 분류",
+        "Markdown 상대 링크",
     )
     require(
         SKILL_ROOT / "templates" / "CLAUDE.md.template",
@@ -59,9 +154,9 @@ def main() -> int:
 
     evals = json.loads((SKILL_ROOT / "evals" / "evals.json").read_text(encoding="utf-8"))
     ids = [case["id"] for case in evals["evals"]]
-    if ids != [1, 2, 3, 4]:
+    if ids != [1, 2, 3, 4, 5, 6, 7, 8]:
         raise AssertionError(f"unexpected eval ids: {ids}")
-    if "_inbox" not in evals["evals"][-1]["expected_output"]:
+    if "_inbox" not in evals["evals"][3]["expected_output"]:
         raise AssertionError("external producer eval must require inbox-only proposal")
     if any("CLAUDE.md는 bridge" in case["expected_output"] for case in evals["evals"]):
         raise AssertionError("context-doc eval still assigns root bridge ownership")

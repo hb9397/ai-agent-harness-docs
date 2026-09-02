@@ -71,7 +71,9 @@ manifest는 **계약 상태**, `install-routing.ps1 -Check`은 **실제 host-loc
 | portable routing 상태 | `.ai-docs/harness/artifact-routing.json` |
 
 > `.ai-docs/` 구조·산출물 규칙은 `.ai-docs/README.md`에 정리되어 있다.
-> `.ai-docs/_inbox/`는 에이전트에게 읽힐 파일을 잠시 올려두는 **로컬 전용 공간**으로, 내용은 git에 올라가지 않는다 (`.ai-docs/.gitignore`가 지정).
+> `.ai-docs/_inbox/`는 에이전트 참고 파일을 올려두는 **기본 로컬 전용 공간**이다.
+> 설계·instruction에 계속 참고할 원문은 사용자가 정확한 파일과 Git 공유를 명시한
+> 경우에만 파일별로 선택 추적하며, 자세한 기준은 `.ai-docs/README.md`를 따른다.
 
 ---
 

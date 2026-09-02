@@ -3,26 +3,50 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "@docs/OUTPUT_V2.md /context-doc\nNext.js + FastAPI 모노레포 설계 문서를 기준으로 AGENTS.md, CLAUDE.md bridge와 instruction 문서를 생성해줘.",
-      "expected_output": "모노레포를 감지하고 배치 방식은 1회만 확인한다. 앱별 *-context.md 인덱스와 실제 instruction 파일이 일치하며 FE/BE 분리 선택이 저장 경로에 반영된다. 루트 AGENTS.md·CLAUDE.md는 수정하지 않고 harness-setup 후속 작업으로 남긴다.",
+      "prompt": "@.ai-docs/fe-portal/context-base/DESIGN.md /context-doc\nNext.js 프론트엔드 앱 컨텍스트와 instruction 문서를 생성해줘.",
+      "expected_output": "제목은 `fe-portal FE — AI Agent Guide` 형식이며 바로 아래에 DESIGN.md의 @ 참조·Markdown 링크, 양방향 최신화 원칙과 루트 컨텍스트 → 앱 컨텍스트 → 필요한 지침 필독 순서를 둔다. 앱 context는 1~10 고정 목차를 사용하고 별도 지시가 없으면 실행 profile과 branch에 dev/qa/prod를 제시한다. 7번은 핵심 도메인 개념을 포함한 계층형 하위 노드, 10번은 DESIGN.md 02와 같은 Depth의 기능 분류 추적 뷰다. 최초 instruction은 architecture·data-standard·code-style·framework·file-convention과 항상 생성되는 agent·artifact routing을 준비하되, routing을 제외한 파일에는 제목과 보편 목적만 두고 앱별 규칙을 추측하지 않는다. 실제 instruction은 @ 참조·링크와 현재 상태를 함께 기록하며 루트 AGENTS.md·CLAUDE.md는 수정하지 않는다.",
       "files": []
     },
     {
       "id": 2,
       "prompt": "@docs/cli-design.md /context-doc\n순수 CLI 라이브러리 설계 문서를 기준으로 컨텍스트 문서를 만들어줘.",
-      "expected_output": "api-instruction.md와 comm-instruction.md를 만들지 않는다. architecture/code-style/file-convention/agent 중심으로만 생성하고, 실행/환경 변수 정보는 앱 context의 실행 방법과 환경 변수 섹션에 채운다. 루트 컨텍스트는 만들지 않는다.",
+      "expected_output": "api-instruction.md와 comm-instruction.md를 만들지 않는다. 4번에는 DB 명령 없이 profile별 애플리케이션 실행만, 5번에는 민감정보를 제거한 Git remote와 branch 기준, 6번에는 로컬 PC·개발 서버·운영 서버의 빌드 결과물 실행 방식, 8번에는 실제 환경 변수 목록을 기록한다. 루트 컨텍스트는 만들지 않는다.",
       "files": []
     },
     {
       "id": 3,
       "prompt": "@docs/sparse-output.md /context-doc\n열린 결정 사항만 많고 핵심 설계가 빈약한 문서로 컨텍스트를 만들어줘.",
-      "expected_output": "핵심 섹션 부족을 감지하고 무작정 파일을 생성하지 않는다. 어떤 섹션 보강이 필요한지 안내하며 설계 보강 요청으로 멈춘다.",
+      "expected_output": "대상 앱의 DESIGN.md가 없거나 개요·기술 스택·아키텍처·앱 특이사항·배포 환경과 현재 앱 실행·Git·환경 설정 중 확인 가능한 묶음이 3개 미만이면 무작정 파일을 생성하지 않는다. design-doc 또는 현재 앱 자료 보강을 요청한다.",
       "files": []
     },
     {
       "id": 4,
       "prompt": "외부 agent가 고정 형식 JSON/PDF bundle을 만들었다. 프로젝트의 context instruction으로 반영해줘.",
       "expected_output": "producer/plugin 이름이 아니라 artifact 의미와 대상 앱을 먼저 판정한다. .ai-docs/harness의 routing·format contract를 읽고, 불명확하거나 충돌하는 외부 bundle은 .ai-docs/_inbox/{artifact-bundle-id}/artifact-manifest.json에 source hash와 proposal만 기록한다. G12 승인 전 canonical instruction을 만들거나 덮어쓰지 않는다.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "기존 앱 context에 핵심 도메인 개념, 실행 방법, 환경 설정, 프로젝트 고유 주의사항, 코딩 지침이 있다. 새 context-doc 양식으로 갱신해줘.",
+      "expected_output": "기존 내용을 현재 사실 기준으로 1~10 목차에 의미 병합한다. 핵심 도메인 개념은 7번 애플리케이션 특이사항의 고정 하위 노드로 옮기고 의미·관계와 세부 주제를 계층형으로 구성한다. 명명·약어·식별자 표현·코드값 규범은 data-standard-instruction.md로 분리한다. 실행 방법의 DB 명령은 4번에서 제외하고 앱 실행·배포를 4번과 6번으로 나누며, 환경 변수는 8번, 실제 지침은 @ 참조와 Markdown 링크를 갖춘 9번, DESIGN.md 02의 기능 분류는 동일한 노드와 Depth의 10번에 둔다. 변경 이력은 본문에 남기지 않는다.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "DESIGN.md와 기존 앱 context에는 응답 필드가 항상 존재한다고 쓰여 있지만 현재 구현 코드는 한 채널에서 그 필드를 제외한다. context-doc으로 최신화해줘.",
+      "expected_output": "현재 코드·설정 근거를 우선해 앱 context에는 지금 유효한 응답 계약만 기록하고 과거 값이나 변경 이력을 남기지 않는다. 공통 상위 설계에도 영향을 주는 drift이므로 차이와 코드 근거를 검토 화면에 표시하고 공개 design-doc workflow로 DESIGN.md 갱신을 제안한다. context-doc이 DESIGN.md를 조용히 직접 덮어쓰지는 않는다.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "DESIGN.md 02에는 대분류와 3단계 하위 기능 노드가 있고 기존 앱 context는 이를 평탄화했다. 현재 코드에는 DESIGN에 없는 기능도 하나 있다. 양방향 추적 구조로 갱신해줘.",
+      "expected_output": "10번 기능 분류 트리는 DESIGN.md 02와 같은 노드명·순서·부모-자식 관계·Depth를 유지하고 현재 구현 위치는 별도 연결 표에 기록한다. DESIGN에 없는 현재 기능을 context 분류 트리에 독립 추가하지 않고 drift와 근거를 검토 화면에 표시한 뒤 공개 design-doc workflow에서 추가·이동·이름·Depth를 확인한다. 기능 분류는 상세 문서나 구현의 허용 목록으로 사용하지 않으며 본문에는 현재 구조만 남긴다.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "context-doc을 다시 실행했더니 기존 framework-instruction에는 폐기된 라이브러리 규칙과 변경 이력이 남아 있고 comm-instruction은 현재 앱에서 더 이상 쓰지 않는다. 최신화해줘.",
+      "expected_output": "framework-instruction에는 현재 채택한 라이브러리의 확정 규칙만 남기고 과거 라이브러리·폐기 규칙·변경 이력은 제거한다. 현재 DESIGN·코드·설정·승인된 표준 어디에도 근거와 읽을 조건이 없는 comm-instruction은 삭제 후보로 분류하고 경로·근거·9번 인덱스 제거 행을 미리보기에 표시한다. 승인과 권한 확인 뒤 파일과 인덱스 행을 같은 변경에서 제거하며, 남은 context와 instruction 본문에는 삭제 이력을 기록하지 않는다. agent-instruction과 artifact-output-routing-instruction은 삭제하지 않는다.",
       "files": []
     }
   ]

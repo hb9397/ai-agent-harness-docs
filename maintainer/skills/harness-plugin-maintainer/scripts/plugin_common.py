@@ -14,7 +14,7 @@ from typing import Any
 
 
 PLUGIN_ID = "harness-kit"
-PLUGIN_VERSION = "0.6.0"
+PLUGIN_VERSION = "0.6.1"
 PLUGIN_ROOT_REL = Path("plugins") / PLUGIN_ID
 MARKETPLACE_NAME = "hb9397"
 PLUGIN_DISPLAY_NAME = "Harness Kit"

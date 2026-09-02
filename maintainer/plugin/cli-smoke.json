@@ -9,13 +9,13 @@
   "platforms": {
     "codex": {
       "status": "passed",
-      "cli_version": "codex-cli 0.151.0-alpha.7.2",
+      "cli_version": "codex-cli 0.152.1",
       "marketplace": "hb9397",
       "plugin_id": "harness-kit@hb9397",
       "evidence_level": "marketplace-install-and-cache-smoke",
       "model_invocation_verified": false,
       "installed_payload": {
-        "version": "0.6.0",
+        "version": "0.6.1",
         "skill_count": 20,
         "agent_count": 0,
         "required_skills": [
@@ -36,7 +36,7 @@
       "evidence_level": "marketplace-install-and-cache-smoke",
       "model_invocation_verified": false,
       "installed_payload": {
-        "version": "0.6.0",
+        "version": "0.6.1",
         "skill_count": 20,
         "agent_count": 0,
         "required_skills": [

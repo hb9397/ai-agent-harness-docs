@@ -11,9 +11,10 @@ SKILL_FILE = SKILL_ROOT / "SKILL.md"
 EVALS_FILE = Path(__file__).with_name("evals.json")
 INTERVIEW_FILE = SKILL_ROOT / "prompts" / "interview.md"
 CODE_SCAN_FILE = SKILL_ROOT / "prompts" / "code-scan.md"
-EXTRACTION_FILE = SKILL_ROOT / "prompts" / "extraction-mapping.md"
+EXTRACTION_FILE = SKILL_ROOT / "prompts" / "project-extraction-mapping.md"
 DESIGN_SKILL_FILE = SKILL_ROOT.parent / "design-doc" / "SKILL.md"
 CONTEXT_SKILL_FILE = SKILL_ROOT.parent / "context-doc" / "SKILL.md"
+CONTEXT_TEMPLATE_FILE = SKILL_ROOT.parent / "context-doc" / "templates" / "AGENTS.md.template"
 
 
 def require(text: str, needle: str) -> None:
@@ -58,6 +59,17 @@ def main() -> int:
         "@.ai-docs/instruction/artifact-output-routing-instruction.md",
         "@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md",
         "{project}/.ai-docs/{앱}/context-base/DESIGN.md",
+        "PROJECT_DESIGN",
+        "기능 분류는 상세 문서나 구현의 허용 목록이 아님",
+        "변경 이력 없이 현재 기준 사실만 기록",
+        "1~10 상세 애플리케이션 컨텍스트",
+        "핵심 도메인 개념을 포함한 계층형 앱 특이사항",
+        "노드명·순서·부모-자식 관계·Depth",
+        "실행 profile, Git remote·branch",
+        "DB 준비·migration 명령을 넣지 않는다",
+        "초기 목적 골격 세트",
+        "architecture·data-standard·code-style·framework·file-convention",
+        "과거 값·변경 과정 없이 현재 사실·규칙만",
     ):
         require(skill, needle)
 
@@ -74,10 +86,35 @@ def main() -> int:
             if needle not in child_text:
                 raise AssertionError(f"{child_skill}: missing confirmed scope handoff contract: {needle}")
 
+    context_template = CONTEXT_TEMPLATE_FILE.read_text(encoding="utf-8")
+    for needle in (
+        "DESIGN.md 열기",
+        "양방향으로 추적",
+        "AI 구현 전 읽기 순서",
+        "## 1. 프로젝트 개요",
+        "## 4. 실행 프로필 및 실행 방식",
+        "## 5. Git 원격 저장소 및 브랜치",
+        "## 6. 배포 방식",
+        "## 8. 애플리케이션 사용 환경 변수 목록",
+        "## 9. AI 구현 지침",
+        "## 10. 구축 대상 기능 분류",
+        "현재 유효한 사실만 기록",
+    ):
+        if needle not in context_template:
+            raise AssertionError(f"{CONTEXT_TEMPLATE_FILE}: missing context contract: {needle}")
+
     if not INTERVIEW_FILE.is_file():
         raise AssertionError(f"missing protected interview prompt: {INTERVIEW_FILE}")
     interview = INTERVIEW_FILE.read_text(encoding="utf-8")
-    for needle in ("최대 2회", "질문 1 (필수)", "질문 2 (선택)", "묻지 않는 것"):
+    for needle in (
+        "최대 3회",
+        "질문 1 (필수)",
+        "질문 2 (필수)",
+        "질문 3 (조건부)",
+        "패키지·파일 구조 예시",
+        "배포 환경은 비워 두겠습니다",
+        "묻지 않는 것",
+    ):
         if needle not in interview:
             raise AssertionError(f"{INTERVIEW_FILE}: missing contract: {needle}")
 

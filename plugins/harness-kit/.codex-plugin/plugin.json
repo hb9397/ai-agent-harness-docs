@@ -1,6 +1,6 @@
 {
   "name": "harness-kit",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Harness Kit plugin for Codex and Claude Code projects.",
   "author": {
     "name": "hb9397",

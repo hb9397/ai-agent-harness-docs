@@ -5,8 +5,8 @@ description: >
   '하네스 부팅', '기존 코드 분석해서 문서 만들어줘', '레거시 프로젝트 문서화',
   'CLAUDE.md 없는데 생성', '설계 문서 역추출', 'AI 문서 부트스트랩',
   '기존 프로젝트에 하네스 도입' 요청이 오면 이 스킬을 사용한다.
-  기존 코드베이스에 harness-setup의 프로젝트 문서 골격을 먼저 적용한 뒤 design-doc OUTPUT_V2 형식 설계 문서 + context-doc 결과물(앱별 *-context.md + .ai-docs/instruction/*)을 자동 도출한다.
-  프레임워크 자동 감지. 최소 인터뷰(2회 이하)로 코드에서 추출 불가능한 도메인 맥락만 보충.
+  기존 코드베이스에 harness-setup의 프로젝트 문서 골격을 먼저 적용한 뒤 design-doc PROJECT_DESIGN 형식 설계 문서 + context-doc 결과물(앱별 *-context.md + .ai-docs/instruction/*)을 자동 도출한다.
+  프레임워크 자동 감지. 최소 인터뷰(3회 이하)로 코드에서 추출 불가능한 도메인 맥락·아키텍처 선택·배포 환경만 보충.
 allowed-tools: Read, Glob, Grep, Write
 ---
 
@@ -15,7 +15,7 @@ allowed-tools: Read, Glob, Grep, Write
 기존 코드베이스만 있고 AI 하네스 문서(CLAUDE.md, AGENTS.md, 설계 문서, instruction 등)가 전혀 없을 때,
 코드를 직접 분석해서 다음 두 산출물을 한 번에 도출한다.
 
-1. **`design-doc` OUTPUT_V2 형식 설계 문서** (프로젝트 설계 스냅샷)
+1. **`design-doc` PROJECT_DESIGN 형식 설계 문서** (확장 가능한 앱 설계 기준)
 2. **`context-doc` 결과물** — 앱별 `*-context.md` + `.ai-docs/instruction/*-instruction.md`
 
 생성 전 반드시 사용자 확인을 거친다. 파일을 무단으로 생성하지 않는다.
@@ -40,8 +40,8 @@ allowed-tools: Read, Glob, Grep, Write
 
 1. **코드에서 추출 가능한 건 모두 자동 추출**. 질문하지 않는다.
 2. **코드에서 알 수 없는 것만 인터뷰**. 도메인 목적·사용자·상위 비즈니스 맥락.
-3. **인터뷰는 최대 2회**. 그 이상은 `미정 — [이유]` 로 남긴다.
-4. **공개 산출물 계약을 재사용한다**. `design-doc` OUTPUT_V2 형식과 `context-doc`의 앱 context + instruction 구조를 따른다.
+3. **인터뷰는 최대 3회**. 앱 대분류, 아키텍처 선택, 배포 환경만 확인한다.
+4. **공개 산출물 계약을 재사용한다**. `design-doc` PROJECT_DESIGN 형식과 `context-doc`의 앱 context + instruction 구조를 따른다.
 5. **프레임워크 중립**. 매니페스트 파일 기반으로 자동 감지한다.
 
 ## 선택 권한 정책 연계와 단계 분리
@@ -137,10 +137,10 @@ ledger를 안전하게 기록할 수 없으면 새 proposal을 보여주지 않�
 
 ## 질문 예산
 
-사용자 질문 총합은 **최대 3회**다.
+사용자 질문 총합은 **최대 4회**다.
 
 - Step 1의 저장소 루트/프로젝트 단위 확인: 최대 1회
-- Step 3의 인터뷰: 최대 2회
+- Step 3의 인터뷰: 최대 3회
 - Step 6의 `context-doc` 단계에서는 **새 도메인 인터뷰를 추가하지 않는다**
 - 예산이 소진되면 추가 확인 대신 `미정 — [이유]` 로 남긴다
 
@@ -161,7 +161,7 @@ harness-bootstrap 스킬
         │
         ├─ Step 1~4: 코드 스캔 + 최소 인터뷰
         │
-        ├─ Step 5: design-doc OUTPUT_V2 산출
+        ├─ Step 5: design-doc PROJECT_DESIGN 산출
         │            ├── 단일 앱: {project}/.ai-docs/context-base/DESIGN.md
         │            └── 복수 앱: {project}/.ai-docs/{앱}/context-base/DESIGN.md
         │
@@ -171,7 +171,7 @@ harness-bootstrap 스킬
 ```
 
 이후 작업은 정규 플로우를 따른다.
-- 설계 변경 시 → `design-doc`로 OUTPUT 갱신 후 → `context-doc`로 하네스 갱신
+- 설계 변경 시 → `design-doc`로 PROJECT_DESIGN 갱신 후 → `context-doc`로 하네스 갱신
 - 문서-코드 괴리 검증 → `doc-audit`
 - 구현 지침이 필요하면 → `impl-fe-be-doc` / `impl-doc`
 - 구현 직전 공통 자산 확인 → `impl-reuse-scan` (재사용 불가 판정 포함 필수 preflight)
@@ -313,53 +313,54 @@ copy는 읽기 전용 report만 반환한다.
 | DB 테이블/모델 | ORM 모델 파일 (`models.py`, `entity/*.ts`, `@Entity` 등) |
 | 환경 변수 | `.env*`, `os.getenv`, `process.env`, `System.getenv` grep |
 | 실행 스크립트 | `scripts` 필드, `Makefile`, `start.sh`, `Dockerfile`, `docker-compose*` |
+| Git remote·branch | 대상 앱 Git 경계의 `.git/config`, `HEAD`, refs·packed-refs |
 | 외부 서비스/라이브러리 | 매니페스트 의존성 분류 |
 
 추출 결과는 **요약 보고서**로 사용자에게 먼저 보여준다. 잘못 읽은 것이 있으면 수정받는다.
 
 ---
 
-### Step 3 — 최소 인터뷰 (최대 2회)
+### Step 3 — 최소 인터뷰 (최대 3회)
 
 `prompts/interview.md`를 이 단계의 **단일 상세 계약**으로 사용한다. 질문 문구,
-질문 2를 사용할 조건, 한 번만 허용하는 재질문, 묻지 않을 항목, 답변 거부·
+질문 2·3을 사용할 조건, 한 번만 허용하는 재질문, 묻지 않을 항목, 답변 거부·
 `모름` 처리 규칙은 그 파일을 따른다. 이 본문이나 다른 prompt에 별도 인터뷰
 질문을 중복 정의하지 않는다.
 
 오케스트레이션 상의 불변조건은 다음뿐이다.
 
-- 코드에서 알 수 없는 도메인 목적·사용자와 필요한 경우의 상위 운영 제약만 묻는다.
-- 최대 2회이며 질문 예산이 소진되면 `미정 — [이유]`로 진행한다.
+- 코드에서 알 수 없는 앱의 대분류, 기술 스택 기반 아키텍처 선택과 배포 환경만 묻는다.
+- 최대 3회이며 아키텍처는 권장안·대안과 패키지·파일 구조 예시를 먼저 보여준다.
+- 배포 환경을 모르면 `DESIGN.md`의 해당 본문을 비운다.
 - Step 6의 자식 workflow는 새 인터뷰를 추가하지 않는다.
 
 ---
 
-### Step 4 — OUTPUT_V2 섹션 매핑
+### Step 4 — PROJECT_DESIGN 섹션 매핑
 
-`prompts/extraction-mapping.md` 기준으로 Step 2 인벤토리 + Step 3 인터뷰 답변을
-`design-doc`의 `OUTPUT_V2.md` 섹션에 매핑한다.
+`prompts/project-extraction-mapping.md` 기준으로 Step 2 인벤토리 + Step 3 인터뷰 답변을
+`design-doc`의 프로젝트 전체 공개 산출물 계약에 매핑한다.
 
-| OUTPUT_V2 섹션 | 채우는 소스 |
-|----------------|------------|
+| PROJECT_DESIGN 섹션 | 채우는 소스 |
+|------------------------|------------|
 | 01 개요 | 인터뷰 + 매니페스트 프로젝트명·버전 |
-| 02 동작 흐름 | 엔트리포인트 → 라우터/핸들러 체인 역추적 |
-| 03 집중 로직 | 엔트리포인트 주변 핵심 모듈 분석 |
-| 04 인터페이스 | 추출된 API/WebSocket 목록 |
-| 05 데이터 | ORM 모델 / 스키마 파일 |
-| 06 파일 구성 | 디렉토리 트리 |
-| 07 라이브러리 | 매니페스트 의존성 |
-| 10 주의사항 | 위험한 환경 분기·Dockerfile·README 패턴 |
-| 11 부가 정보 | 실행 스크립트·배포 힌트·환경 변수·DB/외부 구성 |
-| 12 열린 결정 | 코드에서 TODO/FIXME/주석 추출 |
+| 02 구축 대상 기능 분류 | 페이지·라우트·모듈·엔드포인트의 상위 책임 그룹 |
+| 03 기술 스택 | 매니페스트 의존성·런타임 |
+| 04 아키텍처 | 관찰된 구조 + 기술 스택 기반 후보와 사용자 선택 |
+| 05 애플리케이션 특이사항 | 외부 연동·환경 분기·고유 데이터·운영 제약 |
+| 06 배포 환경 | 실행 스크립트·컨테이너·CI와 사용자 답변 |
+| 07 VSCode 익스텐션 추천 | 기술 스택과 파일 형식 기반 자동 추천 |
 
 코드에서 역추출한 정보는 **관찰 기반**이므로, 설계 의도를 추측하지 않는다.
 "현재 코드는 이렇게 구성돼 있다"로만 서술한다.
+최종 `DESIGN.md`에는 현재 코드·설정과 이번 사용자 확인으로 유효한 사실만 남긴다.
+변경 전 값, 제거·이동·이름 변경 기록과 과거 대안은 본문에 넣지 않는다.
 
 ---
 
 ### Step 5 — design-doc OUTPUT 초안 생성 및 확인
 
-공개 스킬 이름 `design-doc`으로 handoff하여 OUTPUT_V2 설계 문서 초안을
+공개 스킬 이름 `design-doc`으로 handoff하여 PROJECT_DESIGN 설계 문서 초안을
 생성한다. 다른 스킬의 `templates/**` 경로나 구현 파일을 직접 읽지 않는다.
 
 handoff 입력에는 Step 2 인벤토리, Step 3 답변, Step 4 매핑 결과와 다음 실행
@@ -372,7 +373,7 @@ suppress_child_handoff = true
 confirmed_scope = {Step 0-B에서 승인받은 범위 객체}
 ```
 
-이 handoff에서는 준비된 관찰·답변을 입력으로 사용하고 추가 인터뷰나 자식
+이 handoff에서는 준비된 관찰·답변과 사용자가 선택한 아키텍처를 입력으로 사용하고 추가 인터뷰나 자식
 `humanize-korean` 후처리를 요청하지 않는다.
 
 권한 정책이 활성화돼 있으면 대상 `DESIGN.md`에 `pm-pl` 또는 해당 앱
@@ -380,8 +381,9 @@ confirmed_scope = {Step 0-B에서 승인받은 범위 객체}
 않으며, guard의 `decision=confirm`은 Step 7의 별도 앱 문서 승인으로 넘긴다.
 
 - 작성 지침(주석)은 제거한 상태로 출력
-- 해당하지 않는 스케일 섹션은 삭제
-- 불명확한 항목은 `미정 — [이유]` 로 표시
+- 고정된 01~07 목차를 유지하고 `주의사항` 제목은 생성하지 않음
+- 불명확한 배포 환경은 제목만 남기고 본문을 비움
+- 변경 이력 없이 현재 기준 사실만 기록
 - 사용자가 별도 중단을 요청하지 않으면, **설계 초안 확인 후 바로 Step 6으로 연속 진행**한다.
 - 설계 초안 단계의 확인은 **수정 포인트 수집용**이며, 최종 저장 승인은 Step 7에서 1회만 받는다.
 
@@ -395,7 +397,8 @@ confirmed_scope = {Step 0-B에서 승인받은 범위 객체}
 
 ### Step 6 — context-doc 파이프라인 실행
 
-Step 5 OUTPUT을 입력으로 삼아 공개 스킬 이름 `context-doc`으로 handoff한다.
+Step 5 OUTPUT과 Step 2의 관찰 기반 코드 인벤토리를 입력으로 삼아
+공개 스킬 이름 `context-doc`으로 handoff한다.
 다른 스킬의 `prompts/**` 또는 `templates/**` 내부 경로를 직접 참조하지 않는다.
 
 handoff에는 다음 실행 컨텍스트를 전달한다.
@@ -407,9 +410,18 @@ suppress_child_handoff = true
 confirmed_scope = {Step 0-B에서 승인받은 범위 객체}
 ```
 
-- `.ai-docs/{앱}-context.md`에 들어갈 애플리케이션 팩트 + 지침 인덱스 초안 작성
-- `context-doc`의 공개 workflow로 주제별 instruction 파일 분류
+- `.ai-docs/{앱}-context.md`에 대응 DESIGN.md의 링크·양방향 최신화 계약과
+  1~10 상세 애플리케이션 컨텍스트 + AI 구현 지침 인덱스 초안 작성
+- 7번은 핵심 도메인 개념을 포함한 계층형 앱 특이사항으로 구성하고, 10번은 DESIGN.md
+  02의 노드명·순서·부모-자식 관계·Depth와 현재 구현 연결을 양방향 추적
+- `context-doc`의 공개 workflow로 초기 목적 골격·조건부 확장·항상 유지 instruction을 분류
 - 앱 context + 각 `*-instruction.md` 구조 활용
+- 앱 context와 instruction에는 과거 값·변경 과정 없이 현재 사실·규칙만 남기고,
+  선택 instruction의 현재 필요성이 사라지면 승인된 삭제 후보로 처리
+- 실행 profile과 환경별 branch에 별도 기준이 없으면 `dev/qa/prod`를 기본 기준으로
+  제시하되 실제 존재를 추측하지 않는다.
+- 실행 profile, Git remote·branch, Kubernetes·컨테이너·빌드 결과물, 환경 변수는
+  Step 2의 현재 관찰 근거로 채운다. 4번과 6번에는 DB 준비·migration 명령을 넣지 않는다.
 - `confirmed_scope.instruction_root`에 따라 instruction 배치를 확정하고 같은 배치 질문을
   반복하지 않는다. 현재 구조가 승인값과 달라졌으면 자동 보정하지 않고 Step 0-B로
   돌아가 범위를 다시 확인한다.
@@ -419,7 +431,8 @@ confirmed_scope = {Step 0-B에서 승인받은 범위 객체}
 또한 bootstrap 한계 때문에 아래 오버라이드를 적용한다.
 
 - 코드/README/주석에서 **규범적 이유·대안이 확인된 금지 항목만** 삼위일체로 기록한다.
-- 관찰 사실만 있고 이유·대안이 확정되지 않으면 `미정 — bootstrap 산출물에는 규범 근거 없음`으로 남긴다.
+- 관찰 사실만 있고 이유·대안이 확정되지 않으면 instruction 본문에 넣지 않고 검토
+  화면의 보강 후보로만 표시한다.
 - 이 사유로는 사용자를 다시 인터뷰하지 않는다. 후속 `design-doc` → `context-doc` 보강 대상으로 넘긴다.
 
 ---
@@ -433,18 +446,19 @@ confirmed_scope = {Step 0-B에서 승인받은 범위 객체}
 **단일 애플리케이션:**
 1. `.ai-docs/context-base/DESIGN.md` (또는 사용자 지정 경로)
 2. `.ai-docs/{앱}-context.md`
-3. `.ai-docs/instruction/*-instruction.md` (해당 주제와 항상 생성되는
+3. `.ai-docs/instruction/*-instruction.md` (초기 목적 골격 세트와 항상 생성되는
    `agent-instruction.md`, `@.ai-docs/instruction/artifact-output-routing-instruction.md` 포함)
 
 **복수 애플리케이션:**
 1. `.ai-docs/{앱}/context-base/DESIGN.md`
 2. `.ai-docs/{앱}-context.md`
-3. `.ai-docs/{앱}/instruction/*-instruction.md` (해당 주제와 항상 생성되는
+3. `.ai-docs/{앱}/instruction/*-instruction.md` (초기 목적 골격 세트와 항상 생성되는
    `agent-instruction.md`, `@.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md` 포함)
 
-(단, 설계 문서에 해당 주제가 없으면 일반 주제 instruction 파일은 생성하지 않는다.
-`agent-instruction.md`와 `artifact-output-routing-instruction.md`는 각각 AI 동작 규칙과
-산출물 경계의 기본 정본이므로 항상 생성한다.)
+(최초 실행은 architecture·data-standard·code-style·framework·file-convention을
+보편 목적만 설명하는 빈 골격으로 만들고, api·comm은 독립해서 반복 적용할 현재 규칙이
+확인될 때만 같은 형식으로 만든다. `agent-instruction.md`와 `artifact-output-routing-instruction.md`는
+항상 생성한다.)
 
 bootstrap이 `DESIGN.md`와 context 초안을 만든 뒤에는 installer나 host 설정을 복제하지
 않는다. `.ai-docs/harness/artifact-routing.json`이 있으면 이를 읽고, 없으면 공개 스킬 이름
@@ -463,8 +477,10 @@ proposal만 기록하고 G12 승인 전 canonical artifact를 만들지 않는�
 > **앱 설계·컨텍스트 문서 쓰기 확인**
 >
 > - 대상 앱과 정확한 파일 전체
-> - `DESIGN.md`: 요구사항, 범위, 아키텍처, 데이터와 인수 기준을 정하는 설계 기준
-> - `*-context.md`: 앱의 설계 원칙, 기술 스택, 아키텍처, 실행 방법과 지침 인덱스
+> - `DESIGN.md`: 앱 개요, 상위 기능 분류, 기술 스택, 아키텍처와 앱 고유 운영 맥락을
+>   공유하는 설계 기준. 기능 분류는 상세 문서나 구현의 허용 목록이 아님
+> - `*-context.md`: 대응 DESIGN.md와 양방향 추적하는 앱의 개요·기술 스택·아키텍처·
+>   실행 profile·Git·배포·앱 특이사항·환경 변수와 AI 구현 지침 인덱스
 > - 각 `*-instruction.md`: 파일명별 주제 규칙
 > - `artifact-output-routing-instruction.md`: 산출물 위치·소유자·승인·인계 정본
 > - 현재 `pm-pl` 또는 `app-doc-lead` 역할과 앱 범위
