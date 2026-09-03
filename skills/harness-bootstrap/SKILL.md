@@ -418,8 +418,10 @@ confirmed_scope = {Step 0-B에서 승인받은 범위 객체}
 - 앱 context + 각 `*-instruction.md` 구조 활용
 - 앱 context와 instruction에는 과거 값·변경 과정 없이 현재 사실·규칙만 남기고,
   선택 instruction의 현재 필요성이 사라지면 승인된 삭제 후보로 처리
-- 실행 profile과 환경별 branch에 별도 기준이 없으면 `dev/qa/prod`를 기본 기준으로
-  제시하되 실제 존재를 추측하지 않는다.
+- 별도 기준이 없으면 실행 profile은 `local/dev/prod`, 환경별 branch는 `dev/main`을
+  기본 기준으로 제시한다. `dev` branch는 실행 profile `dev`, `main` branch는 실행
+  profile `prod`에 대응시키고 `local`에는 환경별 branch를 배정하지 않는다. 실제 존재를
+  추측하지 않는다.
 - 실행 profile, Git remote·branch, Kubernetes·컨테이너·빌드 결과물, 환경 변수는
   Step 2의 현재 관찰 근거로 채운다. 4번과 6번에는 DB 준비·migration 명령을 넣지 않는다.
 - `confirmed_scope.instruction_root`에 따라 instruction 배치를 확정하고 같은 배치 질문을

@@ -4,10 +4,10 @@
   "plugin": {
     "plugin_root": "plugins/harness-kit",
     "plugin_id": "harness-kit",
-    "version": "0.6.1",
+    "version": "0.6.2",
     "codex_manifest_matches_claude": true,
-    "archive": "plugins/harness-kit-0.6.1.zip",
-    "archive_sha256": "aa681b5996e0a28f2484780620897f104afc81d19bab2a71066ee1d50aff4900",
+    "archive": "plugins/harness-kit-0.6.2.zip",
+    "archive_sha256": "a97863a376be6d3176f823432218fe5966cacd8254b91a42a33ff317691a154d",
     "archive_sha256_matches_release": true,
     "logical_user_skills": 20,
     "codex_physical_skills": 20,
@@ -93,7 +93,7 @@
       "available": true,
       "status": "ok",
       "exit_code": 0,
-      "stdout_excerpt": "Manage Codex plugins\n\nUsage: codex plugin [OPTIONS] <COMMAND>\n\nCommands:\n  add          Install a plugin from a configured marketplace snapshot\n  list         List plugins available from configured marketplace snapshots\n  marketplace  Add, list, upgrade, or remove configured plugin marketplaces\n  remove       Remove an installed plugin from local config and cache\n  help         Print this message or the help of the given subcommand(s)\n\nOptions:\n  -c, --config <key=value>\n          Override a configuration value that would otherwise be loaded from `~/.codex/config.toml`.\n          Use a dotted path (`foo.bar.baz`) to override nested values. The `value` portion is parsed\n          as TOML. If it fails to parse as TOML, the raw string is used as a literal.\n          \n          Examples: - `-c model=\"o3\"` - `-c 'sandbox_permissions=[\"disk-full-read-access\"]'` - `-c\n          shell_environment_policy.inherit=all`\n\n      --enable <FEATURE>\n          Enable a feature (repeatable). Equivalent ",
+      "stdout_excerpt": "Manage Codex plugins\n\nUsage: codex plugin [OPTIONS] <COMMAND>\n\nCommands:\n  add          Install a plugin from a configured or remote marketplace\n  list         List plugins available from configured and remote marketplaces\n  marketplace  Add, list, upgrade, or remove configured plugin marketplaces\n  remove       Uninstall a plugin and remove its local cache\n  help         Print this message or the help of the given subcommand(s)\n\nOptions:\n  -c, --config <key=value>\n          Override a configuration value that would otherwise be loaded from `~/.codex/config.toml`.\n          Use a dotted path (`foo.bar.baz`) to override nested values. The `value` portion is parsed\n          as TOML. If it fails to parse as TOML, the raw string is used as a literal.\n          \n          Examples: - `-c model=\"o3\"` - `-c 'sandbox_permissions=[\"disk-full-read-access\"]'` - `-c\n          shell_environment_policy.inherit=all`\n\n      --enable <FEATURE>\n          Enable a feature (repeatable). Equivalent to `-c",
       "stderr_excerpt": ""
     },
     "claude_help": {
@@ -119,34 +119,13 @@
     "platforms": {
       "codex": {
         "status": "passed",
-        "cli_version": "codex-cli 0.152.1",
+        "cli_version": "codex-cli 0.153.0-alpha.5",
         "marketplace": "hb9397",
         "plugin_id": "harness-kit@hb9397",
         "evidence_level": "marketplace-install-and-cache-smoke",
         "model_invocation_verified": false,
         "installed_payload": {
-          "version": "0.6.1",
-          "skill_count": 20,
-          "agent_count": 0,
-          "required_skills": [
-            "harness-setup",
-            "humanize-korean"
-          ],
-          "evidence_level": "installed-cache-payload",
-          "model_invocation_verified": false,
-          "nested_marketplaces": 0
-        },
-        "cleanup": "passed"
-      },
-      "claude": {
-        "status": "passed",
-        "cli_version": "2.1.50 (Claude Code)",
-        "marketplace": "hb9397",
-        "plugin_id": "harness-kit@hb9397",
-        "evidence_level": "marketplace-install-and-cache-smoke",
-        "model_invocation_verified": false,
-        "installed_payload": {
-          "version": "0.6.1",
+          "version": "0.6.2",
           "skill_count": 20,
           "agent_count": 0,
           "required_skills": [
@@ -160,22 +139,22 @@
         "cleanup": "passed"
       }
     },
-    "status": "passed",
+    "status": "failed",
     "evidence_applies_to_current_version": true,
-    "summary": "isolated marketplace add/install/list/uninstall/remove and cache inspection passed; model invocation not tested"
+    "summary": "CLI smoke evidence is incomplete or failed"
   },
   "surfaces": {
     "codex-cli": {
-      "status": "install-smoke-verified",
-      "summary": "isolated marketplace add/install/list/uninstall/remove and cache inspection passed; model invocation not tested"
+      "status": "blocked",
+      "summary": "CLI smoke evidence is incomplete or failed"
     },
     "codex-desktop-app": {
       "status": "manual-required",
       "summary": "Interactive Plugins UI install/update requires app surface and cannot be completed from this shell."
     },
     "claude-code-cli": {
-      "status": "install-smoke-verified",
-      "summary": "isolated marketplace add/install/list/uninstall/remove and cache inspection passed; model invocation not tested"
+      "status": "blocked",
+      "summary": "CLI smoke evidence is incomplete or failed"
     },
     "claude-desktop-code": {
       "status": "manual-required",

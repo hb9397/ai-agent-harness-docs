@@ -89,8 +89,11 @@ grep 키워드: `websocket`, `WebSocket`, `\.on\(['\"]message`, `@WebSocketGatew
 - 대상 앱의 Git 경계를 확정하고 `.git`이 디렉토리인지 worktree 포인터 파일인지 확인
 - `.git/config`에서 remote 이름과 URL을 읽고 사용자정보·token·credential·민감 query 제거
 - `HEAD`, `refs/heads`, `refs/remotes`, `packed-refs`에서 현재·로컬·원격 추적 branch 확인
-- 사용자나 저장소가 환경별 branch를 지정하지 않았으면 context-doc에 `dev/qa/prod`
-  기본 기준을 전달하되 실제 원격 존재가 확인되지 않은 branch를 존재한다고 표현하지 않음
+- 사용자나 저장소가 별도 기준을 지정하지 않았으면 context-doc에 실행 profile
+  `local/dev/prod`와 환경별 branch `dev/main`을 기본 기준으로 전달
+- `dev` branch는 실행 profile `dev`, `main` branch는 실행 profile `prod`에 대응시키고
+  `local`에는 환경별 branch를 배정하지 않음
+- 실제 원격 존재가 확인되지 않은 branch를 존재한다고 표현하지 않음
 
 ### 9. 외부 서비스/라이브러리
 

@@ -56,7 +56,8 @@ AI가 구현 중 바로 사용할 수 있도록 전개한 상세 애플리케이
 ## 4. 실행 프로필 및 실행 방식
 
 - 사용자가 별도 profile을 지정하지 않고 현재 설정에서도 다른 이름이 확인되지 않으면
-  `dev`, `qa`, `prod`를 기본 profile로 제시한다.
+  `local`, `dev`, `prod`를 기본 profile로 제시한다. `local`은 로컬 개발, `dev`는
+  개발·검증 서버, `prod`는 운영 용도로 구분한다.
 - profile별 용도, 활성화 방법, 애플리케이션 실행 명령, 포트·엔트리포인트와 동작
   차이를 기록한다.
 - DB 생성, schema migration, seed, DB 접속·검증 명령은 기록하지 않는다.
@@ -68,9 +69,11 @@ AI가 구현 중 바로 사용할 수 있도록 전개한 상세 애플리케이
 - `.git/config` 또는 동등한 현재 Git metadata에서 remote 이름과 URL을 확인하고,
   `.git/HEAD`, refs와 packed refs에서 현재·추적 branch를 확인한다.
 - URL의 사용자정보·token·credential·민감 query는 제거한다.
-- 사용자나 저장소가 환경별 branch 매핑을 별도로 정하지 않았다면 `dev`, `qa`, `prod`
-  branch를 기본 기준으로 제시하되, 실제 원격 존재를 확인하지 못한 branch를 현재 존재하는
-  branch로 표현하지 않는다.
+- 사용자나 저장소가 환경별 branch 매핑을 별도로 정하지 않았다면 `dev`, `main` branch를
+  기본 기준으로 제시한다. `dev` branch는 실행 profile `dev`,
+  `main` branch는 실행 profile `prod`에 대응시키고 `main`을 운영 branch로 취급한다.
+  `local`에는 환경별 branch를 배정하지 않으며, 실제 원격 존재를 확인하지 못한 branch를
+  현재 존재하는 branch로 표현하지 않는다.
 
 ## 6. 배포 방식
 
@@ -138,8 +141,9 @@ AI가 구현 중 바로 사용할 수 있도록 전개한 상세 애플리케이
 - `DESIGN.md` 자체가 없으면 앱 context를 정본으로 만들지 않고 `design-doc` 실행을 요청한다.
 - Git remote·branch, profile, deployment처럼 현재 자료에서 확인하지 못한 값은
   사용자 질문 예산 안에서 확인하거나 `미정 — 현재 근거 없음`으로 표시한다.
-- `dev/qa/prod` 기본은 사용자가 별도 기준을 주지 않았을 때의 문서 기준이며, 존재를
-  확인하지 못한 외부 환경이나 branch를 실제 운영 중이라고 단정하는 근거가 아니다.
+- `local/dev/prod` profile과 `dev/main` branch 매핑은 사용자가 별도 기준을 주지 않았을
+  때의 문서 기준이다. 존재를 확인하지 못한 외부 환경이나 branch를 실제 운영 중이라고
+  단정하는 근거가 아니다.
 
 ## 관찰 기반 입력
 

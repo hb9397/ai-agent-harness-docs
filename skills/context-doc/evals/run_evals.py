@@ -70,9 +70,9 @@ def main() -> int:
         "#### [도메인 개념 또는 식별자 묶음]",
         "### 기능 분류 트리",
         "### 현재 구현 연결",
-        "| dev |",
-        "| qa |",
-        "| prod |",
+        "| local |",
+        "| dev | dev |",
+        "| prod | main |",
         "`@` 참조",
         "문서 링크",
         "현재 상태",
@@ -85,6 +85,8 @@ def main() -> int:
     )
     if "## 4. 핵심 도메인 개념" in context_template:
         raise AssertionError("app context template still contains core-domain section")
+    if "| qa |" in context_template or "dev/qa/prod" in context_template:
+        raise AssertionError("app context template still contains the removed qa default")
     require(
         SKILL_ROOT / "templates" / "data-standard-instruction.md.template",
         "# 데이터 명칭·용어·약어·코드 표준 지침",
@@ -139,7 +141,8 @@ def main() -> int:
     )
     require(
         SKILL_ROOT / "prompts" / "analysis-claude.md",
-        "dev`, `qa`, `prod",
+        "`local`, `dev`, `prod`",
+        "`dev`, `main` branch",
         "Git 원격 저장소 및 브랜치",
         "핵심 도메인 개념`을 독립된 최상위 섹션으로 만들지 않고",
         "## 10. 구축 대상 기능 분류",

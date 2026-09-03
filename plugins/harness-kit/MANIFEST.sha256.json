@@ -3,15 +3,15 @@
   "files": [
     {
       "path": ".claude-plugin/plugin.json",
-      "sha256": "3b82d6e818f4ccf7ba65ab61502806e947c6282a4d2a930c8c80441e56131ccf"
+      "sha256": "f7fcd6819e3bde61fa666e8eff1f969de70d2b893f43907735e414bbd76de679"
     },
     {
       "path": ".codex-plugin/plugin.json",
-      "sha256": "b7b1ca8a7c91e13c836d73ba49a3138f5bbf606fdef4c62bfe61e60be1da8290"
+      "sha256": "1c2836c9de59341960585d93ac26b28d5f35be79095c490da571642dc5810471"
     },
     {
       "path": "CAPABILITIES.json",
-      "sha256": "a14da8c62eae37588b4971a7fa53b179a227970c8190f12554e3df98a828abaa"
+      "sha256": "2fee430ae85628c1b951d67bebd5466c255a79f217955a8abd7c0cc96b9161cc"
     },
     {
       "path": "LICENSE",
@@ -27,7 +27,7 @@
     },
     {
       "path": "UPSTREAMS.lock.json",
-      "sha256": "35c05725b6fc062c789880291fe6a79ca8f4a42f334d2826a18d7da02a5092fd"
+      "sha256": "21c294880f43ed3254dd9a7bd51cec80c77820de65aa699433f61a2d87983f63"
     },
     {
       "path": "licenses/anthropic-frontend-design-LICENSE",
@@ -79,19 +79,19 @@
     },
     {
       "path": "runtime/claude/skills/context-doc/SKILL.md",
-      "sha256": "8bec62ae8a868fb6a081bf52453d30f4f0e2204750104c52c34cf91b53d1dae2"
+      "sha256": "63ba99d8925d3efc8808a52b631df6887b186ed767b6a889fda14f6ec9e81255"
     },
     {
       "path": "runtime/claude/skills/context-doc/evals/evals.json",
-      "sha256": "2d2dc703f684a3fc85077056eae97f71aa97036e4bd57576831c8dd62868782e"
+      "sha256": "7870b62032152d92d195726f366b598e631a0bb15c7c5e394464ae0aa70c41c0"
     },
     {
       "path": "runtime/claude/skills/context-doc/evals/run_evals.py",
-      "sha256": "1accaac6753bba8ca811bb5b025acbbe04ffcfcba87df350461df10450cdc181"
+      "sha256": "c1d73af523526bf9e4cc43f8714a39c33c7b04579e256712e820d534a3c4b2ec"
     },
     {
       "path": "runtime/claude/skills/context-doc/prompts/analysis-claude.md",
-      "sha256": "6800fd649bb612877cfad1b1eea0745984cab60d8c34c913738c6fbfc9439250"
+      "sha256": "35eb311cb78f430d8bac2d78f6cfc429e2953dea6150e04271b591c217e97c63"
     },
     {
       "path": "runtime/claude/skills/context-doc/prompts/analysis-instruction.md",
@@ -111,7 +111,7 @@
     },
     {
       "path": "runtime/claude/skills/context-doc/templates/AGENTS.md.template",
-      "sha256": "2c486b137c99e818bd01b286e8509efb5ec6a654e263bea31e0e629bb8eafb0d"
+      "sha256": "9ea6e479266ad604b664e6abbb57177f77dafe7f321fcc57907c498c86faf8d3"
     },
     {
       "path": "runtime/claude/skills/context-doc/templates/CLAUDE.md.template",
@@ -299,7 +299,7 @@
     },
     {
       "path": "runtime/claude/skills/harness-bootstrap/SKILL.md",
-      "sha256": "9c28f6c0d08172bd90b8db211fef92ac8fa6bce662a1988cd0460a5e8391ae6a"
+      "sha256": "d4ada76cf48002c04a088efb95278c91b518304d56b72d8d72b7202e98585d06"
     },
     {
       "path": "runtime/claude/skills/harness-bootstrap/evals/evals.json",
@@ -307,11 +307,11 @@
     },
     {
       "path": "runtime/claude/skills/harness-bootstrap/evals/run_evals.py",
-      "sha256": "10625e3b6e28f0f30684aa5edd837b00d578558a14e77a74c833ff0722827296"
+      "sha256": "8a288777c13985b2aa33f32be59edef523b6dd405c61b8c9398f650a6b28d165"
     },
     {
       "path": "runtime/claude/skills/harness-bootstrap/prompts/code-scan.md",
-      "sha256": "34b7bfa46b04f21c9c64a487d2faa5e605d0d066627e1dc3296562a780aa09d5"
+      "sha256": "bf996fa2ddbc0419a2c627ed8aae75bc721f037eb7112edf6516d5393d4721ba"
     },
     {
       "path": "runtime/claude/skills/harness-bootstrap/prompts/extraction-mapping.md",
@@ -963,19 +963,19 @@
     },
     {
       "path": "runtime/codex/skills/context-doc/SKILL.md",
-      "sha256": "8bec62ae8a868fb6a081bf52453d30f4f0e2204750104c52c34cf91b53d1dae2"
+      "sha256": "63ba99d8925d3efc8808a52b631df6887b186ed767b6a889fda14f6ec9e81255"
     },
     {
       "path": "runtime/codex/skills/context-doc/evals/evals.json",
-      "sha256": "2d2dc703f684a3fc85077056eae97f71aa97036e4bd57576831c8dd62868782e"
+      "sha256": "7870b62032152d92d195726f366b598e631a0bb15c7c5e394464ae0aa70c41c0"
     },
     {
       "path": "runtime/codex/skills/context-doc/evals/run_evals.py",
-      "sha256": "1accaac6753bba8ca811bb5b025acbbe04ffcfcba87df350461df10450cdc181"
+      "sha256": "c1d73af523526bf9e4cc43f8714a39c33c7b04579e256712e820d534a3c4b2ec"
     },
     {
       "path": "runtime/codex/skills/context-doc/prompts/analysis-claude.md",
-      "sha256": "6800fd649bb612877cfad1b1eea0745984cab60d8c34c913738c6fbfc9439250"
+      "sha256": "35eb311cb78f430d8bac2d78f6cfc429e2953dea6150e04271b591c217e97c63"
     },
     {
       "path": "runtime/codex/skills/context-doc/prompts/analysis-instruction.md",
@@ -995,7 +995,7 @@
     },
     {
       "path": "runtime/codex/skills/context-doc/templates/AGENTS.md.template",
-      "sha256": "2c486b137c99e818bd01b286e8509efb5ec6a654e263bea31e0e629bb8eafb0d"
+      "sha256": "9ea6e479266ad604b664e6abbb57177f77dafe7f321fcc57907c498c86faf8d3"
     },
     {
       "path": "runtime/codex/skills/context-doc/templates/CLAUDE.md.template",
@@ -1183,7 +1183,7 @@
     },
     {
       "path": "runtime/codex/skills/harness-bootstrap/SKILL.md",
-      "sha256": "9c28f6c0d08172bd90b8db211fef92ac8fa6bce662a1988cd0460a5e8391ae6a"
+      "sha256": "d4ada76cf48002c04a088efb95278c91b518304d56b72d8d72b7202e98585d06"
     },
     {
       "path": "runtime/codex/skills/harness-bootstrap/evals/evals.json",
@@ -1191,11 +1191,11 @@
     },
     {
       "path": "runtime/codex/skills/harness-bootstrap/evals/run_evals.py",
-      "sha256": "10625e3b6e28f0f30684aa5edd837b00d578558a14e77a74c833ff0722827296"
+      "sha256": "8a288777c13985b2aa33f32be59edef523b6dd405c61b8c9398f650a6b28d165"
     },
     {
       "path": "runtime/codex/skills/harness-bootstrap/prompts/code-scan.md",
-      "sha256": "34b7bfa46b04f21c9c64a487d2faa5e605d0d066627e1dc3296562a780aa09d5"
+      "sha256": "bf996fa2ddbc0419a2c627ed8aae75bc721f037eb7112edf6516d5393d4721ba"
     },
     {
       "path": "runtime/codex/skills/harness-bootstrap/prompts/extraction-mapping.md",

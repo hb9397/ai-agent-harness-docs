@@ -66,6 +66,10 @@ def main() -> int:
         "핵심 도메인 개념을 포함한 계층형 앱 특이사항",
         "노드명·순서·부모-자식 관계·Depth",
         "실행 profile, Git remote·branch",
+        "실행 profile은 `local/dev/prod`",
+        "환경별 branch는 `dev/main`",
+        "`main` branch는 실행",
+        "profile `prod`에 대응",
         "DB 준비·migration 명령을 넣지 않는다",
         "초기 목적 골격 세트",
         "architecture·data-standard·code-style·framework·file-convention",
@@ -122,6 +126,15 @@ def main() -> int:
         text = prompt_file.read_text(encoding="utf-8")
         if "artifact 의미" not in text or "대상 앱" not in text:
             raise AssertionError(f"{prompt_file}: missing portable routing decision rule")
+
+    code_scan = CODE_SCAN_FILE.read_text(encoding="utf-8")
+    for needle in (
+        "`local/dev/prod`",
+        "`dev/main`",
+        "`main` branch는 실행 profile `prod`",
+    ):
+        if needle not in code_scan:
+            raise AssertionError(f"{CODE_SCAN_FILE}: missing profile/branch default: {needle}")
 
     if "../harness-setup/" in skill:
         raise AssertionError("bootstrap must not couple to harness-setup private paths")

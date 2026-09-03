@@ -342,8 +342,10 @@ STEP 0에서 병렬을 선택한 경우, Step 3-B에서 확정된 생성 파일 
   최신화 원칙을 적고 기존 개요 요약을 유지한다.
 - 최상단과 `9. AI 구현 지침`에 루트 컨텍스트 → 앱 context → 작업 관련 instruction
   필독 순서를 적는다.
-- 앱 context의 확실하지 않은 항목은 `미정 — [이유]` 로 표시한다. profile·branch에
-  별도 지시가 없으면 `dev/qa/prod`를 기본 기준으로 제시하되 실제 존재를 단정하지 않는다.
+- 앱 context의 확실하지 않은 항목은 `미정 — [이유]` 로 표시한다. 별도 지시가 없으면
+  실행 profile은 `local/dev/prod`, 환경별 branch는 `dev/main`을 기본 기준으로 제시한다.
+  `dev` branch는 실행 profile `dev`, `main` branch는 실행 profile `prod`에 대응시키며
+  `local`에는 환경별 branch를 배정하지 않는다. 실제 profile·branch 존재를 단정하지 않는다.
 - `4. 실행 프로필 및 실행 방식`과 `6. 배포 방식`에는 DB 생성·migration·seed·접속
   명령을 넣지 않는다.
 - 코드 예시는 핵심 패턴만, 완성 코드는 포함하지 않는다.

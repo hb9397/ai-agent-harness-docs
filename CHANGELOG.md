@@ -2,6 +2,30 @@
 
 이 문서는 `harness-kit` 사용자 플러그인의 주요 변경 사항을 기록한다.
 
+## [0.6.2] - 2026-09-03
+
+### 변경
+
+- `context-doc`이 별도 지시나 확인된 설정이 없을 때 실행 프로필을
+  `local`, `dev`, `prod`로 제시하도록 변경했다.
+- 환경별 기본 브랜치는 `dev`, `main`으로 제시하고 `dev` 브랜치는 실행 프로필 `dev`,
+  `main` 브랜치는 실행 프로필 `prod`에 대응하도록 했다. `local`에는 환경별 브랜치를
+  배정하지 않고 기존 `qa` 기본값을 제거했다.
+- `harness-bootstrap`의 관찰 정보 전달과 회귀검증도 같은 실행 프로필·브랜치 계약을
+  사용하도록 동기화했다.
+
+### 보호 자산 영향
+
+- `context-doc`의 앱 컨텍스트 템플릿과 `context-doc`·`harness-bootstrap` eval을
+  새 기본 매핑에 맞게 보완했다.
+- 보호 자산의 삭제·이동·교체는 없다.
+
+### 배포 상태
+
+- `0.6.2`는 `main` 브랜치 배포 후보다. tag와 GitHub Release는 만들지 않는다.
+- `0.6.2` 아카이브 경로와 SHA-256은
+  [`maintainer/plugin/release.json`](./maintainer/plugin/release.json)을 정본으로 삼는다.
+
 ## [0.6.1] - 2026-09-02
 
 ### 변경
