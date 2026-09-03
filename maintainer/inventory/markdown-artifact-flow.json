@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "generated_at": "2026-07-31",
-  "purpose": "Track Markdown producer bundles and enforce one optional humanize-korean handoff owned by the outermost producer.",
+  "generated_at": "2026-09-03",
+  "purpose": "Track Markdown producer bundles when the user explicitly requests the optional humanize-korean handoff owned by the outermost producer.",
   "producer_skills": [
     {
       "skill": "harness-setup",
@@ -11,7 +11,7 @@
         ".ai-docs/README.md"
       ],
       "structural_validator": "project layout allowlist, AGENTS canonical context, CLAUDE @AGENTS.md bridge",
-      "handoff": "Outermost owner offers one humanize-korean document-refinement proposal after structural validation."
+      "handoff": "Only on an explicit refinement request, the outermost owner offers one humanize-korean document-refinement proposal after structural validation."
     },
     {
       "skill": "harness-bootstrap",
@@ -21,7 +21,7 @@
         "CLAUDE.md"
       ],
       "structural_validator": "design output, context references, AGENTS/CLAUDE bridge and output paths",
-      "handoff": "Own the combined design-doc/context-doc bundle; suppress both child handoffs and offer once after final validation."
+      "handoff": "On an explicit refinement request, own the combined design-doc/context-doc bundle, suppress both child handoffs, and offer once after final validation."
     },
     {
       "skill": "context-doc",
@@ -30,7 +30,7 @@
         "CLAUDE.md"
       ],
       "structural_validator": "instruction references, AGENTS canonical context and CLAUDE @AGENTS.md bridge",
-      "handoff": "Offer once only when directly invoked; return draft and validation result when a parent owns the bundle."
+      "handoff": "Offer once only when refinement is explicitly requested and directly invoked; otherwise return the draft and validation result."
     },
     {
       "skill": "design-doc",
@@ -38,7 +38,7 @@
         "DESIGN.md"
       ],
       "structural_validator": "required sections, requirement traceability, links and save path",
-      "handoff": "Offer once only when directly invoked and after OUTPUT validation."
+      "handoff": "Offer once only when refinement is explicitly requested, directly invoked, and OUTPUT validation has passed."
     },
     {
       "skill": "design-prototype-docs",
@@ -46,7 +46,7 @@
         "prototype design .md"
       ],
       "structural_validator": "seven quality checks, requirement coverage, routes, tables and code fences",
-      "handoff": "Offer once only when directly invoked; revalidate before create-prototype handoff."
+      "handoff": "Offer once only when refinement is explicitly requested and directly invoked; revalidate before passing to the selected prototype producer."
     },
     {
       "skill": "impl-doc",
@@ -55,7 +55,7 @@
         "implementation roadmap index"
       ],
       "structural_validator": "task IDs, commands, paths, verification scenarios and roadmap index links",
-      "handoff": "Offer once for the plan/index bundle and revalidate before downstream implementation."
+      "handoff": "On an explicit refinement request, offer once for the plan/index bundle and revalidate before downstream implementation."
     },
     {
       "skill": "impl-fe-be-doc",
@@ -64,7 +64,7 @@
         "implementation roadmap index"
       ],
       "structural_validator": "FE-API-BE-DB traceability, task IDs, paths, verification scenarios and roadmap index links",
-      "handoff": "Offer once for the FE/BE plan/index bundle and revalidate before downstream implementation."
+      "handoff": "On an explicit refinement request, offer once for the FE/BE plan/index bundle and revalidate before downstream implementation."
     },
     {
       "skill": "ui-ux-pro-max",
@@ -77,7 +77,7 @@
         ".ai-docs/{앱}/design-system/{project-slug}/pages/{page-slug}.md"
       ],
       "structural_validator": "required sections, token tables, slug-safe paths, MASTER/override split",
-      "handoff": "Offer once only when directly invoked and the outermost producer; suppress when a parent owns the bundle."
+      "handoff": "Offer once only when refinement is explicitly requested, directly invoked, and the outermost producer; suppress otherwise."
     },
     {
       "skill": "motion-design",
@@ -88,11 +88,11 @@
         ".ai-docs/{앱}/design-system/{project-slug}/motion/{screen-or-component}.md"
       ],
       "structural_validator": "required spec fields, slug-safe paths, reduced-motion alternative present",
-      "handoff": "Offer once only when directly invoked and the outermost producer; suppress when a parent owns the bundle."
+      "handoff": "Offer once only when refinement is explicitly requested, directly invoked, and the outermost producer; suppress otherwise."
     }
   ],
   "policy": {
-    "default": "proposal-only",
+    "default": "no handoff unless explicitly requested; proposal-only when requested",
     "requires_user_approval_before_write": true,
     "protected_contract": "skills/humanize-korean/references/document-refinement.md",
     "bundle_contract": {
@@ -112,6 +112,7 @@
       "ledger_excluded_from_bundle": true
     },
     "required_order": [
+      "explicit user request for document refinement",
       "producer structural validation",
       "one proposal-only humanize-korean handoff by the owner",
       "explicit user approval before any write",

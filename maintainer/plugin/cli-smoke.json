@@ -15,7 +15,7 @@
       "evidence_level": "marketplace-install-and-cache-smoke",
       "model_invocation_verified": false,
       "installed_payload": {
-        "version": "0.6.2",
+        "version": "0.6.3",
         "skill_count": 20,
         "agent_count": 0,
         "required_skills": [

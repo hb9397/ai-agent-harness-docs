@@ -5,8 +5,8 @@ description: >
   프로젝트별 prefix) 기반 화면 프로토타입을 HTML 파일로 생성한다.
   Tailwind CSS CDN + Noto Sans KR 기반이며, 실제 서비스 수준의 인터랙티브 프로토타입을 만든다.
   "검증용 프로토타입", "UI 프로토타입", "HTML 목업", "SFR 화면 시안",
-  "REQ 화면 시안" 요청에 사용한다. Markdown 화면 설계 문서는 design-prototype-docs,
-  실제 앱 소스 구현은 frontend-design이 담당한다.
+  "REQ 화면 시안" 요청에 사용한다. Markdown 화면 설계와 실제 앱 소스 구현은 각각
+  목적에 맞는 도구가 담당하며, `design-prototype-docs`와 `frontend-design`은 제공 선택지다.
 allowed-tools: Read, Write, Glob, Grep, Agent
 ---
 
@@ -38,15 +38,15 @@ Tailwind CSS CDN과 Noto Sans KR 폰트를 사용하며, `file://` 직접 열기
 
 ## 진입 라우팅
 
-| 최종 산출물 | 담당 스킬 |
-|---|---|
-| 화면 요구사항·흐름·컴포넌트 배치를 설명하는 Markdown | `design-prototype-docs` |
-| 단일 `.ai-docs/prototype/` 또는 복수 `.ai-docs/{앱}/prototype/` 아래 검증용 HTML/CSS/JS/JSON | `create-prototype` |
-| 실제 앱 디렉터리에 반영할 제품 코드 | `frontend-design` |
+| 최종 산출물 | 정규 위치·처리 | 제공 스킬 예시 |
+|---|---|---|
+| 화면 요구사항·흐름·컴포넌트 배치를 설명하는 Markdown | prototype 문서 경로 | `design-prototype-docs` |
+| 단일 `.ai-docs/prototype/` 또는 복수 `.ai-docs/{앱}/prototype/` 아래 검증용 HTML/CSS/JS/JSON | prototype bundle | `create-prototype` |
+| 실제 앱 디렉터리에 반영할 제품 코드 | 승인된 앱 source root | `frontend-design` |
 
 프로토타입은 요구사항 검증을 위한 폐기 가능한 산출물이다. 사용자가 실제 앱 적용을
-요청하면 이 스킬로 비슷한 코드를 만든 뒤 복사하지 말고 `frontend-design`으로
-handoff한다.
+요청하면 이 스킬로 비슷한 코드를 만든 뒤 복사하지 말고 승인된 디자인 결정과 화면
+명세만 선택한 제품 구현 도구에 handoff한다.
 
 ### 두 분기의 경계
 
@@ -56,23 +56,23 @@ handoff한다.
   제품 디렉터리로 복사하지 않는다.
 - 프로토타입 승인 후 실제 구현으로 넘어갈 때는 **승인된 디자인 결정과 화면
   명세만** 전달한다. 코드는 전달하지 않는다.
-- 사용자가 처음부터 실제 화면 구현을 요청하면 이 스킬을 강제하지 않고 바로
-  `frontend-design`으로 넘긴다.
+- 사용자가 처음부터 실제 화면 구현을 요청하면 이 스킬을 강제하지 않고 바로 선택한
+  제품 구현 도구로 넘긴다. `frontend-design`은 제공 선택지다.
 
 작업을 마칠 때 이 산출물이 검증용이며 제품 소스가 아니라는 점을 출력에 명시한다.
 
 ### 이후 연결
 
-프로토타입 생성으로 작업이 끝나지 않는다. 사용자의 다음 목적에 따라 공개 이름으로
-넘긴다.
+프로토타입 생성 뒤 후속 작업이 필요하면 사용자가 선택한 도구로 넘긴다. 아래 이름은
+Harness Kit가 제공하는 선택지이며 필수 호출이 아니다.
 
-| 사용자의 다음 목적 | 넘길 스킬 |
+| 사용자의 다음 목적 | 제공 스킬 예시 |
 |---|---|
 | 시안이 요구사항을 만족하는지 검증 | `impl-verify` |
 | 승인 후 실제 제품 화면 구현 | `frontend-design` |
 
-두 분기 모두 최종적으로 `impl-verify` 검증을 거친다. 프로토타입 분기는 시안과
-요구사항의 일치를, 실제 화면 분기는 기능·UI·접근성·모션을 검증한다.
+어떤 도구를 선택하든 프로토타입 분기는 시안과 요구사항의 일치를, 실제 화면 분기는
+기능·UI·접근성·모션을 검증하고 실행하지 못한 항목을 통과로 기록하지 않는다.
 
 ### 선행 입력
 

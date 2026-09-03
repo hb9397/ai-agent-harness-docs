@@ -186,7 +186,7 @@
       "multi_app_path": ".ai-docs/{앱}/prototype/{사용자}/{식별자}/",
       "owner": "create-prototype",
       "approval": "explicit prototype generation request",
-      "handoff": "design-prototype-docs input; impl-verify report",
+      "handoff": "optional compatible design input; optional verification producer; no named-skill requirement",
       "evidence": "skills/create-prototype/SKILL.md"
     },
     {
@@ -199,7 +199,7 @@
       "multi_app_path": ".ai-docs/{앱}/context-base/DESIGN.md",
       "owner": "design-doc",
       "approval": "user approval before save",
-      "handoff": "context-doc; impl-doc or impl-fe-be-doc",
+      "handoff": "context-doc baseline; optional compatible planning producer",
       "evidence": "skills/design-doc/SKILL.md"
     },
     {
@@ -212,7 +212,7 @@
       "multi_app_path": ".ai-docs/{앱}/prototype/{사용자}/{식별자}/design-doc.md",
       "owner": "design-prototype-docs",
       "approval": "user approval before save",
-      "handoff": "create-prototype; impl-verify",
+      "handoff": "optional compatible prototype and verification producers",
       "evidence": "skills/design-prototype-docs/SKILL.md"
     },
     {
@@ -238,7 +238,7 @@
       "multi_app_path": "selected app source root only",
       "owner": "user",
       "approval": "explicit implementation request",
-      "handoff": "impl-verify; no prototype-to-product copy",
+      "handoff": "optional compatible verification producer; no prototype-to-product copy",
       "evidence": "skills/frontend-design/SKILL.md"
     },
     {
@@ -302,8 +302,8 @@
       "single_app_path": ".ai-docs/impl-doc/{사용자}/{YYMMDD}-{seq}.{slug}-impl-{kind}.md",
       "multi_app_path": ".ai-docs/{앱}/impl-doc/{사용자}/{YYMMDD}-{seq}.{slug}-impl-{kind}.md",
       "owner": "impl-doc",
-      "approval": "user approval before save; roadmap preflight",
-      "handoff": "shared roadmap index; impl-reuse-scan; explicit impl-verify",
+      "approval": "user approval before save",
+      "handoff": "shared roadmap index; optional compatible reuse review and verification producers",
       "evidence": "skills/impl-doc/SKILL.md; *-roadmap-impl-index.md"
     },
     {
@@ -315,8 +315,8 @@
       "single_app_path": ".ai-docs/impl-doc/{사용자}/{YYMMDD}-{seq}.{slug}-impl-{kind}.md",
       "multi_app_path": ".ai-docs/{앱}/impl-doc/{사용자}/{YYMMDD}-{seq}.{slug}-impl-{kind}.md",
       "owner": "impl-fe-be-doc",
-      "approval": "user approval before save; roadmap preflight",
-      "handoff": "shared roadmap index; impl-reuse-scan; explicit impl-verify",
+      "approval": "user approval before save",
+      "handoff": "shared roadmap index; optional compatible reuse review and verification producers",
       "evidence": "skills/impl-fe-be-doc/SKILL.md; *-roadmap-impl-index.md"
     },
     {
@@ -355,7 +355,7 @@
       "multi_app_path": ".ai-docs/{앱}/design-system/{project-slug}/motion/{screen-or-component}.md",
       "owner": "motion-design",
       "approval": "explicit save approval",
-      "handoff": "frontend-design; impl-verify",
+      "handoff": "optional compatible product implementation and verification producers",
       "evidence": "skills/motion-design/SKILL.md"
     },
     {
@@ -394,7 +394,7 @@
       "multi_app_path": ".ai-docs/{앱}/design-system/{project-slug}/MASTER.md; pages/{page-slug}.md",
       "owner": "ui-ux-pro-max",
       "approval": "explicit save approval",
-      "handoff": "frontend-design; impl-verify",
+      "handoff": "optional compatible product implementation and verification producers",
       "evidence": "skills/ui-ux-pro-max/SKILL.md"
     },
     {

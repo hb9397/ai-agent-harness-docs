@@ -9,7 +9,10 @@
 
 ## 1. 읽기 규칙과 적용 범위
 
-- 이 문서는 산출물을 만드는 모든 사용자 스킬의 위치·소유자·승인·인계 정본이다.
+- 이 문서는 산출물을 만드는 모든 스킬·플러그인·일반 AI Agent의 위치·소유자·승인·인계
+  정본이다. 특정 producer 이름을 사용 조건으로 삼지 않는다.
+- Harness Kit의 사용자 스킬을 프로젝트에 복사하지 않는 배포 규칙은 다른 설치 스킬,
+  플러그인 또는 일반 Agent의 사용을 금지한다는 뜻이 아니다.
 - `AGENTS.md`는 아래 instruction을 `@`로 참조하고, `CLAUDE.md`는 `@AGENTS.md`
   bridge만 유지한다.
 - 복수 앱에서는 `{앱}`을 실제 애플리케이션 식별자로 치환한다. 앱 식별자나 source
@@ -27,29 +30,34 @@
 복수 앱 root에 앱별 산출물을 평평하게 쓰지 않는다. 이미 공통 경로에 있는 문서를
 앱별 위치로 이동해야 하면 migration map·사용자 승인·hash·link 검증을 먼저 남긴다.
 
-## 3. 스킬별 위치와 인계
+## 3. 산출물 유형별 위치와 인계
 
 정확한 전체 매니페스트는 `maintainer/inventory/artifact-output-contract.json`에
-있다. 아래는 작업 시 반드시 지켜야 하는 요약이다.
+있다. 아래 계약은 producer와 무관하게 지켜야 한다. 괄호 안 Harness Kit 스킬은 사용할
+수 있는 참조 구현이며, 사용자가 선택하지 않은 비기반 스킬을 필수 호출로 만들지 않는다.
 
-- `design-doc` → `context-base/DESIGN.md` → `context-doc`
-- `context-doc`·`harness-setup`·`harness-bootstrap` → AGENTS/CLAUDE bridge와
-  instruction files. 이 파일은 항상 생성되는 routing instruction이다.
-- `impl-doc`·`impl-fe-be-doc` → 앱별 `impl-doc/{사용자}/`와 공유
-  `*-roadmap-impl-index.md`. 계획 승인·index 확정 후 Phase 시작에
-  `impl-reuse-scan`, Phase 종료에 명시 호출 `impl-verify`를 연결한다.
-- `design-prototype-docs`·`create-prototype` → prototype bundle. prototype code를
-  실제 제품 source로 복사하지 않는다.
-- `ui-ux-pro-max`·`motion-design` → design-system 문서. 명시적 저장 승인 전에는
-  파일을 만들지 않는다.
-- `frontend-design`·`code-comment` → 실제 source root. 제품 source를 `.ai-docs`에
-  복제하지 않는다.
-- `humanize-korean` → outer producer가 소유한 입력 artifact 원위치. 독립 경로를
-  만들지 않는다.
-- `impl-reuse-scan`·`impl-verify`·`doc-audit`·`multi-review` → 기본 report-only/
-  chat-only. 명시적 저장 요청 없이는 임의 Markdown을 만들지 않는다.
-- `commit` → Git history, `git-scoped-account` → 사용자가 지정한 Git config.
-- manager 스킬 → manager repository `maintainer/**`·`plugins/**`만 사용한다.
+- 설계 기준 → `context-base/DESIGN.md` (`design-doc`) → 앱 context와 instruction
+  (`context-doc`). 이 기반 문서 흐름은 유지한다.
+- 하네스·컨텍스트 → AGENTS/CLAUDE bridge와 instruction files
+  (`harness-setup`, `harness-bootstrap`, `context-doc`). 이 routing instruction은 항상
+  생성한다.
+- 구현 계획 → 앱별 `impl-doc/{사용자}/`와 공유 `*-roadmap-impl-index.md`
+  (`impl-doc`, `impl-fe-be-doc`). 구현 전 재사용 검토와 구현 후 검증 증적은 남기되,
+  `impl-reuse-scan`·`impl-verify` 또는 동등한 다른 도구·Agent 중에서 선택할 수 있다.
+- 프로토타입 설계·시안 → prototype bundle (`design-prototype-docs`,
+  `create-prototype`). prototype code를 실제 제품 source로 복사하지 않는다.
+- 디자인 시스템·모션 명세 → design-system 문서 (`ui-ux-pro-max`, `motion-design`).
+  명시적 저장 승인 전에는 파일을 만들지 않는다.
+- 제품 구현·코드 주석 → 실제 source root (`frontend-design`, `code-comment`). 제품
+  source를 `.ai-docs`에 복제하지 않는다.
+- 문체 개선 → producer가 소유한 입력 artifact 원위치 (`humanize-korean`). 사용자가
+  명시적으로 요청한 경우에만 제안하며 독립 경로를 만들지 않는다.
+- 재사용 점검·구현 검증·문서 감사·코드 리뷰 → 기본 report-only/chat-only
+  (`impl-reuse-scan`, `impl-verify`, `doc-audit`, `multi-review`). 명시적 저장 요청 없이는
+  임의 Markdown을 만들지 않으며 특정 스킬 호출을 완료 조건으로 삼지 않는다.
+- Git 이력과 계정 설정 → Git history 또는 사용자가 지정한 Git config (`commit`,
+  `git-scoped-account`). 커밋은 사용자의 명시 요청이 있을 때만 수행한다.
+- manager 산출물 → manager repository `maintainer/**`·`plugins/**`만 사용한다.
 
 ## 4. 승인·fingerprint·금지 규칙
 
@@ -69,6 +77,9 @@
 - `.ai-docs/harness/artifact-routing.json`과 `.ai-docs/harness/artifact-format-contract.json`을
   함께 읽어 app ownership, required field, host 상태를 확인한다. producer 이름이나
   plugin 이름이 아니라 artifact 의미와 대상 app으로 경로를 결정한다.
+- 다른 스킬·플러그인·일반 Agent가 같은 artifact를 만들 때도 위 정규 경로와 형식,
+  owner, 승인, evidence 계약을 적용한다. 제공 스킬 목록을 독점 실행 목록으로 해석하지
+  않는다.
 - 외부 fixed-format bundle(JSON/YAML/이미지/PDF 등)은
   `.ai-docs/_inbox/{artifact-bundle-id}/artifact-manifest.json`에 원본 hash·producer·제안
   target을 기록한다. G12 승인 전에는 canonical artifact를 만들거나 덮어쓰지 않는다.

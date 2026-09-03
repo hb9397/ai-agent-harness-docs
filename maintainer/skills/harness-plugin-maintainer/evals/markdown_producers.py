@@ -41,13 +41,14 @@ def test_producer_list_has_a_single_source() -> None:
     assert "MARKDOWN_PRODUCERS = [" not in builder, "producer list must not be hardcoded in the builder"
 
 
-def test_every_producer_is_canonical_and_declares_the_handoff() -> None:
+def test_every_producer_is_canonical_and_requires_explicit_refinement_opt_in() -> None:
     for item in inventory()["producer_skills"]:
         name = item["skill"]
         skill = ROOT / "skills" / name / "SKILL.md"
         assert skill.is_file(), f"producer is not a canonical user skill: {name}"
         text = skill.read_text(encoding="utf-8")
         assert "humanize-korean" in text, f"producer does not declare the handoff: {name}"
+        assert "사용자가 이번 요청에서" in text, f"producer still offers refinement automatically: {name}"
 
 
 def test_conditional_producers_default_to_no_write() -> None:
@@ -61,8 +62,8 @@ def test_conditional_producers_default_to_no_write() -> None:
         assert "사용자 승인 없이" in text, f"{item['skill']} must gate writes on approval"
 
 
-def test_only_the_outermost_producer_offers_the_handoff() -> None:
-    """Nested producers must not each propose refinement for the same bundle."""
+def test_only_the_outermost_producer_handles_an_explicit_handoff() -> None:
+    """Nested producers must not each propose explicitly requested refinement for one bundle."""
     for item in inventory()["producer_skills"]:
         text = (ROOT / "skills" / item["skill"] / "SKILL.md").read_text(encoding="utf-8")
         owns = "handoff_owner" in text or "suppress_child_handoff" in text
@@ -127,9 +128,9 @@ def test_persisted_paths_stay_inside_the_declared_contract() -> None:
 def main() -> int:
     tests = [
         test_producer_list_has_a_single_source,
-        test_every_producer_is_canonical_and_declares_the_handoff,
+        test_every_producer_is_canonical_and_requires_explicit_refinement_opt_in,
         test_conditional_producers_default_to_no_write,
-        test_only_the_outermost_producer_offers_the_handoff,
+        test_only_the_outermost_producer_handles_an_explicit_handoff,
         test_protected_tokens_are_declared_and_contracted,
         test_producing_skills_lock_their_own_mechanical_values,
         test_persisted_paths_stay_inside_the_declared_contract,

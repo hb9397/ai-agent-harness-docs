@@ -34,15 +34,15 @@ allowed-tools: Read, Write, Glob, Grep
 
 작업을 시작하기 전에 요청의 최종 산출물을 기준으로 다음 중 하나만 선택한다.
 
-| 사용자의 최종 산출물 | 담당 스킬 |
-|---|---|
-| 화면 구조·요구사항·흐름을 담은 Markdown 설계 문서 | `design-prototype-docs` |
-| `.ai-docs/prototype/` 아래에서 폐기 가능한 HTML/CSS/JS 검증 시안 | `create-prototype` |
-| 애플리케이션 소스에 반영할 페이지·컴포넌트·스타일 | `frontend-design` |
+| 사용자의 최종 산출물 | 정규 처리 | 제공 스킬 예시 |
+|---|---|---|
+| 화면 구조·요구사항·흐름을 담은 Markdown 설계 문서 | prototype 문서 경로 | `design-prototype-docs` |
+| `.ai-docs/prototype/` 아래에서 폐기 가능한 HTML/CSS/JS 검증 시안 | prototype bundle | `create-prototype` |
+| 애플리케이션 소스에 반영할 페이지·컴포넌트·스타일 | 승인된 앱 source root | `frontend-design` |
 
 요청에 “화면”, “UI”, “프로토타입”이라는 단어가 있다는 이유만으로 선택하지 않는다.
-현재 요청이 문서나 검증 시안이면 해당 공개 스킬 이름으로 handoff하고 이 스킬의
-프로덕션 코드 수정 단계는 실행하지 않는다.
+현재 요청이 문서나 검증 시안이면 선택한 producer로 handoff하고 이 스킬의 프로덕션
+코드 수정 단계는 실행하지 않는다. 제공 스킬 이름은 선택지이며 다른 도구를 배제하지 않는다.
 
 ---
 
@@ -114,8 +114,9 @@ allowed-tools: Read, Write, Glob, Grep
 
 ## 구현 검증
 
-기능·UI·접근성·모션을 요구사항 기준으로 검증해야 하면 공개 이름 `impl-verify`로
-넘긴다. 아래는 이 스킬이 구현을 마치기 전에 직접 수행하는 최소 확인이다.
+기능·UI·접근성·모션을 요구사항 기준으로 추가 검증하려면 `impl-verify` 또는 동등한
+검증 도구를 선택할 수 있다. 아래는 어떤 후속 도구를 선택하든 이 스킬이 구현을 마치기
+전에 직접 수행하는 최소 확인이다.
 
 완료 전 프로젝트가 제공하는 검증 명령을 우선 사용한다.
 

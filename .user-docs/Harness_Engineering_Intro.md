@@ -91,10 +91,10 @@ flowchart TD
 2. 요구사항을 설계로 만드는 형식
 3. 에이전트가 계속 읽을 컨텍스트
 4. 단일 기능과 FE/BE·다중 화면을 나누는 구현 계획
-5. Phase 시작 전 재사용 점검
-6. 구현 후 검증·리뷰·문서 감사
+5. Phase 시작 전 재사용 점검 계약
+6. 구현 후 검증·리뷰·문서 감사 계약
 7. 최종 변경 상태의 커밋 전 검사
-8. Markdown 산출물의 승인형 문체 개선
+8. 명시 요청 시 Markdown 산출물의 승인형 문체 개선
 
 ```mermaid
 flowchart LR
@@ -129,15 +129,22 @@ flowchart LR
 
 ### 3.5 품질 확인을 앞당긴다
 
-모든 기능을 만든 뒤 한 번에 검증하지 않는다. Phase마다 재사용 후보를 보고, 구현이 끝나면 계획 대비 결과를 확인하고, 리뷰와 커밋 전 검사를 수행한다.
+모든 기능을 만든 뒤 한 번에 검증하지 않는다. Phase마다 필요한 재사용 후보를 보고,
+구현이 끝나면 계획 대비 결과를 확인하고, 필요한 리뷰와 커밋 전 검사를 수행한다. 이때
+특정 스킬 이름보다 evidence의 내용과 신뢰성을 기준으로 삼는다.
 
 ### 3.6 문서 문체도 구조 계약을 해치지 않게 개선한다
 
-AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 그래서 고정 7종과 조건부 2종, 총 9종의 Markdown producer 뒤에는 `humanize-korean` 개선안이 연결된다. 조건부인 `ui-ux-pro-max`와 `motion-design`은 사용자가 파일 저장을 명시적으로 요청했을 때만 이 흐름에 들어온다. 자동으로 덮어쓰지 않고 diff를 먼저 보여 주며 승인 후 원 producer가 구조를 다시 검증한다.
+AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 사용자가 문체 개선을
+명시적으로 요청한 경우에만 producer 뒤에 `humanize-korean` 개선안을 연결한다. 자동으로
+덮어쓰지 않고 diff를 먼저 보여 주며 승인 후 원 producer가 구조를 다시 검증한다.
 
 ### 3.7 스킬 배포는 프로젝트 책임이 아니다
 
-`harness-setup`은 플러그인의 사용자 스킬 복사본을 `.agents/skills`, `.claude/skills`, `skills/`에 만들거나 맞추지 않는다. 사용자 스킬은 설치된 플러그인에서 제공한다. 프로젝트에서 발견한 고유 custom skill과 사용자 스킬 복사본은 읽기 전용으로 분류·보고하고 승인 없이 변경하지 않는다.
+`harness-setup`은 Harness Kit 사용자 스킬 복사본을 `.agents/skills`, `.claude/skills`,
+`skills/`에 만들거나 맞추지 않는다. 이 규칙은 Harness Kit의 배포 위치를 뜻하며 다른
+설치 스킬·플러그인·일반 Agent의 사용을 금지하지 않는다. 프로젝트에서 발견한 고유
+custom skill과 사용자 스킬 복사본은 읽기 전용으로 분류·보고하고 승인 없이 변경하지 않는다.
 
 ## 4. 스킬 역할 소개
 
@@ -189,7 +196,7 @@ AI가 만든 Markdown은 구조는 맞아도 문장이 기계적일 수 있다. 
 | `doc-audit` | 코드와 프로젝트 문서의 괴리 분석 | 구조나 동작이 바뀌었을 때 |
 | `code-comment` | 필요한 변경 코드의 한글 주석 보강 | 인수인계 맥락이 코드만으로 부족할 때 |
 | `commit` | 범위·diff·검증을 확인하고 의도한 파일만 stage해 정상 hook과 Conventional Commit을 실행한 뒤 사후 증거 확인 | 사용자가 커밋을 명시 요청할 때 |
-| `humanize-korean` | 한국어 Markdown 개선안과 diff | producer 후처리 또는 명시적 문체 개선 |
+| `humanize-korean` | 한국어 Markdown 개선안과 diff | 사용자가 문체 개선을 명시 요청했을 때 |
 
 RFP는 `design-doc`, `design-prototype-docs`, 다중 화면·FE/BE 페어 계획용 `impl-fe-be-doc`에 직접 입력한다. 사용자 스킬 배포·업데이트는 플러그인이 담당한다.
 
@@ -219,22 +226,22 @@ flowchart LR
 
     C --> C1["harness-bootstrap"]
 
-    D --> D0["ui-ux-pro-max"]
-    D0 --> D1["design-prototype-docs"]
+    D --> D0["선택한 디자인 판단 도구"]
+    D0 --> D1["선택한 화면 명세 producer"]
     D1 --> DM{"모션이 필요한가?"}
-    DM -->|"예"| D3["motion-design"]
-    DM -->|"아니오"| D2["create-prototype"]
+    DM -->|"예"| D3["선택한 모션 설계 도구"]
+    DM -->|"아니오"| D2["선택한 프로토타입 producer"]
     D3 --> D2
 
     E --> E1{"단일 작업인가?"}
-    E1 -->|"예"| E2["impl-doc"]
-    E1 -->|"다중 화면·FE/BE 페어"| E3["impl-fe-be-doc"]
-    E2 --> E4["impl-reuse-scan"]
+    E1 -->|"예"| E2["단일 작업 계획 producer"]
+    E1 -->|"다중 화면·FE/BE 페어"| E3["통합 계획 producer"]
+    E2 --> E4["선택: 재사용 검토"]
     E3 --> E4
 
-    F --> F1["impl-verify"]
-    F1 --> F2["multi-review"]
-    F2 --> F3["doc-audit"]
+    F --> F1["선택: 구현 검증"]
+    F1 --> F2["선택: 코드 리뷰"]
+    F2 --> F3["선택: 문서 감사"]
 
     G --> G1["선택: code-comment"]
     G1 --> G4["명시 요청: commit<br/>범위 확인 → 선택 stage → hook → commit"]
@@ -248,11 +255,11 @@ flowchart LR
 - 문서 없는 기존 코드다 → `harness-bootstrap`
 - 요구사항이나 RFP를 설계로 정리한다 → `design-doc`
 - 설계를 에이전트 규칙으로 고정한다 → `context-doc`
-- 화면부터 본다 → `ui-ux-pro-max` → `design-prototype-docs` → 필요 시 `motion-design` → `create-prototype`
-- 단일 기능 계획을 만든다 → `impl-doc`
-- 다중 화면·FE/BE 페어 계획을 만든다 → `impl-fe-be-doc`
-- 구현을 시작한다 → `impl-reuse-scan`
-- Phase가 끝났다 → `impl-verify`
+- 화면부터 본다 → 필요에 맞는 디자인·명세·프로토타입 producer를 선택한다
+- 단일 기능 계획을 만든다 → 선택지: `impl-doc`
+- 다중 화면·FE/BE 페어 계획을 만든다 → 선택지: `impl-fe-be-doc`
+- 구현을 시작한다 → 재사용 검토. 선택지: `impl-reuse-scan`
+- Phase가 끝났다 → 계획 대비 검증. 선택지: `impl-verify`
 - 커밋을 준비한다 → 리뷰·문서 감사·재검증 뒤 사용자가 `commit` 명시 호출
 
 ## 6. 전체 사용자 흐름
@@ -269,14 +276,14 @@ flowchart LR
 → 모든 참여자: 현재 PC 로컬 등록
 → 권한 정책이 있으면 허용된 역할·앱 범위에서 design-doc
 → 같은 역할·앱 범위에서 context-doc
-→ 화면 작업일 때 선택: ui-ux-pro-max → design-prototype-docs → 필요 시 motion-design → create-prototype
-→ impl-doc 또는 impl-fe-be-doc
-→ impl-reuse-scan
+→ 화면 작업일 때 선택: 디자인·명세·프로토타입 producer
+→ 선택: 구현 계획 producer
+→ 선택: 재사용 검토
 → Phase·태스크 단위 구현
-   └─ 제품 UI 작업이면 frontend-design으로 구현
-→ impl-verify
-→ multi-review
-→ doc-audit
+   └─ 제품 UI 작업이면 승인된 source에 맞는 구현 도구 선택
+→ 선택: 구현 검증
+→ 선택: 코드 리뷰
+→ 선택: 문서 감사
 → 필요한 수정·재검증
 → 선택: code-comment
 → 사용자 명시 요청: commit
@@ -298,7 +305,7 @@ flowchart LR
    ├─ 코드 스캔
    ├─ design-doc 형식 설계
    └─ context-doc 형식 컨텍스트
-→ impl-doc 또는 impl-fe-be-doc
+→ 선택: 구현 계획 producer
 → 이후 흐름은 동일
 ```
 
@@ -306,7 +313,10 @@ flowchart LR
 
 ### Markdown 문서 개선이 끼어드는 위치
 
-여기서 producer는 Markdown 파일이나 문서 묶음을 생성·갱신하고 저장 경로와 구조를 검증한 뒤 다음 단계로 넘기는 산출물 책임 스킬을 뜻한다. 고정 producer인 `harness-setup`, `harness-bootstrap`, `design-doc`, `context-doc`, `design-prototype-docs`, `impl-doc`, `impl-fe-be-doc`과 조건부 producer인 `ui-ux-pro-max`, `motion-design`이 Markdown bundle을 만들면 다음 순서를 거친다. 조건부 2종은 사용자가 파일 저장을 명시적으로 요청했을 때만 이 흐름에 들어온다.
+여기서 producer는 Markdown 파일이나 문서 묶음을 생성·갱신하고 저장 경로와 구조를
+검증한 뒤 다음 단계로 넘기는 산출물 책임 주체를 뜻한다. 사용자가 문체 개선을 명시적으로
+요청한 경우에만 아래 순서를 거친다. Harness Kit의 producer 목록은 선택지이며 다른 설치
+스킬·플러그인·일반 Agent를 배제하지 않는다.
 
 ```text
 원 producer 구조 검증
@@ -431,7 +441,7 @@ $design-prototype-docs
 저장 전 디자인 문서를 먼저 보여줘.
 ```
 
-승인된 화면 설계 문서를 입력으로 `$create-prototype`을 호출한다.
+승인된 화면 설계 문서를 입력으로 프로토타입 producer를 선택한다. `$create-prototype`은 제공 선택지다.
 
 ### 예시 6. 구현 계획 선택
 
@@ -466,7 +476,8 @@ Phase 2의 API-03만 구현해줘.
 완료 후 수정 파일, 실행한 검증, 남아 있는 위험을 보고해줘.
 ```
 
-Phase 시작 전 `$impl-reuse-scan`, 완료 후 `$impl-verify`를 명시 호출한다.
+필요하면 Phase 시작 전에 재사용 검토, 완료 후 계획 대비 검증을 수행한다.
+`$impl-reuse-scan`과 `$impl-verify`는 사용할 수 있는 선택지이며 필수 호출이 아니다.
 
 ### 예시 8. 커밋 전 품질 확인
 
@@ -525,7 +536,8 @@ $doc-audit
 
 ### 9.4 검증 실패를 다음 Phase로 넘기지 않는다
 
-`impl-verify`의 FAIL은 다음 Phase 차단을 권고하는 신호다. 실패를 고치거나, 정말 허용할 이유와 후속 작업을 명시한다.
+선택한 검증 도구의 FAIL은 다음 Phase 차단을 권고하는 신호다. 실패를 고치거나, 정말
+허용할 이유와 후속 작업을 명시한다.
 
 ### 9.5 문서 갱신을 미루지 않는다
 
@@ -597,12 +609,14 @@ $doc-audit
 
 - 신규·요구사항 기반: 권한 정책이 있으면 허용된 역할·앱 범위에서 `design-doc` → `context-doc`
 - 하네스 문서 없는 기존 코드: 같은 권한 범위에서 `harness-bootstrap`
+
+여기까지가 기반 흐름이다. 이후 항목은 프로젝트와 사용자가 고르는 제공 선택지다.
+
+### 2단계 — 선택형 구현 전후 품질
+
 - `impl-doc` 또는 `impl-fe-be-doc`
-- `impl-verify`
-
-### 2단계 — 구현 전후 품질
-
 - `impl-reuse-scan`
+- `impl-verify`
 - `multi-review`
 - `doc-audit`
 - `commit`
@@ -614,7 +628,7 @@ $doc-audit
 - 필요 시 `motion-design`
 - `create-prototype`
 - `frontend-design`
-- producer에 내장된 `humanize-korean` 승인 흐름
+- 명시 요청 시 `humanize-korean` 승인 흐름
 
 반복 업무를 새 스킬로 만드는 단계는 사용자 프로젝트에서 수행하지 않는다. 사례를 모아 하네스 관리자에게 개선 후보로 전달한다.
 

@@ -53,6 +53,9 @@ manifest는 **계약 상태**, `install-routing.ps1 -Check`은 **실제 host-loc
 
 - 사용자 스킬은 프로젝트 local copy가 아니라 설치된 `harness-kit`
   플러그인에서 제공한다.
+- 위 local-copy 금지는 Harness Kit의 배포 규칙일 뿐이다. 다른 설치 스킬·플러그인·일반
+  Agent도 routing instruction의 산출물 계약을 따르면 사용할 수 있으며,
+  `플러그인 스킬만 사용` 규칙으로 확대하지 않는다.
 - 프로젝트에 `.agents/skills/`, `.claude/skills/`, `skills/` 사용자 스킬
   projection을 만들거나 동기화하지 않는다.
 - 프로젝트 전체 읽기·라우팅 규칙은 이 파일에 두고 `CLAUDE.md`에는 Claude 전용 차이만 둔다.

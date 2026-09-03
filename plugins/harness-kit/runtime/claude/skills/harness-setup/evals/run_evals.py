@@ -701,6 +701,8 @@ def check_setup_contract() -> None:
         "서명 권한 정책이 있으면 디렉토리를 옮기지 않는다",
         "`migrate-root-plan`과 `migrate-root`",
         "`harness-setup`이 이 권한 작업을 대신 실행하지 않는다",
+        "사용자가 이번 요청에서 한국어 Markdown 문체 개선까지 명시한",
+        "명시 요청이 없으면 이 절 전체를 건너뛰며",
     ):
         require(skill_text, needle, SETUP_ROOT / "SKILL.md")
 
@@ -762,6 +764,8 @@ def check_setup_contract() -> None:
     require(single_template, "{{APP_ID}}-context.md", SETUP_ROOT / "templates" / "root-context-single.template")
     if "context-doc`으로 보강" in single_template:
         raise AssertionError("single-app root map still delegates admin-owned root content to context-doc")
+    for needle in ("다른 설치 스킬·플러그인·일반", "`플러그인 스킬만 사용` 규칙으로 확대하지 않는다"):
+        require(needle=needle, text=single_template, source=SETUP_ROOT / "templates" / "root-context-single.template")
 
     multi_template = read(SETUP_ROOT / "templates" / "root-context.template")
     if "HARNESS_REPO_NAME" in multi_template:
@@ -769,6 +773,22 @@ def check_setup_contract() -> None:
     require(multi_template, ".ai-docs/root-context/AGENTS.md`가 Git 관리 원본", SETUP_ROOT / "templates" / "root-context.template")
     if "원본 복사본" in multi_template:
         raise AssertionError("multi-app root template still calls the management source a copy")
+    for needle in ("산출물 유형", "`플러그인 스킬만 사용` 규칙으로 확대하지 않는다"):
+        require(multi_template, needle, SETUP_ROOT / "templates" / "root-context.template")
+
+    for template_name in ("docs-readme-single.template", "docs-readme-multi.template"):
+        template_path = SETUP_ROOT / "templates" / template_name
+        template = read(template_path)
+        for needle in (
+            "산출물 종류와 정규 위치",
+            "제공 스킬 예시",
+            "독점 실행 목록이 아니다",
+            "다른 설치 스킬·플러그인·일반 Agent",
+            "`플러그인 스킬만 사용` 또는 다른 도구 사용 금지로 해석하지 않는다",
+        ):
+            require(template, needle, template_path)
+        if "정해진 스킬이 정해진 위치" in template:
+            raise AssertionError(f"{template_path}: still binds an artifact path to one skill")
 
     for template_name in (
         "docs-readme-single.template",

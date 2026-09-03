@@ -37,7 +37,7 @@ AI Agent 및 개발자가 참조하는 FE/BE 페어 기능 단위 또는 화면 
 > 각 Phase는 독립 실행·테스트 가능해야 하고, 웹앱에서는 BE/FE 페어가 함께 완성되어야 한다.
 > 화면 중심 작업에서는 화면 1개를 Phase 단위로 삼되, 그 화면에 필요한 BE API·FE 컴포넌트·상태·검증을 한 번에 명세한다.
 
-## 스킬 연계
+## 산출물 연계
 
 이 스킬은 단독으로도 사용할 수 있지만, 아래 순서로 연계했을 때 가장 효과적이다.
 
@@ -47,12 +47,15 @@ design-doc (설계 인터뷰 → OUTPUT 문서)
 impl-fe-be-doc → FE/BE 페어 또는 화면 중심 작업지침서
     └─→ 같은 디렉토리의 로드맵 인덱스 문서
         {YYMMDD}-0.{앱이름}-roadmap-impl-index.md 생성/갱신 (Step 0-C, Step 8)
-            ├─→ impl-reuse-scan → Phase/태스크 시작 preflight (필수 또는 not-applicable)
             ├─→ 실제 구현
-            ├─→ impl-verify → Phase/태스크 종료 명시적 게이트
-            ├─→ multi-review
-            └─→ doc-audit
+            ├─→ 선택: 재사용 검토
+            ├─→ 선택: 구현 검증
+            ├─→ 선택: 코드 리뷰
+            └─→ 선택: 문서 괴리 점검
 ```
+
+선택 작업은 `impl-reuse-scan`, `impl-verify`, `multi-review`, `doc-audit` 또는 같은
+계약을 따르는 다른 도구·Agent로 수행할 수 있다.
 
 design-doc OUTPUT의 각 섹션은 아래와 같이 매핑된다.
 
@@ -340,8 +343,9 @@ suppress_child_handoff = false
 handoff_completed = false
 ```
 
-Step 7의 계획서 저장 검증과 Step 8의 인덱스 링크·분할 구조 검증을 모두 마친 뒤,
-owner이고 억제되지 않았으며 아직 완료되지 않은 bundle에 대해서만
+사용자가 이번 요청에서 한국어 Markdown 문체 개선까지 명시했고 Step 7의 계획서 저장
+검증과 Step 8의 인덱스 링크·분할 구조 검증을 모두 마친 뒤, owner이고 억제되지 않았으며
+아직 완료되지 않은 bundle에 대해서만
 `humanize-korean`의 `document-refinement` 프로필을 한 번 제안한다. 상위
 producer가 owner이면 초안과 검증 결과만 반환한다.
 
@@ -361,33 +365,31 @@ ledger 자체는 개선 대상에서 제외하며 기록할 수 없으면 현재
 
 승인된 변경을 반영한 경우 FE↔API↔BE↔DB 추적, 태스크 ID, 파일 경로, 검증
 시나리오와 Step 8 인덱스 링크를 다시 검증한다. 재검증된 계획서와 인덱스만
-downstream 구현·검증 스킬의 입력으로 사용한다.
+downstream 구현·검증 도구의 입력으로 사용한다.
 
-## downstream 구현·검증 handoff
+## downstream 구현·검증 계약
 
-계획서가 완료되면 다음 계약을 문서 머리말 또는 인덱스에 남긴다.
+계획서가 완료된 뒤 선택한 구현 흐름이 재사용 검토나 검증을 수행하면 다음 evidence
+계약을 문서 머리말 또는 인덱스에 남길 수 있다. 특정 스킬 호출은 필수가 아니다.
 
 ```yaml
 downstream:
   roadmap_index: "{정규화 상대경로}"
   phase: "{phase-id}"
-  reuse_scan:
-    skill: "impl-reuse-scan"
-    trigger: "phase-or-task-start"
-    status: "required-or-not-applicable"
+  reuse_review:
+    producer: "{selected-skill-plugin-or-agent}"
+    status: "not-run|not-applicable|passed|pending"
     input: "approved-plan-and-roadmap-index"
     decision: "reuse|extend|new"
     evidence: "{scan-result-or-not-applicable-reason}"
-  verify:
-    skill: "impl-verify"
-    trigger: "phase-or-task-end"
-    invocation: "explicit-only"
-    status: "pass|fail|not-run"
+  verification:
+    producer: "{selected-skill-plugin-or-agent}"
+    status: "not-run|pass|fail"
     input: "implementation-diff-and-acceptance-criteria"
     evidence: "{verification-report-or-not-run-reason}"
 ```
 
-각 Phase/태스크 시작 시 `$impl-reuse-scan`을 호출해 기존 구현·산출물을
-확인하고, 종료 시 `$impl-verify`를 명시적으로 호출한다. 두 호출은 자동
-모델 invocation이 아니며, reuse scan은 not-applicable 사유를 남길 수 있다.
-`impl-verify`가 FAIL이면 다음 Phase 추천이나 완료 보고를 진행하지 않는다.
+Harness Kit 제공 선택지로 `impl-reuse-scan`과 `impl-verify`가 있다. 다른 도구를 골라도
+재사용 후보는 사용자 결정 전에 자동 반영하지 않고, 실행하지 못한 검증은 통과로 기록하지
+않는다. 검증이 FAIL이면 다음 Phase 추천이나 완료 보고 전에 위험을 해결하거나 명시적으로
+인수한다.

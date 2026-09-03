@@ -11,7 +11,7 @@
 ## 이 저장소의 역할
 
 - 여러 애플리케이션이 공유하는 AI 문서를 한곳에서 형상관리한다.
-- 각 산출물은 정해진 스킬이 정해진 위치에 생성한다 (아래 표 참조).
+- 각 산출물 유형은 어떤 도구가 만들더라도 아래 정규 위치와 소유·승인 계약을 따른다.
 - 팀원은 이 레포를 clone 하여 동일한 설계·컨텍스트를 공유한다.
 
 ---
@@ -40,23 +40,26 @@
 └── prototype/                      ← 프로토타입 산출물
 ```
 
-> 위 산출물 디렉토리·파일은 해당 스킬을 처음 실행할 때 생성된다. 세팅 직후에는 비어 있을 수 있다.
-> `.ai-docs/.harness/humanize-handoffs.json`은 첫 문서 개선 handoff 때 생성되는
+> 위 산출물 디렉토리·파일은 해당 유형의 산출물을 처음 만들 때 생성된다. 세팅 직후에는 비어 있을 수 있다.
+> `.ai-docs/.harness/humanize-handoffs.json`은 사용자가 문서 개선을 명시 요청한 뒤 생성되는
 > 기계 관리 JSON이며 Markdown 개선 대상이 아니다.
 
 ---
 
-## 산출물 종류 — 어떤 스킬이 무엇을 만드는가
+## 산출물 종류와 정규 위치
 
-| 스킬 | 산출물 | 위치 |
-|------|--------|------|
-| `harness-setup` | 이 README, `.gitignore`, `_inbox/`, 루트 컨텍스트 | `.ai-docs/README.md`, `.ai-docs/.gitignore`, `.ai-docs/_inbox/`, `.ai-docs/root-context/` |
-| portable routing | 경로·format·host 설치 상태 | `.ai-docs/harness/` |
-| `design-doc` | 설계 문서 | `.ai-docs/{앱}/context-base/DESIGN.md` |
-| `context-doc` | 앱별 컨텍스트 + instruction | `.ai-docs/{앱}-context.md`, `.ai-docs/{앱}/instruction/*-instruction.md`, 루트 `AGENTS.md` 정본과 `CLAUDE.md` bridge |
-| `impl-doc` / `impl-fe-be-doc` | 구현 지침 | `.ai-docs/{앱}/impl-doc/{사용자}/{기능}.md` |
-| `design-prototype-docs` | 프로토타입 설계 문서 | `.ai-docs/prototype/{사용자}/{식별자}/design-doc.md` |
-| `create-prototype` | HTML 프로토타입 | `.ai-docs/prototype/{사용자}/{PREFIX}-{번호}/` |
+| 산출물 | 위치 | 제공 스킬 예시 |
+|--------|------|----------------|
+| 하네스 README, `.gitignore`, `_inbox/`, 루트 컨텍스트 | `.ai-docs/README.md`, `.ai-docs/.gitignore`, `.ai-docs/_inbox/`, `.ai-docs/root-context/` | `harness-setup` |
+| portable routing | `.ai-docs/harness/` | `harness-setup` |
+| 설계 문서 | `.ai-docs/{앱}/context-base/DESIGN.md` | `design-doc` |
+| 앱별 컨텍스트 + instruction | `.ai-docs/{앱}-context.md`, `.ai-docs/{앱}/instruction/*-instruction.md`, 루트 `AGENTS.md` 정본과 `CLAUDE.md` bridge | `context-doc` |
+| 구현 지침 | `.ai-docs/{앱}/impl-doc/{사용자}/{기능}.md` | `impl-doc`, `impl-fe-be-doc` |
+| 프로토타입 설계 문서 | `.ai-docs/prototype/{사용자}/{식별자}/design-doc.md` | `design-prototype-docs` |
+| HTML 프로토타입 | `.ai-docs/prototype/{사용자}/{PREFIX}-{번호}/` | `create-prototype` |
+
+`제공 스킬 예시`는 독점 실행 목록이 아니다. 다른 설치 스킬·플러그인·일반 Agent도
+같은 산출물 유형에 대해 정규 위치·owner·승인·형식·evidence 계약을 따르면 된다.
 
 ---
 
@@ -70,6 +73,9 @@ bundle**이다. `harness-setup`이 이 계약을 먼저 정해 두면, 이후 Ha
 이 계약은 경로 결정을 공유하는 방식이며, 다른 도구의 쓰기를 자동으로 대체하거나 강제하지
 않는다. 스킬 실행은 설치된 플러그인 또는 해당 도구가 담당하고, 정규 경로 적용은 아래
 instruction을 읽고 따르는 작업에서 이루어진다.
+
+Harness Kit 사용자 스킬을 프로젝트에 복사하지 않는 규칙은 배포 위치 규칙이다. 이를
+`플러그인 스킬만 사용` 또는 다른 도구 사용 금지로 해석하지 않는다.
 
 | 대상 | 역할 |
 |------|------|

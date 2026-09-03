@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0.0",
   "generated_by": "harness-plugin-maintainer",
-  "generated_at": "2026-08-03",
-  "scope": "Phase 1 manager skill freeze after commit-workflow and upstream governance validation updates",
+  "generated_at": "2026-09-03",
+  "scope": "Tool-neutral downstream skill routing and explicit document-refinement opt-in regression updates",
   "manager_skill_count": 3,
   "skills": [
     {
@@ -53,7 +53,7 @@
       "files": [
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/design_workflow.py",
-          "sha256": "4c595c02ba0d82f56583fb114c23949413ecb536bf908f83b0c43a68723b675c"
+          "sha256": "ca7b01f02d2d62d2d0e0ad4250c437a32e575f06cf93edf819ea2ee12b7b54de"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/fixtures/README.md",
@@ -65,11 +65,11 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/impl_workflow.py",
-          "sha256": "fa0279bf1af6722af7c7860e68c4b4549aed117c0ca182622b75e7a090830dac"
+          "sha256": "e11cf0f8b8974b1e63b7d87f49332e87265406afa4890205ba01608652c9c547"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/markdown_producers.py",
-          "sha256": "bafa36140fb696882f2ce9da20c878b8f0e6317543fe2566b71be33af1bf8322"
+          "sha256": "40540fa76f6b29116d27073cf8c32d8a89be844182072816a9624f401b96cf8d"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/evals/run_evals.py",
@@ -85,11 +85,11 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/freeze_manager_inventory.py",
-          "sha256": "b1d807ed148ce790a9ed41aac07bb647b111a25e1d321b1c7401de0e76dc391b"
+          "sha256": "bea4fd60978a15eeb424219b1acddfbcc96f508b06c5e2612d53fe4bd6e64257"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/plugin_common.py",
-          "sha256": "67c7abe30b9fdd7fb2501e1def136b7ca5d286f2f41a22981d94a928166b0e0a"
+          "sha256": "3afce62609f6e31259eab1fd3530a55a1bbd1c702d3cc0abf51fdf5ded234425"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/run_all_skill_evals.py",
@@ -97,7 +97,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/run_release_regression.py",
-          "sha256": "bc2e5c17753205e7142413c5b66147f2abfd3f5cc438ed9f7762eb8e6bc7b71b"
+          "sha256": "d32ee5b543fd68fe41cf3270637ee01557e821866acbe4d1245a7d763b334b7e"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/scripts/smoke_cli_install.py",
@@ -117,7 +117,7 @@
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/SKILL.md",
-          "sha256": "6003337be522a54f85e55df329f82df13abcb9e9c75c8a4ffacb0f7aaf4cf6dc"
+          "sha256": "bf144575cdd19a8857d8856c9c1c777a2bee4cc21832f417f6fc18e3a8c2068b"
         },
         {
           "path": "maintainer/skills/harness-plugin-maintainer/templates/claude-agent.md",

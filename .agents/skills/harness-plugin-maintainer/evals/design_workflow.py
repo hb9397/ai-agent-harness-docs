@@ -3,8 +3,8 @@
 
 Individual skill runners guard their own contract wording. Nothing there can see
 whether the branches fit together: that a design decision reaches implementation
-only through public names, that prototype output never becomes product source,
-and that exactly one Markdown producer owns the humanize handoff. Those are
+through a tool-neutral artifact contract, that prototype output never becomes product source,
+and that an explicitly requested Markdown refinement has exactly one owner. Those are
 properties of the set, so they live here instead of in any single skill.
 """
 
@@ -68,9 +68,13 @@ def test_prototype_output_is_never_promoted_to_product_source() -> None:
     assert "`.ai-docs/prototype/**` 코드가 제품 소스로 복사되지 않음" in verify
 
 
-def test_both_branches_end_in_verification() -> None:
+def test_both_branches_preserve_verification_without_mandating_a_skill() -> None:
     for skill in ("create-prototype", "frontend-design", "ui-ux-pro-max", "motion-design"):
-        assert "impl-verify" in read(skill), f"{skill} does not route to verification"
+        text = read(skill)
+        assert "impl-verify" in text, f"{skill} does not expose the packaged verification option"
+        assert "동등한" in text or "필수 호출이 아니다" in text or "제공 선택지" in text, (
+            f"{skill} does not allow an equivalent verification or implementation producer"
+        )
 
 
 def test_real_screen_branch_does_not_require_a_prototype_first() -> None:
@@ -92,14 +96,15 @@ def test_existing_product_assets_outrank_generated_suggestions() -> None:
     assert "1순위와 2순위가 충돌하면 **구현하지 말고**" in read("frontend-design")
 
 
-def test_single_humanize_owner_per_bundle() -> None:
-    """Only declared producers may offer the refinement handoff, and only once."""
+def test_single_humanize_owner_per_explicit_request() -> None:
+    """Only declared producers may offer an explicitly requested refinement, and only once."""
     flow = json.loads((ROOT / "maintainer" / "inventory" / "markdown-artifact-flow.json").read_text(encoding="utf-8"))
     declared = {item["skill"] for item in flow["producer_skills"]}
     for skill in DESIGN_FLOW:
         text = read(skill)
         if "humanize-korean" not in text:
             continue
+        assert "사용자가 이번 요청에서" in text, f"{skill} still offers refinement automatically"
         if skill in declared:
             assert "suppress_child_handoff" in text or "억제" in text, (
                 f"{skill} is a declared producer but does not suppress nested handoffs"
@@ -138,11 +143,11 @@ def main() -> int:
         test_design_flow_skills_exist,
         test_skills_never_bind_to_another_skills_internals,
         test_prototype_output_is_never_promoted_to_product_source,
-        test_both_branches_end_in_verification,
+        test_both_branches_preserve_verification_without_mandating_a_skill,
         test_real_screen_branch_does_not_require_a_prototype_first,
         test_motion_stays_conditional_across_the_flow,
         test_existing_product_assets_outrank_generated_suggestions,
-        test_single_humanize_owner_per_bundle,
+        test_single_humanize_owner_per_explicit_request,
         test_new_skills_are_canonical_but_not_yet_packaged,
         test_reference_relationships_import_no_files,
     ]

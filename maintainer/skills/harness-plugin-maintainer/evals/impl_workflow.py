@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static cross-skill checks for implementation-document handoffs."""
+"""Static cross-skill checks for tool-neutral implementation contracts."""
 
 from __future__ import annotations
 
@@ -29,21 +29,21 @@ def main() -> int:
             "impl-verify",
             "downstream:",
             "not-applicable",
-            "$impl-reuse-scan",
-            "$impl-verify",
+            "selected",
+            "특정 스킬",
+            "다른 도구·Agent",
         ):
             assert needle in content, f"{name} missing integration contract: {needle}"
-        assert "invocation: explicit-only" in content or 'invocation: "explicit-only"' in content, (
-            f"{name} missing explicit-only invocation contract"
-        )
+        assert "$impl-reuse-scan" not in content, f"{name} still mandates impl-reuse-scan"
+        assert "$impl-verify" not in content, f"{name} still mandates impl-verify"
 
-    assert "impl-reuse-scan" in fe_be and "impl-verify" in fe_be, "FE/BE integration graph is incomplete"
-    assert "impl-reuse-scan (선택)" not in bootstrap, "bootstrap still marks reuse scan optional"
-    assert "impl-verify (선택)" not in bootstrap, "bootstrap still marks verify optional"
-    assert "필수 preflight" in bootstrap and "명시 호출 전용" in bootstrap, "bootstrap gate wording is incomplete"
+    assert "필수 preflight" not in bootstrap and "종료 게이트" not in bootstrap
+    assert "제공되는 참조 구현" in bootstrap and "필수 조건으로 만들지 않는다" in bootstrap
     assert "artifact-output-routing-instruction" in context
     assert "artifact-output-routing-instruction" in context_template
-    print("impl workflow integration evals: PASS (roadmap, reuse, verify, routing)")
+    assert "특정 스킬 호출을 완료 조건으로 삼지 않는다" in context_template
+    assert "다른 스킬·플러그인·일반 Agent" in context_template
+    print("impl workflow integration evals: PASS (roadmap, tool-neutral reuse/verify, routing)")
     return 0
 
 

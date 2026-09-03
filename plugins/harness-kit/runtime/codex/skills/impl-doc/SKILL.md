@@ -45,7 +45,7 @@ FE/BE 페어 다중 기능 또는 화면 다중 RFP가 아니면 이 스킬을 �
 > 데이터 파이프라인, **BE 단일 기능(엔드포인트 1~수개 또는 단일 도메인 로직)**,
 > **FE 단일 기능(컴포넌트/훅/화면 1개 신규·수정)** 등이 대상이다.
 
-## 스킬 연계
+## 산출물 연계
 
 ```
 design-doc OUTPUT (설계문서.md)
@@ -58,11 +58,14 @@ impl-doc  ← 지금 여기
     ├─→ 같은 디렉토리의 로드맵 인덱스 문서
     │   {YYMMDD}-0.{앱이름}-roadmap-impl-index.md 생성/갱신 (Step 8)
     ├─→ 실제 구현
-    ├─→ impl-reuse-scan  →  Phase 시작 전 공통 자산 확인
-    ├─→ impl-verify      →  Phase 종료 검증
-    ├─→ multi-review     →  코드 리뷰
-    └─→ doc-audit        →  문서 괴리 점검
+    ├─→ 선택: 재사용 검토
+    ├─→ 선택: 구현 검증
+    ├─→ 선택: 코드 리뷰
+    └─→ 선택: 문서 괴리 점검
 ```
+
+선택 작업은 `impl-reuse-scan`, `impl-verify`, `multi-review`, `doc-audit` 또는 같은
+계약을 따르는 다른 도구·Agent로 수행할 수 있다.
 
 ### 구현 지침 스킬 선택 기준
 
@@ -366,35 +369,31 @@ Step 7에서 방금 저장한 문서와 같은 자리에 인덱스 문서를 새
 
 **⑤ 저장 전 확인** — 인덱스 문서의 신규 생성/갱신 내용을 요약해 사용자에게 보여주고 저장한다. 별도 승인 게이트 없이 Step 7 승인에 포함된 것으로 간주하되, 인덱스 문서만 크게 구조가 바뀌는 경우(최초 생성, 스테이지 경계 변경 등)에는 저장 직전 한 번 더 확인한다.
 
-## downstream 구현·검증 handoff
+## downstream 구현·검증 계약
 
-계획서와 index를 저장한 뒤 실제 구현 흐름은 모든 Phase/태스크에서 다음 블록을 따른다.
-이 route는 자동 하위 스킬 실행이 아니라 사용자가 실행할 명시적 handoff다.
+계획서와 index를 저장한 뒤 선택한 구현 흐름이 재사용 검토나 검증을 수행하면 다음
+evidence 블록을 남길 수 있다. 이 블록은 특정 스킬의 필수 호출 목록이 아니다.
 
 ```yaml
 downstream:
   roadmap_index: <verified index path>
   phase: <phase id>
-  reuse_scan:
-    skill: impl-reuse-scan
-    trigger: phase-start
-    status: required | not-applicable | passed | pending
+  reuse_review:
+    producer: <selected skill, plugin, or agent>
+    status: not-run | not-applicable | passed | pending
     input: <plan path + task/asset scope + source root>
     decision: reuse | extend | new | deferred | pending
     evidence: <report reference or reason>
-  verify:
-    skill: impl-verify
-    trigger: phase-end
-    invocation: explicit-only
-    status: required | passed | failed | skipped | pending
+  verification:
+    producer: <selected skill, plugin, or agent>
+    status: not-run | passed | failed | skipped | pending
     input: <plan path + task/phase/full scope + implementation root>
     evidence: <verification report reference>
 ```
 
-Phase 시작에는 `$impl-reuse-scan`을 호출해 후보를 보고하고 사용자 결정 전에는 패치하지
-않는다. Phase 종료에는 `$impl-verify`를 명시 호출한다. `impl-verify`는
-`disable-model-invocation: true`를 유지하므로 route가 자동 실행을 의미하지 않는다.
-FAIL은 다음 Phase 진입 불가 권고로 index/evidence에 전달한다.
+Harness Kit 제공 선택지로 `impl-reuse-scan`과 `impl-verify`가 있다. 다른 도구를 골라도
+재사용 후보는 사용자 결정 전에 자동 반영하지 않고, 실행하지 못한 검증은 통과로 기록하지
+않는다. FAIL은 다음 Phase 진입 위험으로 index/evidence에 전달한다.
 
 ---
 
@@ -423,8 +422,9 @@ suppress_child_handoff = false
 handoff_completed = false
 ```
 
-Step 7의 계획서 저장 검증과 Step 8의 인덱스 링크·분할 구조 검증을 모두 마친 뒤,
-owner이고 억제되지 않았으며 아직 완료되지 않은 bundle에 대해서만
+사용자가 이번 요청에서 한국어 Markdown 문체 개선까지 명시했고 Step 7의 계획서 저장
+검증과 Step 8의 인덱스 링크·분할 구조 검증을 모두 마친 뒤, owner이고 억제되지 않았으며
+아직 완료되지 않은 bundle에 대해서만
 `humanize-korean`의 `document-refinement` 프로필을 한 번 제안한다. 상위
 producer가 owner이면 초안과 검증 결과만 반환한다.
 
@@ -443,4 +443,4 @@ humanize-handoffs.json` 원자적 ledger에 같은 fingerprint의 `proposed`, `s
 
 승인된 변경을 반영한 경우 태스크 ID, 파일 경로, 명령어, 검증 시나리오와 Step 8
 인덱스 링크를 다시 검증한다. 재검증된 구현 계획서와 인덱스만 downstream 구현·
-검증 스킬의 입력으로 사용한다.
+검증 도구의 입력으로 사용한다.

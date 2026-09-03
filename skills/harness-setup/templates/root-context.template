@@ -61,13 +61,13 @@ manifest는 **계약 상태**, `install-routing.ps1 -Check`은 **실제 host-loc
 
 ## 산출물 위치
 
-| 스킬 | 경로 |
-|------|------|
-| design-doc | `.ai-docs/{앱}/context-base/DESIGN.md` |
-| context-doc | `.ai-docs/{앱}-context.md` + `.ai-docs/{앱}/instruction/*-instruction.md` |
-| impl-doc / impl-fe-be-doc | `.ai-docs/{앱}/impl-doc/{사용자}/{기능}.md` |
-| design-prototype-docs / create-prototype | `.ai-docs/prototype/{사용자}/{id}/` |
-| artifact-output-routing | `.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md` |
+| 산출물 유형 | 경로 |
+|-------------|------|
+| 설계 기준 | `.ai-docs/{앱}/context-base/DESIGN.md` |
+| 앱 context·instruction | `.ai-docs/{앱}-context.md` + `.ai-docs/{앱}/instruction/*-instruction.md` |
+| 구현 계획 | `.ai-docs/{앱}/impl-doc/{사용자}/{기능}.md` |
+| 프로토타입 설계·시안 | `.ai-docs/prototype/{사용자}/{id}/` |
+| 산출물 routing | `.ai-docs/{앱}/instruction/artifact-output-routing-instruction.md` |
 | portable routing 상태 | `.ai-docs/harness/artifact-routing.json` |
 
 > `.ai-docs/` 구조·산출물 규칙은 `.ai-docs/README.md`에 정리되어 있다.
@@ -82,5 +82,8 @@ manifest는 **계약 상태**, `install-routing.ps1 -Check`은 **실제 host-loc
 - 프로젝트 루트의 실행용 `AGENTS.md`는 어떤 git 레포에도 속하지 않는다.
 - `CLAUDE.md`는 공통 본문을 복제하지 않고 `@AGENTS.md` bridge만 둔다.
 - `harness-setup` 스킬 재실행으로 관리 블록을 갱신한다.
+- Harness Kit 사용자 스킬의 project-local copy 금지는 배포 규칙일 뿐이다. 다른 설치
+  스킬·플러그인·일반 Agent도 앱별 routing instruction의 산출물 계약을 따르면 사용할
+  수 있으며, `플러그인 스킬만 사용` 규칙으로 확대하지 않는다.
 - Git 관리 원본: `.ai-docs/root-context/AGENTS.md`, `.ai-docs/root-context/CLAUDE.md`
 <!-- harness-kit:managed:end -->

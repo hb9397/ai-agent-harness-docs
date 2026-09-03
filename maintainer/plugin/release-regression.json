@@ -34,7 +34,7 @@
       "passed": true
     },
     "reproducible_build": {
-      "archive_sha256": "a97863a376be6d3176f823432218fe5966cacd8254b91a42a33ff317691a154d",
+      "archive_sha256": "056ab4988e681a6d250e179fe6a668a6be4e6b7beab9f83f9b369330c167d80e",
       "same_archive_hash": true,
       "same_manifest": true,
       "release_metadata_matches": true,
@@ -77,6 +77,7 @@
     "user_contract_fixture": {
       "evidence_level": "filesystem-and-script-fixture",
       "live_agent_skill_invocation_executed": false,
+      "explicit_document_refinement_requested": true,
       "harness_setup_eval_passed": true,
       "project_created_without_manager_clone": true,
       "im_not_ai_clone_required": false,

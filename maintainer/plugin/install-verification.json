@@ -4,10 +4,10 @@
   "plugin": {
     "plugin_root": "plugins/harness-kit",
     "plugin_id": "harness-kit",
-    "version": "0.6.2",
+    "version": "0.6.3",
     "codex_manifest_matches_claude": true,
-    "archive": "plugins/harness-kit-0.6.2.zip",
-    "archive_sha256": "a97863a376be6d3176f823432218fe5966cacd8254b91a42a33ff317691a154d",
+    "archive": "plugins/harness-kit-0.6.3.zip",
+    "archive_sha256": "056ab4988e681a6d250e179fe6a668a6be4e6b7beab9f83f9b369330c167d80e",
     "archive_sha256_matches_release": true,
     "logical_user_skills": 20,
     "codex_physical_skills": 20,
@@ -125,7 +125,7 @@
         "evidence_level": "marketplace-install-and-cache-smoke",
         "model_invocation_verified": false,
         "installed_payload": {
-          "version": "0.6.2",
+          "version": "0.6.3",
           "skill_count": 20,
           "agent_count": 0,
           "required_skills": [

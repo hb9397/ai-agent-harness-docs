@@ -27,8 +27,8 @@
     },
     {
       "id": 5,
-      "prompt": "직전 session에서 같은 bootstrap 산출물에 대한 문서 개선안을 이미 제안했고 새 session에서 다시 bootstrap을 실행했다.",
-      "expected_output": "최종 산출물 상대경로와 내용 SHA-256으로 동일 fingerprint를 계산하고 .ai-docs/.harness/humanize-handoffs.json의 기존 proposed/skipped/rejected/applied/revalidated event를 확인한다. 동일 fingerprint에는 새 개선안을 제안하지 않으며 ledger 자체는 humanize 대상에서 제외한다.",
+      "prompt": "문체 개선을 명시 요청했다. 직전 session에서 같은 bootstrap 산출물에 대한 문서 개선안을 이미 제안했고 새 session에서 다시 bootstrap을 실행했다.",
+      "expected_output": "명시 요청이 있을 때만 문서 개선 handoff를 검토한다. 최종 산출물 상대경로와 내용 SHA-256으로 동일 fingerprint를 계산하고 .ai-docs/.harness/humanize-handoffs.json의 기존 proposed/skipped/rejected/applied/revalidated event를 확인한다. 동일 fingerprint에는 새 개선안을 제안하지 않으며 ledger 자체는 humanize 대상에서 제외한다.",
       "files": []
     }
   ]

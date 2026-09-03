@@ -310,9 +310,11 @@ Step 2 확인 결과에 따라 분기한다.
 
 ---
 
-## 문서 개선 후처리와 bundle 소유권
+## 명시 요청형 문서 개선과 bundle 소유권
 
-이 스킬을 사용자가 직접 호출하면 쓰기 전에 다음 실행 컨텍스트를 만든다.
+사용자가 이번 요청에서 한국어 Markdown 문체 개선까지 명시한 직접 호출에만, 쓰기 전에
+다음 실행 컨텍스트를 만든다. 명시 요청이 없으면 이 절 전체를 건너뛰며
+`humanize-korean`을 제안하거나 호출하지 않는다.
 
 ```text
 artifact_bundle_id = harness-setup:{정규화한 프로젝트 루트}:{이번 실행의 고유 ID}
@@ -367,6 +369,7 @@ event를 merge하고 재시도한다. ledger를 안전하게 기록할 수 없�
 다음 조건을 전부 만족하고 ledger에 같은 fingerprint가 없을 때만 bundle 전체에
 대해 `humanize-korean`의 `document-refinement` 프로필을 **한 번** 제안한다.
 
+- `user_requested_document_refinement == true`
 - `handoff_owner == harness-setup`
 - `suppress_child_handoff == false`
 - `handoff_completed == false`

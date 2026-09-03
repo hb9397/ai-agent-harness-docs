@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "@.ai-docs/fe-portal/context-base/DESIGN.md /context-doc\nNext.js 프론트엔드 앱 컨텍스트와 instruction 문서를 생성해줘.",
-      "expected_output": "제목은 `fe-portal FE — AI Agent Guide` 형식이며 바로 아래에 DESIGN.md의 @ 참조·Markdown 링크, 양방향 최신화 원칙과 루트 컨텍스트 → 앱 컨텍스트 → 필요한 지침 필독 순서를 둔다. 앱 context는 1~10 고정 목차를 사용하고 별도 지시가 없으면 실행 profile은 local/dev/prod, 환경별 branch는 dev/main을 제시한다. dev branch는 dev profile, main branch는 prod profile에 대응하며 local에는 환경별 branch를 배정하지 않는다. 7번은 핵심 도메인 개념을 포함한 계층형 하위 노드, 10번은 DESIGN.md 02와 같은 Depth의 기능 분류 추적 뷰다. 최초 instruction은 architecture·data-standard·code-style·framework·file-convention과 항상 생성되는 agent·artifact routing을 준비하되, routing을 제외한 파일에는 제목과 보편 목적만 두고 앱별 규칙을 추측하지 않는다. 실제 instruction은 @ 참조·링크와 현재 상태를 함께 기록하며 루트 AGENTS.md·CLAUDE.md는 수정하지 않는다.",
+      "expected_output": "제목은 `fe-portal FE — AI Agent Guide` 형식이며 바로 아래에 DESIGN.md의 @ 참조·Markdown 링크, 양방향 최신화 원칙과 루트 컨텍스트 → 앱 컨텍스트 → 필요한 지침 필독 순서를 둔다. 앱 context는 1~10 고정 목차를 사용하고 별도 지시가 없으면 실행 profile은 local/dev/prod, 환경별 branch는 dev/main을 제시한다. dev branch는 dev profile, main branch는 prod profile에 대응하며 local에는 환경별 branch를 배정하지 않는다. 7번은 핵심 도메인 개념을 포함한 계층형 하위 노드, 10번은 DESIGN.md 02와 같은 Depth의 기능 분류 추적 뷰다. 최초 instruction은 architecture·data-standard·code-style·framework·file-convention과 항상 생성되는 agent·artifact routing을 준비하되, routing을 제외한 파일에는 제목과 보편 목적만 두고 앱별 규칙을 추측하지 않는다. Harness Kit 사용자 스킬의 project-local copy 금지를 플러그인 스킬만 사용하라는 규칙으로 바꾸지 않으며, 비기반 공개 스킬 이름을 필수 실행 체인으로 만들지 않는다. 다른 설치 스킬·플러그인·일반 Agent도 artifact 의미·정규 경로·owner·승인·형식·evidence 계약을 따르면 된다. 실제 instruction은 @ 참조·링크와 현재 상태를 함께 기록하며 루트 AGENTS.md·CLAUDE.md는 수정하지 않는다.",
       "files": []
     },
     {

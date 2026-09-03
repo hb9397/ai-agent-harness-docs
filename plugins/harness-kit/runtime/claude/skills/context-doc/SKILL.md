@@ -346,6 +346,10 @@ STEP 0에서 병렬을 선택한 경우, Step 3-B에서 확정된 생성 파일 
   실행 profile은 `local/dev/prod`, 환경별 branch는 `dev/main`을 기본 기준으로 제시한다.
   `dev` branch는 실행 profile `dev`, `main` branch는 실행 profile `prod`에 대응시키며
   `local`에는 환경별 branch를 배정하지 않는다. 실제 profile·branch 존재를 단정하지 않는다.
+- `agent-instruction.md`에는 스킬 카탈로그나 README의 예시를 근거로
+  `플러그인 스킬만 사용` 또는 비기반 공개 스킬의 필수 호출 체인을 만들지 않는다.
+  Harness Kit 스킬의 project-local copy 금지는 배포 규칙이며, 다른 설치 스킬·플러그인·
+  일반 Agent가 routing 계약을 따르는 것을 금지하지 않는다.
 - `4. 실행 프로필 및 실행 방식`과 `6. 배포 방식`에는 DB 생성·migration·seed·접속
   명령을 넣지 않는다.
 - 코드 예시는 핵심 패턴만, 완성 코드는 포함하지 않는다.
@@ -473,12 +477,14 @@ STEP 0에서 확정한 프로젝트 유형에 따라 저장 경로와 검증 범
 
 ---
 
-## 문서 개선 후처리
+## 명시 요청형 문서 개선 후처리
 
-전체 앱 context와 생성된 instruction 파일의 경로·참조 검증을
-마친 뒤 다음 조건을 전부 만족할 때만 bundle 전체를 `humanize-korean`의
+사용자가 이번 요청에서 한국어 Markdown 문체 개선까지 명시한 경우에만, 전체 앱
+context와 생성된 instruction 파일의 경로·참조 검증을 마친 뒤 다음 조건을 전부
+만족할 때 bundle 전체를 `humanize-korean`의
 `document-refinement` 프로필로 한 번 넘긴다.
 
+- `user_requested_document_refinement == true`
 - `handoff_owner == context-doc`
 - `suppress_child_handoff == false`
 - `handoff_completed == false`

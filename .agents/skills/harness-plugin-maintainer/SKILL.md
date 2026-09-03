@@ -153,7 +153,8 @@ Phase 10에서는 `scripts/run_release_regression.py`를 실행한다.
 - source, manager projection, plugin projection의 수·역할·alias mapping을 확인한다.
 - 문서 로컬 링크, upstream registry/provenance, plugin NOTICE/license closure를 회귀 검증한다.
 - reference, vendored, adapted 세 upstream 관리 모드는 임시 mirror에서만 end-to-end로 시뮬레이션한다.
-- 사용자 end-to-end는 임시 프로젝트에서 `harness-setup` 결과 구조, `humanize-korean` proposal-only, 승인 후 재검증 흐름을 검증한다.
+- 사용자 end-to-end는 임시 프로젝트에서 `harness-setup` 결과 구조, 명시 요청한
+  `humanize-korean` proposal-only, 승인 후 재검증 흐름을 검증한다.
 - 실패 주입과 rollback은 임시 released lock/plugin version fixture에서만 수행한다.
 - push, tag, GitHub release, `released` lock 갱신은 별도 승인 전 수행하지 않는다.
 

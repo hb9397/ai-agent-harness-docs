@@ -4,8 +4,9 @@ description: >
   프로토타입용 화면 설계 문서(.md) 생성 스킬. 기능요구사항을 분석하여
   create-prototype 스킬의 입력이 되는 목업 디자인 문서를 생성한다.
   "목업 문서 만들어줘", "화면 설계 문서", "프로토타입 설계", "화면 구성 정리",
-  "화면 명세 작성", "목업 디자인 문서", "화면 기능 정리" 등의 요청에 반드시 이 스킬을 사용한다.
-  결과물은 create-prototype 스킬에 그대로 입력할 수 있는 .md 파일이다.
+  사용자가 Harness Kit의 화면 명세 workflow를 명시적으로 요청하거나 선택한 경우
+  "화면 명세 작성", "목업 디자인 문서", "프로토타입 설계" 등에 사용한다.
+  결과물은 create-prototype 또는 같은 계약을 따르는 다른 도구에 입력할 수 있는 .md 파일이다.
 allowed-tools: Read, Write, Glob, Agent
 ---
 
@@ -21,7 +22,8 @@ allowed-tools: Read, Write, Glob, Agent
 # Design Prototype Docs — 프로토타입 화면 설계 문서 생성기
 
 기능요구사항, RFP/SFR 원문, 사용자가 정리한 요구사항을 분석하여,
-`create-prototype` 스킬의 입력으로 사용할 수 있는 **목업 디자인 문서(.md)** 를
+`create-prototype` 또는 같은 입력 계약을 따르는 다른 도구에서 사용할 수 있는
+**목업 디자인 문서(.md)** 를
 생성하는 스킬이다.
 
 저장 경로·소유권·인계는 단일 앱의
@@ -33,7 +35,7 @@ allowed-tools: Read, Write, Glob, Agent
 
 ```
 design-prototype-docs OUTPUT (.md)
-    └─→ create-prototype INPUT  →  HTML/CSS/JS/JSON 프로토타입
+    └─→ 선택한 prototype producer INPUT  →  HTML/CSS/JS/JSON 프로토타입
 ```
 
 ---
@@ -306,9 +308,10 @@ STEP 0-E에서 디자인 시스템 입력을 받았으면 그 출처와 적용 �
 후보가 있고 사용자가 모션 설계를 원하면 공개 이름 `motion-design`으로 넘긴다.
 duration, easing, 속성 같은 구체값을 이 문서에서 정하지 않는다.
 
-### 7. create-prototype 전달 전제조건
+### 7. prototype producer 전달 전제조건
 
-이 섹션은 create-prototype 스킬이 이 문서를 받았을 때 따라야 할 구조 규칙을 명시한다.
+이 섹션은 `create-prototype`을 포함한 어떤 prototype producer가 이 문서를 받더라도
+따라야 할 구조 규칙을 명시한다.
 
 ```text
 [산출물 디렉토리 구조]
@@ -397,7 +400,7 @@ STEP 0-C에서 확인한 식별자를 폴더명에 사용한다.
 
 ## 품질 기준
 
-1. **create-prototype 입력으로 바로 사용 가능** — 이 문서만 보고 프로토타입을 생성할 수 있어야 한다
+1. **prototype producer 입력으로 바로 사용 가능** — 이 문서만 보고 프로토타입을 생성할 수 있어야 한다
 2. **화면 분리 근거가 명확** — 각 화면이 왜 독립 화면인지 이유가 있다
 3. **기능 흐름이 도식화됨** — 화면 간 흐름 + 화면 내 기능 흐름 모두 `text` 코드 블록으로 시각화
 4. **기능 배치 이유가 있음** — 각 기능이 왜 이 화면에 있는지 근거 명시
@@ -420,10 +423,10 @@ handoff_completed = false
 ```
 
 상위 producer가 owner이면 `suppress_child_handoff = true`로 유지하고 이 스킬에서는
-별도 후처리를 제안하지 않는다. 직접 호출에서는 품질 기준 7개와
-`create-prototype` 전달 전제조건을 먼저 검증한 뒤, owner이고 아직 완료되지 않은
-bundle에 대해서만 `humanize-korean`의 `document-refinement` 프로필을 한 번
-제안한다.
+별도 후처리를 제안하지 않는다. 직접 호출에서도 사용자가 이번 요청에서 한국어 Markdown
+문체 개선을 명시한 경우에만 품질 기준 7개와 prototype 전달 전제조건을 먼저 검증한 뒤,
+owner이고 아직 완료되지 않은 bundle에 대해 `humanize-korean`의
+`document-refinement` 프로필을 한 번 제안한다. 명시 요청이 없으면 제안하지 않는다.
 
 최종 검증된 Markdown의 정규화 상대경로와 각 파일 SHA-256, profile 이름을 정렬해
 `artifact_bundle_fingerprint`를 계산한다. `.ai-docs/.harness/humanize-handoffs.json`
@@ -440,4 +443,5 @@ bundle ID, owner, 파일 hash, 시각과 함께 기록하고 승인 적용 뒤�
 
 승인된 변경을 반영한 경우 품질 기준 7개, 요구사항 누락 여부, 화면 흐름,
 파일명·라우트·표·코드 fence를 다시 검증한다. 재검증된 최종 Markdown만
-`create-prototype`에 전달한다.
+사용자가 선택한 prototype producer에 전달한다. `create-prototype`은 제공되는
+선택지이며 필수 후속 단계가 아니다.

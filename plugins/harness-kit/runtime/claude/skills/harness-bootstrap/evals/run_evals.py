@@ -74,8 +74,18 @@ def main() -> int:
         "초기 목적 골격 세트",
         "architecture·data-standard·code-style·framework·file-convention",
         "과거 값·변경 과정 없이 현재 사실·규칙만",
+        "제공되는 참조 구현",
+        "특정 호출을 다음 단계 진입이나 완료의",
+        "필수 조건으로 만들지 않는다",
+        "사용자가 이번 요청에서 한국어",
+        "document_refinement_requested = true | false",
+        "`false`면 자식 workflow를 포함해",
     ):
         require(skill, needle)
+
+    for forbidden in ("필수 preflight", "명시 호출 전용 종료 게이트"):
+        if forbidden in skill:
+            raise AssertionError(f"bootstrap still mandates a downstream skill: {forbidden}")
 
     if "저장 경로는 `.ai-docs/context-base/DESIGN.md`" in skill:
         raise AssertionError("bootstrap still presents a single-app path for every project type")

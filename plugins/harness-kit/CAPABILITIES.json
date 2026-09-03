@@ -32,7 +32,7 @@
     "skill-portfolio-maintainer"
   ],
   "generated_by": "harness-plugin-maintainer",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "plugin_id": "harness-kit",
   "codex": {
     "physical_skills": 20,

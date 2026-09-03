@@ -277,6 +277,7 @@ def user_contract_fixture(root: Path) -> dict[str, Any]:
         return {
             "evidence_level": "filesystem-and-script-fixture",
             "live_agent_skill_invocation_executed": False,
+            "explicit_document_refinement_requested": True,
             "harness_setup_eval_passed": True,
             "project_created_without_manager_clone": True,
             "im_not_ai_clone_required": False,

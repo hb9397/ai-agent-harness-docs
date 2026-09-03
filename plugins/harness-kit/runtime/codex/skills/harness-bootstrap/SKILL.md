@@ -80,16 +80,19 @@ pm-pl 또는 해당 앱 app-doc-lead
 `design-doc`·`context-doc`을 자동 handoff한 경우에도 Step 7에서 문서 종류·대상·변경
 요약을 설명하고 별도 승인을 받는다.
 
-## 산출물 bundle과 후처리 소유권
+## 산출물 bundle과 명시 요청형 후처리 소유권
 
-`harness-bootstrap`은 이 통합 실행의 최외곽 producer다. Step 0에서 다음 컨텍스트를
-한 번 만든다.
+`harness-bootstrap`은 이 통합 실행의 최외곽 producer다. Step 0에서 다음 bundle
+컨텍스트를 한 번 만든다. `document_refinement_requested`는 사용자가 이번 요청에서 한국어
+Markdown 문체 개선까지 명시했는지에 따라 `true` 또는 `false`로 기록한다. 값이
+`false`면 자식 workflow를 포함해 `humanize-korean`을 제안하거나 호출하지 않는다.
 
 ```text
 artifact_bundle_id = harness-bootstrap:{정규화한 프로젝트 루트}:{이번 실행의 고유 ID}
 handoff_owner = harness-bootstrap
 suppress_child_handoff = false
 handoff_completed = false
+document_refinement_requested = true | false
 ```
 
 고유 실행 ID는 부모·자식 workflow correlation에만 사용한다. 새 task/session에서
@@ -170,12 +173,17 @@ harness-bootstrap 스킬
                      └── 복수 앱: *-context.md + .ai-docs/{앱}/instruction/*-instruction.md
 ```
 
-이후 작업은 정규 플로우를 따른다.
-- 설계 변경 시 → `design-doc`로 PROJECT_DESIGN 갱신 후 → `context-doc`로 하네스 갱신
-- 문서-코드 괴리 검증 → `doc-audit`
-- 구현 지침이 필요하면 → `impl-fe-be-doc` / `impl-doc`
-- 구현 직전 공통 자산 확인 → `impl-reuse-scan` (재사용 불가 판정 포함 필수 preflight)
-- 단계/페이즈 종료 검증 → `impl-verify` (명시 호출 전용 종료 게이트)
+이후에도 설계 변경은 `design-doc`로 PROJECT_DESIGN을 갱신하고 `context-doc`로 하네스를
+갱신하는 기반 흐름을 유지한다. 나머지는 산출물 routing 계약을 따르는 선택 흐름이다.
+
+- 문서-코드 괴리 검증: `doc-audit` 또는 동등한 검토 방식
+- 구현 지침: `impl-fe-be-doc`, `impl-doc` 또는 동등한 계획 작성 도구
+- 구현 전 공통 자산 확인: `impl-reuse-scan` 또는 동등한 재사용 검토
+- 단계/페이즈 종료 검증: `impl-verify` 또는 동등한 검증 방식
+
+위 비기반 스킬 이름은 제공되는 참조 구현이며, 특정 호출을 다음 단계 진입이나 완료의
+필수 조건으로 만들지 않는다. 선택한 도구와 관계없이 정규 경로·owner·승인·형식·evidence
+계약은 지킨다.
 
 ## 중간 산출물 재사용
 
@@ -524,12 +532,14 @@ proposal만 기록하고 G12 승인 전 canonical artifact를 만들지 않는�
 
 ---
 
-## 문서 개선 후처리
+## 명시 요청형 문서 개선 후처리
 
-Step 7의 전체 산출물과 구조 검증이 끝난 뒤 다음 조건을 전부 만족할 때만
+사용자가 이번 요청에서 문체 개선을 명시했고 Step 7의 전체 산출물과 구조 검증이 끝난
+뒤 다음 조건을 전부 만족할 때만
 `artifact_bundle_id` 전체를 `humanize-korean`의 `document-refinement` 프로필로
 한 번 넘긴다.
 
+- `user_requested_document_refinement == true`
 - `handoff_owner == harness-bootstrap`
 - `suppress_child_handoff == false`
 - `handoff_completed == false`

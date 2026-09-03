@@ -39,6 +39,9 @@ def main() -> int:
         "data-standard-instruction.md",
         "Git 원격 저장소 및 브랜치",
         "DB 생성·migration·seed·접속",
+        "`플러그인 스킬만 사용` 또는 비기반 공개 스킬의 필수 호출 체인을 만들지 않는다",
+        "다른 설치 스킬·플러그인·",
+        "사용자가 이번 요청에서 한국어 Markdown 문체 개선까지 명시한 경우에만",
     )
     skill_text = (SKILL_ROOT / "SKILL.md").read_text(encoding="utf-8")
     if "유일한 항상 생성 예외" in skill_text:
@@ -49,6 +52,30 @@ def main() -> int:
         "G12 승인",
         "artifact_bundle_id",
         "harness-kit:managed:start/end",
+        "특정 producer 이름을 사용 조건으로 삼지 않는다",
+        "다른 스킬·플러그인·일반 Agent",
+        "특정 스킬 호출을 완료 조건으로 삼지 않는다",
+    )
+    routing_template = (SKILL_ROOT / "templates" / "artifact-output-routing-instruction.md.template").read_text(
+        encoding="utf-8"
+    )
+    for forbidden in (
+        "Phase 시작에\n  `impl-reuse-scan`",
+        "Phase 종료에 명시 호출 `impl-verify`",
+    ):
+        if forbidden in routing_template:
+            raise AssertionError(f"routing template still mandates a downstream skill: {forbidden}")
+    require(
+        SKILL_ROOT / "templates" / "agent-instruction.md.template",
+        "project-local skill copy 금지",
+        "다른 설치 스킬",
+        "필수 실행 체인으로 쓰지 않는다",
+    )
+    require(
+        SKILL_ROOT / "prompts" / "analysis-instruction.md",
+        "필수 실행 체인으로",
+        "다른 설치 스킬·플러그인·일반 Agent",
+        "선택 가능한",
     )
     require(
         SKILL_ROOT / "templates" / "AGENTS.md.template",

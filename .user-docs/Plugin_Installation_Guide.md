@@ -18,7 +18,7 @@
 - `harness-setup`은 사용자 프로젝트에 `.agents/skills/`, `.claude/skills/`, `skills/`를 생성하거나 스킬을 복사·동기화하지 않는다.
 - 모든 참여자는 자기 작업 환경에서 `harness-setup`을 최초 1회 실행하고, 단일·복수 repo 구분 없이 `git-scoped-account`로 각 repo의 Git 작성자와 provider 계정을 등록한다.
 - 문서 쓰기 권한을 나눌 때만 관리자가 `project-write-access`를 명시 호출해 공유 정책을 설정한다. 정책 생성 뒤에는 각 참여자가 관리자 키 없이 자기 PC의 로컬 Git·AI 가드를 등록한다. 권한 기능이 없어도 나머지 하네스 흐름은 그대로 사용할 수 있다.
-- `.md` 산출물 후처리는 별도 `im-not-ai` 설치 없이 내장 `humanize-korean`을 쓴다.
+- 사용자가 `.md` 산출물의 문체 개선을 명시 요청했을 때는 별도 `im-not-ai` 설치 없이 내장 `humanize-korean`을 선택할 수 있다.
 
 ---
 
@@ -245,7 +245,9 @@ harness-setup 명시 호출
 
 ## 10. Markdown 산출물 후처리
 
-여기서 producer는 Markdown 파일이나 문서 묶음을 생성·갱신하고 저장 경로와 구조를 검증한 뒤 다음 단계로 넘기는 산출물 책임 스킬을 뜻한다. Markdown producer는 고정 7종과 조건부 2종, 총 9종이다.
+여기서 producer는 Markdown 파일이나 문서 묶음을 생성·갱신하고 저장 경로와 구조를
+검증한 뒤 다음 단계로 넘기는 산출물 책임 주체를 뜻한다. 아래 9종은 Harness Kit가
+제공하는 producer이며 독점 실행 목록이 아니다.
 
 고정 producer 7종:
 
@@ -267,7 +269,8 @@ harness-setup 명시 호출
 산출물 생성 후 흐름:
 
 ```text
-원 producer 검증
+사용자가 문체 개선을 명시 요청
+→ 원 producer 검증
 → 최외곽 producer가 artifact_bundle_id와 handoff_owner 확정
 → 중첩 producer는 suppress_child_handoff=true로 별도 제안 억제
 → bundle을 humanize-korean document-refinement profile에 한 번만 전달
@@ -279,12 +282,16 @@ harness-setup 명시 호출
 ```
 
 `humanize-korean`은 기본적으로 proposal-only다. 사용자가 승인하지 않으면 원본 파일을 변경하지 않는다.
+문체 개선 요청 자체가 없으면 producer는 이 handoff를 제안하거나 호출하지 않는다.
 
 ---
 
 ## 11. 프로젝트 내부 사용자 스킬 복사본 처리
 
-프로젝트에서는 사용자 스킬을 설치된 플러그인에서만 사용한다. `.agents/skills` 또는 `.claude/skills`에서 사용자 스킬 복사본을 발견하면 기본 동작은 삭제가 아니라 읽기 전용 inventory다.
+프로젝트에는 Harness Kit 사용자 스킬 복사본을 만들지 않고 설치된 플러그인의 것을 사용한다.
+이는 Harness Kit의 배포 위치 규칙이며, 다른 설치 스킬·플러그인·일반 Agent의 사용을
+금지하지 않는다. `.agents/skills` 또는 `.claude/skills`에서 Harness Kit 사용자 스킬
+복사본을 발견하면 기본 동작은 삭제가 아니라 읽기 전용 inventory다.
 
 분류:
 

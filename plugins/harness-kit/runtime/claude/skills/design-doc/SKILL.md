@@ -35,21 +35,23 @@ allowed-tools: Read, Glob, Write, Agent
 
 ---
 
-## 다운스트림 스킬 연계
+## 다운스트림 연계
 
-이 스킬의 OUTPUT은 아래 스킬의 입력으로 바로 사용할 수 있다.
+이 스킬의 OUTPUT은 기반 `context-doc` 또는 아래 선택 작업의 입력으로 사용할 수 있다.
+비기반 스킬 이름은 Harness Kit가 제공하는 참조 구현이며 동등한 다른 도구·Agent를
+배제하지 않는다.
 
 ```
 design-doc OUTPUT
-    ├─→ context-doc      →  앱 context + .ai-docs/{앱}/instruction/*-instruction.md
-    ├─→ impl-fe-be-doc   →  FE/BE 페어 또는 화면 중심 작업지침서
-    ├─→ impl-doc         →  범용 단계별 구현 지침서
-    ├─→ impl-reuse-scan  →  Phase/태스크 시작 직전 공통 자산 발견·보고(자동 반영 금지)
-    └─→ impl-verify      →  태스크·Phase 종료 시 검증 매트릭스(코드/지침서 수정 금지)
+    ├─→ context-doc                         → 앱 context + instruction (기반 흐름)
+    ├─→ 구현 계획 도구                     → FE/BE·화면·범용 작업지침서
+    ├─→ 재사용 검토 도구                   → 공통 자산 발견·보고
+    └─→ 구현 검증 도구                     → 검증 결과와 evidence
 ```
 
-OUTPUT 문서를 저장했다면 해당 파일을 그대로 다음 스킬에 넘기면 된다.
-각 스킬의 섹션 매핑은 해당 스킬의 SKILL.md 참조.
+OUTPUT 문서를 저장했다면 해당 파일을 그대로 선택한 다음 도구에 넘기면 된다.
+제공 선택지로 `impl-fe-be-doc`, `impl-doc`, `impl-reuse-scan`, `impl-verify`가 있지만
+특정 호출을 완료 조건으로 만들지 않는다.
 
 ---
 
@@ -283,10 +285,12 @@ bundle ID, owner, 파일 hash, 시각을 기록하고 승인 반영 뒤에는 `a
 `revalidated`를 순서대로 갱신한다. ledger 파일은 개선 대상 bundle에서 제외한다.
 ledger를 기록할 수 없으면 현재 session 한정 상태로 보고한다.
 
-직접 호출에서는 Step 4에서 스케일별 필수 섹션, 현재 사실만 유지했는지, 내부 링크와 저장 경로를 먼저
+직접 호출에서도 사용자가 이번 요청에서 한국어 Markdown 문체 개선까지 명시한 경우에만,
+Step 4에서 스케일별 필수 섹션, 현재 사실만 유지했는지, 내부 링크와 저장 경로를 먼저
 검증한 후 다음 조건을 모두 만족할 때 bundle 전체를 `humanize-korean`의
 `document-refinement` 프로필로 한 번만 제안한다.
 
+- `user_requested_document_refinement == true`
 - `handoff_owner == design-doc`
 - `suppress_child_handoff == false`
 - `handoff_completed == false`
